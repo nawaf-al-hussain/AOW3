@@ -33232,9 +33232,10 @@ void main() {
       a.enabled = true;
       a.fadeIn(fade);
       a.play();
-      a.addEventListener("finished", () => {
-        a.fadeOut(0.12);
-      });
+      if (typeof a.addEventListener === "function")
+        a.addEventListener("finished", () => {
+          a.fadeOut(0.12);
+        });
       return a;
     }
     update(dt) {
