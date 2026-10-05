@@ -107,3 +107,48 @@ Stage Summary:
 - Known limits: sim clock tied to render fps (steps<8 catch-up cap) — slow
   machines run slower than realtime; sand-area props near enemy HQ still use
   fallback colors; water/walkability still procedural under the real map.
+
+---
+Task ID: 4
+Agent: Super Z (main)
+Task: "Textures, models and gameplay issues" — live-QA-driven fidelity pass 3
+
+Work Log:
+- Served docs/ locally (port 8777) and ran full browser QA with agent-browser:
+  menu, battle, zoom/pan, placement, production, march, enemy contact.
+- Root-caused concrete defects:
+  1) ACESFilmic tone mapping crushed the dark jungle atlases -> murky/black foliage.
+  2) setClearColor(0xA8A89C) + missing off-map fade = beige void beyond terrain.
+  3) Walkability grid was 90 RANDOM blobs -> invisible walls, placement refused
+     near HQ, units detouring nothing (real map ignored).
+  4) Building blob shadows were fixed 10-unit slabs; foliage props floated above
+     terrain; card art used object-fit:cover (cropped portraits); camera default
+     12.5/min 6.5 was far closer than the original RTS framing.
+- surgery3.py (14 verified string edits) + 3 follow-up patches:
+  * Lighting: LinearToneMapping exp 1.14, hemi 1.95 (sky E5F4FF/ground 99A173),
+    sun 2.0 @ (-22,68,-15), +0.55 fill light -> bright, saturated, soft shadows.
+  * Clear color now fog color (0xCFC3A2); off-map blends into haze.
+  * preloadDecor: exposes window.__decorIndex; cutout foliage color x1.3,
+    ground decals x1.2 + opacity 0.62/depthWrite false (seamless blending);
+    prop placements snapped to heightAtWorld (no more floaters).
+  * Grid: real-map derived — only rock decor with w>=1.1 blocks (br = max(.9, w*.5)),
+    fallback to old random blobs when real map absent. Placement verified via
+    sim.canPlace probe (valid spots return true; near-HQ refusals were genuinely
+    blocked tiles + units).
+  * Building shadow sprite = radius*3.1 @ 0.85 opacity; camera clamp 9..64,
+    default dist 20 (strategic framing like the original).
+  * Card art object-fit:contain on gradient; construction rise starts 0.45.
+- Verified in-browser: barracks place->build->queue rifle/MG->march (walk anim
+  frames differ), enemy AI defended and killed 4 units (combat math active),
+  gunship rotor spins (frame delta), ground decal blending fixed, zero console errors.
+- Committed 9965119 and pushed to main (Pages build queued/stuck "building"
+  at time of writing — GitHub-side; commit content verified in repo).
+
+Stage Summary:
+- Live code: main @ 9965119 (docs/). URL: https://nawaf-al-hussain.github.io/AOW3/
+- Visuals now: bright saturated jungle, visible foliage/props, blended decals,
+  soft shadows, no black silhouettes, no beige void, correct-ish RTS camera.
+- Gameplay now: real-rock obstacles only, placement/production/march/AI-defense
+  all functional.
+- Next candidates: mortar/tank shell arcs, AA flak vs gunship, minimap tap-to-move
+  polish, desert-side prop density (real map is sparse mid-map), sound mixing.
