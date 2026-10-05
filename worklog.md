@@ -47,3 +47,15 @@ Stage Summary:
   game's real AnimationClips; helicopter rotors spin procedurally.
 - Strategy answer on record: 1:1 in-browser = asset-level remake (this), not Unity WebGL (needs
   original project) or full native decompile (months, still no visuals).
+
+---
+Real map pass (0d1566f) + oneshot guard (6de3b0d)
+- docs/ now runs the real extracted jungle map: map.json (6,371 placements),
+  124 extra GLBs incl. 26 land_chunk terrain meshes, heightmap.png/json,
+  water.png, real minimap, real fx textures, 44 curated sfx WAVs.
+- pipeline/tools/: export_map.py, export_missing.py, export_heightmap.py,
+  scan_map_prefab.py, surgery_realmap.py (repeatable full rebuild).
+- Audio recipe: clips = assets/bin/Data/<hash>.resource (FSB5) in base APK;
+  decode with fmod_toolkit.raw_to_wav(bytes, name, channels, freq) -> WAV.
+- Live QA (fresh session, github.io): 0 page errors, 393/393 templates,
+  battle at enemy HQ verified, minimap + water + announcer working.
