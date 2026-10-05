@@ -1,0 +1,1862 @@
+[
+ {
+  "n": "Underbrush_03",
+  "f": "decor/dec_Underbrush_03_69992.glb",
+  "cat": "bush",
+  "g": "map_real",
+  "vc": 4,
+  "h": 3.239269971847534,
+  "w": 3.239269971847534,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "Ground_43",
+  "f": "decor/dec_Ground_43_62759.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 1.7979143857955933,
+  "w": 3.1999998092651367,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "Ground_25",
+  "f": "decor/dec_Ground_25_3521.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 3.9679996967315674,
+  "w": 3.9679996967315674,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "Ground_44",
+  "f": "decor/dec_Ground_44_86054.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 2.301348924636841,
+  "w": 3.9679996967315674,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "atlas_2_plane_37",
+  "f": "decor/dec_atlas_2_plane_37_53472.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 4.0,
+  "w": 4.0,
+  "l": 1.7484555314695172e-07,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "Underbrush_01",
+  "f": "decor/dec_Underbrush_01_23741.glb",
+  "cat": "bush",
+  "g": "map_real",
+  "vc": 4,
+  "h": 2.267488956451416,
+  "w": 2.267488956451416,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "Ground_12",
+  "f": "decor/dec_Ground_12_59590.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 4.0,
+  "w": 4.0,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "atlas_2_plane_01",
+  "f": "decor/dec_atlas_2_plane_01_66547.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 3.9679996967315674,
+  "w": 3.9679996967315674,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "atlas_2_plane_35",
+  "f": "decor/dec_atlas_2_plane_35_28048.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 4.0,
+  "w": 4.0,
+  "l": 1.7484555314695172e-07,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "atlas_2_plane_50",
+  "f": "decor/dec_atlas_2_plane_50_85635.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 1.7666538953781128,
+  "w": 1.3067291975021362,
+  "l": 1.3778386431795298e-08,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "Ground_04",
+  "f": "decor/dec_Ground_04_96374.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 4.0,
+  "w": 4.0,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "Underbrush_02",
+  "f": "decor/dec_Underbrush_02_60723.glb",
+  "cat": "bush",
+  "g": "map_real",
+  "vc": 4,
+  "h": 2.7533795833587646,
+  "w": 2.7533795833587646,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "atlas_2_plane_07",
+  "f": "decor/dec_atlas_2_plane_07_41570.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 3.9679996967315674,
+  "w": 3.9679996967315674,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "atlas_2_plane_25",
+  "f": "decor/dec_atlas_2_plane_25_32029.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 2.6056960821151733,
+  "w": 2.6056960225105286,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "road_01",
+  "f": "decor/dec_road_01_66801.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 5.199999809265137,
+  "w": 3.0,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "Ground_37",
+  "f": "decor/dec_Ground_37_34225.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 2.799999952316284,
+  "w": 2.799999952316284,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "atlas_2_plane_68",
+  "f": "decor/dec_atlas_2_plane_68_50356.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 1.4074947834014893,
+  "w": 1.1715023517608643,
+  "l": 4.959508359547726e-08,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "atlas_2_plane_33",
+  "f": "decor/dec_atlas_2_plane_33_82933.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 4.0,
+  "w": 4.0,
+  "l": 1.7484555314695172e-07,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "atlas_2_plane_41",
+  "f": "decor/dec_atlas_2_plane_41_96924.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 4.0,
+  "w": 4.0,
+  "l": 1.7484555314695172e-07,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "atlas_2_plane_10",
+  "f": "decor/dec_atlas_2_plane_10_36977.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 3.1999998092651367,
+  "w": 3.1999998092651367,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "Ground_36",
+  "f": "decor/dec_Ground_36_23631.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 4.0,
+  "w": 4.0,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "jungle_flat_stone_02",
+  "f": "decor/dec_jungle_flat_stone_02_34762.glb",
+  "cat": "rock",
+  "g": "map_real",
+  "vc": 4,
+  "h": 1.1280544996261597,
+  "w": 1.0379304885864258,
+  "l": 3.974860618427556e-08,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "atlas_2_plane_02",
+  "f": "decor/dec_atlas_2_plane_02_36249.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 3.1999998092651367,
+  "w": 3.1999998092651367,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "jungle_middle_path",
+  "f": "decor/dec_jungle_middle_path_26571.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 1.8192548751831055,
+  "w": 3.5683209896087646,
+  "l": 2.126949993908056e-08,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "atlas_2_plane_67",
+  "f": "decor/dec_atlas_2_plane_67_50623.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 1.2067774534225464,
+  "w": 1.0044389963150024,
+  "l": 4.2522522392118844e-08,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "atlas_2_plane_06",
+  "f": "decor/dec_atlas_2_plane_06_15352.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 4.054910659790039,
+  "w": 1.8192554712295532,
+  "l": 4.570237417678147e-15,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "atlas_2_plane_65",
+  "f": "decor/dec_atlas_2_plane_65_17269.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 2.4616971015930176,
+  "w": 1.2862833738327026,
+  "l": 4.985787072087078e-08,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "atlas_2_plane_08",
+  "f": "decor/dec_atlas_2_plane_08_29669.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 3.1999998092651367,
+  "w": 3.1999998092651367,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "jungle_flat_stone_01",
+  "f": "decor/dec_jungle_flat_stone_01_60828.glb",
+  "cat": "rock",
+  "g": "map_real",
+  "vc": 4,
+  "h": 1.1280544996261597,
+  "w": 1.3478002548217773,
+  "l": 3.974860618427556e-08,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "atlas_2_plane_38",
+  "f": "decor/dec_atlas_2_plane_38_51021.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 4.0,
+  "w": 4.0,
+  "l": 1.5576574128317588e-06,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "atlas_2_plane_12",
+  "f": "decor/dec_atlas_2_plane_12_99395.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 3.1999998092651367,
+  "w": 3.1999998092651367,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "atlas_2_plane_24",
+  "f": "decor/dec_atlas_2_plane_24_69862.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 3.618296265602112,
+  "w": 3.618296265602112,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "atlas_2_plane_63",
+  "f": "decor/dec_atlas_2_plane_63_33177.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 1.6022955179214478,
+  "w": 2.8055765628814697,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "atlas_2_plane_42",
+  "f": "decor/dec_atlas_2_plane_42_38892.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 4.0,
+  "w": 4.0,
+  "l": 1.5576574128317588e-06,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "atlas_2_plane_66",
+  "f": "decor/dec_atlas_2_plane_66_81321.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 2.0609312057495117,
+  "w": 1.1739126443862915,
+  "l": 4.1740982226201595e-08,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "atlas_2_plane_11",
+  "f": "decor/dec_atlas_2_plane_11_67563.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 3.9679996967315674,
+  "w": 3.9679996967315674,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "jungle_flat_stone_04",
+  "f": "decor/dec_jungle_flat_stone_04_67784.glb",
+  "cat": "rock",
+  "g": "map_real",
+  "vc": 4,
+  "h": 1.5584259033203125,
+  "w": 0.7455723881721497,
+  "l": 3.1563509139687085e-08,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "Ground_11",
+  "f": "decor/dec_Ground_11_82559.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 2.799999952316284,
+  "w": 2.799999952316284,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "atlas_2_plane_39",
+  "f": "decor/dec_atlas_2_plane_39_93382.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 1.963963270187378,
+  "w": 1.1766654253005981,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "Ground_34",
+  "f": "decor/dec_Ground_34_28812.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 2.799999952316284,
+  "w": 2.799999952316284,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "Ground_39",
+  "f": "decor/dec_Ground_39_76456.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 2.799999952316284,
+  "w": 2.799999952316284,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "Ground_31",
+  "f": "decor/dec_Ground_31_88079.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 2.799999952316284,
+  "w": 2.799999952316284,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "Ground_14",
+  "f": "decor/dec_Ground_14_65311.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 2.799999952316284,
+  "w": 2.799999952316284,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "atlas_2_plane_39a",
+  "f": "decor/dec_atlas_2_plane_39a_52675.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 1.313093900680542,
+  "w": 1.0072946548461914,
+  "l": 5.178067752353854e-08,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "atlas_2_plane_64",
+  "f": "decor/dec_atlas_2_plane_64_60013.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 2.2454993724823,
+  "w": 1.183868408203125,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "atlas_2_plane_18",
+  "f": "decor/dec_atlas_2_plane_18_10236.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 4.0,
+  "w": 4.0,
+  "l": 1.7484555314695172e-07,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "atlas_2_plane_55",
+  "f": "decor/dec_atlas_2_plane_55_27729.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 1.766654372215271,
+  "w": 1.3067294359207153,
+  "l": 1.4066742082263772e-07,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "atlas_2_plane_09",
+  "f": "decor/dec_atlas_2_plane_09_46299.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 3.9679996967315674,
+  "w": 3.9679996967315674,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "jungle_flat_stone_03",
+  "f": "decor/dec_jungle_flat_stone_03_87014.glb",
+  "cat": "rock",
+  "g": "map_real",
+  "vc": 4,
+  "h": 0.912535548210144,
+  "w": 0.7595321536064148,
+  "l": 3.215448884930083e-08,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "atlas_2_woodflour_03",
+  "f": "decor/dec_atlas_2_woodflour_03_48143.glb",
+  "cat": "prop",
+  "g": "map_real",
+  "vc": 4,
+  "h": 0.9698033928871155,
+  "w": 0.28853827714920044,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungle",
+  "mats": {
+   "jungle_mat_decorations_cutout": "jungle"
+  }
+ },
+ {
+  "n": "atlas_2_plane_40",
+  "f": "decor/dec_atlas_2_plane_40_74045.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 1.9729963541030884,
+  "w": 1.3146268129348755,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "Ground_16",
+  "f": "decor/dec_Ground_16_32827.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 2.799999952316284,
+  "w": 2.799999952316284,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "Ground_40",
+  "f": "decor/dec_Ground_40_88316.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 2.799999952316284,
+  "w": 2.799999952316284,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "atlas_2_plane_36",
+  "f": "decor/dec_atlas_2_plane_36_9303.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 4.0,
+  "w": 4.0,
+  "l": 1.5576574128317588e-06,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "atlas_2_plane_46",
+  "f": "decor/dec_atlas_2_plane_46_19101.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 2.7999998927116394,
+  "w": 2.7999998927116394,
+  "l": 1.0903601719292055e-06,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "road_03",
+  "f": "decor/dec_road_03_70192.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 3.4640815258026123,
+  "w": 3.0000001192092896,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "road_02",
+  "f": "decor/dec_road_02_32716.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 4.2605955600738525,
+  "w": 3.0,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "Ground_13",
+  "f": "decor/dec_Ground_13_17327.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 4.0,
+  "w": 4.0,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "atlas_2_woodflour_02",
+  "f": "decor/dec_atlas_2_woodflour_02_97732.glb",
+  "cat": "prop",
+  "g": "map_real",
+  "vc": 4,
+  "h": 0.9698033928871155,
+  "w": 0.4660053849220276,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungle",
+  "mats": {
+   "jungle_mat_decorations_cutout": "jungle"
+  }
+ },
+ {
+  "n": "Ground_05",
+  "f": "decor/dec_Ground_05_39206.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 2.799999952316284,
+  "w": 2.799999952316284,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "atlas_2_plane_20",
+  "f": "decor/dec_atlas_2_plane_20_37926.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 3.9679999351501465,
+  "w": 3.9679999351501465,
+  "l": 1.7344678582276174e-07,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "atlas_2_plane_49",
+  "f": "decor/dec_atlas_2_plane_49_71297.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 3.5333077907562256,
+  "w": 1.3067291975021362,
+  "l": 2.7556774639947434e-08,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "atlas_2_plane_21",
+  "f": "decor/dec_atlas_2_plane_21_44284.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 3.9679996967315674,
+  "w": 3.9679996967315674,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "atlas_2_plane_61",
+  "f": "decor/dec_atlas_2_plane_61_8189.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 1.7383631467819214,
+  "w": 2.8055765628814697,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "Ground_08",
+  "f": "decor/dec_Ground_08_86404.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 4.0,
+  "w": 4.0,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "Ground_21",
+  "f": "decor/dec_Ground_21_15268.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 4.0,
+  "w": 4.0,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "Road_Ground_Up_01",
+  "f": "decor/dec_Road_Ground_Up_01_94697.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 8,
+  "h": 5.199999809265137,
+  "w": 3.0,
+  "l": 0.800000011920929,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "goingup_plane_02",
+  "f": "decor/dec_goingup_plane_02_17598.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 2.9243093729019165,
+  "w": 2.1056485176086426,
+  "l": 3.952035854126734e-08,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "road_04",
+  "f": "decor/dec_road_04_40729.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 2.521090507507324,
+  "w": 3.000000238418579,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "Ground_32",
+  "f": "decor/dec_Ground_32_11955.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 2.799999952316284,
+  "w": 2.799999952316284,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "Ground_22",
+  "f": "decor/dec_Ground_22_24972.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 4.0,
+  "w": 4.0,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "atlas_2_plane_47",
+  "f": "decor/dec_atlas_2_plane_47_15107.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 2.7999998927116394,
+  "w": 2.7999998927116394,
+  "l": 1.2239188151852431e-07,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "Ground_28",
+  "f": "decor/dec_Ground_28_78429.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 3.9679996967315674,
+  "w": 3.9679996967315674,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "atlas_2_plane_45",
+  "f": "decor/dec_atlas_2_plane_45_83813.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 2.7999998927116394,
+  "w": 2.7999998927116394,
+  "l": 1.2239188151852431e-07,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "Ground_50",
+  "f": "decor/dec_Ground_50_88732.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 2.799999952316284,
+  "w": 2.799999952316284,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "Ground_30",
+  "f": "decor/dec_Ground_30_57098.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 4.0,
+  "w": 4.0,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "atlas_2_plane_19",
+  "f": "decor/dec_atlas_2_plane_19_97817.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 3.9679999351501465,
+  "w": 3.9679999351501465,
+  "l": 1.7344678582276174e-07,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "Ground_38",
+  "f": "decor/dec_Ground_38_47695.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 2.799999952316284,
+  "w": 2.799999952316284,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "Ground_10",
+  "f": "decor/dec_Ground_10_18758.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 2.799999952316284,
+  "w": 2.799999952316284,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "goingup_plane_01",
+  "f": "decor/dec_goingup_plane_01_34940.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 3.6455161571502686,
+  "w": 3.0033624172210693,
+  "l": 9.961554781057202e-08,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "atlas_2_plane_43",
+  "f": "decor/dec_atlas_2_plane_43_63777.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 3.054028868675232,
+  "w": 3.0540287494659424,
+  "l": 1.3349584193633746e-07,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "atlas_2_plane_13",
+  "f": "decor/dec_atlas_2_plane_13_67247.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 3.9679996967315674,
+  "w": 3.9679996967315674,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "land_chunk_30_1_0",
+  "f": "decor/dec_land_chunk_30_1_0_64871.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 220,
+  "h": 2.384185791015625e-07,
+  "w": 16.0,
+  "l": 20.000000596046448,
+  "kb": 9,
+  "atlas": "jungleterrain",
+  "mats": {
+   "mat_terrain_jungle": "jungleterrain"
+  }
+ },
+ {
+  "n": "road_06",
+  "f": "decor/dec_road_06_62478.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 5.199999809265137,
+  "w": 2.09895396232605,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "Ground_24",
+  "f": "decor/dec_Ground_24_2532.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 3.9679996967315674,
+  "w": 3.9679996967315674,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "atlas_2_plane_44",
+  "f": "decor/dec_atlas_2_plane_44_10570.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 3.054028868675232,
+  "w": 3.0540287494659424,
+  "l": 4.6114554663745366e-07,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "land_chunk_0_1_20",
+  "f": "decor/dec_land_chunk_0_1_20_45142.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 400,
+  "h": 2.384185791015625e-07,
+  "w": 20.000000476837158,
+  "l": 20.0,
+  "kb": 15,
+  "atlas": "jungleterrain",
+  "mats": {
+   "mat_terrain_jungle": "jungleterrain"
+  }
+ },
+ {
+  "n": "land_chunk_10_1_30",
+  "f": "decor/dec_land_chunk_10_1_30_4001.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 64,
+  "h": 2.384185791015625e-07,
+  "w": 12.0,
+  "l": 8.0,
+  "kb": 3,
+  "atlas": "jungleterrain",
+  "mats": {
+   "mat_terrain_jungle": "jungleterrain"
+  }
+ },
+ {
+  "n": "road_07",
+  "f": "decor/dec_road_07_64584.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 3.2053163051605225,
+  "w": 2.5651289224624634,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "atlas_2_plane_52",
+  "f": "decor/dec_atlas_2_plane_52_39859.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 10,
+  "h": 1.6712335348129272,
+  "w": 4.0274248123168945,
+  "l": 1.8400794488115935e-07,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "Ground_35",
+  "f": "decor/dec_Ground_35_55266.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 2.799999952316284,
+  "w": 2.799999952316284,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "land_chunk_10_0_0",
+  "f": "decor/dec_land_chunk_10_0_0_16263.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 1538,
+  "h": 0.8000004291534992,
+  "w": 22.0,
+  "l": 20.000000715255737,
+  "kb": 62,
+  "atlas": "jungleterrain",
+  "mats": {
+   "mat_terrain_jungle": "jungleterrain"
+  }
+ },
+ {
+  "n": "Ground_03",
+  "f": "decor/dec_Ground_03_86582.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 4.0,
+  "w": 4.0,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "Ground_09",
+  "f": "decor/dec_Ground_09_32595.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 3.1999998092651367,
+  "w": 3.1999998092651367,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "land_chunk_10_1_20",
+  "f": "decor/dec_land_chunk_10_1_20_46195.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 84,
+  "h": 2.384185791015625e-07,
+  "w": 6.0,
+  "l": 18.0,
+  "kb": 4,
+  "atlas": "jungleterrain",
+  "mats": {
+   "mat_terrain_jungle": "jungleterrain"
+  }
+ },
+ {
+  "n": "land_chunk_20_0_10",
+  "f": "decor/dec_land_chunk_20_0_10_54621.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 1469,
+  "h": 0.8000004291534992,
+  "w": 20.0,
+  "l": 20.000003814697266,
+  "kb": 60,
+  "atlas": "jungleterrain",
+  "mats": {
+   "mat_terrain_jungle": "jungleterrain"
+  }
+ },
+ {
+  "n": "land_chunk_20_0_30",
+  "f": "decor/dec_land_chunk_20_0_30_32344.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 1495,
+  "h": 0.8003455400175881,
+  "w": 22.0,
+  "l": 20.0,
+  "kb": 61,
+  "atlas": "jungleterrain",
+  "mats": {
+   "mat_terrain_jungle": "jungleterrain"
+  }
+ },
+ {
+  "n": "land_chunk_20_0_0",
+  "f": "decor/dec_land_chunk_20_0_0_6451.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 1162,
+  "h": 0.8003455998259597,
+  "w": 22.0,
+  "l": 20.00000250339508,
+  "kb": 47,
+  "atlas": "jungleterrain",
+  "mats": {
+   "mat_terrain_jungle": "jungleterrain"
+  }
+ },
+ {
+  "n": "atlas_2_plane_23",
+  "f": "decor/dec_atlas_2_plane_23_36257.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 3.618296265602112,
+  "w": 3.618296265602112,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "land_chunk_20_1_20",
+  "f": "decor/dec_land_chunk_20_1_20_26087.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 52,
+  "h": 2.384185791015625e-07,
+  "w": 8.0,
+  "l": 14.0,
+  "kb": 3,
+  "atlas": "jungleterrain",
+  "mats": {
+   "mat_terrain_jungle": "jungleterrain"
+  }
+ },
+ {
+  "n": "Ground_49",
+  "f": "decor/dec_Ground_49_4895.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 3.749161958694458,
+  "w": 3.7495481967926025,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "land_chunk_20_1_0",
+  "f": "decor/dec_land_chunk_20_1_0_16526.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 56,
+  "h": 2.384185791015625e-07,
+  "w": 10.0,
+  "l": 8.000001549720764,
+  "kb": 3,
+  "atlas": "jungleterrain",
+  "mats": {
+   "mat_terrain_jungle": "jungleterrain"
+  }
+ },
+ {
+  "n": "Ground_33",
+  "f": "decor/dec_Ground_33_71433.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 4.0,
+  "w": 4.0,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "atlas_2_plane_17",
+  "f": "decor/dec_atlas_2_plane_17_78213.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 4.0,
+  "w": 4.0,
+  "l": 1.5576574128317588e-06,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "land_chunk_10_0_30",
+  "f": "decor/dec_land_chunk_10_0_30_91029.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 1193,
+  "h": 0.8000004291534992,
+  "w": 22.0,
+  "l": 20.0,
+  "kb": 49,
+  "atlas": "jungleterrain",
+  "mats": {
+   "mat_terrain_jungle": "jungleterrain"
+  }
+ },
+ {
+  "n": "land_chunk_20_1_30",
+  "f": "decor/dec_land_chunk_20_1_30_68476.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 48,
+  "h": 2.384185791015625e-07,
+  "w": 10.0,
+  "l": 20.0,
+  "kb": 2,
+  "atlas": "jungleterrain",
+  "mats": {
+   "mat_terrain_jungle": "jungleterrain"
+  }
+ },
+ {
+  "n": "atlas_2_plane_26",
+  "f": "decor/dec_atlas_2_plane_26_26267.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 2.6056960821151733,
+  "w": 2.6056960225105286,
+  "l": 1.014695499179652e-06,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "land_chunk_10_0_20",
+  "f": "decor/dec_land_chunk_10_0_20_55703.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 1404,
+  "h": 0.8000004291534992,
+  "w": 20.0,
+  "l": 20.0,
+  "kb": 57,
+  "atlas": "jungleterrain",
+  "mats": {
+   "mat_terrain_jungle": "jungleterrain"
+  }
+ },
+ {
+  "n": "land_chunk_30_1_20",
+  "f": "decor/dec_land_chunk_30_1_20_45562.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 400,
+  "h": 2.384185791015625e-07,
+  "w": 20.0,
+  "l": 20.0,
+  "kb": 15,
+  "atlas": "jungleterrain",
+  "mats": {
+   "mat_terrain_jungle": "jungleterrain"
+  }
+ },
+ {
+  "n": "Ground_41",
+  "f": "decor/dec_Ground_41_17223.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 3.749161958694458,
+  "w": 3.7495481967926025,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "land_chunk_0_1_10",
+  "f": "decor/dec_land_chunk_0_1_10_64989.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 400,
+  "h": 2.384185791015625e-07,
+  "w": 20.000000476837158,
+  "l": 20.0,
+  "kb": 15,
+  "atlas": "jungleterrain",
+  "mats": {
+   "mat_terrain_jungle": "jungleterrain"
+  }
+ },
+ {
+  "n": "atlas_2_plane_14",
+  "f": "decor/dec_atlas_2_plane_14_84217.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 4,
+  "h": 3.1999998092651367,
+  "w": 3.1999998092651367,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground2",
+  "mats": {
+   "jungle_mat_decoration_diffuse2_2": "jungleground2"
+  }
+ },
+ {
+  "n": "land_chunk_30_1_10",
+  "f": "decor/dec_land_chunk_30_1_10_52278.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 400,
+  "h": 2.384185791015625e-07,
+  "w": 20.0,
+  "l": 20.0,
+  "kb": 15,
+  "atlas": "jungleterrain",
+  "mats": {
+   "mat_terrain_jungle": "jungleterrain"
+  }
+ },
+ {
+  "n": "land_chunk_30_1_30",
+  "f": "decor/dec_land_chunk_30_1_30_66120.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 384,
+  "h": 2.384185791015625e-07,
+  "w": 20.0,
+  "l": 20.0,
+  "kb": 15,
+  "atlas": "jungleterrain",
+  "mats": {
+   "mat_terrain_jungle": "jungleterrain"
+  }
+ },
+ {
+  "n": "land_chunk_0_1_30",
+  "f": "decor/dec_land_chunk_0_1_30_95566.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 220,
+  "h": 2.384185791015625e-07,
+  "w": 20.000000476837158,
+  "l": 20.0,
+  "kb": 9,
+  "atlas": "jungleterrain",
+  "mats": {
+   "mat_terrain_jungle": "jungleterrain"
+  }
+ },
+ {
+  "n": "land_chunk_0_0_30",
+  "f": "decor/dec_land_chunk_0_0_30_79316.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 1909,
+  "h": 2.800000846385956,
+  "w": 14.000000357627869,
+  "l": 20.0,
+  "kb": 77,
+  "atlas": "jungleterrain",
+  "mats": {
+   "mat_terrain_jungle": "jungleterrain"
+  }
+ },
+ {
+  "n": "land_chunk_20_0_20",
+  "f": "decor/dec_land_chunk_20_0_20_39325.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 1159,
+  "h": 0.8000003099442097,
+  "w": 20.0,
+  "l": 20.0,
+  "kb": 47,
+  "atlas": "jungleterrain",
+  "mats": {
+   "mat_terrain_jungle": "jungleterrain"
+  }
+ },
+ {
+  "n": "land_chunk_10_1_0",
+  "f": "decor/dec_land_chunk_10_1_0_90036.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 36,
+  "h": 2.384185791015625e-07,
+  "w": 10.0,
+  "l": 20.000000596046448,
+  "kb": 2,
+  "atlas": "jungleterrain",
+  "mats": {
+   "mat_terrain_jungle": "jungleterrain"
+  }
+ },
+ {
+  "n": "land_chunk_10_0_10",
+  "f": "decor/dec_land_chunk_10_0_10_82336.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 1178,
+  "h": 0.8000004291534992,
+  "w": 18.0,
+  "l": 20.0,
+  "kb": 48,
+  "atlas": "jungleterrain",
+  "mats": {
+   "mat_terrain_jungle": "jungleterrain"
+  }
+ },
+ {
+  "n": "land_chunk_30_0_0",
+  "f": "decor/dec_land_chunk_30_0_0_34527.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 1333,
+  "h": 2.800345480442047,
+  "w": 12.0,
+  "l": 20.0,
+  "kb": 54,
+  "atlas": "jungleterrain",
+  "mats": {
+   "mat_terrain_jungle": "jungleterrain"
+  }
+ },
+ {
+  "n": "land_chunk_20_1_10",
+  "f": "decor/dec_land_chunk_20_1_10_27836.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 56,
+  "h": 2.384185791015625e-07,
+  "w": 6.0,
+  "l": 14.0,
+  "kb": 3,
+  "atlas": "jungleterrain",
+  "mats": {
+   "mat_terrain_jungle": "jungleterrain"
+  }
+ },
+ {
+  "n": "land_chunk_10_1_10",
+  "f": "decor/dec_land_chunk_10_1_10_24577.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 68,
+  "h": 2.384185791015625e-07,
+  "w": 8.0,
+  "l": 20.0,
+  "kb": 3,
+  "atlas": "jungleterrain",
+  "mats": {
+   "mat_terrain_jungle": "jungleterrain"
+  }
+ },
+ {
+  "n": "Ground_29",
+  "f": "decor/dec_Ground_29_36944.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 3,
+  "h": 4.0,
+  "w": 4.0,
+  "l": 0.0,
+  "kb": 1,
+  "atlas": "jungleground",
+  "mats": {
+   "jungle_mat_decoration_diffuse2": "jungleground"
+  }
+ },
+ {
+  "n": "land_chunk_0_1_0",
+  "f": "decor/dec_land_chunk_0_1_0_29609.glb",
+  "cat": "ground",
+  "g": "map_real",
+  "vc": 384,
+  "h": 2.384185791015625e-07,
+  "w": 20.000000476837158,
+  "l": 20.000000596046448,
+  "kb": 15,
+  "atlas": "jungleterrain",
+  "mats": {
+   "mat_terrain_jungle": "jungleterrain"
+  }
+ }
+]
