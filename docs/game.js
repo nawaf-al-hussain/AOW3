@@ -145,6 +145,16 @@
   var BUILD_ORDER = ["rifle", "mg", "rpg", "tank", "mammoth", "artillery", "helicopter"];
   var HQ = { id: "hq", name: "Headquarters", health: 4200, radius: 2.2, view: 13 };
   var DEPOT = { id: "depot", name: "Supply Depot", health: 600, radius: 1.6, view: 8 };
+  var BLD = {
+    barracks: { id: "barracks", name: "Barracks", health: 900, radius: 1.9, view: 9, price: 400, buildTime: 14, model: "f1_bld_barracks" },
+    factory: { id: "factory", name: "Factory", health: 1100, radius: 2.1, view: 9, price: 550, buildTime: 18, model: "f1_bld_factory_light" },
+    heavyfactory: { id: "heavyfactory", name: "Heavy Factory", health: 1400, radius: 2.3, view: 9, price: 850, buildTime: 24, model: "f1_bld_factory_heavy" },
+    power: { id: "power", name: "Power Plant", health: 700, radius: 1.7, view: 8, price: 300, buildTime: 10, model: "f1_bld_power" },
+    turret: { id: "turret", name: "Turret", health: 800, radius: 1.2, view: 11, price: 450, buildTime: 12, model: "f1_bld_tower", weapon: { damage: { light: 34, medium: 30, heavy: 20 }, range: 10.5, cooldown: 1.35, accStatic: 88, accWalk: 66, splash: 0, projectileSpeed: 30 } },
+    bunker: { id: "bunker", name: "Bunker", health: 1000, radius: 1.4, view: 9, price: 350, buildTime: 10, model: "f1_bld_bunker", weapon: { damage: { light: 26, medium: 8, heavy: 2 }, range: 7.5, cooldown: 0.7, accStatic: 80, accWalk: 60, splash: 0, projectileSpeed: 0 } }
+  };
+  var BUILDINGS_ORDER = ["barracks", "factory", "heavyfactory", "power", "turret", "bunker"];
+  var PRODUCER_OF = { rifle: "barracks", mg: "barracks", rpg: "barracks", tank: "factory", artillery: "factory", mammoth: "heavyfactory", helicopter: "heavyfactory" };
   var ECONOMY = {
     baseIncome: 14,
     depotIncome: 11,
@@ -399,7 +409,7 @@
       this.spawn("mg", 2, MAP_W - 13, MAP_H / 2);
     }
     newPlayer() {
-      return { funds: 350, income: ECONOMY.baseIncome, cpUsed: 0, cpCap: ECONOMY.baseCP, queue: [], alive: true };
+      return { funds: 500, income: ECONOMY.baseIncome, cpUsed: 0, cpCap: ECONOMY.baseCP, queue: [], alive: true };
     }
     genTerrain(seed) {
       let s = seed >>> 0;
@@ -433,9 +443,13 @@
         this.grid[y * MAP_W + MAP_W - 1] = 1;
       }
     }
-    addBuilding(defId, owner, x, y) {
-      const def = defId === "hq" ? HQ : DEPOT;
-      const b = { id: this.nextId++, defId, owner, x, y, hp: def.health, maxHp: def.health, captureT: 0, captureBy: 0 };
+    addBuilding(defId, owner, x, y, instant = true) {
+      const def = defId === "hq" ? HQ : defId === "depot" ? DEPOT : BLD[defId];
+      const b = { id: this.nextId++, defId, owner, x, y, radius: def.radius, hp: def.health, maxHp: def.health, captureT: 0, captureBy: 0, built: instant };
+      if (!instant) {
+        b.buildT = 0;
+        b.buildTotal = def.buildTime;
+      }
       this.buildings.push(b);
       for (let dy = -2;dy <= 2; dy++)
         for (let dx = -2;dx <= 2; dx++) {
@@ -443,6 +457,44 @@
           if (gx > 0 && gy > 0 && gx < MAP_W - 1 && gy < MAP_H - 1 && Math.hypot(dx, dy) <= def.radius + 0.5)
             this.grid[gy * MAP_W + gx] = 0;
         }
+    }
+    canPlace(owner, defId, x, y) {
+      const def = BLD[defId];
+      if (!def)
+        return false;
+      const gx = Math.round(x), gy = Math.round(y);
+      if (gx < 3 || gy < 3 || gx > MAP_W - 4 || gy > MAP_H - 4)
+        return false;
+      if (this.grid[gy * MAP_W + gx] !== 0)
+        return false;
+      let nearBase = false;
+      for (const b of this.buildings) {
+        if (b.owner !== owner || b.hp <= 0 || !b.built)
+          continue;
+        const br = b.defId === "hq" ? HQ.radius : b.radius;
+        if (Math.hypot(b.x - x, b.y - y) <= br + 10.5)
+          nearBase = true;
+        if (Math.hypot(b.x - x, b.y - y) < def.radius + br + 0.8)
+          return false;
+      }
+      if (!nearBase)
+        return false;
+      for (const u of this.units)
+        if (u.def.kind !== "aircraft" && Math.hypot(u.x - x, u.y - y) < def.radius + 0.5)
+          return false;
+      return true;
+    }
+    tryPlace(owner, defId, x, y) {
+      const def = BLD[defId];
+      const p = this.players[owner - 1];
+      if (!def || !p || !p.alive || p.funds < def.price)
+        return false;
+      if (!this.canPlace(owner, defId, x, y))
+        return false;
+      p.funds -= def.price;
+      this.addBuilding(defId, owner, x, y, false);
+      this.refreshEconomy();
+      return true;
     }
     spawn(defId, owner, x, y) {
       const def = UNITS[defId];
@@ -477,11 +529,17 @@
       for (const o of [1, 2]) {
         const p = this.players[o - 1];
         let depots = 0;
-        for (const b of this.buildings)
-          if (b.defId === "depot" && b.owner === o)
+        let power = 0;
+        for (const b of this.buildings) {
+          if (b.owner !== o || b.hp <= 0)
+            continue;
+          if (b.defId === "depot")
             depots++;
-        p.income = ECONOMY.baseIncome + depots * ECONOMY.depotIncome;
-        p.cpCap = ECONOMY.baseCP + depots * ECONOMY.depotCP;
+          if (b.defId === "power" && b.built)
+            power++;
+        }
+        p.income = ECONOMY.baseIncome + depots * ECONOMY.depotIncome + power * 2;
+        p.cpCap = ECONOMY.baseCP + depots * ECONOMY.depotCP + power * 2;
         p.cpUsed = this.cpUsed(o);
       }
     }
@@ -530,6 +588,9 @@
       const def = UNITS[defId];
       if (!def || !p.alive)
         return false;
+      const producer = PRODUCER_OF[defId];
+      if (producer && !this.buildings.some((b) => b.defId === producer && b.owner === owner && b.hp > 0 && b.built))
+        return false;
       if (p.funds < def.price)
         return false;
       if (p.queue.length >= 8)
@@ -554,11 +615,12 @@
           q.t -= dt;
           if (q.t <= 0) {
             p.queue.shift();
-            const hq = this.buildings.find((b) => b.defId === "hq" && b.owner === o);
-            if (hq) {
-              const sx = hq.x + (o === 1 ? 3.2 : -3.2);
-              const u = this.spawn(q.defId, o, sx, hq.y + (Math.random() * 4 - 2));
-              u.order = { kind: "move", x: hq.x + (o === 1 ? 6.5 : -6.5), y: u.y };
+            const producer = PRODUCER_OF[q.defId];
+            const prod = this.buildings.find((b) => b.defId === producer && b.owner === o && b.hp > 0 && b.built) || this.buildings.find((b) => b.defId === "hq" && b.owner === o);
+            if (prod) {
+              const dir = o === 1 ? 1 : -1;
+              const u = this.spawn(q.defId, o, prod.x + dir * (prod.radius + 1), prod.y + (Math.random() * 3 - 1.5));
+              u.order = { kind: "move", x: prod.x + dir * (prod.radius + 4.5), y: u.y };
               u.path = this.pf.find(u.x, u.y, u.order.x, u.order.y, u.def.kind === "aircraft") ?? [];
             }
             this.refreshEconomy();
@@ -566,6 +628,7 @@
         }
       }
       this.refreshEconomy();
+      this.updateBuildings(dt);
       this.updateUnits(dt);
       this.updateProjectiles(dt);
       this.updateDepots(dt);
@@ -845,6 +908,50 @@
       }
       this.projectiles = this.projectiles.filter((p) => !p.dead);
     }
+    updateBuildings(dt) {
+      for (const b of this.buildings) {
+        if (b.buildT !== undefined && b.buildT < b.buildTotal) {
+          b.buildT += dt;
+          if (b.buildT >= b.buildTotal)
+            b.built = true;
+        }
+        const wdef = BLD[b.defId] && BLD[b.defId].weapon;
+        if (wdef && b.built && b.hp > 0 && b.owner > 0) {
+          b.cd = Math.max(0, (b.cd ?? 0) - dt);
+          if (b.cd <= 0) {
+            let best;
+            let bd = wdef.range;
+            for (const t of this.units) {
+              if (t.owner === b.owner || t.hp <= 0)
+                continue;
+              const d = Math.hypot(t.x - b.x, t.y - b.y);
+              if (d < bd) {
+                bd = d;
+                best = t;
+              }
+            }
+            if (best) {
+              b.cd = wdef.cooldown;
+              b.aim = Math.atan2(best.y - b.y, best.x - b.x);
+              const acc = hitChance(wdef.accStatic, wdef.accWalk, best.path.length > 0, bd, wdef.range);
+              const dmg = effectiveDamage(wdef.damage, best.def.armor, best.def.armorClass);
+              if (wdef.projectileSpeed === 0) {
+                this.applyHit(b, best.x, best.y, best, dmg, acc);
+              } else {
+                this.projectiles.push({ x: b.x, y: b.y, tx: best.x, ty: best.y, speed: wdef.projectileSpeed, dmg, armorClassOfTarget: best.def.armorClass, targetArmor: best.def.armor, splash: wdef.splash, acc, owner: b.owner, targetId: best.id, trail: 0 });
+              }
+            }
+          }
+        }
+      }
+      if (this.buildings.some((b) => b.hp <= 0 && b.defId !== "hq")) {
+        for (const b of this.buildings)
+          if (b.hp <= 0 && b.defId !== "hq")
+            this.booms.push({ x: b.x, y: b.y, r: (b.radius ?? 1.6) + 1.1, t: 0, max: 0.6 });
+        this.buildings = this.buildings.filter((b) => b.hp > 0 || b.defId === "hq");
+        this.refreshEconomy();
+      }
+    }
     updateDepots(dt) {
       for (const b of this.buildings) {
         if (b.defId !== "depot")
@@ -885,7 +992,7 @@
             reveal(u.x, u.y, u.def.view);
         for (const b of this.buildings)
           if (b.owner === o)
-            reveal(b.x, b.y, b.defId === "hq" ? HQ.view : DEPOT.view);
+            reveal(b.x, b.y, b.defId === "hq" ? HQ.view : b.defId === "depot" ? DEPOT.view : BLD[b.defId]?.view ?? DEPOT.view);
       }
     }
     depots() {
@@ -916,13 +1023,17 @@
         return;
       this.nextThink = this.t + 0.5;
       const sim = this.sim;
+      this.maybeBuild();
       const p = sim.players[this.me - 1];
       if (p.queue.length < 3) {
         const counts = {};
         for (const u of sim.units)
           if (u.owner === this.me)
             counts[u.def.id] = (counts[u.def.id] ?? 0) + 1;
-        const want = ["rifle", "rifle", "rpg", "tank", "tank", "mg", "artillery", "mammoth", "helicopter"];
+        const all = ["rifle", "rifle", "rpg", "tank", "tank", "mg", "artillery", "mammoth", "helicopter"];
+        const want = all.filter((id) => sim.buildings.some((b) => b.owner === this.me && b.defId === PRODUCER_OF[id] && b.hp > 0 && b.built));
+        if (!want.length)
+          return;
         let choice = want[Math.floor(Math.random() * want.length)];
         const pInf = sim.units.filter((u) => u.owner !== this.me && u.def.kind === "infantry").length;
         const pVeh = sim.units.filter((u) => u.owner !== this.me && u.def.kind === "vehicle").length;
@@ -986,6 +1097,49 @@
           this.wavePushing = false;
           this.waveSize = Math.min(14, this.waveSize + 2);
         }
+      }
+    }
+    maybeBuild() {
+      const sim = this.sim;
+      const me = this.me;
+      const p = sim.players[me - 1];
+      const mine = sim.buildings.filter((b) => b.owner === me && b.hp > 0);
+      const has = (id) => mine.some((b) => b.defId === id);
+      const under = mine.filter((b) => b.buildT !== undefined && b.buildT < b.buildTotal).length;
+      if (under >= 2)
+        return;
+      const hq = sim.hq(me);
+      if (!hq)
+        return;
+      let want = null;
+      if (!has("barracks"))
+        want = "barracks";
+      else if (!has("power"))
+        want = "power";
+      else if (!has("factory"))
+        want = "factory";
+      else if (sim.time > 100 && !has("heavyfactory"))
+        want = "heavyfactory";
+      else if (sim.time > 150 && mine.filter((b) => b.defId === "turret").length < 1)
+        want = "turret";
+      else if (sim.time > 280 && mine.filter((b) => b.defId === "turret").length < 2)
+        want = "turret";
+      else if (sim.time > 340 && mine.filter((b) => b.defId === "bunker").length < 1)
+        want = "bunker";
+      if (!want)
+        return;
+      const def = BLD[want];
+      if (p.funds < def.price)
+        return;
+      for (let attempt = 0; attempt < 30; attempt++) {
+        const ang = attempt * 2.399 + 1.1;
+        const r = 4.5 + (attempt % 7) * 1.05;
+        const x = hq.x + Math.cos(ang) * r;
+        const y = hq.y + Math.sin(ang) * r * 0.9;
+        const cx = Math.max(4, Math.min(MAP_W - 5, x));
+        const cy = Math.max(4, Math.min(MAP_H - 5, y));
+        if (sim.tryPlace(me, want, cx, cy))
+          return;
       }
     }
   }
@@ -33172,6 +33326,9 @@ void main() {
       names.add(b);
     }
     names.add(HQ_MODEL);
+    for (const k of Object.keys(BLD))
+      names.add(BLD[k].model);
+    names.add("f1_bld_supply");
     const loader = new GLTFLoader;
     loadPromise = (async () => {
       await Promise.all([...names].map(async (n) => {
@@ -33292,7 +33449,7 @@ void main() {
     wrap.updateMatrixWorld(true);
     const box = new Box3().setFromObject(wrap);
     const s = box.getSize(new Vector3);
-    const target = def.kind === "infantry" ? 0.9 / Math.max(0.01, s.y) : def.radius * (def.kind === "aircraft" ? 3.6 : 3) / Math.max(0.01, Math.max(s.x, s.z));
+    const target = def.kind === "infantry" ? 1.32 / Math.max(0.01, s.y) : def.radius * (def.kind === "aircraft" ? 4.6 : 4) / Math.max(0.01, Math.max(s.x, s.z));
     wrap.scale.setScalar(target);
     wrap.updateMatrixWorld(true);
     const box2 = new Box3().setFromObject(wrap);
@@ -33372,6 +33529,74 @@ void main() {
     wrap.position.set(-c.x, -box2.min.y, -c.z);
     group.add(wrap);
     return { group };
+  }
+  function swapRedBlue(inst) {
+    inst.traverse((o) => {
+      const mesh = o;
+      if (!mesh.isMesh)
+        return;
+      const src = mesh.material?.map;
+      const img = src?.image;
+      if (!img)
+        return;
+      const cv = document.createElement("canvas");
+      cv.width = img.width;
+      cv.height = img.height;
+      const ctx = cv.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+      const id = ctx.getImageData(0, 0, cv.width, cv.height);
+      const d = id.data;
+      for (let i = 0;i < d.length; i += 4) {
+        const r = d[i];
+        d[i] = d[i + 2];
+        d[i + 2] = r;
+      }
+      ctx.putImageData(id, 0, 0);
+      const tex = new CanvasTexture(cv);
+      tex.colorSpace = SRGBColorSpace;
+      tex.flipY = false;
+      const m = mesh.material.clone();
+      m.map = tex;
+      m.color = new Color(1, 0.62, 0.55);
+      m.needsUpdate = true;
+      mesh.material = m;
+    });
+  }
+  function buildGlbBuilding(def, owner) {
+    const t = templates.get(def.model);
+    if (!t)
+      return null;
+    const group = new Group;
+    const inst = cloneScaled(t);
+    if (owner === 1)
+      swapRedBlue(inst);
+    const wrap = new Group;
+    wrap.add(inst);
+    wrap.updateMatrixWorld(true);
+    const box = new Box3().setFromObject(wrap);
+    const s = box.getSize(new Vector3);
+    const target = def.radius * 2.15 / Math.max(0.01, Math.max(s.x, s.z));
+    wrap.scale.setScalar(target);
+    wrap.updateMatrixWorld(true);
+    const box2 = new Box3().setFromObject(wrap);
+    const c = box2.getCenter(new Vector3);
+    wrap.position.set(-c.x, -box2.min.y, -c.z);
+    group.add(wrap);
+    let turret;
+    let turretBaseQ;
+    if (t.turret) {
+      const tn = t.turret.name;
+      let found;
+      inst.traverse((o) => {
+        if (o.name === tn)
+          found = o;
+      });
+      if (found) {
+        turret = found;
+        turretBaseQ = found.quaternion.clone();
+      }
+    }
+    return { group, turret, turretBaseQ, height: box2.getSize(new Vector3).y };
   }
 
   // src/game/render/models.ts
@@ -33862,7 +34087,7 @@ void main() {
       this.renderer.shadowMap.type = PCFShadowMap;
       this.renderer.setClearColor(11060444);
       this.camera = new PerspectiveCamera(38, 1, 1, 500);
-      this.scene.fog = new Fog(13616034, 110, 260);
+      this.scene.fog = new Fog(13616034, 170, 560);
       const hemi = new HemisphereLight(14215423, 9075285, 1.5);
       this.scene.add(hemi);
       this.sun = new DirectionalLight(16773848, 1.85);
@@ -34287,6 +34512,18 @@ void main() {
     render(dt, sim, cam, sel) {
       setDt(dt);
       this.time += dt;
+      if (!this.anisoDone) {
+        this.anisoDone = true;
+        const maxAniso = Math.min(8, this.renderer.capabilities.getMaxAnisotropy());
+        this.scene.traverse((o) => {
+          const mats = Array.isArray(o.material) ? o.material : o.material ? [o.material] : [];
+          for (const m of mats)
+            if (m.map && m.map.anisotropy < maxAniso) {
+              m.map.anisotropy = maxAniso;
+              m.map.needsUpdate = true;
+            }
+        });
+      }
       this.syncCamera(cam, sim);
       this.syncBuildings(sim);
       this.syncUnits(sim, sel);
@@ -34323,13 +34560,67 @@ void main() {
             v.capRing.visible = true;
             const theta = Math.min(1, prog / 9) * Math.PI * 2;
             const old = v.capRing.geometry;
-            v.capRing.geometry = new RingGeometry(1.55, 1.85, 28, 1, -Math.PI / 2, theta);
+            v.capRing.geometry = new RingGeometry(v.def.radius + 0.05, v.def.radius + 0.35, 28, 1, -Math.PI / 2, theta);
             old.dispose();
             v.capRing.material.color.setHex(b.captureBy === 1 ? FACTION[1].accent : b.captureBy === 2 ? FACTION[2].accent : 14540253);
           } else
             v.capRing.visible = false;
         }
-        const hidden = b.defId === "depot" && b.owner !== 1 && !sim.explored[Math.round(b.y) * MAP_W + Math.round(b.x)];
+        const underC = b.buildT !== undefined && b.buildT < b.buildTotal;
+        if (underC) {
+          v.wasUnder = true;
+          if (v.glb)
+            v.glb.group.scale.set(1, 0.22 + 0.78 * (b.buildT / b.buildTotal), 1);
+          if (v.bldRing) {
+            v.bldRing.visible = true;
+            const theta = Math.min(1, b.buildT / b.buildTotal) * Math.PI * 2;
+            const old = v.bldRing.geometry;
+            v.bldRing.geometry = new RingGeometry(v.def.radius + 0.2, v.def.radius + 0.46, 26, 1, -Math.PI / 2, theta);
+            old.dispose();
+          }
+          v.dustAcc = (v.dustAcc ?? 0) + dt();
+          if (v.dustAcc > 0.4) {
+            v.dustAcc = 0;
+            const ang = Math.random() * Math.PI * 2;
+            this.puff(v.group.position.x + Math.cos(ang) * v.def.radius, 0.25, v.group.position.z + Math.sin(ang) * v.def.radius, 0.32, 0.45);
+          }
+        } else {
+          if (v.wasUnder) {
+            v.wasUnder = false;
+            if (v.glb)
+              v.glb.group.scale.set(1, 1, 1);
+            this.addFx(this.texFlash, v.group.position.x, 0.6, v.group.position.z, 2, 0.09, 1.2, true);
+            window.__sfx?.play("bld_end", { pos: [v.group.position.x, v.group.position.z], vol: 0.7 });
+            if (b.owner === 1)
+              window.__sfx?.play("ann_built", { vol: 0.65 });
+          }
+          if (v.bldRing)
+            v.bldRing.visible = false;
+        }
+        const frac = b.hp / b.maxHp;
+        if (v.hpSprite) {
+          if ((frac < 0.999 || underC) && b.owner > 0) {
+            v.hpSprite.visible = true;
+            const shown = underC ? b.buildT / b.buildTotal : frac;
+            if (Math.abs(shown - v.lastHp) > 0.01) {
+              v.lastHp = shown;
+              this.paintHp(v.hpCanvas, shown);
+              v.hpTex.needsUpdate = true;
+            }
+          } else
+            v.hpSprite.visible = false;
+        }
+        if (v.glb?.turret && v.glb.turretBaseQ && b.aim !== undefined) {
+          let want = -b.aim - (v.turYaw ?? 0);
+          while (want > Math.PI)
+            want -= Math.PI * 2;
+          while (want < -Math.PI)
+            want += Math.PI * 2;
+          v.turYaw = (v.turYaw ?? 0) + want * Math.min(1, 7 * dt());
+          _qTmp.setFromAxisAngle(_Y, v.turYaw);
+          v.glb.turret.quaternion.copy(v.glb.turretBaseQ).multiply(_qTmp);
+        }
+        const hidden = b.owner !== 1 && !sim.explored[Math.round(b.y) * MAP_W + Math.round(b.x)];
         v.group.visible = !hidden;
         if (v.shadow)
           v.shadow.visible = !hidden;
@@ -34345,7 +34636,7 @@ void main() {
       const group = new Group;
       const [wx, wz] = t2w(b.x, b.y);
       group.position.set(wx, heightAtWorld(wx, wz), wz);
-      const view = { group };
+      const view = { group, b };
       const shadow = new Sprite(new SpriteMaterial({ map: this.texShadow, transparent: true, depthWrite: false }));
       shadow.scale.set(b.defId === "hq" ? 10 : 5.4, b.defId === "hq" ? 10 : 5.4, 1);
       shadow.position.set(0.9, 0.03, 0.8);
@@ -34375,36 +34666,61 @@ void main() {
         group.add(flag);
         view.flag = flag;
       } else {
-        const pad = new Mesh(new CylinderGeometry(1.9, 2, 0.16, 9), mat(10130052, { rough: 1 }));
+        const isDepot = b.defId === "depot";
+        const def = isDepot ? DEPOT : BLD[b.defId] || DEPOT;
+        view.def = def;
+        const pad = new Mesh(new CylinderGeometry(def.radius + 0.35, def.radius + 0.5, 0.18, 12), mat(8222571, { rough: 1 }));
         pad.receiveShadow = true;
+        pad.position.y = 0.02;
         group.add(pad);
-        const tank = new Mesh(new CylinderGeometry(0.62, 0.62, 2, 10), mat(13156528, { rough: 0.5, metal: 0.45 }));
-        tank.rotation.z = Math.PI / 2;
-        tank.position.y = 0.85;
-        tank.castShadow = true;
-        group.add(tank);
-        for (const off of [-0.7, 0.7]) {
-          const leg = new Mesh(new BoxGeometry(0.14, 0.5, 0.14), mat(5592400));
-          leg.position.set(off, 0.3, 0);
-          group.add(leg);
+        const glb = buildGlbBuilding(isDepot ? { model: "f1_bld_supply", radius: def.radius } : def, b.owner);
+        if (glb) {
+          group.add(glb.group);
+          view.glb = glb;
+          view.glbH = glb.height;
+        } else {
+          const shack = new Mesh(new BoxGeometry(def.radius * 1.4, 1.1, def.radius * 1.2), mat(10130052, { rough: 0.8 }));
+          shack.position.y = 0.55;
+          shack.castShadow = true;
+          group.add(shack);
         }
-        const hut = new Mesh(new BoxGeometry(0.9, 0.6, 0.8), mat(9078136));
-        hut.position.set(1, 0.4, 0.7);
-        hut.castShadow = true;
-        group.add(hut);
-        const pole = new Mesh(new CylinderGeometry(0.04, 0.04, 2.3, 6), mat(5592405, { metal: 0.5, rough: 0.5 }));
-        pole.position.set(-1.2, 1.2, -0.6);
-        group.add(pole);
-        const flag = new Mesh(new PlaneGeometry(0.85, 0.5), new MeshBasicMaterial({ color: 13157556, side: DoubleSide }));
-        flag.position.set(-0.78, 2.1, -0.6);
-        group.add(flag);
-        view.flag = flag;
-        const capRing = new Mesh(new RingGeometry(1.55, 1.85, 28, 1, -Math.PI / 2, Math.PI * 2), new MeshBasicMaterial({ color: 16777215, transparent: true, opacity: 0.9, depthWrite: false, side: DoubleSide }));
-        capRing.rotation.x = -Math.PI / 2;
-        capRing.position.y = 0.28;
-        capRing.visible = false;
-        group.add(capRing);
-        view.capRing = capRing;
+        if (b.owner > 0) {
+          const pole = new Mesh(new CylinderGeometry(0.04, 0.04, 2.1, 6), mat(5592405, { metal: 0.5, rough: 0.5 }));
+          pole.position.set(def.radius * 0.85, 1.05, -def.radius * 0.6);
+          group.add(pole);
+          const flag = new Mesh(new PlaneGeometry(0.85, 0.5), new MeshBasicMaterial({ color: 13157556, side: DoubleSide }));
+          flag.position.set(def.radius * 0.85 + 0.45, 1.95, -def.radius * 0.6);
+          group.add(flag);
+          view.flag = flag;
+        }
+        if (isDepot) {
+          const capRing = new Mesh(new RingGeometry(def.radius + 0.05, def.radius + 0.35, 28, 1, -Math.PI / 2, Math.PI * 2), new MeshBasicMaterial({ color: 16777215, transparent: true, opacity: 0.9, depthWrite: false, side: DoubleSide }));
+          capRing.rotation.x = -Math.PI / 2;
+          capRing.position.y = 0.28;
+          capRing.visible = false;
+          group.add(capRing);
+          view.capRing = capRing;
+        }
+        const hpCanvas = document.createElement("canvas");
+        hpCanvas.width = 64;
+        hpCanvas.height = 10;
+        const hpTex = new CanvasTexture(hpCanvas);
+        const hpSprite = new Sprite(new SpriteMaterial({ map: hpTex, transparent: true, depthWrite: false }));
+        hpSprite.scale.set(2.3, 0.34, 1);
+        hpSprite.visible = false;
+        hpSprite.renderOrder = 40;
+        hpSprite.position.y = (view.glbH ?? 2.4) + 0.75;
+        group.add(hpSprite);
+        view.hpSprite = hpSprite;
+        view.hpCanvas = hpCanvas;
+        view.hpTex = hpTex;
+        view.lastHp = -1;
+        const bldRing = new Mesh(new RingGeometry(def.radius + 0.2, def.radius + 0.46, 26, 1, -Math.PI / 2, Math.PI * 2), new MeshBasicMaterial({ color: 16769788, transparent: true, opacity: 0.95, depthWrite: false, side: DoubleSide }));
+        bldRing.rotation.x = -Math.PI / 2;
+        bldRing.position.y = 0.26;
+        bldRing.visible = false;
+        group.add(bldRing);
+        view.bldRing = bldRing;
       }
       this.scene.add(group);
       return view;
@@ -34520,14 +34836,14 @@ void main() {
         } else
           v.capRing.visible = false;
         const frac = u.hp / u.def.health;
-        if (frac < 0.999 || isSel) {
+        if (u.owner === 1 || frac < 0.999 || isSel) {
           v.hpSprite.visible = true;
           if (Math.abs(frac - v.lastHp) > 0.01) {
             v.lastHp = frac;
             this.paintHp(v.hpCanvas, frac);
             v.hpTex.needsUpdate = true;
           }
-          v.hpSprite.position.y = v.model.height + 0.42;
+          v.hpSprite.position.y = v.model.height + 0.55;
         } else
           v.hpSprite.visible = false;
       }
@@ -34640,7 +34956,7 @@ void main() {
       hpCanvas.height = 10;
       const hpTex = new CanvasTexture(hpCanvas);
       const hpSprite = new Sprite(new SpriteMaterial({ map: hpTex, transparent: true, depthWrite: false }));
-      hpSprite.scale.set(1.5, 0.24, 1);
+      hpSprite.scale.set(1.9, 0.3, 1);
       hpSprite.visible = false;
       hpSprite.renderOrder = 40;
       this.scene.add(hpSprite);
@@ -34906,6 +35222,37 @@ void main() {
       if (this.boomLight.intensity < 0.4)
         this.boomLight.intensity = 0;
     }
+    setGhost(defId) {
+      if (this.ghost) {
+        this.scene.remove(this.ghost.group);
+        this.ghost = null;
+      }
+      this.ghostDef = defId || null;
+      if (!defId)
+        return;
+      const def = BLD[defId];
+      const group = new Group;
+      const disc = new Mesh(new CylinderGeometry(def.radius + 0.3, def.radius + 0.3, 0.14, 20), new MeshBasicMaterial({ color: 9109354, transparent: true, opacity: 0.4, depthWrite: false }));
+      disc.position.y = 0.08;
+      const ring = new Mesh(new RingGeometry(def.radius + 0.4, def.radius + 0.62, 28), new MeshBasicMaterial({ color: 9109354, transparent: true, opacity: 0.95, depthWrite: false, side: DoubleSide }));
+      ring.rotation.x = -Math.PI / 2;
+      ring.position.y = 0.1;
+      const body = new Mesh(new CylinderGeometry(def.radius * 0.72, def.radius * 0.8, 1.6, 8), new MeshStandardMaterial({ color: 6336563, transparent: true, opacity: 0.45, roughness: 0.9 }));
+      body.position.y = 0.8;
+      group.add(disc, ring, body);
+      this.ghost = { group, disc, ring, body };
+      this.scene.add(group);
+    }
+    updateGhost(tx, ty, valid) {
+      if (!this.ghost || !this.ghostDef)
+        return;
+      const [wx, wz] = t2w(tx, ty);
+      this.ghost.group.position.set(wx, heightAtWorld(wx, wz), wz);
+      const col = valid ? 9109354 : 16738890;
+      this.ghost.disc.material.color.setHex(col);
+      this.ghost.ring.material.color.setHex(col);
+      this.ghost.body.material.color.setHex(valid ? 6336563 : 11743546);
+    }
     mark(tx, ty, kind) {
       const [wx, wz] = t2w(tx, ty);
       const col = kind === "attack" ? 16738890 : kind === "capture" ? 16769658 : 9109354;
@@ -35101,7 +35448,7 @@ void main() {
       <div class="hintgrid">
         <div>\uD83D\uDDB1 Drag = select · Right-click / long-press = order</div>
         <div>\uD83C\uDFAF Capture depots with infantry for income &amp; CP</div>
-        <div>\uD83C\uDFF0 Destroy the enemy HQ · WASD / wheel / pinch</div>
+        <div>\uD83C\uDFF0 Build barracks &amp; factories \u00B7 destroy the enemy HQ · WASD / wheel / pinch</div>
       </div>
       <button id="start">▶ START SKIRMISH</button>
       <div id="baking">… LOADING THE REAL MAP</div>
@@ -35127,6 +35474,7 @@ void main() {
   <div id="minimap-wrap" class="panel hidden"><canvas id="mini" width="172" height="172"></canvas></div>
 
   <div id="prodwrap" class="hidden">
+    <div id="bcards" class="panel"></div>
     <div id="cards" class="panel"></div>
     <div id="prodhint">drag = select · right-click / long-press = move · attack · capture · wheel / pinch = zoom · WASD = pan</div>
   </div>
@@ -35164,6 +35512,10 @@ button{cursor:pointer;border:0;border-radius:8px}
 #minimap-wrap{left:8px;bottom:8px;padding:6px}
 #mini{display:block;border-radius:3px;cursor:pointer}
 #prodwrap{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);z-index:10;text-align:center}
+#bcards{position:static;display:flex;gap:6px;margin:0 auto 6px;justify-content:center;width:max-content}
+.bcard{width:74px}
+.bcard .bico{height:38px;display:flex;align-items:center;justify-content:center;font-size:20px;background:linear-gradient(180deg,#333a46,#161a20)}
+.card.armed{outline:2px solid #6ee7b7;box-shadow:0 0 12px rgba(110,231,183,.65)}
 #cards{position:static;display:flex;gap:6px;overflow-x:auto;max-width:94vw}
 #prodhint{color:rgba(255,255,255,.4);font-size:10px;margin-top:4px}
 .card{position:relative;width:92px;flex:0 0 auto;border:1px solid rgba(255,255,255,.25);border-radius:6px;overflow:hidden;background:#111;padding:0}
@@ -35184,7 +35536,7 @@ button{cursor:pointer;border:0;border-radius:8px}
   var ai = null;
   var r3d = null;
   var ready = false;
-  var cam = { x: MAP_W / 2, y: MAP_H / 2, dist: 21 };
+  var cam = { x: MAP_W / 2, y: MAP_H / 2, dist: 12.5 };
   var sel = new Set;
   var keys = new Set;
   {
@@ -35210,11 +35562,13 @@ button{cursor:pointer;border:0;border-radius:8px}
     const hq = sim.hq(1);
     cam.x = hq ? hq.x + 6 : 12;
     cam.y = hq ? hq.y : MAP_H / 2;
-    cam.dist = 21;
+    cam.dist = 12.5;
     $("menu").classList.add("hidden");
     $("over").classList.add("hidden");
     ["resbar", "clock", "minimap-wrap", "prodwrap"].forEach((id) => $(id).classList.remove("hidden"));
     buildCards();
+    buildBCards();
+    stopPlacing();
     last = performance.now();
   }
   $("start").onclick = start;
@@ -35240,6 +35594,44 @@ button{cursor:pointer;border:0;border-radius:8px}
       <div class="pr">${d.price}¤<span class="cp">CP${d.cp}</span></div>`;
       b.onclick = () => sim?.enqueue(id, 1);
       cards.appendChild(b);
+    }
+  }
+  var BLD_ICON = { barracks: "\u{1F52B}", factory: "\u2699\uFE0F", heavyfactory: "\u{1F3ED}", power: "\u26A1", turret: "\u{1F5FC}", bunker: "\u{1F6E1}\uFE0F" };
+  var HINT_DEFAULT = "drag = select \u00B7 right-click / long-press = move \u00B7 attack \u00B7 capture \u00B7 wheel / pinch = zoom \u00B7 WASD = pan";
+  var placing = null;
+  function startPlacing(defId) {
+    placing = defId;
+    r3d?.setGhost(defId);
+    $("prodhint").textContent = "Click to place " + BLD[defId].name + " near your base \u00B7 right-click / ESC cancels \u00B7 Shift-click places more";
+    document.querySelectorAll("#bcards .card").forEach((b) => b.classList.toggle("armed", b.dataset.id === defId));
+  }
+  function stopPlacing() {
+    placing = null;
+    r3d?.setGhost(null);
+    const ph = $("prodhint");
+    if (ph)
+      ph.textContent = HINT_DEFAULT;
+    document.querySelectorAll("#bcards .card").forEach((b) => b.classList.remove("armed"));
+  }
+  function buildBCards() {
+    const wrap2 = $("bcards");
+    if (!wrap2)
+      return;
+    wrap2.innerHTML = "";
+    for (const id of BUILDINGS_ORDER) {
+      const d = BLD[id];
+      const b = document.createElement("button");
+      b.className = "card bcard";
+      b.dataset.id = id;
+      b.title = d.name + " \u2014 " + d.price + "\u00A4 \u00B7 place near your base";
+      b.innerHTML = '<div class="bico">' + BLD_ICON[id] + '</div><div class="nm">' + d.name + '</div><div class="pr">' + d.price + '\u00A4</div>';
+      b.onclick = () => {
+        if (placing === id)
+          stopPlacing();
+        else
+          startPlacing(id);
+      };
+      wrap2.appendChild(b);
     }
   }
   var pointers = new Map;
@@ -35301,6 +35693,28 @@ button{cursor:pointer;border:0;border-radius:8px}
       }
       return;
     }
+    if (placing) {
+      if (e.button === 2) {
+        stopPlacing();
+        return;
+      }
+      if (e.button === 0 && sim && r3d) {
+        const t = r3d.screenToTile(p.x, p.y);
+        if (t) {
+          const cx = Math.max(4, Math.min(MAP_W - 5, t.x));
+          const cy = Math.max(4, Math.min(MAP_H - 5, t.y));
+          if (sim.tryPlace(1, placing, cx, cy)) {
+            window.__sfx?.play("bld_start", { vol: 0.8 });
+            r3d.mark(t.x, t.y, "capture");
+            if (!e.shiftKey)
+              stopPlacing();
+          } else {
+            $("prodhint").textContent = "Can't place here \u2014 must be near your base, clear of buildings & rocks";
+          }
+        }
+      }
+      return;
+    }
     if (e.button === 2) {
       orderAt(p.x, p.y);
       return;
@@ -35339,7 +35753,7 @@ button{cursor:pointer;border:0;border-radius:8px}
       const [a, b] = [...pointers.values()];
       const d = Math.hypot(a.x - b.x, a.y - b.y);
       if (pinchDist > 0)
-        cam.dist = Math.min(70, Math.max(12, cam.dist * (pinchDist / d)));
+        cam.dist = Math.min(46, Math.max(6.5, cam.dist * (pinchDist / d)));
       pinchDist = d;
       return;
     }
@@ -35348,6 +35762,15 @@ button{cursor:pointer;border:0;border-radius:8px}
       if (t) {
         cam.x = Math.max(3, Math.min(MAP_W - 3, pan.camX - (t.x - pan.wx)));
         cam.y = Math.max(3, Math.min(MAP_H - 3, pan.camY - (t.y - pan.wy)));
+      }
+      return;
+    }
+    if (placing) {
+      const t = r3d?.screenToTile(p.x, p.y);
+      if (t && sim) {
+        const cx = Math.max(4, Math.min(MAP_W - 5, t.x));
+        const cy = Math.max(4, Math.min(MAP_H - 5, t.y));
+        r3d.updateGhost(cx, cy, sim.canPlace(1, placing, cx, cy) && sim.players[0].funds >= BLD[placing].price);
       }
       return;
     }
@@ -35456,12 +35879,15 @@ button{cursor:pointer;border:0;border-radius:8px}
   cv.addEventListener("contextmenu", (e) => e.preventDefault());
   cv.addEventListener("wheel", (e) => {
     e.preventDefault();
-    cam.dist = Math.min(70, Math.max(12, cam.dist * (e.deltaY > 0 ? 1.1 : 0.9)));
+    cam.dist = Math.min(46, Math.max(6.5, cam.dist * (e.deltaY > 0 ? 1.09 : 0.92)));
   }, { passive: false });
   window.addEventListener("keydown", (e) => {
     keys.add(e.key.toLowerCase());
-    if (e.key === "Escape")
+    if (e.key === "Escape") {
+      if (placing)
+        stopPlacing();
       sel.clear();
+    }
   });
   window.addEventListener("keyup", (e) => keys.delete(e.key.toLowerCase()));
   mini.addEventListener("pointerdown", (e) => {
@@ -35483,8 +35909,11 @@ button{cursor:pointer;border:0;border-radius:8px}
       const btn = cards[i];
       if (!btn)
         return;
+      const producer = PRODUCER_OF[id];
+      const hasP = sim.buildings.some((b) => b.defId === producer && b.owner === 1 && b.hp > 0 && b.built);
       const afford = p.funds >= d.price && p.cpUsed + d.cp <= p.cpCap;
-      btn.disabled = !afford;
+      btn.disabled = !afford || !hasP;
+      btn.title = hasP ? d.name + " \u2014 " + d.desc : d.name + " \u2014 requires " + BLD[producer].name;
       const qn = p.queue.filter((q) => q.defId === id).length;
       let badge = btn.querySelector(".qn");
       if (qn > 0) {
@@ -35496,6 +35925,13 @@ button{cursor:pointer;border:0;border-radius:8px}
         badge.textContent = "×" + qn;
       } else if (badge)
         badge.remove();
+    });
+    const bcards = $("bcards")?.children ?? [];
+    BUILDINGS_ORDER.forEach((id, i) => {
+      const d = BLD[id];
+      const btn = bcards[i];
+      if (btn)
+        btn.disabled = p.funds < d.price;
     });
   }
   var last = performance.now();
@@ -35630,6 +36066,18 @@ button{cursor:pointer;border:0;border-radius:8px}
           if (d < bd) {
             bd = d;
             best = u;
+          }
+        }
+        if (!best) {
+          for (const v of this.bldViews.values()) {
+            const b = v.b;
+            if (!b || b.owner !== owner)
+              continue;
+            const d = Math.hypot(b.x - px, b.y - py);
+            if (d < bd) {
+              bd = d;
+              best = { def: BLD[b.defId] };
+            }
           }
         }
         if (best) {
