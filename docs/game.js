@@ -1122,6 +1122,9 @@
   var SIGNED_RED_RGTC1_Format = 36284;
   var RED_GREEN_RGTC2_Format = 36285;
   var SIGNED_RED_GREEN_RGTC2_Format = 36286;
+  var LoopOnce = 2200;
+  var LoopRepeat = 2201;
+  var LoopPingPong = 2202;
   var InterpolateDiscrete = 2300;
   var InterpolateLinear = 2301;
   var InterpolateSmooth = 2302;
@@ -1130,6 +1133,7 @@
   var ZeroSlopeEnding = 2401;
   var WrapAroundEnding = 2402;
   var NormalAnimationBlendMode = 2500;
+  var AdditiveAnimationBlendMode = 2501;
   var TrianglesDrawMode = 0;
   var TriangleStripDrawMode = 1;
   var TriangleFanDrawMode = 2;
@@ -13643,6 +13647,145 @@
       this.cameras = array;
     }
   }
+  class PropertyMixer {
+    constructor(binding, typeName, valueSize) {
+      this.binding = binding;
+      this.valueSize = valueSize;
+      let mixFunction, mixFunctionAdditive, setIdentity;
+      switch (typeName) {
+        case "quaternion":
+          mixFunction = this._slerp;
+          mixFunctionAdditive = this._slerpAdditive;
+          setIdentity = this._setAdditiveIdentityQuaternion;
+          this.buffer = new Float64Array(valueSize * 6);
+          this._workIndex = 5;
+          break;
+        case "string":
+        case "bool":
+          mixFunction = this._select;
+          mixFunctionAdditive = this._select;
+          setIdentity = this._setAdditiveIdentityOther;
+          this.buffer = new Array(valueSize * 5);
+          break;
+        default:
+          mixFunction = this._lerp;
+          mixFunctionAdditive = this._lerpAdditive;
+          setIdentity = this._setAdditiveIdentityNumeric;
+          this.buffer = new Float64Array(valueSize * 5);
+      }
+      this._mixBufferRegion = mixFunction;
+      this._mixBufferRegionAdditive = mixFunctionAdditive;
+      this._setIdentity = setIdentity;
+      this._origIndex = 3;
+      this._addIndex = 4;
+      this.cumulativeWeight = 0;
+      this.cumulativeWeightAdditive = 0;
+      this.useCount = 0;
+      this.referenceCount = 0;
+    }
+    accumulate(accuIndex, weight) {
+      const buffer = this.buffer, stride = this.valueSize, offset = accuIndex * stride + stride;
+      let currentWeight = this.cumulativeWeight;
+      if (currentWeight === 0) {
+        for (let i = 0;i !== stride; ++i) {
+          buffer[offset + i] = buffer[i];
+        }
+        currentWeight = weight;
+      } else {
+        currentWeight += weight;
+        const mix = weight / currentWeight;
+        this._mixBufferRegion(buffer, offset, 0, mix, stride);
+      }
+      this.cumulativeWeight = currentWeight;
+    }
+    accumulateAdditive(weight) {
+      const buffer = this.buffer, stride = this.valueSize, offset = stride * this._addIndex;
+      if (this.cumulativeWeightAdditive === 0) {
+        this._setIdentity();
+      }
+      this._mixBufferRegionAdditive(buffer, offset, 0, weight, stride);
+      this.cumulativeWeightAdditive += weight;
+    }
+    apply(accuIndex) {
+      const stride = this.valueSize, buffer = this.buffer, offset = accuIndex * stride + stride, weight = this.cumulativeWeight, weightAdditive = this.cumulativeWeightAdditive, binding = this.binding;
+      this.cumulativeWeight = 0;
+      this.cumulativeWeightAdditive = 0;
+      if (weight < 1) {
+        const originalValueOffset = stride * this._origIndex;
+        this._mixBufferRegion(buffer, offset, originalValueOffset, 1 - weight, stride);
+      }
+      if (weightAdditive > 0) {
+        this._mixBufferRegionAdditive(buffer, offset, this._addIndex * stride, 1, stride);
+      }
+      for (let i = stride, e = stride + stride;i !== e; ++i) {
+        if (buffer[i] !== buffer[i + stride]) {
+          binding.setValue(buffer, offset);
+          break;
+        }
+      }
+    }
+    saveOriginalState() {
+      const binding = this.binding;
+      const buffer = this.buffer, stride = this.valueSize, originalValueOffset = stride * this._origIndex;
+      binding.getValue(buffer, originalValueOffset);
+      for (let i = stride, e = originalValueOffset;i !== e; ++i) {
+        buffer[i] = buffer[originalValueOffset + i % stride];
+      }
+      this._setIdentity();
+      this.cumulativeWeight = 0;
+      this.cumulativeWeightAdditive = 0;
+    }
+    restoreOriginalState() {
+      const originalValueOffset = this.valueSize * 3;
+      this.binding.setValue(this.buffer, originalValueOffset);
+    }
+    _setAdditiveIdentityNumeric() {
+      const startIndex = this._addIndex * this.valueSize;
+      const endIndex = startIndex + this.valueSize;
+      for (let i = startIndex;i < endIndex; i++) {
+        this.buffer[i] = 0;
+      }
+    }
+    _setAdditiveIdentityQuaternion() {
+      this._setAdditiveIdentityNumeric();
+      this.buffer[this._addIndex * this.valueSize + 3] = 1;
+    }
+    _setAdditiveIdentityOther() {
+      const startIndex = this._origIndex * this.valueSize;
+      const targetIndex = this._addIndex * this.valueSize;
+      for (let i = 0;i < this.valueSize; i++) {
+        this.buffer[targetIndex + i] = this.buffer[startIndex + i];
+      }
+    }
+    _select(buffer, dstOffset, srcOffset, t, stride) {
+      if (t >= 0.5) {
+        for (let i = 0;i !== stride; ++i) {
+          buffer[dstOffset + i] = buffer[srcOffset + i];
+        }
+      }
+    }
+    _slerp(buffer, dstOffset, srcOffset, t) {
+      Quaternion.slerpFlat(buffer, dstOffset, buffer, dstOffset, buffer, srcOffset, t);
+    }
+    _slerpAdditive(buffer, dstOffset, srcOffset, t, stride) {
+      const workOffset = this._workIndex * stride;
+      Quaternion.multiplyQuaternionsFlat(buffer, workOffset, buffer, dstOffset, buffer, srcOffset);
+      Quaternion.slerpFlat(buffer, dstOffset, buffer, dstOffset, buffer, workOffset, t);
+    }
+    _lerp(buffer, dstOffset, srcOffset, t, stride) {
+      const s = 1 - t;
+      for (let i = 0;i !== stride; ++i) {
+        const j = dstOffset + i;
+        buffer[j] = buffer[j] * s + buffer[srcOffset + i] * t;
+      }
+    }
+    _lerpAdditive(buffer, dstOffset, srcOffset, t, stride) {
+      for (let i = 0;i !== stride; ++i) {
+        const j = dstOffset + i;
+        buffer[j] = buffer[j] + buffer[srcOffset + i] * t;
+      }
+    }
+  }
   var _RESERVED_CHARS_RE = "\\[\\]\\.:\\/";
   var _reservedRe = new RegExp("[" + _RESERVED_CHARS_RE + "]", "g");
   var _wordChar = "[^" + _RESERVED_CHARS_RE + "]";
@@ -14000,7 +14143,704 @@
       PropertyBinding.prototype._setValue_fromArray_setMatrixWorldNeedsUpdate
     ]
   ];
+  class AnimationAction {
+    constructor(mixer, clip, localRoot = null, blendMode = clip.blendMode) {
+      this._mixer = mixer;
+      this._clip = clip;
+      this._localRoot = localRoot;
+      this.blendMode = blendMode;
+      const tracks = clip.tracks, nTracks = tracks.length, interpolants = new Array(nTracks);
+      const interpolantSettings = {
+        endingStart: ZeroCurvatureEnding,
+        endingEnd: ZeroCurvatureEnding
+      };
+      for (let i = 0;i !== nTracks; ++i) {
+        const interpolant = tracks[i].createInterpolant(null);
+        interpolants[i] = interpolant;
+        interpolant.settings = interpolantSettings;
+      }
+      this._interpolantSettings = interpolantSettings;
+      this._interpolants = interpolants;
+      this._propertyBindings = new Array(nTracks);
+      this._cacheIndex = null;
+      this._byClipCacheIndex = null;
+      this._timeScaleInterpolant = null;
+      this._restoreTimeScale = null;
+      this._weightInterpolant = null;
+      this.loop = LoopRepeat;
+      this._loopCount = -1;
+      this._startTime = null;
+      this.time = 0;
+      this.timeScale = 1;
+      this._effectiveTimeScale = 1;
+      this.weight = 1;
+      this._effectiveWeight = 1;
+      this.repetitions = Infinity;
+      this.paused = false;
+      this.enabled = true;
+      this.clampWhenFinished = false;
+      this.zeroSlopeAtStart = true;
+      this.zeroSlopeAtEnd = true;
+    }
+    play() {
+      this._mixer._activateAction(this);
+      return this;
+    }
+    stop() {
+      this._mixer._deactivateAction(this);
+      return this.reset();
+    }
+    reset() {
+      this.paused = false;
+      this.enabled = true;
+      this.time = 0;
+      this._loopCount = -1;
+      this._startTime = null;
+      return this.stopFading().stopWarping();
+    }
+    isRunning() {
+      return this.enabled && !this.paused && this.timeScale !== 0 && this._startTime === null && this._mixer._isActiveAction(this);
+    }
+    isScheduled() {
+      return this._mixer._isActiveAction(this);
+    }
+    startAt(time) {
+      this._startTime = time;
+      return this;
+    }
+    setLoop(mode, repetitions) {
+      this.loop = mode;
+      this.repetitions = repetitions;
+      return this;
+    }
+    setEffectiveWeight(weight) {
+      this.weight = weight;
+      this._effectiveWeight = this.enabled ? weight : 0;
+      return this.stopFading();
+    }
+    getEffectiveWeight() {
+      return this._effectiveWeight;
+    }
+    fadeIn(duration) {
+      return this._scheduleFading(duration, 0, 1);
+    }
+    fadeOut(duration) {
+      return this._scheduleFading(duration, 1, 0);
+    }
+    crossFadeFrom(fadeOutAction, duration, warp = false) {
+      fadeOutAction.fadeOut(duration);
+      this.fadeIn(duration);
+      if (warp === true) {
+        const fadeInDuration = this._clip.duration, fadeOutDuration = fadeOutAction._clip.duration, startEndRatio = fadeOutDuration / fadeInDuration, endStartRatio = fadeInDuration / fadeOutDuration;
+        fadeOutAction._restoreTimeScale = fadeOutAction.timeScale;
+        this._restoreTimeScale = this.timeScale;
+        fadeOutAction.warp(1, startEndRatio, duration);
+        this.warp(endStartRatio, 1, duration);
+      }
+      return this;
+    }
+    crossFadeTo(fadeInAction, duration, warp = false) {
+      return fadeInAction.crossFadeFrom(this, duration, warp);
+    }
+    stopFading() {
+      const weightInterpolant = this._weightInterpolant;
+      if (weightInterpolant !== null) {
+        this._weightInterpolant = null;
+        this._mixer._takeBackControlInterpolant(weightInterpolant);
+      }
+      return this;
+    }
+    setEffectiveTimeScale(timeScale) {
+      this.timeScale = timeScale;
+      this._effectiveTimeScale = this.paused ? 0 : timeScale;
+      return this.stopWarping();
+    }
+    getEffectiveTimeScale() {
+      return this._effectiveTimeScale;
+    }
+    setDuration(duration) {
+      this.timeScale = this._clip.duration / duration;
+      return this.stopWarping();
+    }
+    syncWith(action) {
+      this.time = action.time;
+      this.timeScale = action.timeScale;
+      return this.stopWarping();
+    }
+    halt(duration) {
+      return this.warp(this._effectiveTimeScale, 0, duration);
+    }
+    warp(startTimeScale, endTimeScale, duration) {
+      const mixer = this._mixer, now = mixer.time, timeScale = this.timeScale;
+      let interpolant = this._timeScaleInterpolant;
+      if (interpolant === null) {
+        interpolant = mixer._lendControlInterpolant();
+        this._timeScaleInterpolant = interpolant;
+      }
+      const { parameterPositions: times, sampleValues: values } = interpolant;
+      times[0] = now;
+      times[1] = now + duration;
+      values[0] = startTimeScale / timeScale;
+      values[1] = endTimeScale / timeScale;
+      return this;
+    }
+    stopWarping() {
+      const timeScaleInterpolant = this._timeScaleInterpolant;
+      if (timeScaleInterpolant !== null) {
+        this._timeScaleInterpolant = null;
+        this._mixer._takeBackControlInterpolant(timeScaleInterpolant);
+      }
+      this._restoreTimeScale = null;
+      return this;
+    }
+    getMixer() {
+      return this._mixer;
+    }
+    getClip() {
+      return this._clip;
+    }
+    getRoot() {
+      return this._localRoot || this._mixer._root;
+    }
+    _update(time, deltaTime, timeDirection, accuIndex) {
+      if (!this.enabled) {
+        this._updateWeight(time);
+        return;
+      }
+      const startTime = this._startTime;
+      if (startTime !== null) {
+        const timeRunning = (time - startTime) * timeDirection;
+        if (timeRunning < 0 || timeDirection === 0) {
+          deltaTime = 0;
+        } else {
+          this._startTime = null;
+          deltaTime = timeDirection * timeRunning;
+        }
+      }
+      deltaTime *= this._updateTimeScale(time);
+      const clipTime = this._updateTime(deltaTime);
+      const weight = this._updateWeight(time);
+      if (weight > 0) {
+        const interpolants = this._interpolants;
+        const propertyMixers = this._propertyBindings;
+        switch (this.blendMode) {
+          case AdditiveAnimationBlendMode:
+            for (let j = 0, m = interpolants.length;j !== m; ++j) {
+              interpolants[j].evaluate(clipTime);
+              propertyMixers[j].accumulateAdditive(weight);
+            }
+            break;
+          case NormalAnimationBlendMode:
+          default:
+            for (let j = 0, m = interpolants.length;j !== m; ++j) {
+              interpolants[j].evaluate(clipTime);
+              propertyMixers[j].accumulate(accuIndex, weight);
+            }
+        }
+      }
+    }
+    _updateWeight(time) {
+      let weight = 0;
+      if (this.enabled) {
+        weight = this.weight;
+        const interpolant = this._weightInterpolant;
+        if (interpolant !== null) {
+          const interpolantValue = interpolant.evaluate(time)[0];
+          weight *= interpolantValue;
+          if (time > interpolant.parameterPositions[1]) {
+            this.stopFading();
+            if (interpolantValue === 0) {
+              this.enabled = false;
+            }
+          }
+        }
+      }
+      this._effectiveWeight = weight;
+      return weight;
+    }
+    _updateTimeScale(time) {
+      let timeScale = 0;
+      if (!this.paused) {
+        timeScale = this.timeScale;
+        const interpolant = this._timeScaleInterpolant;
+        if (interpolant !== null) {
+          const interpolantValue = interpolant.evaluate(time)[0];
+          timeScale *= interpolantValue;
+          if (time > interpolant.parameterPositions[1]) {
+            if (timeScale === 0) {
+              this.paused = true;
+            } else {
+              if (this._restoreTimeScale !== null) {
+                timeScale = this._restoreTimeScale;
+              }
+              this.timeScale = timeScale;
+            }
+            this.stopWarping();
+          }
+        }
+      }
+      this._effectiveTimeScale = timeScale;
+      return timeScale;
+    }
+    _updateTime(deltaTime) {
+      const duration = this._clip.duration;
+      const loop = this.loop;
+      let time = this.time + deltaTime;
+      let loopCount = this._loopCount;
+      const pingPong = loop === LoopPingPong;
+      if (deltaTime === 0) {
+        if (loopCount === -1)
+          return time;
+        return pingPong && (loopCount & 1) === 1 ? duration - time : time;
+      }
+      if (loop === LoopOnce) {
+        if (loopCount === -1) {
+          this._loopCount = 0;
+          this._setEndings(true, true, false);
+        }
+        handle_stop: {
+          if (time >= duration) {
+            time = duration;
+          } else if (time < 0) {
+            time = 0;
+          } else {
+            this.time = time;
+            break handle_stop;
+          }
+          if (this.clampWhenFinished)
+            this.paused = true;
+          else
+            this.enabled = false;
+          this.time = time;
+          this._mixer.dispatchEvent({
+            type: "finished",
+            action: this,
+            direction: deltaTime < 0 ? -1 : 1
+          });
+        }
+      } else {
+        if (loopCount === -1) {
+          if (deltaTime >= 0) {
+            loopCount = 0;
+            this._setEndings(true, this.repetitions === 0, pingPong);
+          } else {
+            this._setEndings(this.repetitions === 0, true, pingPong);
+          }
+        }
+        if (time >= duration || time < 0) {
+          const loopDelta = Math.floor(time / duration);
+          time -= duration * loopDelta;
+          loopCount += Math.abs(loopDelta);
+          const pending = this.repetitions - loopCount;
+          if (pending <= 0) {
+            if (this.clampWhenFinished)
+              this.paused = true;
+            else
+              this.enabled = false;
+            time = deltaTime > 0 ? duration : 0;
+            this.time = time;
+            this._mixer.dispatchEvent({
+              type: "finished",
+              action: this,
+              direction: deltaTime > 0 ? 1 : -1
+            });
+          } else {
+            if (pending === 1) {
+              const atStart = deltaTime < 0;
+              this._setEndings(atStart, !atStart, pingPong);
+            } else {
+              this._setEndings(false, false, pingPong);
+            }
+            this._loopCount = loopCount;
+            this.time = time;
+            this._mixer.dispatchEvent({
+              type: "loop",
+              action: this,
+              loopDelta
+            });
+          }
+        } else {
+          this._loopCount = loopCount;
+          this.time = time;
+        }
+        if (pingPong && (loopCount & 1) === 1) {
+          return duration - time;
+        }
+      }
+      return time;
+    }
+    _setEndings(atStart, atEnd, pingPong) {
+      const settings = this._interpolantSettings;
+      if (pingPong) {
+        settings.endingStart = ZeroSlopeEnding;
+        settings.endingEnd = ZeroSlopeEnding;
+      } else {
+        if (atStart) {
+          settings.endingStart = this.zeroSlopeAtStart ? ZeroSlopeEnding : ZeroCurvatureEnding;
+        } else {
+          settings.endingStart = WrapAroundEnding;
+        }
+        if (atEnd) {
+          settings.endingEnd = this.zeroSlopeAtEnd ? ZeroSlopeEnding : ZeroCurvatureEnding;
+        } else {
+          settings.endingEnd = WrapAroundEnding;
+        }
+      }
+    }
+    _scheduleFading(duration, weightNow, weightThen) {
+      const mixer = this._mixer, now = mixer.time;
+      let interpolant = this._weightInterpolant;
+      if (interpolant === null) {
+        interpolant = mixer._lendControlInterpolant();
+        this._weightInterpolant = interpolant;
+      }
+      const { parameterPositions: times, sampleValues: values } = interpolant;
+      times[0] = now;
+      values[0] = weightNow;
+      times[1] = now + duration;
+      values[1] = weightThen;
+      return this;
+    }
+  }
   var _controlInterpolantsResultBuffer = new Float32Array(1);
+
+  class AnimationMixer extends EventDispatcher {
+    constructor(root) {
+      super();
+      this._root = root;
+      this._initMemoryManager();
+      this._accuIndex = 0;
+      this.time = 0;
+      this.timeScale = 1;
+      if (typeof __THREE_DEVTOOLS__ !== "undefined") {
+        __THREE_DEVTOOLS__.dispatchEvent(new CustomEvent("observe", { detail: this }));
+      }
+    }
+    _bindAction(action, prototypeAction) {
+      const root = action._localRoot || this._root, tracks = action._clip.tracks, nTracks = tracks.length, bindings = action._propertyBindings, interpolants = action._interpolants, rootUuid = root.uuid, bindingsByRoot = this._bindingsByRootAndName;
+      let bindingsByName = bindingsByRoot[rootUuid];
+      if (bindingsByName === undefined) {
+        bindingsByName = {};
+        bindingsByRoot[rootUuid] = bindingsByName;
+      }
+      for (let i = 0;i !== nTracks; ++i) {
+        const track = tracks[i], trackName = track.name;
+        let binding = bindingsByName[trackName];
+        if (binding !== undefined) {
+          ++binding.referenceCount;
+          bindings[i] = binding;
+        } else {
+          binding = bindings[i];
+          if (binding !== undefined) {
+            if (binding._cacheIndex === null) {
+              ++binding.referenceCount;
+              this._addInactiveBinding(binding, rootUuid, trackName);
+            }
+            continue;
+          }
+          const path = prototypeAction && prototypeAction._propertyBindings[i].binding.parsedPath;
+          binding = new PropertyMixer(PropertyBinding.create(root, trackName, path), track.ValueTypeName, track.getValueSize());
+          ++binding.referenceCount;
+          this._addInactiveBinding(binding, rootUuid, trackName);
+          bindings[i] = binding;
+        }
+        interpolants[i].resultBuffer = binding.buffer;
+      }
+    }
+    _activateAction(action) {
+      if (!this._isActiveAction(action)) {
+        if (action._cacheIndex === null) {
+          const rootUuid = (action._localRoot || this._root).uuid, clipUuid = action._clip.uuid, actionsForClip = this._actionsByClip[clipUuid];
+          this._bindAction(action, actionsForClip && actionsForClip.knownActions[0]);
+          this._addInactiveAction(action, clipUuid, rootUuid);
+        }
+        const bindings = action._propertyBindings;
+        for (let i = 0, n = bindings.length;i !== n; ++i) {
+          const binding = bindings[i];
+          if (binding.useCount++ === 0) {
+            this._lendBinding(binding);
+            binding.saveOriginalState();
+          }
+        }
+        this._lendAction(action);
+      }
+    }
+    _deactivateAction(action) {
+      if (this._isActiveAction(action)) {
+        const bindings = action._propertyBindings;
+        for (let i = 0, n = bindings.length;i !== n; ++i) {
+          const binding = bindings[i];
+          if (--binding.useCount === 0) {
+            binding.restoreOriginalState();
+            this._takeBackBinding(binding);
+          }
+        }
+        this._takeBackAction(action);
+      }
+    }
+    _initMemoryManager() {
+      this._actions = [];
+      this._nActiveActions = 0;
+      this._actionsByClip = {};
+      this._bindings = [];
+      this._nActiveBindings = 0;
+      this._bindingsByRootAndName = {};
+      this._controlInterpolants = [];
+      this._nActiveControlInterpolants = 0;
+      const scope = this;
+      this.stats = {
+        actions: {
+          get total() {
+            return scope._actions.length;
+          },
+          get inUse() {
+            return scope._nActiveActions;
+          }
+        },
+        bindings: {
+          get total() {
+            return scope._bindings.length;
+          },
+          get inUse() {
+            return scope._nActiveBindings;
+          }
+        },
+        controlInterpolants: {
+          get total() {
+            return scope._controlInterpolants.length;
+          },
+          get inUse() {
+            return scope._nActiveControlInterpolants;
+          }
+        }
+      };
+    }
+    _isActiveAction(action) {
+      const index = action._cacheIndex;
+      return index !== null && index < this._nActiveActions;
+    }
+    _addInactiveAction(action, clipUuid, rootUuid) {
+      const actions = this._actions, actionsByClip = this._actionsByClip;
+      let actionsForClip = actionsByClip[clipUuid];
+      if (actionsForClip === undefined) {
+        actionsForClip = {
+          knownActions: [action],
+          actionByRoot: {}
+        };
+        action._byClipCacheIndex = 0;
+        actionsByClip[clipUuid] = actionsForClip;
+      } else {
+        const knownActions = actionsForClip.knownActions;
+        action._byClipCacheIndex = knownActions.length;
+        knownActions.push(action);
+      }
+      action._cacheIndex = actions.length;
+      actions.push(action);
+      actionsForClip.actionByRoot[rootUuid] = action;
+    }
+    _removeInactiveAction(action) {
+      const actions = this._actions, lastInactiveAction = actions[actions.length - 1], cacheIndex = action._cacheIndex;
+      lastInactiveAction._cacheIndex = cacheIndex;
+      actions[cacheIndex] = lastInactiveAction;
+      actions.pop();
+      action._cacheIndex = null;
+      const clipUuid = action._clip.uuid, actionsByClip = this._actionsByClip, actionsForClip = actionsByClip[clipUuid], knownActionsForClip = actionsForClip.knownActions, lastKnownAction = knownActionsForClip[knownActionsForClip.length - 1], byClipCacheIndex = action._byClipCacheIndex;
+      lastKnownAction._byClipCacheIndex = byClipCacheIndex;
+      knownActionsForClip[byClipCacheIndex] = lastKnownAction;
+      knownActionsForClip.pop();
+      action._byClipCacheIndex = null;
+      const actionByRoot = actionsForClip.actionByRoot, rootUuid = (action._localRoot || this._root).uuid;
+      delete actionByRoot[rootUuid];
+      if (knownActionsForClip.length === 0) {
+        delete actionsByClip[clipUuid];
+      }
+      this._removeInactiveBindingsForAction(action);
+    }
+    _removeInactiveBindingsForAction(action) {
+      const bindings = action._propertyBindings;
+      for (let i = 0, n = bindings.length;i !== n; ++i) {
+        const binding = bindings[i];
+        if (--binding.referenceCount === 0) {
+          this._removeInactiveBinding(binding);
+        }
+      }
+    }
+    _lendAction(action) {
+      const actions = this._actions, prevIndex = action._cacheIndex, lastActiveIndex = this._nActiveActions++, firstInactiveAction = actions[lastActiveIndex];
+      action._cacheIndex = lastActiveIndex;
+      actions[lastActiveIndex] = action;
+      firstInactiveAction._cacheIndex = prevIndex;
+      actions[prevIndex] = firstInactiveAction;
+    }
+    _takeBackAction(action) {
+      const actions = this._actions, prevIndex = action._cacheIndex, firstInactiveIndex = --this._nActiveActions, lastActiveAction = actions[firstInactiveIndex];
+      action._cacheIndex = firstInactiveIndex;
+      actions[firstInactiveIndex] = action;
+      lastActiveAction._cacheIndex = prevIndex;
+      actions[prevIndex] = lastActiveAction;
+    }
+    _addInactiveBinding(binding, rootUuid, trackName) {
+      const bindingsByRoot = this._bindingsByRootAndName, bindings = this._bindings;
+      let bindingByName = bindingsByRoot[rootUuid];
+      if (bindingByName === undefined) {
+        bindingByName = {};
+        bindingsByRoot[rootUuid] = bindingByName;
+      }
+      bindingByName[trackName] = binding;
+      binding._cacheIndex = bindings.length;
+      bindings.push(binding);
+    }
+    _removeInactiveBinding(binding) {
+      const bindings = this._bindings, propBinding = binding.binding, rootUuid = propBinding.rootNode.uuid, trackName = propBinding.path, bindingsByRoot = this._bindingsByRootAndName, bindingByName = bindingsByRoot[rootUuid], lastInactiveBinding = bindings[bindings.length - 1], cacheIndex = binding._cacheIndex;
+      lastInactiveBinding._cacheIndex = cacheIndex;
+      bindings[cacheIndex] = lastInactiveBinding;
+      bindings.pop();
+      delete bindingByName[trackName];
+      if (Object.keys(bindingByName).length === 0) {
+        delete bindingsByRoot[rootUuid];
+      }
+    }
+    _lendBinding(binding) {
+      const bindings = this._bindings, prevIndex = binding._cacheIndex, lastActiveIndex = this._nActiveBindings++, firstInactiveBinding = bindings[lastActiveIndex];
+      binding._cacheIndex = lastActiveIndex;
+      bindings[lastActiveIndex] = binding;
+      firstInactiveBinding._cacheIndex = prevIndex;
+      bindings[prevIndex] = firstInactiveBinding;
+    }
+    _takeBackBinding(binding) {
+      const bindings = this._bindings, prevIndex = binding._cacheIndex, firstInactiveIndex = --this._nActiveBindings, lastActiveBinding = bindings[firstInactiveIndex];
+      binding._cacheIndex = firstInactiveIndex;
+      bindings[firstInactiveIndex] = binding;
+      lastActiveBinding._cacheIndex = prevIndex;
+      bindings[prevIndex] = lastActiveBinding;
+    }
+    _lendControlInterpolant() {
+      const interpolants = this._controlInterpolants, lastActiveIndex = this._nActiveControlInterpolants++;
+      let interpolant = interpolants[lastActiveIndex];
+      if (interpolant === undefined) {
+        interpolant = new LinearInterpolant(new Float32Array(2), new Float32Array(2), 1, _controlInterpolantsResultBuffer);
+        interpolant.__cacheIndex = lastActiveIndex;
+        interpolants[lastActiveIndex] = interpolant;
+      }
+      return interpolant;
+    }
+    _takeBackControlInterpolant(interpolant) {
+      const interpolants = this._controlInterpolants, prevIndex = interpolant.__cacheIndex, firstInactiveIndex = --this._nActiveControlInterpolants, lastActiveInterpolant = interpolants[firstInactiveIndex];
+      interpolant.__cacheIndex = firstInactiveIndex;
+      interpolants[firstInactiveIndex] = interpolant;
+      lastActiveInterpolant.__cacheIndex = prevIndex;
+      interpolants[prevIndex] = lastActiveInterpolant;
+    }
+    clipAction(clip, optionalRoot, blendMode) {
+      const root = optionalRoot || this._root, rootUuid = root.uuid;
+      let clipObject = typeof clip === "string" ? AnimationClip.findByName(root, clip) : clip;
+      const clipUuid = clipObject !== null ? clipObject.uuid : clip;
+      const actionsForClip = this._actionsByClip[clipUuid];
+      let prototypeAction = null;
+      if (blendMode === undefined) {
+        if (clipObject !== null) {
+          blendMode = clipObject.blendMode;
+        } else {
+          blendMode = NormalAnimationBlendMode;
+        }
+      }
+      if (actionsForClip !== undefined) {
+        const existingAction = actionsForClip.actionByRoot[rootUuid];
+        if (existingAction !== undefined && existingAction.blendMode === blendMode) {
+          return existingAction;
+        }
+        prototypeAction = actionsForClip.knownActions[0];
+        if (clipObject === null)
+          clipObject = prototypeAction._clip;
+      }
+      if (clipObject === null)
+        return null;
+      const newAction = new AnimationAction(this, clipObject, optionalRoot, blendMode);
+      this._bindAction(newAction, prototypeAction);
+      this._addInactiveAction(newAction, clipUuid, rootUuid);
+      return newAction;
+    }
+    existingAction(clip, optionalRoot) {
+      const root = optionalRoot || this._root, rootUuid = root.uuid, clipObject = typeof clip === "string" ? AnimationClip.findByName(root, clip) : clip, clipUuid = clipObject ? clipObject.uuid : clip, actionsForClip = this._actionsByClip[clipUuid];
+      if (actionsForClip !== undefined) {
+        return actionsForClip.actionByRoot[rootUuid] || null;
+      }
+      return null;
+    }
+    stopAllAction() {
+      const actions = this._actions, nActions = this._nActiveActions;
+      for (let i = nActions - 1;i >= 0; --i) {
+        actions[i].stop();
+      }
+      return this;
+    }
+    update(deltaTime) {
+      deltaTime *= this.timeScale;
+      const actions = this._actions, nActions = this._nActiveActions, time = this.time += deltaTime, timeDirection = Math.sign(deltaTime), accuIndex = this._accuIndex ^= 1;
+      for (let i = 0;i !== nActions; ++i) {
+        const action = actions[i];
+        action._update(time, deltaTime, timeDirection, accuIndex);
+      }
+      const bindings = this._bindings, nBindings = this._nActiveBindings;
+      for (let i = 0;i !== nBindings; ++i) {
+        bindings[i].apply(accuIndex);
+      }
+      return this;
+    }
+    setTime(time) {
+      this.time = 0;
+      for (let i = 0;i < this._actions.length; i++) {
+        this._actions[i].time = 0;
+      }
+      return this.update(time);
+    }
+    getRoot() {
+      return this._root;
+    }
+    uncacheClip(clip) {
+      const actions = this._actions, clipUuid = clip.uuid, actionsByClip = this._actionsByClip, actionsForClip = actionsByClip[clipUuid];
+      if (actionsForClip !== undefined) {
+        const actionsToRemove = actionsForClip.knownActions;
+        for (let i = 0, n = actionsToRemove.length;i !== n; ++i) {
+          const action = actionsToRemove[i];
+          this._deactivateAction(action);
+          const cacheIndex = action._cacheIndex, lastInactiveAction = actions[actions.length - 1];
+          action._cacheIndex = null;
+          action._byClipCacheIndex = null;
+          lastInactiveAction._cacheIndex = cacheIndex;
+          actions[cacheIndex] = lastInactiveAction;
+          actions.pop();
+          this._removeInactiveBindingsForAction(action);
+        }
+        delete actionsByClip[clipUuid];
+      }
+    }
+    uncacheRoot(root) {
+      const rootUuid = root.uuid, actionsByClip = this._actionsByClip;
+      for (const clipUuid in actionsByClip) {
+        const actionByRoot = actionsByClip[clipUuid].actionByRoot, action = actionByRoot[rootUuid];
+        if (action !== undefined) {
+          this._deactivateAction(action);
+          this._removeInactiveAction(action);
+        }
+      }
+      const bindingsByRoot = this._bindingsByRootAndName, bindingByName = bindingsByRoot[rootUuid];
+      if (bindingByName !== undefined) {
+        for (const trackName in bindingByName) {
+          const binding = bindingByName[trackName];
+          binding.restoreOriginalState();
+          this._removeInactiveBinding(binding);
+        }
+      }
+    }
+    uncacheAction(clip, optionalRoot) {
+      const action = this.existingAction(clip, optionalRoot);
+      if (action !== null) {
+        this._deactivateAction(action);
+        this._removeInactiveAction(action);
+      }
+    }
+  }
   var _matrix = /* @__PURE__ */ new Matrix4;
 
   class Raycaster {
@@ -32320,7 +33160,7 @@ void main() {
   }
   function loadOne(loader, url) {
     return new Promise((res) => {
-      loader.load(url, (g) => res(g), undefined, () => res(null));
+      loader.load(url, (g) => res({ scene: g.scene, animations: g.animations || [] }), undefined, () => res(null));
     });
   }
   async function preloadGlbModels(base) {
@@ -32342,7 +33182,7 @@ void main() {
         scene.updateMatrixWorld(true);
         const box = new Box3().setFromObject(scene);
         const size = box.getSize(new Vector3);
-        templates.set(n, { scene, turret: findTurret(scene), size });
+        templates.set(n, { scene, animations: g.animations, turret: findTurret(scene), size });
       }));
     })();
     return loadPromise;
@@ -32350,8 +33190,75 @@ void main() {
   function glbReady() {
     return templates.size > 0;
   }
+
+  class UnitAnim {
+    mixer;
+    actions = new Map;
+    current = null;
+    clips;
+    constructor(root, clips) {
+      this.mixer = new AnimationMixer(root);
+      this.clips = clips.map((c) => c.name);
+      for (const c of clips)
+        this.actions.set(c.name, this.mixer.clipAction(c));
+    }
+    has(name) {
+      return this.actions.has(name);
+    }
+    loop(name, fade = 0.18) {
+      const next = this.actions.get(name);
+      if (!next || this.current === name)
+        return;
+      next.reset();
+      next.setLoop(LoopRepeat, Infinity);
+      next.clampWhenFinished = false;
+      next.enabled = true;
+      if (this.current) {
+        const prev = this.actions.get(this.current);
+        if (prev) {
+          next.crossFadeFrom(prev, fade, false);
+        }
+      }
+      next.play();
+      this.current = name;
+    }
+    oneshot(name, fade = 0.08) {
+      const a = this.actions.get(name);
+      if (!a)
+        return null;
+      a.reset();
+      a.setLoop(LoopOnce, 1);
+      a.clampWhenFinished = true;
+      a.enabled = true;
+      a.fadeIn(fade);
+      a.play();
+      a.addEventListener("finished", () => {
+        a.fadeOut(0.12);
+      });
+      return a;
+    }
+    update(dt) {
+      this.mixer.update(dt);
+    }
+  }
+  function collectMuzzles(root) {
+    const out = [];
+    root.traverse((o) => {
+      if (o.name.toLowerCase().startsWith("muzzle"))
+        out.push(o);
+    });
+    return out;
+  }
+  function collectRotorBlades(root) {
+    const out = [];
+    root.traverse((o) => {
+      if (/b_wing|^fan$/i.test(o.name))
+        out.push({ node: o, baseQ: o.quaternion.clone() });
+    });
+    return out;
+  }
   function cloneScaled(t) {
-    const inst = t.scene.clone(true);
+    const inst = clone(t.scene);
     inst.traverse((o) => {
       const mesh = o;
       if (mesh.isMesh) {
@@ -32392,14 +33299,26 @@ void main() {
     wrap.position.set(-c.x, -box2.min.y, -c.z);
     group.add(wrap);
     let turret;
-    if (t.turret) {
+    let turretBaseQ;
+    if (t.turret && def.kind !== "infantry") {
       const tn = t.turret.name;
+      let found;
       inst.traverse((o) => {
         if (o.name === tn)
-          turret = o;
+          found = o;
       });
+      if (found) {
+        turret = found;
+        turretBaseQ = found.quaternion.clone();
+      }
     }
-    return { group, turret, height: box2.getSize(new Vector3).y };
+    let rotorBlades;
+    if (def.kind === "aircraft") {
+      rotorBlades = collectRotorBlades(inst);
+    }
+    const muzzles = collectMuzzles(inst);
+    const anim = t.animations.length ? new UnitAnim(inst, t.animations) : null;
+    return { group, turret, turretBaseQ, rotorBlades, muzzles, anim, height: box2.getSize(new Vector3).y };
   }
   function buildGlbHq(owner = 2) {
     const t = templates.get(HQ_MODEL);
@@ -32558,29 +33477,22 @@ void main() {
       if (glb) {
         group.add(glb.group);
         height = glb.height;
-        if (glb.turret) {
-          const tGroup = new Group;
-          const parent = glb.turret.parent;
-          if (parent) {
-            const wp = new Vector3;
-            glb.turret.getWorldPosition(wp);
-            const wq = new Quaternion;
-            glb.turret.getWorldQuaternion(wq);
-            parent.remove(glb.turret);
-            tGroup.position.copy(wp);
-            tGroup.quaternion.copy(wq);
-            glb.turret.position.set(0, 0, 0);
-            glb.turret.quaternion.identity();
-            tGroup.add(glb.turret);
-            group.add(tGroup);
-            turret = tGroup;
-          }
-        }
         group.traverse((o) => {
           if (o instanceof Mesh)
             o.receiveShadow = false;
         });
-        return { group, turret, rotor, animNodes, height, radius: def.radius };
+        return {
+          group,
+          turretBone: glb.turret,
+          turretBaseQ: glb.turretBaseQ,
+          rotorBlades: glb.rotorBlades,
+          spinT: 0,
+          muzzles: glb.muzzles,
+          anim: glb.anim,
+          animNodes,
+          height,
+          radius: def.radius
+        };
       }
     }
     if (def.kind === "infantry") {
@@ -32695,6 +33607,143 @@ void main() {
     return { group, turret, rotor, animNodes, height, radius: def.radius };
   }
 
+  // src/game/render/decor.ts
+  var templates2 = [];
+  var loadPromise2 = null;
+  function pickSpread(entries, count) {
+    const sorted = [...entries].sort((a, b) => a.vc - b.vc);
+    const out = [];
+    const step = Math.max(1, Math.floor(sorted.length / count));
+    for (let i = 0;i < sorted.length && out.length < count; i += step)
+      out.push(sorted[i]);
+    return out;
+  }
+  async function preloadDecor(base) {
+    if (loadPromise2)
+      return loadPromise2;
+    const loader = new GLTFLoader;
+    loadPromise2 = (async () => {
+      let index = [];
+      try {
+        const r = await fetch(`${base}models/decor/index.json`);
+        index = await r.json();
+      } catch {
+        return;
+      }
+      const byCat = { tree: [], palm: [], bush: [], rock: [], grass: [] };
+      for (const e of index) {
+        if (byCat[e.cat])
+          byCat[e.cat].push(e);
+      }
+      const want = { tree: 6, palm: 4, bush: 5, rock: 4, grass: 3 };
+      const picks = [];
+      for (const [cat, n] of Object.entries(want)) {
+        picks.push(...pickSpread(byCat[cat], n));
+      }
+      await Promise.all(picks.map(async (e) => {
+        try {
+          const g = await new Promise((res) => {
+            loader.load(`${base}models/${e.f}`, (g2) => res(g2), undefined, () => res(null));
+          });
+          if (!g)
+            return;
+          const parts = [];
+          g.scene.updateMatrixWorld(true);
+          g.scene.traverse((o) => {
+            const mesh = o;
+            if (!mesh.isMesh)
+              return;
+            const geo = mesh.geometry.clone();
+            geo.applyMatrix4(mesh.matrixWorld);
+            const m = mesh.material.clone();
+            m.side = DoubleSide;
+            if ("roughness" in m) {
+              m.roughness = Math.min(1, (m.roughness ?? 0.85) * 0.95 + 0.05);
+              m.metalness = 0;
+            }
+            if (m.map)
+              m.map.colorSpace = SRGBColorSpace;
+            parts.push({ geometry: geo, material: m });
+          });
+          if (!parts.length)
+            return;
+          const bbox = new Box3;
+          for (const p of parts) {
+            p.geometry.computeBoundingBox();
+            bbox.union(p.geometry.boundingBox);
+          }
+          const c = bbox.getCenter(new Vector3);
+          const minY = bbox.min.y;
+          for (const p of parts) {
+            p.geometry.translate(-c.x, -minY, -c.z);
+          }
+          const bakedH = Math.max(0.4, bbox.max.y - minY);
+          const size = bbox.getSize(new Vector3);
+          const maxDim = Math.max(0.4, size.x, size.y, size.z);
+          templates2.push({
+            name: e.n,
+            cat: e.cat,
+            parts,
+            baseH: bakedH,
+            maxDim
+          });
+        } catch {}
+      }));
+    })();
+    return loadPromise2;
+  }
+  function decorReady() {
+    return templates2.length > 0;
+  }
+  function decorTemplates() {
+    return templates2;
+  }
+
+  class DecorScatter {
+    meshes = [];
+    place(entries, targetSize) {
+      const perT = new Map;
+      for (const e of entries) {
+        let arr = perT.get(e.ti);
+        if (!arr) {
+          arr = [];
+          perT.set(e.ti, arr);
+        }
+        arr.push(e);
+      }
+      const dummy = new Object3D;
+      for (const [ti, arr] of perT) {
+        const t = templates2[ti];
+        if (!t)
+          continue;
+        const scaleTo = targetSize(t) / t.maxDim;
+        for (const part of t.parts) {
+          const im = new InstancedMesh(part.geometry, part.material, arr.length);
+          im.castShadow = t.cat !== "grass";
+          im.receiveShadow = true;
+          for (let i = 0;i < arr.length; i++) {
+            const e = arr[i];
+            dummy.position.set(e.x, 0, e.z);
+            dummy.rotation.set(0, e.ry, 0);
+            dummy.scale.set(e.s * scaleTo, e.s * scaleTo * (e.sy || 1), e.s * scaleTo);
+            dummy.updateMatrix();
+            im.setMatrixAt(i, dummy.matrix);
+          }
+          im.instanceMatrix.needsUpdate = true;
+          this.meshes.push(im);
+        }
+      }
+      return this.meshes;
+    }
+    disposeAll(scene) {
+      for (const m of this.meshes) {
+        scene.remove(m);
+        m.dispose();
+      }
+      this.meshes = [];
+    }
+  }
+
   // src/game/render/renderer3d.ts
   var MAP2 = MAP_W / 2;
   var t2w = (x, y) => [x - MAP2, y - MAP2];
@@ -32711,6 +33760,7 @@ void main() {
     raycaster = new Raycaster;
     groundPlane = new Plane(new Vector3(0, 1, 0), 0);
     unitViews = new Map;
+    dying = [];
     bldViews = new Map;
     tracerViews = new Map;
     handledBooms = new Set;
@@ -32785,6 +33835,11 @@ void main() {
       } catch (e) {
         console.warn("glb preload failed", e);
       }
+      try {
+        await preloadDecor(base);
+      } catch (e) {
+        console.warn("decor preload failed", e);
+      }
     }
     buildStaticWorld(groundTex, hqImg) {
       const ground = new Mesh(new PlaneGeometry(MAP_W, MAP_H), new MeshStandardMaterial({ map: groundTex, roughness: 1, metalness: 0 }));
@@ -32816,6 +33871,10 @@ void main() {
         m.dispose();
       }
       this.scatterMeshes = [];
+      if (decorReady()) {
+        this.applyDecorScatter(grid);
+        return;
+      }
       if (!this.scatterGeo) {
         this.scatterGeo = {
           trunk: new CylinderGeometry(0.09, 0.16, 1, 6),
@@ -32903,6 +33962,87 @@ void main() {
         this.scene.add(m);
         this.scatterMeshes.push(m);
       });
+    }
+    applyDecorScatter(grid) {
+      const temps = decorTemplates();
+      if (!temps.length)
+        return;
+      const scatter = new DecorScatter;
+      const tiles = [];
+      const border = [];
+      for (let y = 0;y < MAP_H; y++)
+        for (let x = 0;x < MAP_W; x++) {
+          if (grid[y * MAP_W + x] !== 1)
+            continue;
+          (x === 0 || y === 0 || x === MAP_W - 1 || y === MAP_H - 1 ? border : tiles).push([x, y]);
+        }
+      const rand = rng(424242);
+      const byCat = { tree: [], palm: [], bush: [], rock: [], grass: [] };
+      temps.forEach((t, i) => byCat[t.cat]?.push(i));
+      const pickT = (cat) => {
+        const pool = byCat[cat];
+        if (!pool || !pool.length)
+          return -1;
+        return pool[Math.floor(rand() * pool.length)];
+      };
+      const entries = [];
+      const heights = {
+        tree: () => 2 + rand() * 1.6,
+        palm: () => 2.6 + rand() * 1.4,
+        bush: () => 0.5 + rand() * 0.5,
+        rock: () => 0.45 + rand() * 0.75,
+        grass: () => 0.32 + rand() * 0.3
+      };
+      const catW = [["tree", 0.4], ["palm", 0.16], ["bush", 0.24], ["rock", 0.2]];
+      const pickCat = () => {
+        const r = rand();
+        let acc = 0;
+        for (const [c, w] of catW) {
+          acc += w;
+          if (r < acc)
+            return c;
+        }
+        return "bush";
+      };
+      for (const [tx, ty] of tiles) {
+        const [wx, wz] = t2w(tx, ty);
+        if (rand() < 0.52)
+          continue;
+        const cat = pickCat();
+        const ti2 = pickT(cat);
+        if (ti2 < 0)
+          continue;
+        entries.push({
+          ti: ti2,
+          x: wx + (rand() - 0.5) * 0.7,
+          z: wz + (rand() - 0.5) * 0.7,
+          s: 0.72 + rand() * 0.4,
+          ry: rand() * 6.28,
+          sy: 0.92 + rand() * 0.2
+        });
+      }
+      for (const [tx, ty] of border) {
+        const [wx, wz] = t2w(tx, ty);
+        if (rand() < 0.6) {
+          const ti2 = pickT(rand() < 0.75 ? "rock" : "bush");
+          if (ti2 < 0)
+            continue;
+          entries.push({ ti: ti2, x: wx, z: wz, s: 1.2 + rand() * 1, ry: rand() * 6.28, sy: 0.8 + rand() * 0.7 });
+        }
+        if (rand() < 0.18) {
+          const ti2 = pickT("palm");
+          if (ti2 >= 0)
+            entries.push({ ti: ti2, x: wx, z: wz, s: 0.9 + rand() * 0.4, ry: rand() * 6.28, sy: 1 });
+        }
+      }
+      const targetSize = (t) => {
+        return { tree: 2.5, palm: 2.7, bush: 0.9, rock: 0.85, grass: 0.6 }[t.cat] ?? 1;
+      };
+      const meshes = scatter.place(entries, targetSize);
+      for (const m of meshes) {
+        this.scene.add(m);
+        this.scatterMeshes.push(m);
+      }
     }
     hqBlue;
     hqRed;
@@ -33117,6 +34257,28 @@ void main() {
         const air = u.def.kind === "aircraft";
         g.position.set(v.pos.x, air ? 2.1 + Math.sin(this.time * 2.1 + u.id) * 0.09 : 0, v.pos.z);
         g.rotation.y = v.yaw;
+        const moving = Math.hypot(u.vx, u.vy) > 0.008;
+        if (v.model.anim) {
+          const want = moving ? "move" : "idle";
+          if (want !== v.loco) {
+            v.loco = want;
+            const clipName = want === "move" ? "move" : v.model.anim.has("idle1") ? "idle1" : "idle2";
+            if (v.model.anim.has(clipName))
+              v.model.anim.loop(clipName);
+          }
+          v.model.anim.update(dt());
+        }
+        v.recoil = Math.max(0, v.recoil - dt() * 4);
+        if (v.model.turretBone && v.model.turretBaseQ) {
+          let tDes = targetYaw - v.yaw;
+          while (tDes - v.turretYaw > Math.PI)
+            tDes -= Math.PI * 2;
+          while (tDes - v.turretYaw < -Math.PI)
+            tDes += Math.PI * 2;
+          v.turretYaw += (tDes - v.turretYaw) * Math.min(1, 7 * dt());
+          _qTmp.setFromAxisAngle(_Y, v.turretYaw - v.recoil * 0.06);
+          v.model.turretBone.quaternion.copy(v.model.turretBaseQ).multiply(_qTmp);
+        }
         if (v.model.turret) {
           let td = targetYaw - v.yaw - v.model.turret.rotation.y;
           while (td > Math.PI)
@@ -33127,17 +34289,27 @@ void main() {
         }
         if (v.model.rotor)
           v.model.rotor.rotation.y += 26 * dt();
-        const moving = Math.hypot(u.vx, u.vy) > 0.008;
-        if (moving) {
-          const t = this.time * 11 + u.id * 1.7;
-          v.model.animNodes.forEach((n, i) => {
-            n.position.y = 0.27 + Math.abs(Math.sin(t + i * 2.1)) * 0.045;
-          });
-        } else {
-          v.model.animNodes.forEach((n) => {
-            n.position.y *= 0.85;
-          });
+        if (v.model.rotorBlades && v.model.spinT !== undefined) {
+          v.model.spinT += dt() * 30;
+          _qTmp.setFromAxisAngle(_Y, v.model.spinT);
+          for (const b of v.model.rotorBlades) {
+            b.node.quaternion.copy(_qTmp).multiply(b.baseQ);
+          }
         }
+        if (!v.model.anim) {
+          if (moving) {
+            const t = this.time * 11 + u.id * 1.7;
+            v.model.animNodes.forEach((n, i) => {
+              n.position.y = 0.27 + Math.abs(Math.sin(t + i * 2.1)) * 0.045;
+            });
+          } else {
+            v.model.animNodes.forEach((n) => {
+              n.position.y *= 0.85;
+            });
+          }
+        }
+        if (v.fireT > 0)
+          v.fireT -= dt();
         if (v.spawnT < 1) {
           v.spawnT = Math.min(1, v.spawnT + dt() * 5);
           const s = 0.3 + 0.7 * v.spawnT;
@@ -33177,12 +34349,99 @@ void main() {
       for (const [id, v] of this.unitViews) {
         if (seen.has(id))
           continue;
-        const u = v.model.group.userData.unit;
-        this.spawnWreck(v);
-        this.scene.remove(v.model.group, v.hpSprite, v.selRing, v.capRing);
-        if (v.shadow)
-          this.scene.remove(v.shadow);
         this.unitViews.delete(id);
+        v.hpSprite.visible = false;
+        v.selRing.visible = false;
+        v.capRing.visible = false;
+        const canDie = !!v.model.anim && (v.model.anim.has("die_bullet") || v.model.anim.has("die_explosion"));
+        if (canDie) {
+          v.dieT = 0;
+          v.dieDur = 1.05;
+          const clip = v.model.anim.has("die_bullet") ? "die_bullet" : "die_explosion";
+          v.model.anim.oneshot(clip, 0.05);
+          this.dying.push(v);
+        } else {
+          this.spawnWreck(v);
+          this.scene.remove(v.model.group, v.hpSprite, v.selRing, v.capRing);
+          if (v.shadow)
+            this.scene.remove(v.shadow);
+        }
+      }
+      this.syncDying(dt());
+    }
+    syncDying(dt) {
+      for (let i = this.dying.length - 1;i >= 0; i--) {
+        const v = this.dying[i];
+        v.dieT = (v.dieT ?? 0) + dt;
+        v.model.anim?.update(dt);
+        const k = v.dieT / (v.dieDur ?? 1);
+        if (k >= 1) {
+          const u = v.model.group.userData.unit;
+          if (u)
+            this.spawnWreck(v);
+          this.scene.remove(v.model.group, v.hpSprite, v.selRing, v.capRing);
+          if (v.shadow)
+            this.scene.remove(v.shadow);
+          this.dying.splice(i, 1);
+        } else if (k > 0.62) {
+          v.model.group.position.y -= dt * 1.6 * ((k - 0.62) / 0.38);
+        }
+      }
+    }
+    fireEvent(px, py, owner) {
+      let best = null;
+      let bestD = 2.2;
+      for (const v2 of this.unitViews.values()) {
+        const u = v2.model.group.userData.unit;
+        if (!u || u.owner !== owner)
+          continue;
+        const d = Math.hypot(u.x - px, u.y - py);
+        if (d < bestD) {
+          bestD = d;
+          best = v2;
+        }
+      }
+      if (!best) {
+        this.flash(px, py);
+        return;
+      }
+      const v = best;
+      const moving = Math.hypot(v.model.group.userData.unit ? v.model.group.userData.unit.vx : 0, v.model.group.userData.unit?.vy ?? 0) > 0.008;
+      const muz = v.model.muzzles;
+      if (muz && muz.length) {
+        const m = muz[v.muzzleIdx % muz.length];
+        v.muzzleIdx = (v.muzzleIdx + 1) % Math.max(1, muz.length);
+        const wp = new Vector3;
+        m.getWorldPosition(wp);
+        this.addFx(this.texFlash, wp.x, wp.y, wp.z, 0.55, 0.06, 1.4, true);
+        this.addFx(this.texSmoke, wp.x, wp.y, wp.z, 0.3, 0.5, 0.9, false, -0.6);
+      } else {
+        this.flash(px, py);
+      }
+      if (v.fireT > 0)
+        return;
+      v.fireT = 0.3;
+      const anim = v.model.anim;
+      if (anim) {
+        const u2 = v.model.group.userData.unit;
+        const kind = u2?.def.kind;
+        if (kind === "infantry") {
+          if (moving && anim.has("move_shoot"))
+            anim.oneshot("move_shoot", 0.06);
+          else if (!moving && anim.has("w1_round"))
+            anim.oneshot("w1_round", 0.06);
+          else if (!moving && anim.has("w2_round"))
+            anim.oneshot("w2_round", 0.06);
+        } else if (kind === "aircraft") {
+          if (anim.has("w2_round"))
+            anim.oneshot("w2_round", 0.06);
+          else if (anim.has("w1_round"))
+            anim.oneshot("w1_round", 0.06);
+        } else {
+          v.recoil = 1;
+        }
+      } else if (v.model.turretBone) {
+        v.recoil = 1;
       }
     }
     makeUnitView(u) {
@@ -33220,7 +34479,12 @@ void main() {
         pos: new Vector3(wx, 0, wz),
         yaw: -u.facing,
         spawnT: 0,
-        lastHp: -1
+        lastHp: -1,
+        loco: "idle",
+        fireT: 0,
+        muzzleIdx: 0,
+        recoil: 0,
+        turretYaw: 0
       };
       if (u.def.kind === "aircraft") {
         const sh = new Sprite(new SpriteMaterial({ map: this.texShadow, transparent: true, depthWrite: false }));
@@ -33263,7 +34527,7 @@ void main() {
           const glow = new Sprite(new SpriteMaterial({ map: this.texGlow, transparent: true, blending: AdditiveBlending, depthWrite: false }));
           glow.scale.setScalar(isBullet ? 0.32 : 0.7);
           this.scene.add(mesh, glow);
-          this.flash(p.x, p.y);
+          this.fireEvent(p.x, p.y, p.owner);
           v = { mesh, glow, trailAcc: 0, prev: new Vector3(p.x - MAP2, 0.6, p.y - MAP2) };
           this.tracerViews.set(p, v);
         }
@@ -33619,6 +34883,8 @@ void main() {
   function setDt(v) {
     _dt = v;
   }
+  var _qTmp = new Quaternion;
+  var _Y = new Vector3(0, 1, 0);
 
   // src/game/standalone.ts
   var app = document.getElementById("app");
@@ -33735,6 +35001,9 @@ button{cursor:pointer;border:0;border-radius:8px}
       $("baking").style.display = "none";
       $("start").disabled = false;
     }).catch(console.error);
+    window.__aow3 = () => ({ get sim() {
+      return sim;
+    }, r3d, cam, sel });
   }
   function start() {
     if (!ready)

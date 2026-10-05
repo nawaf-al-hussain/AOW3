@@ -9,10 +9,15 @@ Two things live in this repo:
    **▶ Play it live: <https://nawaf-al-hussain.github.io/AOW3/>** (served from `docs/` via GitHub Pages).
    - Combat math (damage-vs-armor curve, weapon counter-triads, hit chances, EStat
      economy schema) was **reverse-engineered from the game binary** (see `reverse/`).
-   - The battlefield is dressed with **the game's own extracted art**: desert terrain
-     decals, HQ building sprite, faction emblems, production card art.
-   - Units are procedural low-poly 3D models styled after the genuine card art
-     (infantry squads, MBT, heavy tank, rocket artillery, gunship).
+   - Units, buildings and scenery use **the game's own extracted assets**:
+     - **26 skeletal GLB models** pulled straight from the APK (both factions'
+       infantry, vehicles, helicopters + HQ/barracks/factories/depot/tower/bunker)
+       with the **original AnimationClips**: idle, walk, fire, move-shoot and
+       death animations, plus spinning helicopter rotors.
+     - **130 jungle/desert decoration props** (trees, palms, bushes, rocks, grass)
+       scattered across the battlefield instead of placeholder geometry.
+     - Terrain decals, faction emblems, production card art, muzzle-flash points
+       wired to the real `muzzle*` bones, and turret bones aimed by gameplay.
 2. **`reverse/` + `assets/` — the RE evidence & extracted assets** used to build it.
 
 ## Run the game
