@@ -417,7 +417,36 @@
         s = s * 1664525 + 1013904223 >>> 0;
         return s / 4294967296;
       };
-      for (let i = 0;i < 90; i++) {
+      if (window.__realMap && window.__decorIndex) {
+        const catByName = new Map(window.__decorIndex.map((e2) => [e2.n, e2.cat]));
+        const wByName = new Map(window.__decorIndex.map((e2) => [e2.n, e2.w || 0]));
+        const MAP2g = MAP_W / 2;
+        for (const p of window.__realMap) {
+          const nm = p.m;
+          if (!nm)
+            continue;
+          const cat = catByName.get(nm);
+          if (cat !== "rock")
+            continue;
+          const w = wByName.get(nm) || 0;
+          if (w < 1.1)
+            continue;
+          const gx = p.p[0] + RMAP.shx + MAP2g;
+          const gy = p.p[2] + RMAP.shz + MAP2g;
+          if (gx < 2 || gy < 2 || gx > MAP_W - 3 || gy > MAP_H - 3)
+            continue;
+          const br = Math.max(0.9, w * 0.5);
+          const r0 = Math.floor(gx - br), r1 = Math.ceil(gx + br);
+          const c0 = Math.floor(gy - br), c1 = Math.ceil(gy + br);
+          for (let y = c0;y <= c1; y++)
+            for (let x = r0;x <= r1; x++) {
+              if (x < 1 || y < 1 || x >= MAP_W - 1 || y >= MAP_H - 1)
+                continue;
+              if (Math.hypot(x - gx, y - gy) <= br)
+                this.grid[y * MAP_W + x] = 1;
+            }
+        }
+      } else for (let i = 0;i < 90; i++) {
         const cx = 6 + rnd() * (MAP_W - 12), cy = 6 + rnd() * (MAP_H - 12);
         const r = 1.5 + rnd() * 2.8;
         for (let y = Math.floor(cy - r);y <= cy + r; y++)
@@ -33856,6 +33885,7 @@ void main() {
       try {
         const r = await fetch(`${base}models/decor/index.json`);
         index = await r.json();
+        window.__decorIndex = index;
       } catch {
         return;
       }
@@ -33932,6 +33962,12 @@ void main() {
               }
               if (m.map)
                 m.map.colorSpace = SRGBColorSpace;
+              m.color.setScalar(e.cat === "ground" ? 1.2 : 1.3);
+              if (e.cat === "ground") {
+                m.transparent = true;
+                m.opacity = 0.62;
+                m.depthWrite = false;
+              }
               parts.push({ geometry: geo, material: m });
             });
             if (!parts.length)
@@ -34081,16 +34117,16 @@ void main() {
       this.assetBase = assetBase;
       this.renderer = new WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
       this.renderer.outputColorSpace = SRGBColorSpace;
-      this.renderer.toneMapping = ACESFilmicToneMapping;
-      this.renderer.toneMappingExposure = 1.0;
+      this.renderer.toneMapping = LinearToneMapping;
+      this.renderer.toneMappingExposure = 1.14;
       this.renderer.shadowMap.enabled = true;
       this.renderer.shadowMap.type = PCFShadowMap;
-      this.renderer.setClearColor(11060444);
+      this.renderer.setClearColor(13616034);
       this.camera = new PerspectiveCamera(38, 1, 1, 500);
       this.scene.fog = new Fog(13616034, 170, 560);
-      const hemi = new HemisphereLight(14215423, 9075285, 1.5);
+      const hemi = new HemisphereLight(15066591, 10052467, 1.95);
       this.scene.add(hemi);
-      this.sun = new DirectionalLight(16773848, 1.85);
+      this.sun = new DirectionalLight(16773848, 2.0);
       this.sun.castShadow = true;
       this.sun.shadow.mapSize.set(2048, 2048);
       const sc = this.sun.shadow.camera;
@@ -34105,6 +34141,9 @@ void main() {
       this.scene.add(this.sun, this.sun.target);
       this.boomLight = new PointLight(16756832, 0, 20, 1.6);
       this.scene.add(this.boomLight);
+      const fill = new DirectionalLight(13421772, 0.55);
+      fill.position.set(70, 62, 84);
+      this.scene.add(fill);
       this.texFlash = new CanvasTexture(radialSprite(64, [[0, "rgba(255,255,230,1)"], [0.3, "rgba(255,220,120,0.95)"], [1, "rgba(255,180,60,0)"]]));
       this.texGlow = new CanvasTexture(radialSprite(64, [[0, "rgba(255,240,190,1)"], [0.4, "rgba(255,160,60,0.8)"], [1, "rgba(255,120,40,0)"]]));
       this.texSmoke = new CanvasTexture(radialSprite(64, [[0, "rgba(70,64,58,0.85)"], [0.6, "rgba(90,82,72,0.4)"], [1, "rgba(100,95,85,0)"]]));
@@ -34380,7 +34419,9 @@ void main() {
           im.frustumCulled = false;
           for (let i = 0; i < arr.length; i++) {
             const e = arr[i];
-            dummy.position.set(e.p[0] + RMAP.shx, e.p[1], e.p[2] + RMAP.shz);
+            const wx2 = e.p[0] + RMAP.shx, wz2 = e.p[2] + RMAP.shz;
+            const gy2 = heightAtWorld(wx2, wz2);
+            dummy.position.set(wx2, t.cat === "ground" ? gy2 : Math.max(e.p[1] - 0.05, gy2), wz2);
             dummy.quaternion.set(e.q[0], e.q[1], e.q[2], e.q[3]);
             dummy.scale.set(e.s[0], e.s[1], e.s[2]);
             dummy.updateMatrix();
@@ -34537,7 +34578,7 @@ void main() {
       const [fx, fz] = t2w(cam.x, cam.y);
       this.camera.position.set(fx, cam.dist * 0.98, fz + cam.dist * 0.44);
       this.camera.lookAt(fx, 0, fz);
-      this.sun.position.set(fx - 30, 58, fz - 22);
+      this.sun.position.set(fx - 22, 68, fz - 15);
       this.sun.target.position.set(fx, 0, fz);
       this.sun.target.updateMatrixWorld();
     }
@@ -34570,7 +34611,7 @@ void main() {
         if (underC) {
           v.wasUnder = true;
           if (v.glb)
-            v.glb.group.scale.set(1, 0.22 + 0.78 * (b.buildT / b.buildTotal), 1);
+            v.glb.group.scale.set(1, 0.45 + 0.55 * (b.buildT / b.buildTotal), 1);
           if (v.bldRing) {
             v.bldRing.visible = true;
             const theta = Math.min(1, b.buildT / b.buildTotal) * Math.PI * 2;
@@ -34637,9 +34678,10 @@ void main() {
       const [wx, wz] = t2w(b.x, b.y);
       group.position.set(wx, heightAtWorld(wx, wz), wz);
       const view = { group, b };
-      const shadow = new Sprite(new SpriteMaterial({ map: this.texShadow, transparent: true, depthWrite: false }));
-      shadow.scale.set(b.defId === "hq" ? 10 : 5.4, b.defId === "hq" ? 10 : 5.4, 1);
-      shadow.position.set(0.9, 0.03, 0.8);
+      const shadow = new Sprite(new SpriteMaterial({ map: this.texShadow, transparent: true, depthWrite: false, opacity: 0.85 }));
+      const srad = (b.defId === "hq" ? HQ : b.defId === "depot" ? DEPOT : BLD[b.defId] || { radius: 1.8 }).radius;
+      shadow.scale.set(srad * 3.1, srad * 3.1, 1);
+      shadow.position.set(0.5, 0.03, 0.45);
       shadow.renderOrder = 2;
       group.add(shadow);
       view.shadow = shadow;
@@ -35519,7 +35561,7 @@ button{cursor:pointer;border:0;border-radius:8px}
 #cards{position:static;display:flex;gap:6px;overflow-x:auto;max-width:94vw}
 #prodhint{color:rgba(255,255,255,.4);font-size:10px;margin-top:4px}
 .card{position:relative;width:92px;flex:0 0 auto;border:1px solid rgba(255,255,255,.25);border-radius:6px;overflow:hidden;background:#111;padding:0}
-.card img{width:100%;height:64px;object-fit:cover;display:block}
+.card img{width:100%;height:64px;object-fit:contain;display:block;background:linear-gradient(180deg,#22301f,#0d130d)}
 .card .nm{font-size:10px;font-weight:800;background:rgba(0,0,0,.7);padding:2px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .card .pr{font-size:10px;font-weight:700;background:rgba(0,0,0,.8);padding:2px;color:#fcd34d}
 .card .pr .cp{color:#7dd3fc;margin-left:6px}
@@ -35562,7 +35604,7 @@ button{cursor:pointer;border:0;border-radius:8px}
     const hq = sim.hq(1);
     cam.x = hq ? hq.x + 6 : 12;
     cam.y = hq ? hq.y : MAP_H / 2;
-    cam.dist = 12.5;
+    cam.dist = 20;
     $("menu").classList.add("hidden");
     $("over").classList.add("hidden");
     ["resbar", "clock", "minimap-wrap", "prodwrap"].forEach((id) => $(id).classList.remove("hidden"));
@@ -35879,7 +35921,7 @@ button{cursor:pointer;border:0;border-radius:8px}
   cv.addEventListener("contextmenu", (e) => e.preventDefault());
   cv.addEventListener("wheel", (e) => {
     e.preventDefault();
-    cam.dist = Math.min(46, Math.max(6.5, cam.dist * (e.deltaY > 0 ? 1.09 : 0.92)));
+    cam.dist = Math.min(64, Math.max(9, cam.dist * (e.deltaY > 0 ? 1.09 : 0.92)));
   }, { passive: false });
   window.addEventListener("keydown", (e) => {
     keys.add(e.key.toLowerCase());
