@@ -4,8 +4,9 @@ Private research / fan project around **Art of War 3: Global Conflict** (Gear Ga
 
 Two things live in this repo:
 
-1. **`game/` — a browser-native 3D skirmish tribute.** Real-time RTS you can open in any
+1. **`docs/` — a browser-native 3D skirmish tribute.** Real-time RTS you can open in any
    browser: produce units, capture depots, fight AI waves, destroy the enemy HQ.
+   **▶ Play it live: <https://nawaf-al-hussain.github.io/AOW3/>** (served from `docs/` via GitHub Pages).
    - Combat math (damage-vs-armor curve, weapon counter-triads, hit chances, EStat
      economy schema) was **reverse-engineered from the game binary** (see `reverse/`).
    - The battlefield is dressed with **the game's own extracted art**: desert terrain
@@ -16,8 +17,12 @@ Two things live in this repo:
 
 ## Run the game
 
+Play online: **<https://nawaf-al-hussain.github.io/AOW3/>**
+
+Or run locally:
+
 ```bash
-cd game
+cd docs
 python3 -m http.server 8000     # or: npx serve .
 # open http://localhost:8000
 ```
@@ -38,8 +43,9 @@ reverse/
 assets/
   aow3-extracted-assets.zip             textures / UI sprites / audio / text assets
                                         extracted with UnityPy (+ catalog.json)
-game/
+docs/
   index.html, game.js, assets/          the playable browser tribute (static, no build step)
+                                        served at https://nawaf-al-hussain.github.io/AOW3/
 ```
 
 ## How the tribute was built (pipeline)
