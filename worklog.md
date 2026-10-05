@@ -59,3 +59,51 @@ Real map pass (0d1566f) + oneshot guard (6de3b0d)
   decode with fmod_toolkit.raw_to_wav(bytes, name, channels, freq) -> WAV.
 - Live QA (fresh session, github.io): 0 page errors, 393/393 templates,
   battle at enemy HQ verified, minimap + water + announcer working.
+
+---
+Task ID: 3
+Agent: Super Z (main)
+Task: "A lot of thing is left" — base-building gameplay pass (play like the real game)
+
+Work Log:
+- Live QA of deployed build found the core gameplay gap: sim had only HQ + depot;
+  all production was abstract (units popped from HQ). Non-HQ buildings were
+  procedural boxes/cylinders even though original f1_bld_* GLBs existed.
+- surgery2.py (40 verified edits, scripts/surgery2.py):
+  * Data: BLD defs (barracks 400 / factory 550 / heavy factory 850 / power 300 /
+    turret 450 / bunker 350, build times 10-24s), BUILDINGS_ORDER, PRODUCER_OF.
+  * Sim: addBuilding(instant) + buildT progress; canPlace/tryPlace (near own base,
+    clear of buildings/units, walkable); enqueue gated by producer building;
+    production spawns AT the producing building with rally; updateBuildings
+    (construction progress, turret/bunker weapon fire w/ RE'd damage+hitChance,
+    building destruction -> boom + removal); power plant = +2 income +2 CP cap;
+    vision per-building view radius; buildings carry radius (fixes NaN spawn and
+    silently-broken unit-vs-building range checks).
+  * AI: maybeBuild() golden-angle slot scan around HQ (barracks -> power ->
+    factory -> heavyfactory@100s -> turret@150s -> turret#2 -> bunker), producer-
+    filtered unit choices, has() counts under-construction (no double-build).
+  * Renderer: swapRedBlue helper + buildGlbBuilding (owner 1 = blue-shifted R/B
+    swap, enemy = original red); depot uses f1_bld_supply; construction visuals
+    (Y-scale grow + progress ring + dust puffs + completion flash + bld_end /
+    ann_built sfx); building HP/progress bars; turret head aims at b.aim; enemy
+    buildings hidden while unexplored; placement ghost (green/red validity);
+    texture anisotropy 8 pass on first render; fog pushed 170-560.
+  * UI: building card row (emoji icons, cost, disabled by funds), placement mode
+    (armed highlight, hint bar, shift = multi-place, right-click/ESC cancels),
+    unit cards disabled + tooltip until producer exists; camera default 12.5,
+    zoom clamp 6.5-46; unit HP bars always-on for own units, bigger sprites;
+    unit scale up (infantry 0.9->1.32, vehicle x3->x4, aircraft x3.6->x4.6).
+- Fixed post-surgery bugs: HQ view missing hpSprite (guard), missing radius on
+  building objects (NaN spawn), AI double-build, turret emoji icon (1F3FC->1F5FC).
+- Verified locally (headless): build/place/produce loop, turret kills infantry
+  (RE'd damage), AI builds barracks+power+factories on accelerated clock.
+- Commit 5267a50 pushed (LFS ok); GitHub Pages rebuilt; live QA fresh session:
+  0 page errors, placement + construction + AI base verified on production URL.
+
+Stage Summary:
+- Live: https://nawaf-al-hussain.github.io/AOW3/ (main:/docs)
+- Battle is now a real base-building skirmish: build producers, units spawn from
+  them, defend with turret/bunker, power plant economy bonus, AI mirrors it.
+- Known limits: sim clock tied to render fps (steps<8 catch-up cap) — slow
+  machines run slower than realtime; sand-area props near enemy HQ still use
+  fallback colors; water/walkability still procedural under the real map.
