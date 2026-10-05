@@ -17,7 +17,7 @@
       captures: true,
       radius: 0.45,
       weapon: { damage: { light: 16, medium: 7, heavy: 3 }, range: 6.5, cooldown: 1.1, accStatic: 72, accWalk: 48, splash: 0, projectileSpeed: 0 },
-      card: "/aow3/card-infantry.png",
+      card: "assets/card-infantry.png",
       tint: "#8fb573",
       desc: "Cheap capture unit. Only infantry can seize depots."
     },
@@ -37,7 +37,7 @@
       captures: true,
       radius: 0.45,
       weapon: { damage: { light: 30, medium: 9, heavy: 3 }, range: 7, cooldown: 0.9, accStatic: 70, accWalk: 52, splash: 0, projectileSpeed: 0 },
-      card: "/aow3/card-infantry.png",
+      card: "assets/card-infantry.png",
       tint: "#b59b73",
       desc: "Shreds infantry. Nearly useless against armor."
     },
@@ -57,7 +57,7 @@
       captures: true,
       radius: 0.45,
       weapon: { damage: { light: 10, medium: 34, heavy: 42 }, range: 7.5, cooldown: 2.4, accStatic: 78, accWalk: 55, splash: 1.1, projectileSpeed: 14 },
-      card: "/aow3/card-mech.png",
+      card: "assets/card-mech.png",
       tint: "#c28f6d",
       desc: "Rocket team — punishes vehicles and tanks."
     },
@@ -77,7 +77,7 @@
       captures: false,
       radius: 0.7,
       weapon: { damage: { light: 42, medium: 30, heavy: 20 }, range: 9, cooldown: 1.8, accStatic: 82, accWalk: 62, splash: 0.6, projectileSpeed: 26 },
-      card: "/aow3/card-tank.png",
+      card: "assets/card-tank.png",
       tint: "#7d9c6a",
       desc: "Main battle tank. Heavy armor, solid all-round gun."
     },
@@ -97,7 +97,7 @@
       captures: false,
       radius: 0.85,
       weapon: { damage: { light: 64, medium: 52, heavy: 40 }, range: 9.5, cooldown: 2.6, accStatic: 84, accWalk: 60, splash: 0.8, projectileSpeed: 24 },
-      card: "/aow3/card-storm.png",
+      card: "assets/card-storm.png",
       tint: "#6d8a5e",
       desc: "Fortress on tracks. Slow, brutally expensive, nearly immune to infantry."
     },
@@ -117,7 +117,7 @@
       captures: false,
       radius: 0.65,
       weapon: { damage: { light: 40, medium: 38, heavy: 46 }, range: 16, cooldown: 4.2, accStatic: 62, accWalk: 44, splash: 2.6, projectileSpeed: 12 },
-      card: "/aow3/card-rocket.png",
+      card: "assets/card-rocket.png",
       tint: "#9c8a5e",
       desc: "Long-range splash damage. Fragile up close."
     },
@@ -137,7 +137,7 @@
       captures: false,
       radius: 0.6,
       weapon: { damage: { light: 34, medium: 26, heavy: 16 }, range: 8.5, cooldown: 1.2, accStatic: 76, accWalk: 68, splash: 0.4, projectileSpeed: 30 },
-      card: "/aow3/card-gunship.png",
+      card: "assets/card-gunship.png",
       tint: "#739c93",
       desc: "Fast strike flyer. Ignores terrain, weak to AA-era MG fire."
     }
@@ -33623,6 +33623,9 @@ void main() {
       return loadPromise2;
     const loader = new GLTFLoader;
     loadPromise2 = (async () => {
+      const ATLAS_FILES = { jungle: "atlas-jungle.png", jungle2: "atlas-jungle2.png", desert: "atlas-desert.png", war: "atlas-war.png", jungleground: "atlas-jungleground.png", jungleground2: "atlas-jungleground2.png" };
+      const atlasTex = {};
+      const texLoader = new TextureLoader;
       let index = [];
       try {
         const r = await fetch(`${base}models/decor/index.json`);
@@ -33630,12 +33633,21 @@ void main() {
       } catch {
         return;
       }
+      await Promise.all(Object.entries(ATLAS_FILES).map(([k, f]) => new Promise((res) => {
+        texLoader.load(`${base}models/${f}`, (t) => {
+          t.colorSpace = SRGBColorSpace;
+          t.wrapS = t.wrapT = RepeatWrapping;
+          t.anisotropy = 4;
+          atlasTex[k] = t;
+          res();
+        }, undefined, () => res());
+      })));
       const byCat = { tree: [], palm: [], bush: [], rock: [], grass: [] };
       for (const e of index) {
         if (byCat[e.cat])
           byCat[e.cat].push(e);
       }
-      const want = { tree: 6, palm: 4, bush: 5, rock: 4, grass: 3 };
+      const want = { tree: 10, palm: 6, bush: 8, rock: 6, grass: 5 };
       const picks = [];
       for (const [cat, n] of Object.entries(want)) {
         picks.push(...pickSpread(byCat[cat], n));
@@ -33657,9 +33669,14 @@ void main() {
             geo.applyMatrix4(mesh.matrixWorld);
             const m = mesh.material.clone();
             m.side = DoubleSide;
-            if ("roughness" in m) {
-              m.roughness = Math.min(1, (m.roughness ?? 0.85) * 0.95 + 0.05);
-              m.metalness = 0;
+            m.metalness = 0;
+            m.transparent = false;
+            m.alphaTest = 0.45;
+            const ak = e.mats && e.mats[m.name];
+            const tex = ak ? atlasTex[ak] : null;
+            if (tex) {
+              m.map = tex;
+              m.needsUpdate = true;
             }
             if (m.map)
               m.map.colorSpace = SRGBColorSpace;
@@ -33785,21 +33802,21 @@ void main() {
     canvasH = 1;
     disposed = false;
     time = 0;
-    constructor(canvas, assetBase = "/aow3/") {
+    constructor(canvas, assetBase = "assets/") {
       this.canvas = canvas;
       this.assetBase = assetBase;
       this.renderer = new WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
       this.renderer.outputColorSpace = SRGBColorSpace;
       this.renderer.toneMapping = ACESFilmicToneMapping;
-      this.renderer.toneMappingExposure = 1.12;
+      this.renderer.toneMappingExposure = 1.0;
       this.renderer.shadowMap.enabled = true;
       this.renderer.shadowMap.type = PCFShadowMap;
       this.renderer.setClearColor(11060444);
       this.camera = new PerspectiveCamera(38, 1, 1, 500);
       this.scene.fog = new Fog(13616034, 110, 260);
-      const hemi = new HemisphereLight(14215423, 9075285, 0.9);
+      const hemi = new HemisphereLight(14215423, 9075285, 1.5);
       this.scene.add(hemi);
-      this.sun = new DirectionalLight(16773848, 2.7);
+      this.sun = new DirectionalLight(16773848, 1.85);
       this.sun.castShadow = true;
       this.sun.shadow.mapSize.set(2048, 2048);
       const sc = this.sun.shadow.camera;
@@ -33855,7 +33872,7 @@ void main() {
       this.fogCanvas.height = MAP_H;
       this.fogData = this.fogCanvas.getContext("2d").createImageData(MAP_W, MAP_H);
       this.fogTex = new CanvasTexture(this.fogCanvas);
-      this.fogTex.magFilter = NearestFilter;
+      this.fogTex.magFilter = LinearFilter;
       this.fogTex.minFilter = LinearFilter;
       const fog = new Mesh(new PlaneGeometry(MAP_W, MAP_H), new MeshBasicMaterial({ map: this.fogTex, transparent: true, depthWrite: false }));
       fog.rotation.x = -Math.PI / 2;
@@ -34480,7 +34497,7 @@ void main() {
         yaw: -u.facing,
         spawnT: 0,
         lastHp: -1,
-        loco: "idle",
+        loco: null,
         fireT: 0,
         muzzleIdx: 0,
         recoil: 0,
@@ -34777,12 +34794,12 @@ void main() {
           d[o] = 12;
           d[o + 1] = 10;
           d[o + 2] = 8;
-          d[o + 3] = 120;
+          d[o + 3] = 92;
         } else {
           d[o] = 10;
           d[o + 1] = 9;
           d[o + 2] = 7;
-          d[o + 3] = 232;
+          d[o + 3] = 212;
         }
       }
       this.fogCanvas.getContext("2d").putImageData(this.fogData, 0, 0);
@@ -34995,7 +35012,7 @@ button{cursor:pointer;border:0;border-radius:8px}
   {
     const probe = new Sim(1);
     const r = new Renderer3D(cv, "assets/");
-    r3d = r;
+    r3d = r; window.__DBG = { r3d: r, cam };
     r.load().then(() => {
       ready = true;
       $("baking").style.display = "none";
@@ -35041,7 +35058,7 @@ button{cursor:pointer;border:0;border-radius:8px}
       const b = document.createElement("button");
       b.className = "card";
       b.title = `${d.name} — ${d.desc}`;
-      b.innerHTML = `<img src="${d.card.replace("/aow3/", "assets/")}?v=2" alt="${d.name}"/><div class="nm">${d.name.split('"')[0]}</div>
+      b.innerHTML = `<img src="${d.card}?v=2" alt="${d.name}"/><div class="nm">${d.name.split('"')[0]}</div>
       <div class="pr">${d.price}¤<span class="cp">CP${d.cp}</span></div>`;
       b.onclick = () => sim?.enqueue(id, 1);
       cards.appendChild(b);
