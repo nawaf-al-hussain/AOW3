@@ -1,0 +1,1250 @@
+# External 6.5.22 method names vs current 6.9.18 dump.cs (Il2CppDumper)
+# Verdict classes: MATCH | COMPILER_ARTIFACT | INTERFACE_EXPLICIT | GENERIC_ARITY_REPRESENTATION | NOT_FOUND
+
+battle     COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <BattleInitialize>b__25_0
+battle     COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <DelayedSubscriptionOnBattleScreenAsync>b__17_0
+battle     COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <GetActionOnClickBattleButton>b__1
+battle     COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <GetBattleExitTick>b__5_0
+battle     COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <GetBattleVisualIds>b__13_2
+battle     COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <InitializeBattlePoolsOptimized>b__0
+battle     COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <LoadBattleBaseDictionary>b__0
+battle     COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <OnMessageBattleFinishNotificationReceived>b__18_0
+battle     COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <ProcessBindingByBattleInfo>b__0
+battle     MATCH                                                        BattleInitialize
+battle     MATCH                                                        CanStartBattle
+battle     MATCH                                                        CancelBattle
+battle     MATCH                                                        CheckConnectionToBattleHosts
+battle     MATCH                                                        ClearBattleInfo
+battle     MATCH                                                        CloseStartBattleCancellationNotificationWaiter
+battle     MATCH                                                        CreateBattleWindow
+battle     MATCH                                                        DelayedSubscriptionOnBattleScreenAsync
+battle     MATCH                                                        DestroyBattlePvpResult
+battle     MATCH                                                        GetBattleBuffer
+battle     MATCH                                                        GetBattleButtonColorForCreator
+battle     MATCH                                                        GetBattleCell
+battle     MATCH                                                        GetBattleFormat
+battle     MATCH                                                        GetFinishBattleStateDebugString
+battle     MATCH                                                        GetHeadBattle
+battle     MATCH                                                        GetTypeResultBattle
+battle     MATCH                                                        GoToBattle
+battle     MATCH                                                        GoToBattleTab
+battle     MATCH                                                        InitializeBattle
+battle     MATCH                                                        InternalPlayBattleSound
+battle     MATCH                                                        IsBattlesLimitReached
+battle     MATCH                                                        LoadBattleForMapEditor
+battle     MATCH                                                        OnBattleClick
+battle     MATCH                                                        OnBattleInviteReceived
+battle     MATCH                                                        OnBattleListAnswerReceived
+battle     MATCH                                                        OnBattleLoaded
+battle     MATCH                                                        OnBattleLogicDesyncNotification
+battle     MATCH                                                        OnBattleMapClick
+battle     MATCH                                                        OnBattleSessionClick
+battle     MATCH                                                        OnCoopBattleInviteReceived
+battle     MATCH                                                        OnLoginToBattleCompleted
+battle     MATCH                                                        OnMessageBattleFinishNotificationReceived
+battle     MATCH                                                        OnMessageBattleResultAnswerReceived
+battle     MATCH                                                        OnMessageComplexBattleMessageReceived
+battle     MATCH                                                        OnMessageGoToBattleNotificationReceived
+battle     MATCH                                                        OnMessageGoToBattleProposalReceived
+battle     MATCH                                                        OnMessageNoBattleServiceReceived
+battle     MATCH                                                        OnMessagePVEBattlePointsReceived
+battle     MATCH                                                        OnMessageStartBattleCancellationNotificationReceived
+battle     MATCH                                                        PrepareMapRestartFromBattle
+battle     MATCH                                                        PrintBattleMapInfo
+battle     MATCH                                                        ReassignBattleSidesFromAlliances
+battle     MATCH                                                        RequestBattleReplay
+battle     MATCH                                                        RestartBattle
+battle     MATCH                                                        RevealProfileAfterLoginToBattle
+battle     MATCH                                                        RevealProfilesAfterLoginToBattle
+battle     MATCH                                                        SaveGoToBattleTime
+battle     MATCH                                                        SaveResumptionBattleDynamicData
+battle     MATCH                                                        SendErrorCancelStartPveBattle
+battle     MATCH                                                        SendEventBattleServiceReady
+battle     MATCH                                                        SetBattleExitTick
+battle     MATCH                                                        SetBattleInterfaceVisible
+battle     MATCH                                                        SetBattleSession
+battle     MATCH                                                        SetInBattleIconActive
+battle     MATCH                                                        ShowBattle
+battle     MATCH                                                        ShowBattleFinishDialog
+battle     MATCH                                                        ShowBattleStart
+battle     MATCH                                                        ShowBattlesDescription
+battle     MATCH                                                        ShowNoBattles
+battle     MATCH                                                        StartBattle
+battle     MATCH                                                        StartReplayBattle
+battle     INTERFACE_EXPLICIT (representation difference)               System.Collections.Generic.IEnumerator<com.geargames.aow.scenes.battle.HotkeyInfo>.get_Current
+battle     MATCH                                                        TryCompareByStateInBattle
+battle     NOT_FOUND (version-drift candidate)                          UpdateAllBattleResources
+battle     MATCH                                                        UpdateResumptionBattleActivityCoroutine
+battle     MATCH                                                        UpdateResumptionBattleInfo
+battle     NOT_FOUND (version-drift candidate)                          addCommandBattleFinished
+battle     NOT_FOUND (version-drift candidate)                          addCommandBattlePause
+battle     MATCH                                                        add_OnBattleMapClickEvent
+battle     MATCH                                                        add_OnGoToBattle
+battle     NOT_FOUND (version-drift candidate)                          battleSets
+battle     NOT_FOUND (version-drift candidate)                          battleSideJoined
+battle     NOT_FOUND (version-drift candidate)                          buildFighterPatrolSegments
+battle     INTERFACE_EXPLICIT (representation difference)               com.geargames.aow.scenes.battle.unity.IBattleReplayRestartable.OnGameObjectsActivated
+battle     MATCH                                                        get_ActualBattleFinishTick
+battle     NOT_FOUND (version-drift candidate)                          get_BatFightersKilledVehicles
+battle     NOT_FOUND (version-drift candidate)                          get_BatWithoutFighters
+battle     MATCH                                                        get_Battle
+battle     MATCH                                                        get_BattleCameraSpeed
+battle     MATCH                                                        get_BattleDescription
+battle     MATCH                                                        get_BattleExitTick
+battle     MATCH                                                        get_BattleFinishTick
+battle     MATCH                                                        get_BattleId
+battle     MATCH                                                        get_BattleInfo
+battle     MATCH                                                        get_BattleResultPvp
+battle     MATCH                                                        get_BattleSession
+battle     MATCH                                                        get_BattleSessionId
+battle     MATCH                                                        get_BattleSideNumber
+battle     MATCH                                                        get_BattleState
+battle     MATCH                                                        get_BattleTicksInterval
+battle     MATCH                                                        get_BattleTimer
+battle     MATCH                                                        get_BattleType
+battle     MATCH                                                        get_BattlefieldCamera
+battle     MATCH                                                        get_Battles
+battle     MATCH                                                        get_BookmarksBattlePanel
+battle     NOT_FOUND (version-drift candidate)                          get_ChampBattles
+battle     MATCH                                                        get_ColorInBattle
+battle     MATCH                                                        get_CurrentBattleTime
+battle     MATCH                                                        get_DefaultBattleStartValidators
+battle     MATCH                                                        get_FightDetector
+battle     MATCH                                                        get_FighterBoomDist
+battle     MATCH                                                        get_FighterMinEnergy
+battle     MATCH                                                        get_FighterNewTargetAwayInTicks
+battle     MATCH                                                        get_FighterStraight
+battle     MATCH                                                        get_FighterStraightNewBackwards
+battle     MATCH                                                        get_GoToBattleAction
+battle     MATCH                                                        get_IsBattleForciblyFinished
+battle     MATCH                                                        get_IsBattleReproduction
+battle     MATCH                                                        get_IsBattleWinOnly
+battle     MATCH                                                        get_IsReplayFromClanBattle
+battle     MATCH                                                        get_MatchedToBattle
+battle     MATCH                                                        get_PVPBattle
+battle     NOT_FOUND (version-drift candidate)                          get_PveBattles
+battle     NOT_FOUND (version-drift candidate)                          get_PvpBattles
+battle     MATCH                                                        get_StartBattleHint
+battle     MATCH                                                        get_StartingBattleClickBlocker
+battle     MATCH                                                        get_TestBattle
+battle     MATCH                                                        get_TimeInitiationBattle
+battle     MATCH                                                        get_UIBattleStatistics
+battle     MATCH                                                        remove_OnStartBattleMatching
+battle     NOT_FOUND (version-drift candidate)                          setPvEBattleResults
+battle     NOT_FOUND (version-drift candidate)                          setPvPBattleResults
+battle     MATCH                                                        set_BattleCost
+battle     MATCH                                                        set_BattleCurrentTickProvider
+battle     NOT_FOUND (version-drift candidate)                          set_BattleCutsceneDialogDispatcher
+battle     MATCH                                                        set_BattleDesc
+battle     MATCH                                                        set_BattleEntranceCostInc
+battle     MATCH                                                        set_BattleFinishTick
+battle     NOT_FOUND (version-drift candidate)                          set_BattleGeneralDialogDispatcher
+battle     MATCH                                                        set_BattleGraphicsLevel
+battle     MATCH                                                        set_BattleId
+battle     MATCH                                                        set_BattlePass
+battle     NOT_FOUND (version-drift candidate)                          set_BattlePassPoints
+battle     MATCH                                                        set_BattlePassScale
+battle     MATCH                                                        set_BattlePayment
+battle     MATCH                                                        set_BattlePrice
+battle     MATCH                                                        set_BattleSessionId
+battle     NOT_FOUND (version-drift candidate)                          set_BattleTime
+battle     MATCH                                                        set_BattleType
+battle     MATCH                                                        set_Battles
+battle     MATCH                                                        set_BattlesPlayed
+battle     MATCH                                                        set_BattlesTotal
+battle     MATCH                                                        set_CellClientBattleSide
+battle     MATCH                                                        set_JoinToBattleChannelToken
+battle     MATCH                                                        set_Pve_battles
+battle     MATCH                                                        set_Pvp_battles
+battle     MATCH                                                        set_RoutesFighter
+battle     MATCH                                                        set_Skirmish_battles
+battle     MATCH                                                        set_StarsBattleNew
+battle     MATCH                                                        set_StartBattleHint
+battle     MATCH                                                        set_UranumBattleModel
+battle     MATCH                                                        set_WorldWarBattles
+building   COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <GetForBuildingLevel>b__21_0
+building   COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <GetFreePosition>g__GetNearestPositionToBuilding|102_1
+building   COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <ReconstructHelper>b__18_0
+building   COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <SetRecommendations>g__GetBuildingsCount|26_0
+building   COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <TryGetHqBuildingPosition>b__49_0
+building   COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <get_HeroBuildingNameId>b__83_0
+building   COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <get_MaxHeroBuildingLevel>b__8_0
+building   MATCH                                                        AddBuilding
+building   MATCH                                                        BuildingBandLeave
+building   MATCH                                                        BuildingComplete
+building   MATCH                                                        BuildingContextMenuUpdate
+building   MATCH                                                        BuildingEnterMenu
+building   MATCH                                                        BuildingRemove
+building   MATCH                                                        CalcBuildingsByLevelIncludeProcessed
+building   MATCH                                                        CalculateBuildingLevelState
+building   MATCH                                                        CheckBuildingLimitExceededOld
+building   MATCH                                                        CheckBuildingsConnector
+building   MATCH                                                        CheckHasAvailableBuilding
+building   MATCH                                                        ClickOnAllyBuildingAtBuildingSelection
+building   MATCH                                                        ClickOnAllyBuildingAtUnitSelection
+building   MATCH                                                        ClickOnAllyUnitAtBuildingSelection
+building   MATCH                                                        ClickOnEmptyPlaceAtBuildingSelection
+building   MATCH                                                        ClickOnEnemyBuildingAtBuildingSelection
+building   MATCH                                                        ClickOnEnemyBuildingAtNoneSelection
+building   MATCH                                                        ClickOnEnemyUnitAtBuildingSelection
+building   MATCH                                                        ClickOnOwnBuildingAtBuildingSelection
+building   MATCH                                                        ClickOnOwnBuildingAtNoneSelection
+building   MATCH                                                        ClickOnOwnBuildingAtUnitSelection
+building   MATCH                                                        CloseHeroBuildingSlots
+building   MATCH                                                        Construct
+building   MATCH                                                        CreateBuildingUpgradeGround
+building   MATCH                                                        CreateForBuildingLevel
+building   NOT_FOUND (version-drift candidate)                          CreateMarkBuildingRecolored
+building   MATCH                                                        Deconstruct
+building   MATCH                                                        DestroyPreBuilding
+building   MATCH                                                        FillCellConnectsByBuildings
+building   MATCH                                                        FindBuildingWhereHeroInTrainingQueue
+building   MATCH                                                        FindBuildingWhereHeroTrainingInProgress
+building   MATCH                                                        GetAllLevelBuildingsByLevelType
+building   MATCH                                                        GetAvailableUnitByBuildingPairs
+building   MATCH                                                        GetBuildingLevelName
+building   MATCH                                                        GetBuildingNames
+building   MATCH                                                        GetBuildingOrderQueueTime
+building   MATCH                                                        GetBuildingPrefabs
+building   MATCH                                                        GetBuildingSlotStrategies
+building   MATCH                                                        GetBuildingTypeOrderForSorting
+building   MATCH                                                        GetForBuildingLevel
+building   MATCH                                                        GetTargetBuildingId
+building   MATCH                                                        IsBuildingDeathDebrisEnabled
+building   MATCH                                                        IsBuildingFlareEnabled
+building   MATCH                                                        IsBuildingLimitExceeded
+building   MATCH                                                        IsBuildingMatch
+building   MATCH                                                        IsBuildingSecret
+building   MATCH                                                        ListReconstruct
+building   MATCH                                                        OnBuildingCreatedUpgradedOrDestroyed
+building   MATCH                                                        OnOwnSideBuildingListChanged
+building   MATCH                                                        PlaceBuilding
+building   MATCH                                                        RaiseBuildingCreationCompleted
+building   MATCH                                                        RaiseBuildingDestroyed
+building   MATCH                                                        RaiseBuildingTrainingProgressChanged
+building   MATCH                                                        Reconstruct
+building   MATCH                                                        SendBuildingCancelBuyUnit
+building   MATCH                                                        SendBuildingRallyPointSet
+building   MATCH                                                        SendSelectedUnitsAttackToBuilding
+building   MATCH                                                        SendSelectedUnitsMineBuilding
+building   MATCH                                                        ShowBuildHeroBuildingNotification
+building   MATCH                                                        ShowBuildingTips
+building   MATCH                                                        SubscribeOnTrainingBuildingEvents
+building   MATCH                                                        ToMoveBuilding
+building   MATCH                                                        TryBuildingGroundFree
+building   MATCH                                                        TryCreateBuildingTrainer
+building   MATCH                                                        TryGetAnyBuildingPosition
+building   MATCH                                                        UpdateAvailableBuildings
+building   MATCH                                                        UpdateBuildingConstrCoverageLine
+building   MATCH                                                        UpdateBuildingCoverageLine
+building   MATCH                                                        UpgradeBuilding
+building   NOT_FOUND (version-drift candidate)                          addCommandBuildingCreate
+building   NOT_FOUND (version-drift candidate)                          addCommandBuildingDestroy
+building   NOT_FOUND (version-drift candidate)                          addCommandBuildingEnergyOff
+building   NOT_FOUND (version-drift candidate)                          addCommandBuildingEnergyOn
+building   NOT_FOUND (version-drift candidate)                          addCommandBuildingErase
+building   NOT_FOUND (version-drift candidate)                          addCommandBuildingHealthChanged
+building   NOT_FOUND (version-drift candidate)                          addCommandBuildingHideFromList
+building   NOT_FOUND (version-drift candidate)                          addCommandBuildingMarkSet
+building   NOT_FOUND (version-drift candidate)                          addCommandBuildingNuclearLaunch
+building   NOT_FOUND (version-drift candidate)                          addCommandBuildingNuclearLaunchDetected
+building   NOT_FOUND (version-drift candidate)                          addCommandBuildingNuclearMissileReady
+building   NOT_FOUND (version-drift candidate)                          addCommandBuildingProcessCompleted
+building   NOT_FOUND (version-drift candidate)                          addCommandBuildingProgressResume
+building   NOT_FOUND (version-drift candidate)                          addCommandBuildingPutInTrainQueue
+building   NOT_FOUND (version-drift candidate)                          addCommandBuildingRallyPoint
+building   NOT_FOUND (version-drift candidate)                          addCommandBuildingRallyRoute
+building   NOT_FOUND (version-drift candidate)                          addCommandBuildingRedeployAmountSet
+building   NOT_FOUND (version-drift candidate)                          addCommandBuildingRedeployPrototypeCountSet
+building   NOT_FOUND (version-drift candidate)                          addCommandBuildingReject
+building   NOT_FOUND (version-drift candidate)                          addCommandBuildingRepair
+building   NOT_FOUND (version-drift candidate)                          addCommandBuildingRepairCompleted
+building   NOT_FOUND (version-drift candidate)                          addCommandBuildingStartTrain
+building   NOT_FOUND (version-drift candidate)                          addCommandBuildingTrainProgress
+building   NOT_FOUND (version-drift candidate)                          addCommandBuildingUnitTrained
+building   NOT_FOUND (version-drift candidate)                          addCommandBuildingWeaponRotate
+building   NOT_FOUND (version-drift candidate)                          addCommandBuildingWeaponTargeting
+building   NOT_FOUND (version-drift candidate)                          addCommandDarkenBuilding
+building   NOT_FOUND (version-drift candidate)                          addCommandTutorialFinishConditionBuildingBuild
+building   NOT_FOUND (version-drift candidate)                          addCommandTutorialFinishConditionBuildingLevel
+building   MATCH                                                        add_OnBuildingCreationCompleted
+building   MATCH                                                        add_OnBuildingErased
+building   MATCH                                                        add_OnBuildingListChanged
+building   MATCH                                                        add_OnBuildingTrainingProgressChanged
+building   MATCH                                                        add_OnBuildingsStateChangedEvent
+building   NOT_FOUND (version-drift candidate)                          adjustRedeploySupplyConstruction
+building   NOT_FOUND (version-drift candidate)                          buildingsThink
+building   NOT_FOUND (version-drift candidate)                          checkAndPlaceBuilding
+building   NOT_FOUND (version-drift candidate)                          checkConstructionBreak
+building   NOT_FOUND (version-drift candidate)                          destroyBuilding
+building   NOT_FOUND (version-drift candidate)                          eraseBuilding
+building   NOT_FOUND (version-drift candidate)                          findBuildingAlreadyBuilt
+building   NOT_FOUND (version-drift candidate)                          findBuildingCoord
+building   NOT_FOUND (version-drift candidate)                          getBuildingTimeConstr
+building   NOT_FOUND (version-drift candidate)                          getLostBuildingsPercent
+building   MATCH                                                        get_AllOwnActiveHeroBuildings
+building   NOT_FOUND (version-drift candidate)                          get_BatAssaultFactoryConstructed
+building   NOT_FOUND (version-drift candidate)                          get_BatBunkersConstructed
+building   NOT_FOUND (version-drift candidate)                          get_BatConstrYardConstructed
+building   NOT_FOUND (version-drift candidate)                          get_BatSupplyDepotConstructed
+building   MATCH                                                        get_BoostsReconstructor
+building   MATCH                                                        get_Building
+building   MATCH                                                        get_BuildingGroundsByBuilding
+building   MATCH                                                        get_BuildingLevelForOpen
+building   MATCH                                                        get_BuildingLimitationsConstrYards
+building   MATCH                                                        get_BuildingLimitationsFactories
+building   MATCH                                                        get_BuildingRallyPointSet
+building   MATCH                                                        get_BuildingRemove
+building   MATCH                                                        get_BuildingSlotPresenter1
+building   MATCH                                                        get_BuildingSlotPresenter3
+building   MATCH                                                        get_BuildingUpgrade
+building   MATCH                                                        get_Buildings
+building   MATCH                                                        get_BuildingsBase
+building   MATCH                                                        get_BuildingsBaseComponent
+building   MATCH                                                        get_BuildingsConstrComponent
+building   MATCH                                                        get_ClanItemsReconstructor
+building   MATCH                                                        get_EnemyBuildingsAmount
+building   MATCH                                                        get_HasHeroBuildingWithRequiredLevel
+building   MATCH                                                        get_NeutralBuildingsNode
+building   MATCH                                                        get_NumberOfRecommendedBuildings
+building   MATCH                                                        get_ObservableBuildings
+building   NOT_FOUND (version-drift candidate)                          get_PveBuildingsConstructed
+building   NOT_FOUND (version-drift candidate)                          get_PveBuildingsErased
+building   MATCH                                                        get_PvpBldPoints
+building   MATCH                                                        get_SelectedBuilding
+building   MATCH                                                        get_SelectionBuilding
+building   NOT_FOUND (version-drift candidate)                          get_SkillBuildings
+building   MATCH                                                        get_SpecialReconstructor
+building   NOT_FOUND (version-drift candidate)                          get_StatAttackBldLost
+building   NOT_FOUND (version-drift candidate)                          get_StatBuildingsConstr
+building   NOT_FOUND (version-drift candidate)                          get_StatBuildingsCurr
+building   NOT_FOUND (version-drift candidate)                          get_StatBuildingsLost
+building   MATCH                                                        get_StunnedBuildingColor
+building   MATCH                                                        get_TabsReconstructor
+building   MATCH                                                        get_UpgBld2Count
+building   NOT_FOUND (version-drift candidate)                          onBuildingLost
+building   NOT_FOUND (version-drift candidate)                          recalcSupplyOnBuildingStun
+building   MATCH                                                        remove_OnBuildingDestroyed
+building   MATCH                                                        remove_OnBuildingUpgraded
+building   MATCH                                                        set_BuildingListFilter
+building   MATCH                                                        set_BuildingWhereHeroInTrainingQueue
+building   MATCH                                                        set_Buildings
+building   MATCH                                                        set_BuildingsAmount
+building   MATCH                                                        set_BuildingsBase
+building   MATCH                                                        set_ButtonBuildingOrderUnit2
+building   MATCH                                                        set_ButtonBuildingRallypoint
+building   MATCH                                                        set_ButtonBuildingUpgrade
+building   MATCH                                                        set_ButtonFastBuildingUpgrades
+building   NOT_FOUND (version-drift candidate)                          set_ConstructionSchedulesArray
+building   NOT_FOUND (version-drift candidate)                          set_PointsForDestructionBld
+building   NOT_FOUND (version-drift candidate)                          set_RemovedLastBuilding
+building   NOT_FOUND (version-drift candidate)                          set_StatBuildingsConstructed
+building   MATCH                                                        set_UIStandartUpgradeBuilding
+building   NOT_FOUND (version-drift candidate)                          verifyAllBuildingConnection
+damage     MATCH                                                        CalculateWeaponArmorDamage
+damage     MATCH                                                        CreateDamageForMediumArmor
+damage     MATCH                                                        CreateLiteDamage
+damage     MATCH                                                        CreateSuperWeaponMediumDamage
+damage     MATCH                                                        Damage
+damage     MATCH                                                        DelayedHideHealthBar
+damage     MATCH                                                        GetArmorMeta
+damage     MATCH                                                        GetDamageForMediumArmor
+damage     MATCH                                                        GetNormalizedHealth
+damage     MATCH                                                        GetSuperWeaponDamageForHeavyArmor
+damage     MATCH                                                        HideHealthBar
+damage     MATCH                                                        OnUnitTakingDamage
+damage     MATCH                                                        SafeSetDamageStat
+damage     MATCH                                                        ShiftContentWithItems
+damage     MATCH                                                        ShowHealthBar
+damage     MATCH                                                        ShowUniqueHitEffect
+damage     MATCH                                                        ToDamageable
+damage     MATCH                                                        WeaponDamageHeavyValue
+damage     NOT_FOUND (version-drift candidate)                          addCommandBuildingHealthChanged
+damage     NOT_FOUND (version-drift candidate)                          addCommandUnitDamage
+damage     NOT_FOUND (version-drift candidate)                          calcBasicDamage
+damage     NOT_FOUND (version-drift candidate)                          calcCoilTankArmorBonusFrontal
+damage     NOT_FOUND (version-drift candidate)                          calcDamageByCommandoJump
+damage     NOT_FOUND (version-drift candidate)                          deactivateBoostArmor
+damage     NOT_FOUND (version-drift candidate)                          deactivateBoostArmorBu
+damage     NOT_FOUND (version-drift candidate)                          generateBasicDamage
+damage     NOT_FOUND (version-drift candidate)                          generateMineDamage
+damage     MATCH                                                        get_Armor
+damage     NOT_FOUND (version-drift candidate)                          get_BatMinesDamaged
+damage     MATCH                                                        get_BeholderSightDamageDelay
+damage     MATCH                                                        get_CoilTankFrontalArmorBonus
+damage     MATCH                                                        get_CommandoJumpRadiusCheckedByDamage
+damage     MATCH                                                        get_DamageLight
+damage     MATCH                                                        get_DamageMedium
+damage     MATCH                                                        get_DamageMediumInit
+damage     MATCH                                                        get_DamagePriority
+damage     MATCH                                                        get_DamageReduce
+damage     MATCH                                                        get_Health
+damage     MATCH                                                        get_HeroAviaDamageDecr
+damage     MATCH                                                        get_HitBonus
+damage     MATCH                                                        get_HitToGround
+damage     MATCH                                                        get_HitToVehicle
+damage     MATCH                                                        get_InternalMaxHealth
+damage     MATCH                                                        get_IsHealthBarShowed
+damage     MATCH                                                        get_RailgunArmorPiercing
+damage     MATCH                                                        remove_OnHealthChanged
+damage     MATCH                                                        set_Armor
+damage     MATCH                                                        set_ArmorBonus
+damage     NOT_FOUND (version-drift candidate)                          set_DamageBonus
+damage     MATCH                                                        set_DamageLight
+damage     MATCH                                                        set_DamageMedium
+damage     MATCH                                                        set_DamagePriority
+damage     MATCH                                                        set_DamagedPerc
+damage     MATCH                                                        set_Health
+damage     MATCH                                                        set_HitId
+damage     MATCH                                                        set_ProcessorArchitecture
+damage     MATCH                                                        set_TargetPreciseHit
+economy    COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <CheckResources>b__13_1
+economy    COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <CheckResources>b__13_7
+economy    COMPILER_ARTIFACT (host not found by name)                   <LoadResourceAsync>b__0
+economy    COMPILER_ARTIFACT (host not found by name)                   <LoadResourcesAsync>b__0
+economy    MATCH                                                        AddResource
+economy    MATCH                                                        ApplyIncomeInvite
+economy    MATCH                                                        BindResourceSystem
+economy    MATCH                                                        CalculateCost
+economy    MATCH                                                        CancelLoadingResourceAsync
+economy    MATCH                                                        ChangeSupplyState
+economy    MATCH                                                        CheckResourceType
+economy    MATCH                                                        CollectSupplyBox
+economy    MATCH                                                        DeserializeCachedResources
+economy    MATCH                                                        GetResourceCategorySettings
+economy    MATCH                                                        IsLackResources
+economy    MATCH                                                        LoadByteResourceAsync
+economy    NOT_FOUND (version-drift candidate)                          LoadResourcesAsync
+economy    NOT_FOUND (version-drift candidate)                          LoadSerializableResourceAsync
+economy    MATCH                                                        LoadWebResourceFromBuffer
+economy    MATCH                                                        LoadedResourceToString
+economy    MATCH                                                        OnLocalizationDictionaryResourceLoaded
+economy    MATCH                                                        OnMessageLobbyIncomeInviteNotificationReceived
+economy    MATCH                                                        OnNotEnoughResourceCredits
+economy    MATCH                                                        OnNotEnoughResources
+economy    MATCH                                                        OnResourceAnswerMessageReceived
+economy    NOT_FOUND (version-drift candidate)                          OnResourceDispatcherCRPSettingsChanged
+economy    MATCH                                                        OnResourceInitializeRequestCreated
+economy    MATCH                                                        OnResourceWarmed
+economy    MATCH                                                        OnResourcesByKeyFound
+economy    MATCH                                                        OnResourcesForReleaseFound
+economy    MATCH                                                        OnResourcesInCacheFound
+economy    MATCH                                                        OnSupplyConfigurationUpdateReceived
+economy    MATCH                                                        OpenClanSupplySectionWithBox
+economy    MATCH                                                        PlayResourcesLabelAnimation
+economy    MATCH                                                        SendEventResourceDownloadFailed
+economy    MATCH                                                        SendEventResourceDownloaded
+economy    MATCH                                                        SetAvailableResourcesColor
+economy    MATCH                                                        SetCostDiscountState
+economy    MATCH                                                        SetCosts
+economy    MATCH                                                        SetGoldCost
+economy    MATCH                                                        ShowPlayerSupplyUpdateStateMessage
+economy    MATCH                                                        ToDownloadResourceFailed
+economy    MATCH                                                        TryLoadResource
+economy    MATCH                                                        TryLoadResourceFromByteBuffer
+economy    MATCH                                                        TryLoadResourceFromCache
+economy    MATCH                                                        UnloadResources
+economy    NOT_FOUND (version-drift candidate)                          UpdateAllBattleResources
+economy    MATCH                                                        UpdateCost
+economy    MATCH                                                        UpdateResources
+economy    MATCH                                                        UpdateSupplyBoxIconByLeague
+economy    MATCH                                                        WithCost
+economy    MATCH                                                        WithSelectSupply
+economy    NOT_FOUND (version-drift candidate)                          addCommandSideIncomeUpkeeped
+economy    MATCH                                                        add_OnClanSupplyUpdate
+economy    MATCH                                                        add_OnIncomeInvite
+economy    MATCH                                                        add_OnIncomeInviteApplied
+economy    MATCH                                                        add_OnIncomeInviteCancel
+economy    MATCH                                                        add_OnPlayerSupplyUpdate
+economy    NOT_FOUND (version-drift candidate)                          adjustRedeploySupplyConstruction
+economy    NOT_FOUND (version-drift candidate)                          calcEnergySupply
+economy    NOT_FOUND (version-drift candidate)                          get_BatSupplyDepotConstructed
+economy    NOT_FOUND (version-drift candidate)                          get_BatSupplyDepotDestructed
+economy    MATCH                                                        get_CPCost
+economy    MATCH                                                        get_ClanSupplyModel
+economy    MATCH                                                        get_Cost
+economy    MATCH                                                        get_CostBase
+economy    MATCH                                                        get_CostC
+economy    MATCH                                                        get_CostDiscounted
+economy    MATCH                                                        get_CostMessage
+economy    MATCH                                                        get_CostView
+economy    MATCH                                                        get_DictionariesResourceInfos
+economy    MATCH                                                        get_EnergySupply
+economy    MATCH                                                        get_HasCostDiscount
+economy    MATCH                                                        get_Income
+economy    NOT_FOUND (version-drift candidate)                          get_IncomeFlagBonus
+economy    MATCH                                                        get_IncomeHqBase
+economy    MATCH                                                        get_IncomeHqInc
+economy    NOT_FOUND (version-drift candidate)                          get_IncomeNextTick
+economy    MATCH                                                        get_IncomeScBase
+economy    MATCH                                                        get_IncomeScDecr
+economy    MATCH                                                        get_InfoProduceResourcesListView
+economy    MATCH                                                        get_IsUnavailableOfResource
+economy    MATCH                                                        get_Resource
+economy    NOT_FOUND (version-drift candidate)                          get_ResourceDispatcher
+economy    MATCH                                                        get_ResourceFilename
+economy    NOT_FOUND (version-drift candidate)                          get_ResourceManagementService
+economy    MATCH                                                        get_ResourceRepositories
+economy    MATCH                                                        get_Resources
+economy    MATCH                                                        get_ResourcesCost
+economy    NOT_FOUND (version-drift candidate)                          get_SkillResIncome
+economy    MATCH                                                        get_SupplyBox
+economy    MATCH                                                        get_SupplyBoxNew
+economy    MATCH                                                        get_SupplyBoxes
+economy    MATCH                                                        get_SupplyLimit
+economy    MATCH                                                        get_SupplyWindow
+economy    MATCH                                                        get_TournamentCostMult
+economy    MATCH                                                        get_UniversalCost
+economy    MATCH                                                        get_UraniumCost
+economy    NOT_FOUND (version-drift candidate)                          recalcSupplyOnBuildingStun
+economy    MATCH                                                        remove_OnClanSupplyUpdate
+economy    MATCH                                                        remove_OnPlayerSupplyUpdate
+economy    NOT_FOUND (version-drift candidate)                          setIncomeAndSupplyLimit
+economy    MATCH                                                        set_BattleCost
+economy    MATCH                                                        set_BattleEntranceCostInc
+economy    MATCH                                                        set_CPCost
+economy    MATCH                                                        set_ChangeNameCost
+economy    MATCH                                                        set_ClanChangeEmblemCost
+economy    MATCH                                                        set_ClanCreateCost
+economy    MATCH                                                        set_CompetitionEntranceCost
+economy    MATCH                                                        set_CostC
+economy    MATCH                                                        set_CostCredits
+economy    MATCH                                                        set_CostG
+economy    MATCH                                                        set_CostReal
+economy    MATCH                                                        set_EnergySupply
+economy    NOT_FOUND (version-drift candidate)                          set_Ensupply
+economy    MATCH                                                        set_IncomeUpkeeped
+economy    MATCH                                                        set_PvpCost
+economy    NOT_FOUND (version-drift candidate)                          set_ResourcesDispatcher
+economy    MATCH                                                        set_ResourcesStatus
+economy    NOT_FOUND (version-drift candidate)                          set_StatChestResourcesPicked
+economy    MATCH                                                        set_SupplyBoxId
+economy    MATCH                                                        set_SupplyBoxes
+economy    NOT_FOUND (version-drift candidate)                          set_SupplyDestroyed
+economy    NOT_FOUND (version-drift candidate)                          set_SupplyLimitTotal
+economy    MATCH                                                        set_TourCost
+hero       COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <AddAtlas>b__9_1
+hero       COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <ApplyUnitAbilityConfigs>b__0
+hero       COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <CreateOrderHeroListPresenter>b__289_1
+hero       COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <CreateStatsAtlas>b__17_0
+hero       COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <ExecuteOnAbilityReaction>b__0
+hero       COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <GetAtlasByName>b__0
+hero       COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <GetOrCreateActiveAbilityAction>b__0
+hero       COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <GetPassiveAbilityFromClientUnit>b__5_0
+hero       COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <IsHeroMaxUpgradeCount>b__26_2
+hero       COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <OnAbilityCooldownHandler>b__37_0
+hero       COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <TryPlayHeroCDActiveAbility>b__0
+hero       COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <TryPlayHeroOutOfRangeActiveVoice>b__0
+hero       COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <TryPlayHeroPassiveAbilityStarted>b__0
+hero       COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <TryPlayHeroSpecToVoice>b__0
+hero       COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <TryPlayHeroUnitDied>b__0
+hero       COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <get_HeroBuildingNameId>b__83_0
+hero       COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <get_IsCurrentHeroSelected>b__23_0
+hero       COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <get_MaxHeroBuildingLevel>b__8_0
+hero       MATCH                                                        AbilityReactOff
+hero       MATCH                                                        AbilityReactOn
+hero       MATCH                                                        AbilityStoppedHeroStunned
+hero       MATCH                                                        ActivateAbility
+hero       MATCH                                                        ActivateActiveAbility
+hero       MATCH                                                        ClearAbilityLine
+hero       MATCH                                                        CloseHeroBuildingSlots
+hero       MATCH                                                        DeactivateActiveAbility
+hero       MATCH                                                        FindBuildingWhereHeroInTrainingQueue
+hero       MATCH                                                        FindBuildingWhereHeroTrainingInProgress
+hero       MATCH                                                        GetAbilityParamDescription
+hero       MATCH                                                        GetAbilityParams
+hero       MATCH                                                        GetAbilityRadius
+hero       MATCH                                                        GetAbilityRadiusActionController
+hero       MATCH                                                        GetAbilityReactionPrefabByName
+hero       MATCH                                                        GetAbilityStates
+hero       MATCH                                                        GetActiveAbilityDescription
+hero       MATCH                                                        GetActiveAbilityFromUnitType
+hero       MATCH                                                        GetAtlas
+hero       MATCH                                                        GetAtlasBySpriteName
+hero       MATCH                                                        GetAtlasesInfo
+hero       MATCH                                                        GetBaseAbilityStates
+hero       MATCH                                                        GetBoostAtlas
+hero       MATCH                                                        GetDeltaAbilityParams
+hero       MATCH                                                        GetHeroParam
+hero       MATCH                                                        GetIconAtlasPathAndName
+hero       MATCH                                                        GetMechanicAvailabilityObservable
+hero       MATCH                                                        GetOrCreateActiveAbilityAction
+hero       MATCH                                                        GetPassiveAbilityDescription
+hero       MATCH                                                        GetPassiveAbilityTextureOrNull
+hero       MATCH                                                        GetValidFractionHeroCard
+hero       MATCH                                                        HeroRebindIsNotAvailableNotification
+hero       MATCH                                                        HeroSameTierAlreadyExists
+hero       MATCH                                                        IncrementUIHero2SelectButton
+hero       MATCH                                                        IncrementUIHero3UseAbilityButton
+hero       MATCH                                                        InitializeHeroCards
+hero       MATCH                                                        InitializeHeroSlots
+hero       MATCH                                                        IsHeroInTrainingQueue
+hero       MATCH                                                        IsHeroResearched
+hero       MATCH                                                        IsHeroSecret
+hero       MATCH                                                        IsHeroSeraphimInDepartModeByType
+hero       MATCH                                                        IsInAbilityOfType
+hero       MATCH                                                        IsRestrictedHeroCombination
+hero       MATCH                                                        LoadGeneralLocalAtlas
+hero       MATCH                                                        LoadRemoteAtlases
+hero       MATCH                                                        OnAbilityCooldownHandler
+hero       MATCH                                                        OnAbilityDeactivatedHandler
+hero       MATCH                                                        OnAbilityReadinessChanged
+hero       MATCH                                                        OnAbilityReadinessChangedHandler
+hero       MATCH                                                        OnAbilityStoppedHandler
+hero       MATCH                                                        OnHeroSlotCooldown
+hero       MATCH                                                        OnHeroSlotUnlock
+hero       MATCH                                                        OnHeroTutorialClick
+hero       MATCH                                                        OnMessagePackAvailabilityMessageReceived
+hero       MATCH                                                        OnRebindAvailabilityChanged
+hero       MATCH                                                        OnTryAbilityShootInvoke
+hero       MATCH                                                        PlayAbilityAnimation
+hero       MATCH                                                        PlayPassiveAbilityActivate
+hero       MATCH                                                        RaiseHeroActiveAbilityCooldown
+hero       MATCH                                                        RaiseHeroActiveAbilityDeactivate
+hero       MATCH                                                        RaiseHeroPassiveAbilityCooldown
+hero       MATCH                                                        RaiseHeroPassiveAbilityDeactivate
+hero       MATCH                                                        RaiseHeroSlotCooldown
+hero       MATCH                                                        RaiseHeroSlotUnlock
+hero       MATCH                                                        SendCommandHeroActivate
+hero       MATCH                                                        SetAbilityProgress
+hero       MATCH                                                        SetHeroIcon
+hero       MATCH                                                        SetHeroIconActive
+hero       MATCH                                                        SetHeroInOrderQueueIconActive
+hero       MATCH                                                        SetHeroNotActivatedIconTransparent
+hero       MATCH                                                        SetHeroRestoreAvailable
+hero       MATCH                                                        SetHeroSlotSelectedBackgroundActive
+hero       MATCH                                                        SetPassiveAbilityAnimatorState
+hero       MATCH                                                        SetPassiveAbilityTrigger
+hero       MATCH                                                        SetSecondaryUpgradeAvailability
+hero       MATCH                                                        ShowBuildHeroBuildingNotification
+hero       MATCH                                                        ShowHeroRebindIsNotAvailableNotification
+hero       MATCH                                                        ShowHeroSameTierAlreadyExists
+hero       MATCH                                                        ShowHeroUnavailableTimoutNotification
+hero       MATCH                                                        ShowRestrictedHeroesCombinationNotification
+hero       MATCH                                                        StopActiveAbility
+hero       MATCH                                                        StopUnitToActivateAbility
+hero       MATCH                                                        TryGetAbilityStateShootClip
+hero       MATCH                                                        TryGetAtlas
+hero       MATCH                                                        TryOrderHero
+hero       MATCH                                                        TryOrderHeroInternal
+hero       MATCH                                                        TryPlayAtlasSpecialVoice
+hero       MATCH                                                        TryPlayHeroCDActiveAbility
+hero       MATCH                                                        TryPlayHeroSpecToVoice
+hero       MATCH                                                        UpdateFiltrationAvailability
+hero       MATCH                                                        UpdateSkipAdAvailabilityState
+hero       MATCH                                                        WaspOnAbilityReaction
+hero       NOT_FOUND (version-drift candidate)                          abilityPassiveWeaponActivate
+hero       NOT_FOUND (version-drift candidate)                          activateHeroInner
+hero       NOT_FOUND (version-drift candidate)                          addCommandHeroAbilityActiveCooldown
+hero       NOT_FOUND (version-drift candidate)                          addCommandHeroAbilityActiveDeactivate
+hero       NOT_FOUND (version-drift candidate)                          addCommandHeroAbilityActiveMoveTargeting
+hero       NOT_FOUND (version-drift candidate)                          addCommandHeroAbilityActiveStop
+hero       NOT_FOUND (version-drift candidate)                          addCommandHeroAbilityActiveTargeting
+hero       NOT_FOUND (version-drift candidate)                          addCommandHeroAbilityAuraActivate
+hero       NOT_FOUND (version-drift candidate)                          addCommandHeroAbilityPassiveActivate
+hero       NOT_FOUND (version-drift candidate)                          addCommandHeroAbilityPassiveDeactivate
+hero       NOT_FOUND (version-drift candidate)                          addCommandHeroGatlingAbilityActiveShot
+hero       NOT_FOUND (version-drift candidate)                          addCommandHeroGatlingWarmUp
+hero       NOT_FOUND (version-drift candidate)                          addCommandSideHeroSlotCooldown
+hero       NOT_FOUND (version-drift candidate)                          addCommandSideHeroSlotUnlock
+hero       NOT_FOUND (version-drift candidate)                          addCommandTutorialFinishConditionActiveAbilityUsed
+hero       MATCH                                                        add_OnAbilityActivated
+hero       MATCH                                                        add_OnAbilityActivationRequested
+hero       MATCH                                                        add_OnAbilityDeactivated
+hero       MATCH                                                        add_OnAbilityProgressChanged
+hero       MATCH                                                        add_OnAbilityReadinessChanged
+hero       MATCH                                                        add_OnAbilityStopped
+hero       MATCH                                                        add_OnHeroActivated
+hero       MATCH                                                        add_OnHeroActiveAbilityActivate
+hero       MATCH                                                        add_OnHeroActiveAbilityDeactivate
+hero       NOT_FOUND (version-drift candidate)                          add_OnHeroInfosChange
+hero       MATCH                                                        add_OnHeroPassiveAbilityActivate
+hero       MATCH                                                        add_OnHeroPassiveAbilityDeactivate
+hero       MATCH                                                        add_OnHeroRestoreAvailabilityChanged
+hero       MATCH                                                        add_OnHeroSlotCooldown
+hero       MATCH                                                        add_OnRebindAvailabilityChanged
+hero       NOT_FOUND (version-drift candidate)                          calcAtlasActiveAbilityShotDistanceAndAngle
+hero       NOT_FOUND (version-drift candidate)                          flySeraphimTurbo
+hero       NOT_FOUND (version-drift candidate)                          getShooterSpecAbility
+hero       MATCH                                                        get_Ability
+hero       MATCH                                                        get_AbilityCountTriggerName
+hero       MATCH                                                        get_AbilityLayout
+hero       MATCH                                                        get_AbilityModel
+hero       MATCH                                                        get_AbilityProgress
+hero       MATCH                                                        get_AbilityRadiusActionController
+hero       MATCH                                                        get_ActiveAbilityView
+hero       MATCH                                                        get_ActiveAbilityWeaponId
+hero       MATCH                                                        get_ActiveBoostAtlasNumber
+hero       MATCH                                                        get_AliveHeroesUnitTypes
+hero       MATCH                                                        get_AllOwnActiveHeroBuildings
+hero       MATCH                                                        get_AnimatorPassiveAbilityHashes
+hero       MATCH                                                        get_Atlas
+hero       MATCH                                                        get_Atlas1
+hero       MATCH                                                        get_AtlasFirstPart
+hero       MATCH                                                        get_AtlasSecondPart
+hero       MATCH                                                        get_AvailableHeroSlotCount
+hero       NOT_FOUND (version-drift candidate)                          get_BatCerberActiveKill
+hero       NOT_FOUND (version-drift candidate)                          get_BatCerberKnifeKill
+hero       NOT_FOUND (version-drift candidate)                          get_BatHeroKillSingleLife
+hero       NOT_FOUND (version-drift candidate)                          get_BatHeroesKill
+hero       NOT_FOUND (version-drift candidate)                          get_BatSeraphimOnLandKill
+hero       NOT_FOUND (version-drift candidate)                          get_BatTyphoonKillHero
+hero       NOT_FOUND (version-drift candidate)                          get_BatWithLeviathan
+hero       NOT_FOUND (version-drift candidate)                          get_BatWithSeraphim
+hero       MATCH                                                        get_ButtonAvailabilityService
+hero       MATCH                                                        get_ButtonUnitSpecSeraphimDepart
+hero       MATCH                                                        get_ClipAbilityDie4
+hero       MATCH                                                        get_ClipAbilityStateIdle2
+hero       MATCH                                                        get_ClipFromAbility2
+hero       MATCH                                                        get_ClipFromAbility2ToSpec
+hero       MATCH                                                        get_EnableAbilityReaction
+hero       MATCH                                                        get_HasGoldToBuyHero
+hero       MATCH                                                        get_HasHeroBuildingWithRequiredLevel
+hero       MATCH                                                        get_HasSeveralAbilityActivations
+hero       MATCH                                                        get_HeroAbilities
+hero       MATCH                                                        get_HeroAbilityOutOfRangeLine
+hero       MATCH                                                        get_HeroAbilityPassive
+hero       MATCH                                                        get_HeroAbilityTargetingTarget
+hero       MATCH                                                        get_HeroAdsCount
+hero       MATCH                                                        get_HeroAviaDamageDecr
+hero       MATCH                                                        get_HeroCerberAbilityTargetingCoordinates
+hero       MATCH                                                        get_HeroConfigurationDataSource
+hero       NOT_FOUND (version-drift candidate)                          get_HeroDied
+hero       MATCH                                                        get_HeroIcon
+hero       NOT_FOUND (version-drift candidate)                          get_HeroInfo
+hero       MATCH                                                        get_HeroInfos
+hero       MATCH                                                        get_HeroMission
+hero       MATCH                                                        get_HeroNameId
+hero       MATCH                                                        get_HeroParam
+hero       MATCH                                                        get_HeroPrice
+hero       MATCH                                                        get_HeroSelection
+hero       MATCH                                                        get_HeroSelectionBig
+hero       MATCH                                                        get_HeroSideSlotView3
+hero       MATCH                                                        get_HeroSiegeModeSelection
+hero       MATCH                                                        get_HeroTutorialView
+hero       MATCH                                                        get_HeroType
+hero       MATCH                                                        get_HeroUnitContextMenuUpdaterPrefab
+hero       MATCH                                                        get_HeroUranumToActivate
+hero       NOT_FOUND (version-drift candidate)                          get_HeroWeaponAccuracy
+hero       NOT_FOUND (version-drift candidate)                          get_HeroWeaponAmount
+hero       MATCH                                                        get_InfoAbilityListView
+hero       MATCH                                                        get_IsAbilityReady
+hero       MATCH                                                        get_IsActiveAbilityShoot
+hero       MATCH                                                        get_IsBuyRestrictedByHeroesCombination
+hero       MATCH                                                        get_IsCurrentHeroSelected
+hero       MATCH                                                        get_IsHeroAvailableByUranum
+hero       MATCH                                                        get_IsHeroResearched
+hero       MATCH                                                        get_IsHeroSecret
+hero       MATCH                                                        get_KodomashActiveAbility
+hero       MATCH                                                        get_NGUIAtlases
+hero       MATCH                                                        get_OnHeroChanged
+hero       MATCH                                                        get_PassiveAbilityModel
+hero       MATCH                                                        get_PassiveAbilityProgress
+hero       MATCH                                                        get_Probability
+hero       MATCH                                                        get_RankHeroesAvailable
+hero       MATCH                                                        get_SolarisA1ActiveAbilityShotLength
+hero       MATCH                                                        get_UnHero
+hero       MATCH                                                        remove_OnAbilityActivated
+hero       MATCH                                                        remove_OnAbilityActivationRequested
+hero       MATCH                                                        remove_OnAbilityReadinessChanged
+hero       MATCH                                                        remove_OnAbilityStopped
+hero       MATCH                                                        remove_OnHeroActivated
+hero       MATCH                                                        remove_OnHeroActiveAbilityActivate
+hero       MATCH                                                        remove_OnHeroActiveAbilityDeactivate
+hero       MATCH                                                        remove_OnHeroPassiveAbilityActivate
+hero       MATCH                                                        remove_OnHeroPassiveAbilityDeactivate
+hero       MATCH                                                        remove_OnHeroSlotCooldown
+hero       NOT_FOUND (version-drift candidate)                          seraphimMovesToLandingPlace
+hero       MATCH                                                        set_Ability
+hero       MATCH                                                        set_AbilityRadiusAction
+hero       MATCH                                                        set_ActiveAbilityProgress
+hero       MATCH                                                        set_Atlas
+hero       MATCH                                                        set_BuildingWhereHeroInTrainingQueue
+hero       MATCH                                                        set_CommandDifficultyHeroic
+hero       MATCH                                                        set_Hero
+hero       MATCH                                                        set_HeroCards
+hero       MATCH                                                        set_HeroClass
+hero       MATCH                                                        set_HeroConfiguration
+hero       MATCH                                                        set_HeroIcon
+hero       NOT_FOUND (version-drift candidate)                          set_HeroSlotsTickAvailable
+hero       NOT_FOUND (version-drift candidate)                          set_HeroStatistics
+hero       MATCH                                                        set_IsHeroRestoreAvailable
+hero       MATCH                                                        set_PanelHeroes
+hero       NOT_FOUND (version-drift candidate)                          set_RankForHero
+hero       MATCH                                                        set_SecondUpgradeAvailability
+hero       MATCH                                                        set_UIHero1UseAbilityButton
+hero       MATCH                                                        set_UIHero2SelectButton
+hero       MATCH                                                        set_UIHero3UseAbilityButton
+hero       MATCH                                                        set_atlas
+hero       NOT_FOUND (version-drift candidate)                          validateHeroBuy
+network    COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <DelayedSubscriptionOnBattleScreenAsync>b__17_0
+network    COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <FindActiveClientUnit>b__94_0
+network    COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <FindServerAndSendCoroutine>b__4
+network    COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <GetClientAction>b__1
+network    COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <GetClientAction>b__5
+network    COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <GetClientInfo>b__3
+network    COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <GetPassiveAbilityFromClientUnit>b__5_0
+network    COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <InitAsync>b__25_0
+network    COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <InstantiateAsync>b__0
+network    COMPILER_ARTIFACT (host not found by name)                   <LoadResourceAsync>b__0
+network    COMPILER_ARTIFACT (host not found by name)                   <LoadResourcesAsync>b__0
+network    COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <OnNetworkEvent>b__2_0
+network    COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <OnNetworkEvent>b__35_0
+network    COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <PeriodicTimeSynchronizationUpdate>b__0
+network    COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <PingPongAsync>b__0
+network    COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <PrepareDesyncButton>b__16_0
+network    COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <ShowAsync>b__0
+network    COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <ShowWindowAsync>g__OnPrepareToSceneChanged|0
+network    COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <StopCycleUpdateMessageAsync>b__0
+network    COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <UpdateBoostEnableCheckerAsync>b__38_0
+network    MATCH                                                        AutoScrollLoopAsync
+network    MATCH                                                        CancelLoadingResourceAsync
+network    MATCH                                                        CatchServerConnectionSocketError
+network    MATCH                                                        CheckOurServerHttpResponse
+network    MATCH                                                        ClientActionBuy
+network    MATCH                                                        ClientActionGoodsSchedule
+network    MATCH                                                        ClientActionInGame
+network    MATCH                                                        CloseByDurationAsync
+network    MATCH                                                        CloseGiveClientLogWaiterConnectorState
+network    MATCH                                                        CloseGoToUpdateClientWaiterConnectorState
+network    MATCH                                                        ConvertServerModeToErrorStatus
+network    MATCH                                                        ConvertServerProductInfosToGGSkuDetails
+network    MATCH                                                        DelayedActivationAsync
+network    MATCH                                                        DelayedClickAsync
+network    MATCH                                                        DelayedDestroyAsync
+network    MATCH                                                        DelayedSubscriptionOnBattleScreenAsync
+network    MATCH                                                        ExecuteAsync
+network    MATCH                                                        GetAddressesAsync
+network    MATCH                                                        GetClientEventPairList
+network    MATCH                                                        GetClientInfo
+network    NOT_FOUND (version-drift candidate)                          GetSelectFractionAsync
+network    MATCH                                                        HideAndDestroyActionAsync
+network    MATCH                                                        InitializeAsync
+network    MATCH                                                        InitializeWithoutServerPvE
+network    MATCH                                                        InstantiateAsync
+network    MATCH                                                        InstantiateMainWindowPrefabAsync
+network    MATCH                                                        LoadAsync
+network    MATCH                                                        LoadBoxesAsync
+network    MATCH                                                        LoadByteResourceAsync
+network    MATCH                                                        LoadLastLoginServerAddress
+network    NOT_FOUND (version-drift candidate)                          LoadResourcesAsync
+network    NOT_FOUND (version-drift candidate)                          LoadSerializableResourceAsync
+network    MATCH                                                        NotifyAsyncResult
+network    MATCH                                                        OnBattleLogicDesyncNotification
+network    MATCH                                                        OnMessageGoToUpdateClientReceived
+network    MATCH                                                        OnNetworkEvent
+network    MATCH                                                        OnWaitingServerHint
+network    MATCH                                                        OptimizeAsync
+network    MATCH                                                        PingPongAsync
+network    MATCH                                                        ReAddGiveClientLogWaiter
+network    MATCH                                                        RepositionAsync
+network    MATCH                                                        SafeOpenAsync
+network    MATCH                                                        SaveLocalLoginServerAddressesWithoutFlush
+network    MATCH                                                        SendCommonMessageAsync
+network    MATCH                                                        SendCycleUpdateMessageAsync
+network    MATCH                                                        SendEventClientStartedWaitingForMatching
+network    MATCH                                                        SendMessageClientPausedNotification
+network    MATCH                                                        SetInteractableNextFrameAsync
+network    MATCH                                                        SetPrivateServerAddressList
+network    MATCH                                                        SetServerTime
+network    MATCH                                                        ShowAsync
+network    MATCH                                                        ShowWindowAsync
+network    MATCH                                                        SoundDurationTimerAsync
+network    MATCH                                                        StartCatalogLoadingAsync
+network    MATCH                                                        StartConnectToServer
+network    MATCH                                                        StartLoadingAsync
+network    MATCH                                                        StartTestConnectionsAsync
+network    MATCH                                                        StartWaitServerAnswer
+network    MATCH                                                        TimeSynchronizationUpdate
+network    MATCH                                                        ToDeathVoiceDelayAsync
+network    NOT_FOUND (version-drift candidate)                          ToNetworkAddresses
+network    MATCH                                                        TuneNetworkConfiguration
+network    MATCH                                                        TweenFloatAsync
+network    MATCH                                                        UnloadUnusedAssetsAsync
+network    MATCH                                                        WaitForClientRequest
+network    MATCH                                                        WaitUntilAsync
+network    MATCH                                                        add_NetworkEvent
+network    INTERFACE_EXPLICIT (representation difference)               com.geargames.aow.client.gui.managedwindow.IComponentCleanable.Clean
+network    MATCH                                                        get_ActiveNetworkConnector
+network    MATCH                                                        get_AsyncState
+network    MATCH                                                        get_AsyncWaitHandle
+network    MATCH                                                        get_ClientUnbuildZones
+network    MATCH                                                        get_ClientUnit
+network    MATCH                                                        get_CompletedSynchronously
+network    MATCH                                                        get_CreatedOnClient
+network    MATCH                                                        get_EventServers
+network    MATCH                                                        get_InForestClient
+network    MATCH                                                        get_IsClientUnlocked
+network    MATCH                                                        get_IsPremiumActiveAndSynced
+network    MATCH                                                        get_IsRemoteServer
+network    MATCH                                                        get_IsTimeSynced
+network    MATCH                                                        get_LastReceivedServerSequenceNumber
+network    MATCH                                                        get_Network
+network    MATCH                                                        get_NetworkConnector
+network    MATCH                                                        get_NetworkMessageListener
+network    MATCH                                                        get_OnDataUpdatedObserver
+network    MATCH                                                        get_ServerType
+network    MATCH                                                        get_UnderShieldClient
+network    MATCH                                                        get_UpdateClientInfo
+network    MATCH                                                        get_VisibleClient
+network    MATCH                                                        noValidClientSession
+network    MATCH                                                        set_CellClientBattleSide
+network    MATCH                                                        set_ClientMessages
+network    MATCH                                                        set_ClientToken
+network    MATCH                                                        set_CreatedOnClient
+network    MATCH                                                        set_DefaultClientLocale
+network    MATCH                                                        set_NetworkConnector
+network    MATCH                                                        set_PvPClientStatisticsNew
+network    MATCH                                                        set_PveClientStatistics
+network    NOT_FOUND (version-drift candidate)                          set_RepeatClientReadyToPlaySendEnabled
+network    MATCH                                                        set_ServerAddress
+network    NOT_FOUND (version-drift candidate)                          trySwitchOffUnderShieldOnClient
+unit       COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <AddSelectUnitsByRectangle>b__0
+unit       COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <AddSelectUnitsByRectangle>b__11_0
+unit       COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <ApplyUnitAbilityConfigs>b__0
+unit       COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <ClickOnEmptyPlaceAtUnitSelection>b__4_0
+unit       COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <DoubleClickOnOwnUnitAtUnitSelection>b__0
+unit       COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <FindActiveClientUnit>b__94_0
+unit       COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <GetPassiveAbilityFromClientUnit>b__5_0
+unit       COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <IsUnitPrototypeOpened>b__0
+unit       COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <SelectAllUnitsOnMapWithSettings>b__0
+unit       COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <SelectCentralUnit>b__12_1
+unit       COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <SelectUnitsByPolygon>b__1
+unit       COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <SelectUnitsByRectangle>b__0
+unit       COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <TryGetUnitConfig>b__0
+unit       COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <TryPlayHeroUnitDied>b__0
+unit       COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <TryPlayMoveVoiceToSelectedUnits>b__0
+unit       COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <TryPlayPatrolVoiceToSelectedUnits>b__0
+unit       COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <TryPlaySelectVoiceToSelectedUnits>b__76_0
+unit       COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <TryPlayUnitOutOfFuelVoice>b__0
+unit       MATCH                                                        AddUnit
+unit       MATCH                                                        ApplyUnitTypeModification
+unit       MATCH                                                        CellNearUnit
+unit       MATCH                                                        CheckUnitsSelection
+unit       MATCH                                                        ClickOnAllyBuildingAtUnitSelection
+unit       MATCH                                                        ClickOnAllyUnitAtBuildingSelection
+unit       MATCH                                                        ClickOnAllyUnitAtNoneSelection
+unit       MATCH                                                        ClickOnAllyUnitAtUnitSelection
+unit       MATCH                                                        ClickOnEmptyPlaceAtUnitSelection
+unit       MATCH                                                        ClickOnEnemyUnitAtBuildingSelection
+unit       MATCH                                                        ClickOnEnemyUnitAtUnitSelection
+unit       MATCH                                                        ClickOnOwnBuildingAtUnitSelection
+unit       MATCH                                                        ClickOnOwnUnitAtNoneSelection
+unit       MATCH                                                        ClickOnOwnUnitAtUnitSelection
+unit       MATCH                                                        CreateLinkedUnityTokenSource
+unit       MATCH                                                        CreateUnit
+unit       MATCH                                                        DestroyUnit
+unit       MATCH                                                        DoGroupUnitsCleared
+unit       MATCH                                                        DoubleClickOnEnemyUnitAtUnitSelection
+unit       MATCH                                                        DoubleClickOnOwnUnitAtUnitSelection
+unit       MATCH                                                        EmulateClickOnEmptyPlaceAtUnitSelection
+unit       MATCH                                                        GGDebugUncancelledUniTasks
+unit       MATCH                                                        GetActiveAbilityFromUnitType
+unit       MATCH                                                        GetAvailableUnitByBuildingPairs
+unit       MATCH                                                        GetBombardUnitsOnly
+unit       NOT_FOUND (version-drift candidate)                          GetContextMenuPoolByUnit
+unit       MATCH                                                        GetMoleTowerUnitType
+unit       MATCH                                                        GetOrAddUnitBaseMaterial
+unit       MATCH                                                        GetSectorUnit
+unit       MATCH                                                        GetSelectVoiceToInfUnit
+unit       MATCH                                                        GetSpotterUnit
+unit       MATCH                                                        GetUniTasksIntersection
+unit       MATCH                                                        GetUnitStateCount
+unit       MATCH                                                        IncrementUIStatTapBuildToUnlockUnit
+unit       MATCH                                                        IsGroupContainsDifferentUnits
+unit       MATCH                                                        IsUnitAlreadySelected
+unit       MATCH                                                        IsUnitCanExecuteAction
+unit       MATCH                                                        IsUnitDead
+unit       MATCH                                                        IsUnitDeathExplosionEnabled
+unit       MATCH                                                        IsUnitOfType
+unit       MATCH                                                        IsUnitShieldAndFoggerEnabled
+unit       MATCH                                                        IsUnitTypeMatch
+unit       MATCH                                                        IsUnitValid
+unit       MATCH                                                        ObservableUnitsChanged
+unit       MATCH                                                        OnGroupUnitsSaved
+unit       MATCH                                                        OnReselectionUnitsChanged
+unit       MATCH                                                        OnUnitTakingDamage
+unit       MATCH                                                        OnUnitTrainingProgressChanged
+unit       MATCH                                                        OnUnitTrainingStateUpdated
+unit       MATCH                                                        OnUnitVisibilityChanged
+unit       MATCH                                                        OverrideUnitState
+unit       MATCH                                                        PlayAttackFlagVoiceToUnitsGroup
+unit       MATCH                                                        PlayMoveVoiceToUnitsGroup
+unit       MATCH                                                        PlayPatrolVoiceToUnitsGroup
+unit       MATCH                                                        PlayUnitOutOfFuelVoice
+unit       MATCH                                                        PlayUnitUnderAttackVoice
+unit       NOT_FOUND (version-drift candidate)                          ProcessUnitMarkRemove
+unit       MATCH                                                        RaiseUnitCreated
+unit       MATCH                                                        RaiseUnitDied
+unit       MATCH                                                        RaiseUnitRemovedFromTrainingQueue
+unit       MATCH                                                        RaiseUnitTrainingCompleted
+unit       MATCH                                                        RaiseUnitTrainingStarted
+unit       MATCH                                                        ReplaceReferencesToUnitType
+unit       MATCH                                                        SaveUnitsAsGroupInternal
+unit       MATCH                                                        SelectAllUnitsOnMap
+unit       MATCH                                                        SelectUnitsByRectangle
+unit       MATCH                                                        SendBuildingCancelBuyUnit
+unit       MATCH                                                        SendNearestUnitToCell
+unit       MATCH                                                        SendSelectedUnitsAttack
+unit       MATCH                                                        SendSelectedUnitsAttackToBuilding
+unit       MATCH                                                        SendSelectedUnitsMineBuilding
+unit       MATCH                                                        SendSelectedUnitsPatrolTargeting
+unit       MATCH                                                        SendUnitsDemining
+unit       MATCH                                                        SendUnitsMove
+unit       MATCH                                                        SendUnitsPsiAttack
+unit       MATCH                                                        SendUnitsUnloadFromTransport
+unit       MATCH                                                        SetBestDestroyUnits
+unit       MATCH                                                        SetUnitSelectedBackgroundActive
+unit       MATCH                                                        ShowUnitDesc
+unit       MATCH                                                        StopUnitToActivateAbility
+unit       MATCH                                                        ThereIsAllyUnit
+unit       MATCH                                                        ToUnitBuffOff
+unit       MATCH                                                        ToUnitBuffOn
+unit       MATCH                                                        TryAddAvailableUnitPrototypes
+unit       MATCH                                                        TryOrderUnit
+unit       MATCH                                                        TryPlayDeployingMinesVoiceToSelectedUnits
+unit       MATCH                                                        TryPlayMoveVoiceToSelectedUnits
+unit       MATCH                                                        TryPlayPatrolVoiceToSelectedUnits
+unit       MATCH                                                        TryPlaySiegeModeVoiceToSelectedUnits
+unit       MATCH                                                        TryPlayUnitOutOfFuelVoice
+unit       MATCH                                                        TryUnitTrainingQueueCompleted
+unit       MATCH                                                        UnitAdd
+unit       MATCH                                                        UnitContextMenuUpdate
+unit       MATCH                                                        UnitFullyCreated
+unit       MATCH                                                        UnitLeave
+unit       MATCH                                                        UnitRemove
+unit       MATCH                                                        UnitTopSelection
+unit       MATCH                                                        UnitTrainingStart
+unit       INTERFACE_EXPLICIT (representation difference)               UnityEngine.EventSystems.IEndDragHandler.OnEndDrag
+unit       MATCH                                                        UnityInstantiate
+unit       NOT_FOUND (version-drift candidate)                          achievementsAtUnitKilled
+unit       NOT_FOUND (version-drift candidate)                          addCommandBuildingUnitTrained
+unit       NOT_FOUND (version-drift candidate)                          addCommandSideUnits
+unit       NOT_FOUND (version-drift candidate)                          addCommandTutorialCheckUnitsSelection
+unit       NOT_FOUND (version-drift candidate)                          addCommandTutorialFinishConditionBuyUnitCount
+unit       NOT_FOUND (version-drift candidate)                          addCommandTutorialFinishConditionUnitGroupSet
+unit       NOT_FOUND (version-drift candidate)                          addCommandTutorialFinishConditionUnitsMoved
+unit       NOT_FOUND (version-drift candidate)                          addCommandTutorialFinishConditionUnitsSpec
+unit       NOT_FOUND (version-drift candidate)                          addCommandUnitAction
+unit       NOT_FOUND (version-drift candidate)                          addCommandUnitAuraOut
+unit       NOT_FOUND (version-drift candidate)                          addCommandUnitBuffOff
+unit       NOT_FOUND (version-drift candidate)                          addCommandUnitChangeAppearance
+unit       NOT_FOUND (version-drift candidate)                          addCommandUnitCreate
+unit       NOT_FOUND (version-drift candidate)                          addCommandUnitDamage
+unit       NOT_FOUND (version-drift candidate)                          addCommandUnitEnergyChanged
+unit       NOT_FOUND (version-drift candidate)                          addCommandUnitErase
+unit       NOT_FOUND (version-drift candidate)                          addCommandUnitFlarePrepare
+unit       NOT_FOUND (version-drift candidate)                          addCommandUnitFoggerOff
+unit       NOT_FOUND (version-drift candidate)                          addCommandUnitFoggerVisible
+unit       NOT_FOUND (version-drift candidate)                          addCommandUnitForcedMoveDisable
+unit       NOT_FOUND (version-drift candidate)                          addCommandUnitIdle
+unit       NOT_FOUND (version-drift candidate)                          addCommandUnitMove
+unit       NOT_FOUND (version-drift candidate)                          addCommandUnitOccupationChanged
+unit       NOT_FOUND (version-drift candidate)                          addCommandUnitOutOfFuel
+unit       NOT_FOUND (version-drift candidate)                          addCommandUnitRotate
+unit       NOT_FOUND (version-drift candidate)                          addCommandUnitShieldOff
+unit       NOT_FOUND (version-drift candidate)                          addCommandUnitShoot
+unit       NOT_FOUND (version-drift candidate)                          addCommandUnitSiegeOn
+unit       NOT_FOUND (version-drift candidate)                          addCommandUnitSweep
+unit       NOT_FOUND (version-drift candidate)                          addCommandUnitTask
+unit       NOT_FOUND (version-drift candidate)                          addCommandUnitTransferBerserk
+unit       NOT_FOUND (version-drift candidate)                          addCommandUnitTransferToSide
+unit       NOT_FOUND (version-drift candidate)                          addCommandUnitUnderShieldOn
+unit       NOT_FOUND (version-drift candidate)                          addCommandUnitWeaponTargeting
+unit       NOT_FOUND (version-drift candidate)                          addToDeadUnits
+unit       MATCH                                                        add_OnGroupUnitsChanged
+unit       MATCH                                                        add_OnGroupUnitsCleared
+unit       MATCH                                                        add_OnUnitDied
+unit       MATCH                                                        add_OnUnitRemovedFromTrainingQueue
+unit       MATCH                                                        add_OnUnitTrainingCanceled
+unit       NOT_FOUND (version-drift candidate)                          buyUnitInner
+unit       NOT_FOUND (version-drift candidate)                          canBarracksProduceUnit
+unit       NOT_FOUND (version-drift candidate)                          checkSkirtedUnitAround
+unit       NOT_FOUND (version-drift candidate)                          checkSkirtedUnitsAround
+unit       NOT_FOUND (version-drift candidate)                          clearUnitTasksWithoutLoading
+unit       NOT_FOUND (version-drift candidate)                          clearUnitsAfterBuSet
+unit       INTERFACE_EXPLICIT (representation difference)               com.geargames.aow.scenes.battle.unity.IBattleReplayRestartable.OnGameObjectsActivated
+unit       INTERFACE_EXPLICIT (representation difference)               com.geargames.unity.IMonoCoroutinable.StartCoroutine
+unit       INTERFACE_EXPLICIT (representation difference)               com.geargames.unity.IMonoCoroutinable.StopAllCoroutines
+unit       INTERFACE_EXPLICIT (representation difference)               com.geargames.unity.IMonoCoroutinable.StopCoroutine
+unit       NOT_FOUND (version-drift candidate)                          getUnitCell
+unit       NOT_FOUND (version-drift candidate)                          getUnitSettings
+unit       MATCH                                                        get_AdUnit
+unit       MATCH                                                        get_AliveHeroesUnitTypes
+unit       NOT_FOUND (version-drift candidate)                          get_BatUnitsKilled
+unit       NOT_FOUND (version-drift candidate)                          get_BatUnitsTrained
+unit       MATCH                                                        get_ButtonUnitSpecAircraftRebase
+unit       MATCH                                                        get_ButtonUnitSpecBomber
+unit       MATCH                                                        get_ButtonUnitSpecCanShoot
+unit       MATCH                                                        get_ButtonUnitSpecFromShield
+unit       MATCH                                                        get_ButtonUnitSpecMineGround
+unit       MATCH                                                        get_ButtonUnitSpecPatrol
+unit       MATCH                                                        get_ButtonUnitSpecSeraphimDepart
+unit       MATCH                                                        get_ClientUnit
+unit       MATCH                                                        get_CommunityLinks
+unit       NOT_FOUND (version-drift candidate)                          get_FoggedUnits
+unit       MATCH                                                        get_GiveUnitModificationType
+unit       MATCH                                                        get_HeroUnitContextMenuUpdaterPrefab
+unit       MATCH                                                        get_HqUnitsBase
+unit       MATCH                                                        get_IsTargetUnit
+unit       MATCH                                                        get_IsUnitHelicopterBehaviour
+unit       MATCH                                                        get_IsUnitTrainingDisabled
+unit       MATCH                                                        get_NotSendedUnitsCount
+unit       MATCH                                                        get_ObservableUnitsVersion
+unit       NOT_FOUND (version-drift candidate)                          get_ObstacleUnits
+unit       MATCH                                                        get_SelectedUnits
+unit       MATCH                                                        get_SelectedUnitsCount
+unit       MATCH                                                        get_SolarisA1UnitCheckRadius
+unit       NOT_FOUND (version-drift candidate)                          get_StatUnitsLost
+unit       NOT_FOUND (version-drift candidate)                          get_StatUnitsProduced
+unit       MATCH                                                        get_Unit
+unit       MATCH                                                        get_UnitAircraftsRebase
+unit       MATCH                                                        get_UnitBombardTargeting
+unit       MATCH                                                        get_UnitConfigList
+unit       MATCH                                                        get_UnitContextMenuUpdaterPrefab
+unit       MATCH                                                        get_UnitDetectedFlashingDuration
+unit       MATCH                                                        get_UnitEventRouter
+unit       MATCH                                                        get_UnitHue
+unit       MATCH                                                        get_UnitInForestColor
+unit       MATCH                                                        get_UnitIndex
+unit       MATCH                                                        get_UnitMining
+unit       MATCH                                                        get_UnitModification
+unit       MATCH                                                        get_UnitPrototype
+unit       MATCH                                                        get_UnitPrototypes
+unit       MATCH                                                        get_UnitSpecialFoggerEmitAlly
+unit       MATCH                                                        get_UnitStrafeTower
+unit       MATCH                                                        get_UnitTakePositions
+unit       NOT_FOUND (version-drift candidate)                          get_UnitTrainBonus
+unit       MATCH                                                        get_UnitTrainingLarva
+unit       MATCH                                                        get_UnitTrainingQueue
+unit       MATCH                                                        get_Units
+unit       MATCH                                                        get_UnitsAmount
+unit       MATCH                                                        get_UnitsAvailable
+unit       MATCH                                                        get_UnitsToFollow
+unit       NOT_FOUND (version-drift candidate)                          hasAliveUnitWithAttack
+unit       NOT_FOUND (version-drift candidate)                          isUnitFitsBoostTarget
+unit       NOT_FOUND (version-drift candidate)                          isUnitFreeCell
+unit       NOT_FOUND (version-drift candidate)                          removeAllUnits
+unit       NOT_FOUND (version-drift candidate)                          removeUnitFromAttack
+unit       MATCH                                                        remove_OnUnitDied
+unit       MATCH                                                        remove_OnUnitPutInTrainingQueue
+unit       MATCH                                                        remove_OnUnitTrainingCompleted
+unit       MATCH                                                        remove_OnUnitTrainingQueueRemove
+unit       MATCH                                                        remove_OnUnitTrainingStarted
+unit       NOT_FOUND (version-drift candidate)                          set_ActivityAfterUnits
+unit       MATCH                                                        set_ButtonBuildingOrderUnit2
+unit       NOT_FOUND (version-drift candidate)                          set_CleanQuestsAndUnits
+unit       NOT_FOUND (version-drift candidate)                          set_DeadUnitsSize
+unit       NOT_FOUND (version-drift candidate)                          set_DeadUnitsToClear
+unit       NOT_FOUND (version-drift candidate)                          set_HQUnitsInc
+unit       MATCH                                                        set_IsMultiAdUnitsAbTestEnabled
+unit       MATCH                                                        set_IsUnitModificationsFeatureActive
+unit       MATCH                                                        set_IsUnitStrafable
+unit       NOT_FOUND (version-drift candidate)                          set_PassUnits
+unit       NOT_FOUND (version-drift candidate)                          set_PointsForKillingUnits
+unit       MATCH                                                        set_ProtectionUnit
+unit       NOT_FOUND (version-drift candidate)                          set_SchedUnit
+unit       NOT_FOUND (version-drift candidate)                          set_ScratchUnits
+unit       MATCH                                                        set_UITapBuildToUnlockUnit
+unit       MATCH                                                        set_UnitPrototype
+unit       MATCH                                                        set_UnitSpecButtons
+unit       MATCH                                                        set_UnitTypeId
+unit       MATCH                                                        set_UnitTypes
+unit       MATCH                                                        set_Units
+unit       MATCH                                                        set_UnitsAmount
+unit       NOT_FOUND (version-drift candidate)                          set_UnitsCreated
+unit       NOT_FOUND (version-drift candidate)                          set_UnitsToAssign
+unit       MATCH                                                        set_UnitsToFollow
+unit       MATCH                                                        set_UnitsToLoad
+unit       MATCH                                                        set_UpgradeUnits
+unit       NOT_FOUND (version-drift candidate)                          shiftFastRespondedUnit
+unit       NOT_FOUND (version-drift candidate)                          stopSiegeUnit
+unit       NOT_FOUND (version-drift candidate)                          stopUnitLoading
+unit       NOT_FOUND (version-drift candidate)                          tryAssignUnits
+unit       NOT_FOUND (version-drift candidate)                          verifyUnitLoading
+weapon     COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <CalculateForWeapon>b__4_0
+weapon     COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <CreateStatsForFirebat>b__2
+weapon     COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <GetAdditionalWeapons>b__5_0
+weapon     COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <SuperWeaponLaunch>b__272_0
+weapon     COMPILER_ARTIFACT (lambda of a method present in 6.9.18)     <WeaponFlarePrepare>b__273_0
+weapon     MATCH                                                        CalculateForWeapon
+weapon     MATCH                                                        CalculateWeaponArmorDamage
+weapon     MATCH                                                        CheckWeaponForAbilities
+weapon     MATCH                                                        CreateSuperWeaponMediumDamage
+weapon     MATCH                                                        DeactivateWeaponList
+weapon     MATCH                                                        GetBombardWeaponType
+weapon     MATCH                                                        GetNextUsualShootAnimation
+weapon     MATCH                                                        GetShootClip
+weapon     MATCH                                                        GetSuperWeaponDamageForHeavyArmor
+weapon     MATCH                                                        GetWeaponBasedFlarePrepareClip
+weapon     MATCH                                                        GetWeaponDistanceOriginal
+weapon     MATCH                                                        GetWeaponSectorAngle
+weapon     MATCH                                                        InitiateBurstWeapon
+weapon     MATCH                                                        OnTryAbilityShootInvoke
+weapon     MATCH                                                        RemoveTrainedSuperWeapon
+weapon     MATCH                                                        RunFirebaseAnalyticsOnWorkerThread
+weapon     MATCH                                                        SetWeaponDistance
+weapon     MATCH                                                        ShowActionShoot
+weapon     INTERFACE_EXPLICIT (representation difference)               System.Collections.Generic.IEnumerable<com.geargames.aow.entities.WeaponType>.GetEnumerator
+weapon     MATCH                                                        ToShoot
+weapon     MATCH                                                        TryGetAbilityStateShootClip
+weapon     MATCH                                                        UpdateSuperWeaponState
+weapon     MATCH                                                        WeaponDamageHeavyValue
+weapon     MATCH                                                        WeaponStaticAccuracy
+weapon     NOT_FOUND (version-drift candidate)                          abilityPassiveWeaponActivate
+weapon     NOT_FOUND (version-drift candidate)                          addCommandBuildingWeaponRotate
+weapon     NOT_FOUND (version-drift candidate)                          addCommandBuildingWeaponTargeting
+weapon     NOT_FOUND (version-drift candidate)                          addCommandTutorialFinishConditionSuperWeaponUnavailable
+weapon     NOT_FOUND (version-drift candidate)                          addCommandUnitShoot
+weapon     NOT_FOUND (version-drift candidate)                          addCommandUnitWeaponTargeting
+weapon     NOT_FOUND (version-drift candidate)                          calcFireDistanceMisc
+weapon     NOT_FOUND (version-drift candidate)                          calcFireOrientBu
+weapon     NOT_FOUND (version-drift candidate)                          calcGatlingWeaponMax
+weapon     MATCH                                                        calcShooter
+weapon     NOT_FOUND (version-drift candidate)                          clearEnemyWeapon
+weapon     NOT_FOUND (version-drift candidate)                          getShooterSpecAbility
+weapon     MATCH                                                        get_ActiveAbilityWeaponId
+weapon     NOT_FOUND (version-drift candidate)                          get_BatFirebatsJumped
+weapon     NOT_FOUND (version-drift candidate)                          get_BatFirebatsSnipersKilled
+weapon     MATCH                                                        get_ButtonUnitSpecCanShoot
+weapon     MATCH                                                        get_ClipDieFire2
+weapon     MATCH                                                        get_ClipShoot1
+weapon     MATCH                                                        get_ClipShoot2
+weapon     MATCH                                                        get_ClipSpecialDieFire2
+weapon     MATCH                                                        get_ClipSpecialShoot3
+weapon     MATCH                                                        get_Fire
+weapon     MATCH                                                        get_FireRadiusInc
+weapon     MATCH                                                        get_FlagShoot
+weapon     MATCH                                                        get_ForestFireDistDrop
+weapon     MATCH                                                        get_ForwardWeapon
+weapon     MATCH                                                        get_GatlingShootDecrInterval
+weapon     MATCH                                                        get_HasCreatedWeapons
+weapon     NOT_FOUND (version-drift candidate)                          get_HeroWeaponAccuracy
+weapon     NOT_FOUND (version-drift candidate)                          get_HeroWeaponAmount
+weapon     MATCH                                                        get_InfoWeaponLongView
+weapon     MATCH                                                        get_IsActiveAbilityShoot
+weapon     MATCH                                                        get_ReadyToShoot
+weapon     MATCH                                                        get_ShootActionPosition
+weapon     MATCH                                                        get_ShootsCount
+weapon     MATCH                                                        get_TrainedSuperWeapons
+weapon     MATCH                                                        get_Weapon
+weapon     MATCH                                                        get_WeaponAmount
+weapon     MATCH                                                        get_WeaponIndex
+weapon     MATCH                                                        get_WeaponTransformVert
+weapon     MATCH                                                        get_Weapons
+weapon     NOT_FOUND (version-drift candidate)                          processWeaponsNoEnergy
+weapon     NOT_FOUND (version-drift candidate)                          removeNuclearMissileAfterShooting
+weapon     MATCH                                                        remove_OnWeaponsLateUpdate
+weapon     NOT_FOUND (version-drift candidate)                          rotateSecondWeaponAfterFirst
+weapon     NOT_FOUND (version-drift candidate)                          seizeFire
+weapon     MATCH                                                        set_BulletShooter
+weapon     MATCH                                                        set_FireStyle
+weapon     MATCH                                                        set_FlagShoot
+weapon     MATCH                                                        set_IsSuperWeaponReady
+weapon     MATCH                                                        set_ShootActionPosition
+weapon     MATCH                                                        set_WeaponTypes
+weapon     MATCH                                                        set_Weapons
+weapon     NOT_FOUND (version-drift candidate)                          thinkWeapons
+weapon     NOT_FOUND (version-drift candidate)                          tryGatlingPassiveShoot
+weapon     MATCH                                                        updateWeaponsDistance
+weapon     NOT_FOUND (version-drift candidate)                          weaponsRotate
