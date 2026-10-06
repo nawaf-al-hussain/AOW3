@@ -1,0 +1,283 @@
+EStat / IStatModel extraction log — 6.9.18 dump.cs
+Generated: 2026-10-06 (audit-report item #4)
+Source: reverse/dump.cs.zip -> dump.cs, 63922449 bytes, SHA-256 0050e67d23f898588f0771c69ba7f30f9122cd6eccd66674c0f7c87b7f24714b
+stringliteral.json SHA-256 50cb8d7e7c4f436e243788c510c7ab9c23e1ec6036c5a95ca2d23bcbb5ab27f8
+EStat enum: dump.cs lines 168776-168858, namespace com.geargames.aow.ugui.army.models.info, 78 values (0..77)
+EStatCategory enum: dump.cs lines 168861-168870: [('None', 0), ('Base', 1), ('Produce', 2), ('Cost', 3), ('Special', 4)]
+IStatModel interface: dump.cs lines 20773-20810, namespace Domains.Workshop.Api.Prototypes.Stats
+Interface contract: public abstract int Name { get; }; public abstract IReadOnlyList<IStatModel.StatValue> Values { get; }; public abstract string Hint { get; }; public abstract EStatCategory Category { get; }; public abstract EStat Stat { get; }; public abstract bool IsIncreasing { get; }; public abstract IPrototypeModel Owner { get; }; public abstract Observable<Unit> OnChange { get; }
+MineStatsFactory: dump.cs lines 17414-, namespace Domains.Workshop.Impl.Models.Weapon
+IStatModel implementors found: 45
+
+== CoilTankMaxTargetsStat TDI 396 (Domains.Workshop.Impl.Models.Weapon) dump.cs:17770-17826 sealed=True rva_count=11
+   field AbilityType m_ability
+   field IMaxStatValueProvider m_max
+   ctor public void .ctor(AbilityType ability, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== LaunchPreparationTimeStat TDI 397 (Domains.Workshop.Impl.Models.Weapon) dump.cs:17831-17887 sealed=True rva_count=11
+   field WeaponType m_rocketWeapon
+   field IMaxStatValueProvider m_max
+   ctor public void .ctor(WeaponType rocketWeapon, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== MineCostStat TDI 398 (Domains.Workshop.Impl.Models.Weapon) dump.cs:17892-17948 sealed=True rva_count=11
+   field MineType m_mine
+   field IMaxStatValueProvider m_max
+   ctor public void .ctor(MineType mine, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== MineDamageForHeavyArmorStat TDI 399 (Domains.Workshop.Impl.Models.Weapon) dump.cs:17953-18009 sealed=True rva_count=11
+   field MineType m_mine
+   field IMaxStatValueProvider m_max
+   ctor public void .ctor(MineType mine, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== MineDamageForLightArmorStat TDI 400 (Domains.Workshop.Impl.Models.Weapon) dump.cs:18014-18070 sealed=True rva_count=11
+   field MineType m_mine
+   field IMaxStatValueProvider m_max
+   ctor public void .ctor(MineType mine, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== MineDamageForMediumArmorStat TDI 401 (Domains.Workshop.Impl.Models.Weapon) dump.cs:18075-18131 sealed=True rva_count=11
+   field MineType m_mine
+   field IMaxStatValueProvider m_max
+   ctor public void .ctor(MineType mine, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== MineExplosionRadiusStat TDI 402 (Domains.Workshop.Impl.Models.Weapon) dump.cs:18136-18192 sealed=True rva_count=11
+   field MineType m_mine
+   field IMaxStatValueProvider m_max
+   ctor public void .ctor(MineType mine, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== MineSetTimeStat TDI 403 (Domains.Workshop.Impl.Models.Weapon) dump.cs:18197-18253 sealed=True rva_count=11
+   field MineType m_mine
+   field IMaxStatValueProvider m_max
+   ctor public void .ctor(MineType mine, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== MissileFlightTimeStat TDI 404 (Domains.Workshop.Impl.Models.Weapon) dump.cs:18258-18314 sealed=True rva_count=11
+   field Fraction m_fraction
+   field IMaxStatValueProvider m_max
+   ctor public void .ctor(Fraction fraction, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== PsiAttackSpeedReductionStat TDI 405 (Domains.Workshop.Impl.Models.Weapon) dump.cs:18319-18375 sealed=True rva_count=11
+   field AbilityType m_ability
+   field IMaxStatValueProvider m_max
+   ctor public void .ctor(AbilityType ability, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== PsiSlowdownDurationStat TDI 406 (Domains.Workshop.Impl.Models.Weapon) dump.cs:18380-18436 sealed=True rva_count=11
+   field AbilityType m_ability
+   field IMaxStatValueProvider m_max
+   ctor public void .ctor(AbilityType ability, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== SpaceStrikePreparationTimeStat TDI 407 (Domains.Workshop.Impl.Models.Weapon) dump.cs:18441-18497 sealed=True rva_count=11
+   field WeaponType m_rocketWeapon
+   field IMaxStatValueProvider m_max
+   ctor public void .ctor(WeaponType rocketWeapon, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== SuperWeaponCostStat TDI 408 (Domains.Workshop.Impl.Models.Weapon) dump.cs:18502-18559 sealed=True rva_count=11
+   field UnitType m_rocket
+   field IMaxStatValueProvider m_max
+   field int m_hint
+   ctor public void .ctor(UnitType rocket, IMaxStatValueProvider max, int hint, IPrototypeModel owner) { }
+== SuperWeaponCpStat TDI 409 (Domains.Workshop.Impl.Models.Weapon) dump.cs:18564-18621 sealed=True rva_count=11
+   field UnitType m_rocket
+   field IMaxStatValueProvider m_max
+   field int m_hint
+   ctor public void .ctor(UnitType rocket, IMaxStatValueProvider max, int hint, IPrototypeModel owner) { }
+== SuperWeaponTimeStat TDI 410 (Domains.Workshop.Impl.Models.Weapon) dump.cs:18626-18683 sealed=True rva_count=11
+   field UnitType m_rocket
+   field IMaxStatValueProvider m_max
+   field int m_hint
+   ctor public void .ctor(UnitType rocket, IMaxStatValueProvider max, int hint, IPrototypeModel owner) { }
+== WeaponAccuracyStat TDI 412 (Domains.Workshop.Impl.Models.Weapon) dump.cs:18708-18764 sealed=True rva_count=11
+   field WeaponType m_weapon
+   ctor public void .ctor(WeaponType weapon, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== WeaponBombCountStat TDI 413 (Domains.Workshop.Impl.Models.Weapon) dump.cs:18769-18828 sealed=True rva_count=12
+   field WeaponType m_weapon
+   field IMaxStatValueProvider m_max
+   static public static IStatModel TryCreate(WeaponType weapon, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== WeaponDamage TDI 414 (Domains.Workshop.Impl.Models.Weapon) dump.cs:18833-18917 sealed=False rva_count=17
+   field WeaponType m_weapon
+   field IMaxStatValueProvider m_max
+   field string m_statName
+   static public static WeaponDamage CreateLiteDamage(WeaponType weapon, IMaxStatValueProvider max, IPrototypeModel owner) { }
+   static public static WeaponDamage CreateMediumDamage(WeaponType weapon, IMaxStatValueProvider max, IPrototypeModel owner) { }
+   static public static WeaponDamage CreateHeavyDamage(WeaponType weapon, IMaxStatValueProvider max, IPrototypeModel owner) { }
+   static public static WeaponDamage CreateSuperWeaponLiteDamage(WeaponType weapon, IMaxStatValueProvider max, IPrototypeModel owner) { }
+   static public static WeaponDamage CreateSuperWeaponMediumDamage(WeaponType weapon, IMaxStatValueProvider max, IPrototypeModel owner) { }
+   static public static WeaponDamage CreateSuperWeaponHeavyDamage(WeaponType weapon, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== WeaponDistanceStat TDI 415 (Domains.Workshop.Impl.Models.Weapon) dump.cs:18922-18985 sealed=True rva_count=13
+   field WeaponType m_weapon
+   field IMaxStatValueProvider m_max
+   field EStat m_stat
+   static public static WeaponDistanceStat Create(WeaponType weapon, IMaxStatValueProvider max, IPrototypeModel owner) { }
+   static public static WeaponDistanceStat CreateForSuperWeapon(WeaponType weapon, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== WeaponExplosionRadiusStat TDI 416 (Domains.Workshop.Impl.Models.Weapon) dump.cs:18990-19053 sealed=True rva_count=13
+   field WeaponType m_weapon
+   field IMaxStatValueProvider m_max
+   field EStat m_stat
+   static public static IStatModel TryCreate(WeaponType weapon, IMaxStatValueProvider max, IPrototypeModel owner) { }
+   static public static IStatModel TryCreateForSuperWeapon(WeaponType weapon, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== WeaponFireRateStat TDI 417 (Domains.Workshop.Impl.Models.Weapon) dump.cs:19058-19116 sealed=True rva_count=12
+   field WeaponType m_weapon
+   static public static IStatModel TryCreate(WeaponType weapon, IPrototypeModel owner) { }
+== WolverineMachineGunMaxAccelerationTimeStat TDI 418 (Domains.Workshop.Impl.Models.Weapon) dump.cs:19121-19178 sealed=True rva_count=11
+   field HeroParam m_param
+   field IMaxStatValueProvider m_max
+   ctor public void .ctor(HeroParam param, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== BuildingArmorStat TDI 4407 (com.geargames.aow.ugui.army.models.info.Stats) dump.cs:168929-168987 sealed=True rva_count=11
+   field BuildingLevelType m_level
+   field IMaxStatValueProvider m_max
+   field EStat m_stat
+   field string m_hint
+   ctor public void .ctor(BuildingLevelType level, IMaxStatValueProvider max, ILogger logger, object creator, IPrototypeModel owner) { }
+== BuildingConstructionTimeStat TDI 4408 (com.geargames.aow.ugui.army.models.info.Stats) dump.cs:168992-169048 sealed=True rva_count=11
+   field BuildingLevelType m_level
+   field IMaxStatValueProvider m_max
+   ctor public void .ctor(BuildingLevelType level, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== BuildingEnergyNeedStat TDI 4409 (com.geargames.aow.ugui.army.models.info.Stats) dump.cs:169053-169109 sealed=True rva_count=11
+   field BuildingLevelType m_level
+   field IMaxStatValueProvider m_max
+   ctor public void .ctor(BuildingLevelType level, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== BuildingEnergyProductionStat TDI 4410 (com.geargames.aow.ugui.army.models.info.Stats) dump.cs:169114-169173 sealed=True rva_count=12
+   field BuildingLevelType m_level
+   field IMaxStatValueProvider m_max
+   static public static IStatModel TryCreate(BuildingLevelType level, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== BuildingHealthStat TDI 4411 (com.geargames.aow.ugui.army.models.info.Stats) dump.cs:169178-169234 sealed=True rva_count=11
+   field BuildingLevelType m_level
+   field IMaxStatValueProvider m_max
+   ctor public void .ctor(BuildingLevelType level, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== BuildingHpRegenStat TDI 4412 (com.geargames.aow.ugui.army.models.info.Stats) dump.cs:169239-169295 sealed=True rva_count=11
+   field BuildingLevelType m_level
+   field IMaxStatValueProvider m_max
+   ctor public void .ctor(BuildingLevelType level, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== BuildingPriceStat TDI 4413 (com.geargames.aow.ugui.army.models.info.Stats) dump.cs:169300-169356 sealed=True rva_count=11
+   field BuildingLevelType m_level
+   field IMaxStatValueProvider m_max
+   ctor public void .ctor(BuildingLevelType level, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== BuildingSizeStat TDI 4414 (com.geargames.aow.ugui.army.models.info.Stats) dump.cs:169361-169426 sealed=True rva_count=13
+   field BuildingType m_building
+   field IMaxStatValueProvider m_max
+   ctor public void .ctor(BuildingType building, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== BuildingViewStat TDI 4415 (com.geargames.aow.ugui.army.models.info.Stats) dump.cs:169431-169487 sealed=True rva_count=11
+   field BuildingLevelType m_level
+   field IMaxStatValueProvider m_max
+   ctor public void .ctor(BuildingLevelType level, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== ConstructionYardRadiusStat TDI 4416 (com.geargames.aow.ugui.army.models.info.Stats) dump.cs:169492-169551 sealed=True rva_count=12
+   field Fraction m_fraction
+   field IMaxStatValueProvider m_max
+   static public static IStatModel TryCreate(BuildingType building, Fraction fraction, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== HqCommandPointsProduceStat TDI 4417 (com.geargames.aow.ugui.army.models.info.Stats) dump.cs:169556-169616 sealed=True rva_count=12
+   field Fraction m_fraction
+   field int m_levelIndex
+   field IMaxStatValueProvider m_max
+   static public static IStatModel TryCreate(BuildingType building, int levelIndex, Fraction fraction, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== HqSupplyIncomeStat TDI 4418 (com.geargames.aow.ugui.army.models.info.Stats) dump.cs:169621-169681 sealed=True rva_count=12
+   field Fraction m_fraction
+   field int m_levelIndex
+   field IMaxStatValueProvider m_max
+   static public static IStatModel TryCreate(BuildingType building, int levelIndex, Fraction fraction, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== SpecialStat TDI 4419 (com.geargames.aow.ugui.army.models.info.Stats) dump.cs:169686-169745 sealed=True rva_count=11
+   field IMaxStatValueProvider m_max
+   field EStat m_stat
+   field int m_name
+   field string m_hint
+   ctor public void .ctor(int name, string hint, EStat stat, IMaxStatValueProvider max, Func<IStatModificationCollection, float> calc, IPrototypeModel owner, Func<IStatModificationCollection, bool> getState) { }
+== SupplyDepotIncomeStat TDI 4420 (com.geargames.aow.ugui.army.models.info.Stats) dump.cs:169750-169809 sealed=True rva_count=12
+   field Fraction m_fraction
+   field IMaxStatValueProvider m_max
+   static public static IStatModel TryCreate(BuildingType building, Fraction fraction, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== UnitArmorStat TDI 4422 (com.geargames.aow.ugui.army.models.info.Stats) dump.cs:169837-169911 sealed=True rva_count=16
+   field UnitType m_unit
+   field IMaxStatValueProvider m_max
+   field EStat m_stat
+   field string m_hint
+   field bool m_hasSecond
+   static public static IStatModel TryCreate(UnitType unit, IMaxStatValueProvider max, ILogger logger, object creator, IPrototypeModel owner) { }
+== UnitControlPointsStat TDI 4423 (com.geargames.aow.ugui.army.models.info.Stats) dump.cs:169916-169972 sealed=True rva_count=11
+   field UnitType m_unit
+   field IMaxStatValueProvider m_max
+   ctor public void .ctor(UnitType unit, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== UnitHealthStat TDI 4424 (com.geargames.aow.ugui.army.models.info.Stats) dump.cs:169977-170033 sealed=True rva_count=11
+   field UnitType m_unit
+   field IMaxStatValueProvider m_max
+   ctor public void .ctor(UnitType unit, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== UnitHpRegenStat TDI 4425 (com.geargames.aow.ugui.army.models.info.Stats) dump.cs:170038-170094 sealed=True rva_count=11
+   field UnitType m_unit
+   field IMaxStatValueProvider m_max
+   ctor public void .ctor(UnitType unit, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== UnitPriceStat TDI 4426 (com.geargames.aow.ugui.army.models.info.Stats) dump.cs:170099-170155 sealed=True rva_count=11
+   field UnitType m_unit
+   field IMaxStatValueProvider m_max
+   ctor public void .ctor(UnitType unit, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== UnitSpeedStat TDI 4427 (com.geargames.aow.ugui.army.models.info.Stats) dump.cs:170160-170229 sealed=True rva_count=14
+   field UnitType m_unit
+   field IMaxStatValueProvider m_max
+   field bool m_isSpecialSpeed
+   static public static IStatModel TryCreate(UnitType unit, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== UnitTrainTimeStat TDI 4428 (com.geargames.aow.ugui.army.models.info.Stats) dump.cs:170234-170290 sealed=True rva_count=11
+   field UnitType m_unit
+   field IMaxStatValueProvider m_max
+   ctor public void .ctor(UnitType unit, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== UnitUraniumCostStat TDI 4429 (com.geargames.aow.ugui.army.models.info.Stats) dump.cs:170295-170354 sealed=True rva_count=12
+   field UnitType m_unit
+   field IMaxStatValueProvider m_max
+   static public static IStatModel TryCreate(UnitType unit, IMaxStatValueProvider max, IPrototypeModel owner) { }
+== UnitViewStat TDI 4431 (com.geargames.aow.ugui.army.models.info.Stats) dump.cs:170382-170459 sealed=True rva_count=16
+   field UnitType m_unit
+   field IMaxStatValueProvider m_max
+   field HeroParam m_heroParam
+   field bool m_hasSecond
+   field bool m_isBeholder
+   static public static IStatModel TryCreate(UnitType unit, IMaxStatValueProvider max, HeroParam heroParam, IPrototypeModel owner) { }
+
+ico_stat_* string literals (66):
+   ico_stat_base_armor_heavy
+   ico_stat_base_armor_light
+   ico_stat_base_armor_medium
+   ico_stat_base_cost
+   ico_stat_base_cp
+   ico_stat_base_energy
+   ico_stat_base_health
+   ico_stat_base_size
+   ico_stat_base_speed
+   ico_stat_base_time
+   ico_stat_base_uranum
+   ico_stat_base_view
+   ico_stat_unique_air_mode
+   ico_stat_unique_decelerate_firerate
+   ico_stat_unique_deceleration_time
+   ico_stat_unique_deployment_time
+   ico_stat_unique_energy_consume
+   ico_stat_unique_energy_regen
+   ico_stat_unique_energy_reserve
+   ico_stat_unique_flight_time
+   ico_stat_unique_fog_activation
+   ico_stat_unique_fog_deactivation
+   ico_stat_unique_fog_radius
+   ico_stat_unique_forest_detection
+   ico_stat_unique_frontal_armor
+   ico_stat_unique_fuel_consume
+   ico_stat_unique_fuel_regen
+   ico_stat_unique_fuel_reserve
+   ico_stat_unique_immortality_time
+   ico_stat_unique_initial_resources
+   ico_stat_unique_jump_range
+   ico_stat_unique_land_mode
+   ico_stat_unique_launch_time
+   ico_stat_unique_machinegun_time
+   ico_stat_unique_march_mode_time
+   ico_stat_unique_mine_defuse_speed
+   ico_stat_unique_mine_defuse_time
+   ico_stat_unique_mine_detection
+   ico_stat_unique_overview_time
+   ico_stat_unique_radius
+   ico_stat_unique_regen
+   ico_stat_unique_shield_activation
+   ico_stat_unique_shield_deactivation
+   ico_stat_unique_shield_radius
+   ico_stat_unique_shield_strength
+   ico_stat_unique_siege_mode_time
+   ico_stat_unique_space_strike_time
+   ico_stat_unique_submarine_detection
+   ico_stat_unique_weapon_switch
+   ico_stat_unique_workshop_radius
+   ico_stat_unique_workshop_speed
+   ico_stat_unique_workshop_time
+   ico_stat_weapon_accuracy
+   ico_stat_weapon_bombs
+   ico_stat_weapon_damage_heavy
+   ico_stat_weapon_damage_light
+   ico_stat_weapon_damage_medium
+   ico_stat_weapon_distance
+   ico_stat_weapon_explosion
+   ico_stat_weapon_firerate
+   ico_stat_weapon_max_coil_targets
+   ico_stat_weapon_mine_cost
+   ico_stat_weapon_mine_time
+   ico_stat_weapon_super_cost
+   ico_stat_weapon_super_cost_cp
+   ico_stat_weapon_super_time

@@ -1,0 +1,46 @@
+class	TypeDefIndex	namespace	dump.cs lines	sealed	EStat binding (dump-derived)	confidence
+CoilTankMaxTargetsStat	396	Domains.Workshop.Impl.Models.Weapon	17770-17826	True	CoilTankMaxTargets	MATCH
+LaunchPreparationTimeStat	397	Domains.Workshop.Impl.Models.Weapon	17831-17887	True	LaunchPreparationTime	MATCH
+MineCostStat	398	Domains.Workshop.Impl.Models.Weapon	17892-17948	True	MinePrice | WeaponMineCost (one of the two mine-cost stats)	MATCH
+MineDamageForHeavyArmorStat	399	Domains.Workshop.Impl.Models.Weapon	17953-18009	True	candidates: WeaponArmorLight/61, WeaponArmorMedium/62, WeaponArmorHeavy/63 (per-armor mine damage; no MineDamage* EStat exists)	INFERRED
+MineDamageForLightArmorStat	400	Domains.Workshop.Impl.Models.Weapon	18014-18070	True	candidates: WeaponArmorLight/61, WeaponArmorMedium/62, WeaponArmorHeavy/63 (per-armor mine damage; no MineDamage* EStat exists)	INFERRED
+MineDamageForMediumArmorStat	401	Domains.Workshop.Impl.Models.Weapon	18075-18131	True	candidates: WeaponArmorLight/61, WeaponArmorMedium/62, WeaponArmorHeavy/63 (per-armor mine damage; no MineDamage* EStat exists)	INFERRED
+MineExplosionRadiusStat	402	Domains.Workshop.Impl.Models.Weapon	18136-18192	True	WeaponExplosionRadius (mine radius) or ExplosionRadius-family	MATCH
+MineSetTimeStat	403	Domains.Workshop.Impl.Models.Weapon	18197-18253	True	WeaponMineTime	MATCH
+MissileFlightTimeStat	404	Domains.Workshop.Impl.Models.Weapon	18258-18314	True	MissileFlightTime	MATCH
+PsiAttackSpeedReductionStat	405	Domains.Workshop.Impl.Models.Weapon	18319-18375	True	PsiAttackSpeedReduction	MATCH
+PsiSlowdownDurationStat	406	Domains.Workshop.Impl.Models.Weapon	18380-18436	True	PsiSlowdownDuration	MATCH
+SpaceStrikePreparationTimeStat	407	Domains.Workshop.Impl.Models.Weapon	18441-18497	True	SpaceStrikePreparationTime	MATCH
+SuperWeaponCostStat	408	Domains.Workshop.Impl.Models.Weapon	18502-18559	True	WeaponSuperWeaponCost	MATCH
+SuperWeaponCpStat	409	Domains.Workshop.Impl.Models.Weapon	18564-18621	True	WeaponSuperWeaponCP	MATCH
+SuperWeaponTimeStat	410	Domains.Workshop.Impl.Models.Weapon	18626-18683	True	WeaponSuperWeaponTime	MATCH
+WeaponAccuracyStat	412	Domains.Workshop.Impl.Models.Weapon	18708-18764	True	WeaponAccuracy/59	MATCH
+WeaponBombCountStat	413	Domains.Workshop.Impl.Models.Weapon	18769-18828	True	WeaponBombCount/65	MATCH
+WeaponDamage	414	Domains.Workshop.Impl.Models.Weapon	18833-18917	False	WeaponArmorLight/61, WeaponArmorMedium/62, WeaponArmorHeavy/63, WeaponSuperWeaponArmorLight/72, Medium/73, Heavy/74 — via 6 static Create*Damage factories (dump-direct)	DIRECT
+WeaponDistanceStat	415	Domains.Workshop.Impl.Models.Weapon	18922-18985	True	WeaponDistance/58	MATCH
+WeaponExplosionRadiusStat	416	Domains.Workshop.Impl.Models.Weapon	18990-19053	True	WeaponExplosionRadius/64	MATCH
+WeaponFireRateStat	417	Domains.Workshop.Impl.Models.Weapon	19058-19116	True	WeaponFireRate/60	MATCH
+WolverineMachineGunMaxAccelerationTimeStat	418	Domains.Workshop.Impl.Models.Weapon	19121-19178	True	WolverineMachineGunMaxAccelerationTime	MATCH
+BuildingArmorStat	4407	com.geargames.aow.ugui.army.models.info.Stats	168929-168987	True	ArmorLight | ArmorMedium | ArmorHeavy (chosen natively per building armor type)	MATCH
+BuildingConstructionTimeStat	4408	com.geargames.aow.ugui.army.models.info.Stats	168992-169048	True	ConstructionTime	MATCH
+BuildingEnergyNeedStat	4409	com.geargames.aow.ugui.army.models.info.Stats	169053-169109	True	EnergyNeed/16 (after prefix strip Building*)	MATCH_STRIPPED
+BuildingEnergyProductionStat	4410	com.geargames.aow.ugui.army.models.info.Stats	169114-169173	True	EnergyProduction/15 (after prefix strip Building*)	MATCH_STRIPPED
+BuildingHealthStat	4411	com.geargames.aow.ugui.army.models.info.Stats	169178-169234	True	Health/1 (after prefix strip Building*)	MATCH_STRIPPED
+BuildingHpRegenStat	4412	com.geargames.aow.ugui.army.models.info.Stats	169239-169295	True	HealthRegeneration	MATCH
+BuildingPriceStat	4413	com.geargames.aow.ugui.army.models.info.Stats	169300-169356	True	Price/2 (after prefix strip Building*)	MATCH_STRIPPED
+BuildingSizeStat	4414	com.geargames.aow.ugui.army.models.info.Stats	169361-169426	True	BuildingSize/17	MATCH
+BuildingViewStat	4415	com.geargames.aow.ugui.army.models.info.Stats	169431-169487	True	View/10 (after prefix strip Building*)	MATCH_STRIPPED
+ConstructionYardRadiusStat	4416	com.geargames.aow.ugui.army.models.info.Stats	169492-169551	True	ConstructionRadius	MATCH
+HqCommandPointsProduceStat	4417	com.geargames.aow.ugui.army.models.info.Stats	169556-169616	True	CommandPointsProduce	MATCH
+HqSupplyIncomeStat	4418	com.geargames.aow.ugui.army.models.info.Stats	169621-169681	True	SupplyIncome	MATCH
+SpecialStat	4419	com.geargames.aow.ugui.army.models.info.Stats	169686-169745	True	EStat unknown (native); icon family ico_stat_unique_*; EStatCategory likely Special/4	INFERRED
+SupplyDepotIncomeStat	4420	com.geargames.aow.ugui.army.models.info.Stats	169750-169809	True	SupplyIncome	MATCH
+UnitArmorStat	4422	com.geargames.aow.ugui.army.models.info.Stats	169837-169911	True	ArmorLight | ArmorMedium | ArmorHeavy (chosen natively per unit armor type)	MATCH
+UnitControlPointsStat	4423	com.geargames.aow.ugui.army.models.info.Stats	169916-169972	True	CommandPoints	MATCH
+UnitHealthStat	4424	com.geargames.aow.ugui.army.models.info.Stats	169977-170033	True	Health/1 (after prefix strip Unit*)	MATCH_STRIPPED
+UnitHpRegenStat	4425	com.geargames.aow.ugui.army.models.info.Stats	170038-170094	True	HealthRegeneration	MATCH
+UnitPriceStat	4426	com.geargames.aow.ugui.army.models.info.Stats	170099-170155	True	Price/2 (after prefix strip Unit*)	MATCH_STRIPPED
+UnitSpeedStat	4427	com.geargames.aow.ugui.army.models.info.Stats	170160-170229	True	Speed/6 (after prefix strip Unit*)	MATCH_STRIPPED
+UnitTrainTimeStat	4428	com.geargames.aow.ugui.army.models.info.Stats	170234-170290	True	TrainTime	MATCH
+UnitUraniumCostStat	4429	com.geargames.aow.ugui.army.models.info.Stats	170295-170354	True	PriceUranum	MATCH
+UnitViewStat	4431	com.geargames.aow.ugui.army.models.info.Stats	170382-170459	True	View/10 (after prefix strip Unit*)	MATCH_STRIPPED
