@@ -1,8 +1,9 @@
-# EStat taxonomy & IStatModel stat-model inventory (6.9.18)
+# EStat taxonomy & IStatModel stat-model inventory (6.9.18) — bindings natively pinned
 
 Created: 2026-10-07 (follow-up to the FileUpload/AOW3 audit — closes audit-report
 "Recommended Next Investigations" item #4 and the Economy_System.md row of
-"Unverified Findings").
+"Unverified Findings"). **Follow-up the same day: all 9 previously ambiguous class→EStat
+bindings were pinned by native disassembly of `libil2cpp.so` (§6) — 0 ambiguities remain.**
 
 ## What
 
@@ -108,13 +109,79 @@ dump; no 6.5.22 material was used.
 
 - `EStat` enum, `IStatModel` contract, class inventory, factory signatures: **CONFIRMED**
   (direct dump.cs lines, recorded in TSV/extraction log).
-- Class→EStat name bindings: **CONFIRMED by name-match** for 24 classes (`MATCH`),
-  **MATCH_STRIPPED** for 10 (Building*/Unit* prefix stripping), **INFERRED** for 8
-  (mine-damage trio, mine cost/radius/set-time variants, armor pair, SpecialStat) — every
-  binding ultimately set in native ctors via the `m_stat` field and only observable at
-  runtime for the ambiguous cases.
+- Class→EStat bindings after the 2026-10-07 native pinning pass: **45/45 resolved** —
+  26 name-match (MATCH) + 9 prefix-stripped match (MATCH_STRIPPED) + 6 native constants
+  (NATIVE_CONST) + 2 native armor-routing chains (NATIVE_ROUTED) + 1 native caller-
+  enumerated wrapper (NATIVE_ENUM_WRAPPER, 42 call sites) + 1 dump-direct 6-factory proof
+  (WeaponDamage). Pre-pin tally was 31 / 9 / 4 INFERRED / 1.
 - Damage-through-EStat flow: **CONFIRMED** (factories) + **HIGH** (native, from the
   ArmorStatHelper note).
+
+## 6. Native pinning of the ambiguous bindings (2026-10-07)
+
+Method: Capstone ARM64 disassembly of `libil2cpp.so` (SHA-256 `8ace05bb…`, byte-identical
+to the chain in `armor-stat-helper-native-analysis.md`) at dump.cs RVAs; whole-file BL
+scan for call sites of the parameter-taking ctors; call sites attributed via a 150,721-method
+RVA index built from dump.cs. Tool: `reverse/tools/pin_estat_bindings.py`; full output:
+`reverse/evidence/estat/estat-native-pinning.txt`.
+
+### 6.1 Constant-returning `get_Stat()` — the six mine/weapon stat classes
+
+Each has no `m_stat` field; `get_Stat()` is a two-instruction constant:
+
+| Class | get_Stat body (VA) | EStat |
+|---|---|---|
+| MineCostStat | `mov w0, #0x42; ret` (0x80e8aac) | **WeaponMineCost / 66** |
+| MineDamageForLightArmorStat | `mov w0, #0x3d; ret` (0x80e93bc) | **WeaponArmorLight / 61** |
+| MineDamageForMediumArmorStat | `mov w0, #0x3e; ret` (0x80e9844) | **WeaponArmorMedium / 62** |
+| MineDamageForHeavyArmorStat | `mov w0, #0x3f; ret` (0x80e8f34) | **WeaponArmorHeavy / 63** |
+| MineExplosionRadiusStat | `mov w0, #0x40; ret` (0x80e9ccc) | **WeaponExplosionRadius / 64** |
+| MineSetTimeStat | `mov w0, #0x43; ret` (0x80ea164) | **WeaponMineTime / 67** |
+
+Notable: `MineCostStat` is bound to **WeaponMineCost (66), NOT MinePrice (71)** — the
+dump-name guess `MinePrice` was wrong. EStat **MinePrice / 71** currently has no dedicated
+IStatModel class (see Unknowns).
+
+### 6.2 Armor stats route through `ArmorStatHelper.GetArmorMeta` — both classes
+
+- **BuildingArmorStat..ctor** (VA 0x7cc1ec4): calls `ArmorStatHelper.GetArmorMeta`
+  (`bl 0x7cb6b30` at 0x7cc1fe4) and stores the EStat half of its return
+  (`str w0, [x19, #0x20]`) into `m_stat` → **ArmorLight/Medium/Heavy (7/8/9) selected per
+  building armor type** (GetArmorMeta's type+7 mapping was natively verified in
+  `armor-stat-helper-native-analysis.md` §3.1).
+- **UnitArmorStat.TryCreate** (VA 0x7cc6a4c): same call (`bl 0x7cb6b30` at 0x7cc6c40),
+  result register w22 passed as the ctor's EStat argument (`mov w3, w22` at 0x7cc6d38 →
+  `bl UnitArmorStat..ctor`) → same **7/8/9 triad, per unit armor type**.
+
+### 6.3 `SpecialStat` is the unique-stat wrapper — 42 native call sites enumerate it
+
+`SpecialStat..ctor` takes `EStat stat` as a parameter (dump.cs:169737-169738). A whole-file
+BL scan found exactly **42 call sites**, all inside the special-stats factory iterators,
+each passing a literal unique EStat:
+
+| Factory (iterator) | EStats passed |
+|---|---|
+| BuildingSpecialStatsFactory.<CreateStatForHq>d__2 | DeploymentTime/46, InitialResourceReserve/47 |
+| BuildingSpecialStatsFactory.<CreateStatForNavalTurret>d__3 | SubmarineDetection/36 |
+| UnitSpecialStatFactory.<CreateStatsAirplains>d__11 | FuelConsumption/38, FuelReserve/37, RefuelingSpeed/39 |
+| UnitSpecialStatFactory.<CreateStatsAtlas>d__17 | AtlasImmortalityTime/57 |
+| UnitSpecialStatFactory.<CreateStatsBeholder>d__14 | MaxViewReachTime/51 |
+| UnitSpecialStatFactory.<CreateStatsCoilTank>d__16 | CoilTankFrontalArmor/56 |
+| UnitSpecialStatFactory.<CreateStatsCommando>d__12 | CerberusWeaponSwitchTime/40 |
+| UnitSpecialStatFactory.<CreateStatsForDemine>d__5 | MineDeactivationTime/22, DeminingSpeed/23, MineDetection/34 |
+| UnitSpecialStatFactory.<CreateStatsForFirebat>d__4 | FuelConsumption/38, JumpRange/19, RefuelingSpeed/39, FuelReserve/37, ForestUnitDetection/35 |
+| UnitSpecialStatFactory.<CreateStatsForFog>d__8 | FogActivationTime/32, EnergyConsumption/25, FogRadius/31, EnergyRegeneration/28, FogDeactivationTime/33, EnergyReserve/24 |
+| UnitSpecialStatFactory.<CreateStatsForMarchMode>d__6 | TransitionToMarchModeTime/20, TransitionToSiegeModeTime/21 |
+| UnitSpecialStatFactory.<CreateStatsForShield>d__7 | ShieldRadius/27, ShieldActivationTime/29, EnergyConsumption/25, ShieldStrength/26, EnergyRegeneration/28, EnergyReserve/24, ShieldDeactivationTime/30 |
+| UnitSpecialStatFactory.<CreateStatsHelicopters>d__9 | SubmarineDetection/36, ForestUnitDetection/35 |
+| UnitSpecialStatFactory.<CreateStatsKodomash>d__15 | WorkshopRepairSpeed/44, TransitionToMarchModeTime/20, WorkshopModeTransitionTime/45, WorkshopRepairRadius/43 |
+| UnitSpecialStatFactory.<CreateStatsSeraphim>d__13 | SeraphimGroundModeTransitionTime/41, SeraphimAirModeTransitionTime/42 |
+| UnitSpecialStatFactory.<CreateStatsShips>d__10 | SubmarineDetection/36 |
+
+(2+1+3+1+1+1+1+3+5+6+2+7+2+4+2+1 = 42 ✓). This independently confirms §1's hero/unique
+grouping: every "special" EStat in the enum is materialized as a SpecialStat by exactly
+these factories. `BuildingArmorStat`'s single constructor call site is
+`BuildingBaseStatsFactory.<CreateStats>d__0.MoveNext` (VA 0x7cb6ff4).
 
 ## Implementation
 
@@ -131,17 +198,22 @@ Tribute mapping guidance (Phase 5+ / Phase 26 consumers):
 
 ## Test
 
-- `python3 scripts/extract_estat_stats.py` (workspace copy) regenerates the TSV and
-  extraction log from `dump.cs` — line numbers and counts (45 classes, 78 enum values)
-  must reproduce.
+- `python3 reverse/tools/extract_estat_stats.py` regenerates the extraction log from
+  `dump.cs` — line numbers and counts (45 classes, 78 enum values) must reproduce.
+- `python3 reverse/tools/pin_estat_bindings.py` (point SO at the extracted
+  `lib/arm64-v8a/libil2cpp.so`) must print the six `mov w0, #imm; ret` constants and
+  42 SpecialStat call sites — matches `reverse/evidence/estat/estat-native-pinning.txt`.
 - Spot-check: `sed -n '168776,168860p' dump.cs` shows the enum; `estat-classes.tsv` row
   `WeaponDamage` must show the 6-factory DIRECT binding.
 
 ## Unknowns
 
-- Native bodies of the 45 `get_Stat()`/ctor implementations (which of the INFERRED
-  candidates each ambiguous class actually returns) — resolvable with Capstone disassembly
-  of ~8 short methods, reusing `reverse/tools/armor_native_analysis.py` machinery.
+- ~~Native bodies of the 45 `get_Stat()`/ctor implementations~~ **Resolved 2026-10-07** —
+  see §6; `estat-classes.tsv` confidence column now carries NATIVE_* labels for the 9
+  previously ambiguous classes.
+- **MinePrice/71 has no dedicated IStatModel class** (MineCostStat is WeaponMineCost/66);
+  it is likely consumed by a non-IStatModel code path (mine placement cost UI/logic).
+  Candidate for a targeted xref scan if ever needed.
 - The numeric balance values behind every stat (backend-delivered; out of APK scope, as
   established by the audit).
 - `MaxStatValueProvider` tier thresholds (BaseMax/FirstMax/MegaMax values) — native data.

@@ -1,0 +1,250 @@
+libil2cpp.so: 164646104 bytes
+
+===== 1. mine-class get_Stat() constants =====
+MineCostStat.get_Stat VA 0x80e8aac: mov w0, #0x42 ; ret  ; str x30, [sp, #-0x20]! ; stp x20, x19, [sp, #0x10] ; adrp x19, #0x9d22000 ; adrp x20, #0x96d9000  -> EStat 66 = WeaponMineCost
+MineDamageForHeavyArmorStat.get_Stat VA 0x80e8f34: mov w0, #0x3f ; ret  ; str x30, [sp, #-0x20]! ; stp x20, x19, [sp, #0x10] ; adrp x19, #0x9d22000 ; adrp x20, #0x96d9000  -> EStat 63 = WeaponArmorHeavy
+MineDamageForLightArmorStat.get_Stat VA 0x80e93bc: mov w0, #0x3d ; ret  ; str x30, [sp, #-0x20]! ; stp x20, x19, [sp, #0x10] ; adrp x19, #0x9d22000 ; adrp x20, #0x96d9000  -> EStat 61 = WeaponArmorLight
+MineDamageForMediumArmorStat.get_Stat VA 0x80e9844: mov w0, #0x3e ; ret  ; str x30, [sp, #-0x20]! ; stp x20, x19, [sp, #0x10] ; adrp x19, #0x9d22000 ; adrp x20, #0x96d9000  -> EStat 62 = WeaponArmorMedium
+MineExplosionRadiusStat.get_Stat VA 0x80e9ccc: mov w0, #0x40 ; ret  ; str x30, [sp, #-0x20]! ; stp x20, x19, [sp, #0x10] ; adrp x19, #0x9d22000 ; adrp x20, #0x96d9000  -> EStat 64 = WeaponExplosionRadius
+MineSetTimeStat.get_Stat VA 0x80ea164: mov w0, #0x43 ; ret  ; str x30, [sp, #-0x20]! ; stp x20, x19, [sp, #0x10] ; adrp x19, #0x9d22000 ; adrp x20, #0x96d9000  -> EStat 67 = WeaponMineTime
+
+===== 2. BL call-site scan =====
+UnitArmorStat..ctor (VA 0x7cc660c): 1 call site(s)
+   bl from file 0x7cc2d48 (va 0x7cc6d48)
+SpecialStat..ctor (VA 0x7cbcee0): 42 call site(s)
+   bl from file 0x7cb40dc (va 0x7cb80dc)
+   bl from file 0x7cb4184 (va 0x7cb8184)
+   bl from file 0x7cb443c (va 0x7cb843c)
+   bl from file 0x7cb86b4 (va 0x7cbc6b4)
+   bl from file 0x7cb8848 (va 0x7cbc848)
+   bl from file 0x7cb88f0 (va 0x7cbc8f0)
+   bl from file 0x7cb8e94 (va 0x7cbce94)
+   bl from file 0x7cb9350 (va 0x7cbd350)
+   bl from file 0x7cb966c (va 0x7cbd66c)
+   bl from file 0x7cb9948 (va 0x7cbd948)
+   bl from file 0x7cb9bf8 (va 0x7cbdbf8)
+   bl from file 0x7cb9d28 (va 0x7cbdd28)
+   bl from file 0x7cb9df0 (va 0x7cbddf0)
+   bl from file 0x7cba0bc (va 0x7cbe0bc)
+   bl from file 0x7cba204 (va 0x7cbe204)
+   bl from file 0x7cba2a8 (va 0x7cbe2a8)
+   bl from file 0x7cba34c (va 0x7cbe34c)
+   bl from file 0x7cba3f0 (va 0x7cbe3f0)
+   bl from file 0x7cba6cc (va 0x7cbe6cc)
+   bl from file 0x7cba784 (va 0x7cbe784)
+   bl from file 0x7cba930 (va 0x7cbe930)
+   bl from file 0x7cba9d0 (va 0x7cbe9d0)
+   bl from file 0x7cbaa74 (va 0x7cbea74)
+   bl from file 0x7cbab18 (va 0x7cbeb18)
+   bl from file 0x7cbae44 (va 0x7cbee44)
+   bl from file 0x7cbaefc (va 0x7cbeefc)
+   bl from file 0x7cbb1e8 (va 0x7cbf1e8)
+   bl from file 0x7cbb2a4 (va 0x7cbf2a4)
+   bl from file 0x7cbb358 (va 0x7cbf358)
+   bl from file 0x7cbb504 (va 0x7cbf504)
+   bl from file 0x7cbb5a4 (va 0x7cbf5a4)
+   bl from file 0x7cbb648 (va 0x7cbf648)
+   bl from file 0x7cbb6ec (va 0x7cbf6ec)
+   bl from file 0x7cbba00 (va 0x7cbfa00)
+   bl from file 0x7cbbaf8 (va 0x7cbfaf8)
+   bl from file 0x7cbbdec (va 0x7cbfdec)
+   bl from file 0x7cbbe90 (va 0x7cbfe90)
+   bl from file 0x7cbbf34 (va 0x7cbff34)
+   bl from file 0x7cbc0fc (va 0x7cc00fc)
+   bl from file 0x7cbc3f0 (va 0x7cc03f0)
+   bl from file 0x7cbc494 (va 0x7cc0494)
+   bl from file 0x7cbc798 (va 0x7cc0798)
+BuildingArmorStat..ctor (VA 0x7cc1ec4): 1 call site(s)
+   bl from file 0x7cb2ff4 (va 0x7cb6ff4)
+
+===== 3. dump.cs method index =====
+indexed 150721 methods
+
+===== 4. call-site attribution + EStat arg decode =====
+
+--- UnitArmorStat..ctor (VA 0x7cc660c), 1 site(s)
+  site va 0x7cc6d48 in UnitArmorStat.TryCreate (fn va 0x7cc6a4c)
+    EStat arg None = None
+    tail: mov w3, w22 ; mov x4, x23 ; mov x6, x20 ; mov x25, x0 ; bl #0x7cc660c ; mov x0, x25 ; ldp x20, x19, [sp, #0x50] ; ldp x22, x21, [sp, #0x40]
+
+--- SpecialStat..ctor (VA 0x7cbcee0), 42 site(s)
+  site va 0x7cb80dc in BuildingSpecialStatsFactory.<CreateStatForHq>d__2.MoveNext (fn va 0x7cb7f68)
+    EStat arg 46 = DeploymentTime
+    tail: mov x6, x21 ; mov x7, xzr ; mov x24, x0 ; str xzr, [sp] ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cb8184 in BuildingSpecialStatsFactory.<CreateStatForHq>d__2.MoveNext (fn va 0x7cb7f68)
+    EStat arg 47 = InitialResourceReserve
+    tail: mov x6, x21 ; mov x7, xzr ; mov x24, x0 ; str xzr, [sp] ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cb843c in BuildingSpecialStatsFactory.<CreateStatForNavalTurret>d__3.MoveNext (fn va 0x7cb82f4)
+    EStat arg 36 = SubmarineDetection
+    tail: mov x6, x20 ; mov x7, xzr ; mov x24, x0 ; str xzr, [sp] ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cbc6b4 in UnitSpecialStatFactory.<CreateStatsAirplains>d__11.MoveNext (fn va 0x7cbc590)
+    EStat arg 38 = FuelConsumption
+    tail: mov x6, x21 ; mov x7, xzr ; mov x24, x0 ; str xzr, [sp] ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cbc848 in UnitSpecialStatFactory.<CreateStatsAirplains>d__11.MoveNext (fn va 0x7cbc590)
+    EStat arg 37 = FuelReserve
+    tail: mov x6, x21 ; mov x7, xzr ; mov x24, x0 ; str xzr, [sp] ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cbc8f0 in UnitSpecialStatFactory.<CreateStatsAirplains>d__11.MoveNext (fn va 0x7cbc590)
+    EStat arg 39 = RefuelingSpeed
+    tail: mov x6, x21 ; mov x7, xzr ; mov x24, x0 ; str xzr, [sp] ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cbce94 in UnitSpecialStatFactory.<CreateStatsAtlas>d__17.MoveNext (fn va 0x7cbcc7c)
+    EStat arg 57 = AtlasImmortalityTime
+    tail: mov x5, x23 ; mov x6, x20 ; mov x7, xzr ; mov x24, x0 ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cbd350 in UnitSpecialStatFactory.<CreateStatsBeholder>d__14.MoveNext (fn va 0x7cbd21c)
+    EStat arg 51 = MaxViewReachTime
+    tail: mov x5, x23 ; mov x6, x20 ; mov x7, xzr ; mov x24, x0 ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cbd66c in UnitSpecialStatFactory.<CreateStatsCoilTank>d__16.MoveNext (fn va 0x7cbd4f4)
+    EStat arg 56 = CoilTankFrontalArmor
+    tail: mov x5, x23 ; mov x6, x20 ; mov x7, xzr ; mov x24, x0 ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cbd948 in UnitSpecialStatFactory.<CreateStatsCommando>d__12.MoveNext (fn va 0x7cbd810)
+    EStat arg 40 = CerberusWeaponSwitchTime
+    tail: mov x5, x23 ; mov x6, x20 ; mov x7, xzr ; mov x24, x0 ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cbdbf8 in UnitSpecialStatFactory.<CreateStatsForDemine>d__5.MoveNext (fn va 0x7cbdadc)
+    EStat arg 22 = MineDeactivationTime
+    tail: mov x5, x23 ; mov x6, x21 ; mov x7, xzr ; mov x24, x0 ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cbdd28 in UnitSpecialStatFactory.<CreateStatsForDemine>d__5.MoveNext (fn va 0x7cbdadc)
+    EStat arg 23 = DeminingSpeed
+    tail: mov x5, x23 ; mov x6, x21 ; mov x7, xzr ; mov x24, x0 ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cbddf0 in UnitSpecialStatFactory.<CreateStatsForDemine>d__5.MoveNext (fn va 0x7cbdadc)
+    EStat arg 34 = MineDetection
+    tail: mov x5, x23 ; mov x6, x21 ; mov x7, xzr ; mov x24, x0 ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cbe0bc in UnitSpecialStatFactory.<CreateStatsForFirebat>d__4.MoveNext (fn va 0x7cbdf7c)
+    EStat arg 38 = FuelConsumption
+    tail: mov x5, x23 ; mov x6, x21 ; mov x7, xzr ; mov x24, x0 ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cbe204 in UnitSpecialStatFactory.<CreateStatsForFirebat>d__4.MoveNext (fn va 0x7cbdf7c)
+    EStat arg 19 = JumpRange
+    tail: mov x5, x23 ; mov x6, x21 ; mov x7, xzr ; mov x24, x0 ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cbe2a8 in UnitSpecialStatFactory.<CreateStatsForFirebat>d__4.MoveNext (fn va 0x7cbdf7c)
+    EStat arg 39 = RefuelingSpeed
+    tail: mov x5, x23 ; mov x6, x21 ; mov x7, xzr ; mov x24, x0 ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cbe34c in UnitSpecialStatFactory.<CreateStatsForFirebat>d__4.MoveNext (fn va 0x7cbdf7c)
+    EStat arg 37 = FuelReserve
+    tail: mov x5, x23 ; mov x6, x21 ; mov x7, xzr ; mov x24, x0 ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cbe3f0 in UnitSpecialStatFactory.<CreateStatsForFirebat>d__4.MoveNext (fn va 0x7cbdf7c)
+    EStat arg 35 = ForestUnitDetection
+    tail: mov x5, x23 ; mov x6, x21 ; mov x7, xzr ; mov x24, x0 ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cbe6cc in UnitSpecialStatFactory.<CreateStatsForFog>d__8.MoveNext (fn va 0x7cbe57c)
+    EStat arg 32 = FogActivationTime
+    tail: mov x5, x23 ; mov x6, x21 ; mov x7, xzr ; mov x24, x0 ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cbe784 in UnitSpecialStatFactory.<CreateStatsForFog>d__8.MoveNext (fn va 0x7cbe57c)
+    EStat arg 25 = EnergyConsumption
+    tail: mov x5, x23 ; mov x6, x21 ; mov x7, xzr ; mov x24, x0 ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cbe930 in UnitSpecialStatFactory.<CreateStatsForFog>d__8.MoveNext (fn va 0x7cbe57c)
+    EStat arg 31 = FogRadius
+    tail: mov x5, x23 ; mov x6, x21 ; mov x7, xzr ; mov x24, x0 ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cbe9d0 in UnitSpecialStatFactory.<CreateStatsForFog>d__8.MoveNext (fn va 0x7cbe57c)
+    EStat arg 28 = EnergyRegeneration
+    tail: mov x5, x23 ; mov x6, x21 ; mov x7, xzr ; mov x24, x0 ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cbea74 in UnitSpecialStatFactory.<CreateStatsForFog>d__8.MoveNext (fn va 0x7cbe57c)
+    EStat arg 33 = FogDeactivationTime
+    tail: mov x5, x23 ; mov x6, x21 ; mov x7, xzr ; mov x24, x0 ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cbeb18 in UnitSpecialStatFactory.<CreateStatsForFog>d__8.MoveNext (fn va 0x7cbe57c)
+    EStat arg 24 = EnergyReserve
+    tail: mov x5, x23 ; mov x6, x21 ; mov x7, xzr ; mov x24, x0 ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cbee44 in UnitSpecialStatFactory.<CreateStatsForMarchMode>d__6.MoveNext (fn va 0x7cbecb4)
+    EStat arg 20 = TransitionToMarchModeTime
+    tail: mov x5, x23 ; mov x6, x21 ; mov x7, x24 ; mov x25, x0 ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x25 ; str x25, [x0, #0x18]!
+  site va 0x7cbeefc in UnitSpecialStatFactory.<CreateStatsForMarchMode>d__6.MoveNext (fn va 0x7cbecb4)
+    EStat arg 21 = TransitionToSiegeModeTime
+    tail: mov x5, x23 ; mov x6, x21 ; mov x7, x24 ; mov x25, x0 ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x25 ; str x25, [x0, #0x18]!
+  site va 0x7cbf1e8 in UnitSpecialStatFactory.<CreateStatsForShield>d__7.MoveNext (fn va 0x7cbf090)
+    EStat arg 27 = ShieldRadius
+    tail: mov x5, x23 ; mov x6, x21 ; mov x7, xzr ; mov x24, x0 ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cbf2a4 in UnitSpecialStatFactory.<CreateStatsForShield>d__7.MoveNext (fn va 0x7cbf090)
+    EStat arg 29 = ShieldActivationTime
+    tail: mov x5, x23 ; mov x6, x21 ; mov x7, xzr ; mov x24, x0 ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cbf358 in UnitSpecialStatFactory.<CreateStatsForShield>d__7.MoveNext (fn va 0x7cbf090)
+    EStat arg 25 = EnergyConsumption
+    tail: mov x5, x23 ; mov x6, x21 ; mov x7, xzr ; mov x24, x0 ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cbf504 in UnitSpecialStatFactory.<CreateStatsForShield>d__7.MoveNext (fn va 0x7cbf090)
+    EStat arg 26 = ShieldStrength
+    tail: mov x5, x23 ; mov x6, x21 ; mov x7, xzr ; mov x24, x0 ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cbf5a4 in UnitSpecialStatFactory.<CreateStatsForShield>d__7.MoveNext (fn va 0x7cbf090)
+    EStat arg 28 = EnergyRegeneration
+    tail: mov x5, x23 ; mov x6, x21 ; mov x7, xzr ; mov x24, x0 ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cbf648 in UnitSpecialStatFactory.<CreateStatsForShield>d__7.MoveNext (fn va 0x7cbf090)
+    EStat arg 24 = EnergyReserve
+    tail: mov x5, x23 ; mov x6, x21 ; mov x7, xzr ; mov x24, x0 ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cbf6ec in UnitSpecialStatFactory.<CreateStatsForShield>d__7.MoveNext (fn va 0x7cbf090)
+    EStat arg 30 = ShieldDeactivationTime
+    tail: mov x5, x23 ; mov x6, x21 ; mov x7, xzr ; mov x24, x0 ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cbfa00 in UnitSpecialStatFactory.<CreateStatsHelicopters>d__9.MoveNext (fn va 0x7cbf888)
+    EStat arg 36 = SubmarineDetection
+    tail: mov x5, x23 ; mov x6, x21 ; mov x7, xzr ; mov x24, x0 ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cbfaf8 in UnitSpecialStatFactory.<CreateStatsHelicopters>d__9.MoveNext (fn va 0x7cbf888)
+    EStat arg 35 = ForestUnitDetection
+    tail: mov x5, x23 ; mov x6, x21 ; mov x7, xzr ; mov x24, x0 ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cbfdec in UnitSpecialStatFactory.<CreateStatsKodomash>d__15.MoveNext (fn va 0x7cbfc7c)
+    EStat arg 44 = WorkshopRepairSpeed
+    tail: mov x5, x23 ; mov x6, x21 ; mov x7, xzr ; mov x24, x0 ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cbfe90 in UnitSpecialStatFactory.<CreateStatsKodomash>d__15.MoveNext (fn va 0x7cbfc7c)
+    EStat arg 20 = TransitionToMarchModeTime
+    tail: mov x5, x23 ; mov x6, x21 ; mov x7, xzr ; mov x24, x0 ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cbff34 in UnitSpecialStatFactory.<CreateStatsKodomash>d__15.MoveNext (fn va 0x7cbfc7c)
+    EStat arg 45 = WorkshopModeTransitionTime
+    tail: mov x5, x23 ; mov x6, x21 ; mov x7, xzr ; mov x24, x0 ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cc00fc in UnitSpecialStatFactory.<CreateStatsKodomash>d__15.MoveNext (fn va 0x7cbfc7c)
+    EStat arg 43 = WorkshopRepairRadius
+    tail: mov x5, x23 ; mov x6, x21 ; mov x7, xzr ; mov x24, x0 ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cc03f0 in UnitSpecialStatFactory.<CreateStatsSeraphim>d__13.MoveNext (fn va 0x7cc0288)
+    EStat arg 41 = SeraphimGroundModeTransitionTime
+    tail: mov x5, x23 ; mov x6, x21 ; mov x7, xzr ; mov x24, x0 ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cc0494 in UnitSpecialStatFactory.<CreateStatsSeraphim>d__13.MoveNext (fn va 0x7cc0288)
+    EStat arg 42 = SeraphimAirModeTransitionTime
+    tail: mov x5, x23 ; mov x6, x21 ; mov x7, xzr ; mov x24, x0 ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+  site va 0x7cc0798 in UnitSpecialStatFactory.<CreateStatsShips>d__10.MoveNext (fn va 0x7cc0628)
+    EStat arg 36 = SubmarineDetection
+    tail: mov x5, x23 ; mov x6, x20 ; mov x7, xzr ; mov x24, x0 ; bl #0x7cbcee0 ; mov x0, x19 ; mov x1, x24 ; str x24, [x0, #0x18]!
+
+--- BuildingArmorStat..ctor (VA 0x7cc1ec4), 1 site(s)
+  site va 0x7cb6ff4 in BuildingBaseStatsFactory.<CreateStats>d__0.MoveNext (fn va 0x7cb6dac)
+    EStat arg None = None
+    tail: mov x4, x23 ; mov x5, x24 ; mov x6, xzr ; mov x25, x0 ; bl #0x7cc1ec4 ; mov x0, x19 ; mov x1, x25 ; str x25, [x0, #0x18]!
+
+===== 5. BuildingArmorStat..ctor native body (m_stat @0x20) =====
+  0x7cc1ecc: stp x26, x25, [sp, #0x20]
+  0x7cc1efc: tbnz w8, #0, #0x7cc1f50
+  0x7cc1f08: bl #0x3cc7948
+  0x7cc1f14: bl #0x3cc7948
+  0x7cc1f20: bl #0x3cc7948
+  0x7cc1f2c: bl #0x3cc7948
+  0x7cc1f38: bl #0x3cc7948
+  0x7cc1f44: bl #0x3cc7948
+  0x7cc1f48: mov w8, #1
+  0x7cc1f58: bl #0x8f91cdc
+  0x7cc1f68: bl #0x3cc78ec
+  0x7cc1f78: bl #0x3cc78ec
+  0x7cc1f88: bl #0x3cc78ec
+  0x7cc1f8c: cbz x22, #0x7cc20c4
+  0x7cc1fe4: bl #0x7cb6b30
+  0x7cc1fec: str w0, [x19, #0x20]
+  0x7cc1ff8: bl #0x3cc78ec
+  0x7cc2000: mov w1, #1
+  0x7cc2004: bl #0x3cc7a38
+  0x7cc2014: bl #0x3cc7be4
+  0x7cc2028: bl #0x555b170
+  0x7cc2030: bl #0x3cc7be4
+  0x7cc2044: bl #0x555c894
+  0x7cc204c: bl #0x3cc7be4
+  0x7cc2064: bl #0x80e87c4
+  0x7cc2068: cbz x20, #0x7cc20c4
+  0x7cc206c: cbz x21, #0x7cc2084
+  0x7cc207c: bl #0x3cc7acc
+  0x7cc2080: cbz x0, #0x7cc20cc
+  0x7cc2088: cbz w8, #0x7cc20c8
+  0x7cc2094: str x21, [x0, #0x20]!
+  0x7cc2098: bl #0x3cc78ec
+  0x7cc20b4: ldp x26, x25, [sp, #0x20]
+  0x7cc20c4: bl #0x3cc7bf4
+  0x7cc20c8: bl #0x3cc7bfc
+  0x7cc20cc: bl #0x3cc7c18
+  0x7cc20d4: bl #0x3cc7ab8
+  0x7cc20e0: stp x20, x19, [sp, #0x20]
+  0x7cc20f4: tbnz w8, #0, #0x7cc2118
+  0x7cc2100: bl #0x3cc7948
+  0x7cc210c: bl #0x3cc7948
+  0x7cc2110: mov w8, #1
+  0x7cc2118: cbz x19, #0x7cc21b8
+  0x7cc2140: ldr x1, [x22, #0x20]
+  0x7cc2148: cbz x9, #0x7cc216c
+
+mine bindings saved.

@@ -1,12 +1,12 @@
 class	TypeDefIndex	namespace	dump.cs lines	sealed	EStat binding (dump-derived)	confidence
 CoilTankMaxTargetsStat	396	Domains.Workshop.Impl.Models.Weapon	17770-17826	True	CoilTankMaxTargets	MATCH
 LaunchPreparationTimeStat	397	Domains.Workshop.Impl.Models.Weapon	17831-17887	True	LaunchPreparationTime	MATCH
-MineCostStat	398	Domains.Workshop.Impl.Models.Weapon	17892-17948	True	MinePrice | WeaponMineCost (one of the two mine-cost stats)	MATCH
-MineDamageForHeavyArmorStat	399	Domains.Workshop.Impl.Models.Weapon	17953-18009	True	candidates: WeaponArmorLight/61, WeaponArmorMedium/62, WeaponArmorHeavy/63 (per-armor mine damage; no MineDamage* EStat exists)	INFERRED
-MineDamageForLightArmorStat	400	Domains.Workshop.Impl.Models.Weapon	18014-18070	True	candidates: WeaponArmorLight/61, WeaponArmorMedium/62, WeaponArmorHeavy/63 (per-armor mine damage; no MineDamage* EStat exists)	INFERRED
-MineDamageForMediumArmorStat	401	Domains.Workshop.Impl.Models.Weapon	18075-18131	True	candidates: WeaponArmorLight/61, WeaponArmorMedium/62, WeaponArmorHeavy/63 (per-armor mine damage; no MineDamage* EStat exists)	INFERRED
-MineExplosionRadiusStat	402	Domains.Workshop.Impl.Models.Weapon	18136-18192	True	WeaponExplosionRadius (mine radius) or ExplosionRadius-family	MATCH
-MineSetTimeStat	403	Domains.Workshop.Impl.Models.Weapon	18197-18253	True	WeaponMineTime	MATCH
+MineCostStat	398	Domains.Workshop.Impl.Models.Weapon	17892-17948	True	WeaponMineCost/66 (native constant: get_Stat = mov w0,#0x42; ret)	NATIVE_CONST
+MineDamageForHeavyArmorStat	399	Domains.Workshop.Impl.Models.Weapon	17953-18009	True	WeaponArmorHeavy/63 (native constant: get_Stat = mov w0,#0x3f; ret)	NATIVE_CONST
+MineDamageForLightArmorStat	400	Domains.Workshop.Impl.Models.Weapon	18014-18070	True	WeaponArmorLight/61 (native constant: get_Stat = mov w0,#0x3d; ret)	NATIVE_CONST
+MineDamageForMediumArmorStat	401	Domains.Workshop.Impl.Models.Weapon	18075-18131	True	WeaponArmorMedium/62 (native constant: get_Stat = mov w0,#0x3e; ret)	NATIVE_CONST
+MineExplosionRadiusStat	402	Domains.Workshop.Impl.Models.Weapon	18136-18192	True	WeaponExplosionRadius/64 (native constant: get_Stat = mov w0,#0x40; ret)	NATIVE_CONST
+MineSetTimeStat	403	Domains.Workshop.Impl.Models.Weapon	18197-18253	True	WeaponMineTime/67 (native constant: get_Stat = mov w0,#0x43; ret)	NATIVE_CONST
 MissileFlightTimeStat	404	Domains.Workshop.Impl.Models.Weapon	18258-18314	True	MissileFlightTime	MATCH
 PsiAttackSpeedReductionStat	405	Domains.Workshop.Impl.Models.Weapon	18319-18375	True	PsiAttackSpeedReduction	MATCH
 PsiSlowdownDurationStat	406	Domains.Workshop.Impl.Models.Weapon	18380-18436	True	PsiSlowdownDuration	MATCH
@@ -21,7 +21,7 @@ WeaponDistanceStat	415	Domains.Workshop.Impl.Models.Weapon	18922-18985	True	Weap
 WeaponExplosionRadiusStat	416	Domains.Workshop.Impl.Models.Weapon	18990-19053	True	WeaponExplosionRadius/64	MATCH
 WeaponFireRateStat	417	Domains.Workshop.Impl.Models.Weapon	19058-19116	True	WeaponFireRate/60	MATCH
 WolverineMachineGunMaxAccelerationTimeStat	418	Domains.Workshop.Impl.Models.Weapon	19121-19178	True	WolverineMachineGunMaxAccelerationTime	MATCH
-BuildingArmorStat	4407	com.geargames.aow.ugui.army.models.info.Stats	168929-168987	True	ArmorLight | ArmorMedium | ArmorHeavy (chosen natively per building armor type)	MATCH
+BuildingArmorStat	4407	com.geargames.aow.ugui.army.models.info.Stats	168929-168987	True	ArmorLight/Medium/Heavy = 7/8/9, selected per building armor type via ArmorStatHelper.GetArmorMeta (bl 0x7cb6b30 in ctor @0x7cc1fe4, w0 -> m_stat@0x20)	NATIVE_ROUTED
 BuildingConstructionTimeStat	4408	com.geargames.aow.ugui.army.models.info.Stats	168992-169048	True	ConstructionTime	MATCH
 BuildingEnergyNeedStat	4409	com.geargames.aow.ugui.army.models.info.Stats	169053-169109	True	EnergyNeed/16 (after prefix strip Building*)	MATCH_STRIPPED
 BuildingEnergyProductionStat	4410	com.geargames.aow.ugui.army.models.info.Stats	169114-169173	True	EnergyProduction/15 (after prefix strip Building*)	MATCH_STRIPPED
@@ -33,9 +33,9 @@ BuildingViewStat	4415	com.geargames.aow.ugui.army.models.info.Stats	169431-16948
 ConstructionYardRadiusStat	4416	com.geargames.aow.ugui.army.models.info.Stats	169492-169551	True	ConstructionRadius	MATCH
 HqCommandPointsProduceStat	4417	com.geargames.aow.ugui.army.models.info.Stats	169556-169616	True	CommandPointsProduce	MATCH
 HqSupplyIncomeStat	4418	com.geargames.aow.ugui.army.models.info.Stats	169621-169681	True	SupplyIncome	MATCH
-SpecialStat	4419	com.geargames.aow.ugui.army.models.info.Stats	169686-169745	True	EStat unknown (native); icon family ico_stat_unique_*; EStatCategory likely Special/4	INFERRED
+SpecialStat	4419	com.geargames.aow.ugui.army.models.info.Stats	169686-169745	True	caller-supplied EStat ctor param; 42 native call sites in BuildingSpecialStatsFactory + UnitSpecialStatFactory iterators enumerate the full unique-stat set (19-22, 24, 25, 27-40, 41-47, 51, 56, 57)	NATIVE_ENUM_WRAPPER
 SupplyDepotIncomeStat	4420	com.geargames.aow.ugui.army.models.info.Stats	169750-169809	True	SupplyIncome	MATCH
-UnitArmorStat	4422	com.geargames.aow.ugui.army.models.info.Stats	169837-169911	True	ArmorLight | ArmorMedium | ArmorHeavy (chosen natively per unit armor type)	MATCH
+UnitArmorStat	4422	com.geargames.aow.ugui.army.models.info.Stats	169837-169911	True	ArmorLight/Medium/Heavy = 7/8/9, selected per unit armor type via ArmorStatHelper.GetArmorMeta (bl 0x7cb6b30 in TryCreate @0x7cc6c40, w22 -> w3 -> ctor)	NATIVE_ROUTED
 UnitControlPointsStat	4423	com.geargames.aow.ugui.army.models.info.Stats	169916-169972	True	CommandPoints	MATCH
 UnitHealthStat	4424	com.geargames.aow.ugui.army.models.info.Stats	169977-170033	True	Health/1 (after prefix strip Unit*)	MATCH_STRIPPED
 UnitHpRegenStat	4425	com.geargames.aow.ugui.army.models.info.Stats	170038-170094	True	HealthRegeneration	MATCH
