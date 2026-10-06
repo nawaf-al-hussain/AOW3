@@ -34172,9 +34172,9 @@ void main() {
       this.renderer.toneMappingExposure = 1.14;
       this.renderer.shadowMap.enabled = true;
       this.renderer.shadowMap.type = PCFShadowMap;
-      this.renderer.setClearColor(13616034);
+      this.renderer.setClearColor(12571336);
       this.camera = new PerspectiveCamera(38, 1, 1, 500);
-      this.scene.fog = new Fog(13616034, 170, 560);
+      this.scene.fog = new Fog(12571336, 190, 620);
       const hemi = new HemisphereLight(15066591, 10052467, 1.95);
       this.scene.add(hemi);
       this.sun = new DirectionalLight(16773848, 2.0);
@@ -34233,11 +34233,15 @@ void main() {
       apron.rotation.x = -Math.PI / 2;
       apron.position.y = -0.08;
       this.scene.add(apron);
+      this.apron = apron;
       this.fogCanvas = document.createElement("canvas");
       this.fogCanvas.width = MAP_W;
       this.fogCanvas.height = MAP_H;
       this.fogData = this.fogCanvas.getContext("2d").createImageData(MAP_W, MAP_H);
-      this.fogTex = new CanvasTexture(this.fogCanvas);
+      this.fogBlur = document.createElement("canvas");
+      this.fogBlur.width = MAP_W * 2;
+      this.fogBlur.height = MAP_H * 2;
+      this.fogTex = new CanvasTexture(this.fogBlur);
       this.fogTex.magFilter = LinearFilter;
       this.fogTex.minFilter = LinearFilter;
       const fog = new Mesh(new PlaneGeometry(MAP_W, MAP_H), new MeshBasicMaterial({ map: this.fogTex, transparent: true, depthWrite: false }));
@@ -34485,21 +34489,24 @@ void main() {
       }
       if (this.groundMesh)
         this.groundMesh.visible = false;
+      if (this.apron)
+        this.apron.visible = false;
     }
     addWater() {
       try {
         const t = new TextureLoader().load(this.assetBase + "models/water.png");
         t.colorSpace = SRGBColorSpace;
         t.wrapS = t.wrapT = RepeatWrapping;
-        t.repeat.set(26, 26);
+        t.repeat.set(42, 42);
         const mat = new MeshStandardMaterial({
-          color: 5275088, map: t, roughness: 0.32, metalness: 0.08,
-          transparent: true, opacity: 0.92
+          color: 5275088, map: t, roughness: 0.28, metalness: 0.12,
+          transparent: true, opacity: 0.93
         });
-        const w = new Mesh(new PlaneGeometry(560, 560), mat);
+        const w = new Mesh(new PlaneGeometry(900, 900), mat);
         w.rotation.x = -Math.PI / 2;
-        w.position.y = -0.42;
+        w.position.y = -0.3;
         this.scene.add(w);
+        this.water = w;
       } catch (e) {}
     }
     loadRealMapExtras(base) {
@@ -34819,10 +34826,11 @@ void main() {
         const pole = new Mesh(new CylinderGeometry(0.045, 0.045, 1.7, 6), mat(5592405, { metal: 0.5, rough: 0.5 }));
         pole.position.set(0, hq ? 4.6 : 6.1, 0);
         group.add(pole);
-        const flag = new Mesh(new PlaneGeometry(1.15, 0.7), new MeshBasicMaterial({ color: 13157556, side: DoubleSide }));
+        const flag = new Mesh(new PlaneGeometry(1.15, 0.7, 8, 4), new MeshBasicMaterial({ color: 13157556, side: DoubleSide }));
         flag.position.set(0.62, hq ? 5.05 : 6.55, 0);
         group.add(flag);
         view.flag = flag;
+        view.flagAnim = { geo: flag.geometry, base: flag.geometry.attributes.position.array.slice(), phase: Math.random() * 6.28, w: 1.15 };
         const hpCanvas = document.createElement("canvas");
         hpCanvas.width = 64;
         hpCanvas.height = 10;
@@ -34860,10 +34868,11 @@ void main() {
           const pole = new Mesh(new CylinderGeometry(0.04, 0.04, 2.1, 6), mat(5592405, { metal: 0.5, rough: 0.5 }));
           pole.position.set(def.radius * 0.85, 1.05, -def.radius * 0.6);
           group.add(pole);
-          const flag = new Mesh(new PlaneGeometry(0.85, 0.5), new MeshBasicMaterial({ color: 13157556, side: DoubleSide }));
+          const flag = new Mesh(new PlaneGeometry(0.85, 0.5, 8, 4), new MeshBasicMaterial({ color: 13157556, side: DoubleSide }));
           flag.position.set(def.radius * 0.85 + 0.45, 1.95, -def.radius * 0.6);
           group.add(flag);
           view.flag = flag;
+          view.flagAnim = { geo: flag.geometry, base: flag.geometry.attributes.position.array.slice(), phase: Math.random() * 6.28, w: 0.85 };
         }
         if (isDepot) {
           const capRing = new Mesh(new RingGeometry(def.radius + 0.05, def.radius + 0.35, 28, 1, -Math.PI / 2, Math.PI * 2), new MeshBasicMaterial({ color: 16777215, transparent: true, opacity: 0.9, depthWrite: false, side: DoubleSide }));
@@ -35338,7 +35347,93 @@ void main() {
         });
       }
     }
+    animateFlags(t) {
+      for (const v of this.bldViews.values()) {
+        const f = v.flagAnim;
+        if (!f)
+          continue;
+        const pos = f.geo.attributes.position, arr = pos.array, base = f.base;
+        for (let i = 0;i < arr.length; i += 3) {
+          const k = (base[i] + f.w / 2) / f.w;
+          arr[i + 2] = Math.sin(base[i] * 5.2 + t * 6.2 + f.phase) * 0.09 * k + Math.sin(base[i] * 9.3 + t * 9.7 + f.phase * 1.7) * 0.022 * k;
+        }
+        pos.needsUpdate = true;
+      }
+    }
+    async makeUnitPortraits() {
+      if (this._portraits)
+        return;
+      this._portraits = true;
+      try {
+        const W = 196, H = 132, fov = 30 * Math.PI / 180;
+        const pr = new WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+        pr.setSize(W, H);
+        pr.setPixelRatio(1.5);
+        pr.outputColorSpace = SRGBColorSpace;
+        pr.toneMapping = LinearToneMapping;
+        pr.toneMappingExposure = 1.14;
+        pr.setClearColor(0, 0);
+        const scene = new Scene;
+        const cam2 = new PerspectiveCamera(30, W / H, 0.05, 300);
+        scene.add(new HemisphereLight(15066591, 10052467, 1.7));
+        const key = new DirectionalLight(16773848, 2.3);
+        key.position.set(4, 7, 5);
+        scene.add(key);
+        const rim = new DirectionalLight(9378239, 0.9);
+        rim.position.set(-5, 4, -5);
+        scene.add(rim);
+        const shadow = new Mesh(new PlaneGeometry(2.6, 2.6), new MeshBasicMaterial({ map: this.texShadow, transparent: true, depthWrite: false }));
+        shadow.rotation.x = -Math.PI / 2;
+        scene.add(shadow);
+        for (const id of BUILD_ORDER) {
+          const pair = UNIT_MODEL[id];
+          if (!pair)
+            continue;
+          const t = templates.get(pair[0]);
+          if (!t)
+            continue;
+          const inst = cloneScaled(t);
+          const wrap = new Group;
+          wrap.add(inst);
+          wrap.updateMatrixWorld(true);
+          if (t.animations && t.animations.length) {
+            try {
+              const ua = new UnitAnim(inst, t.animations);
+              const clip = ua.has("idle1") ? "idle1" : ua.has("idle2") ? "idle2" : t.animations[0].name;
+              ua.loop(clip);
+              ua.mixer.update(0.45);
+            } catch (e2) {}
+          }
+          const box = new Box3().setFromObject(wrap);
+          const size = box.getSize(new Vector3);
+          const c0 = box.getCenter(new Vector3);
+          wrap.position.set(-c0.x, -c0.y, -c0.z);
+          wrap.rotation.y = 0.5;
+          wrap.updateMatrixWorld(true);
+          scene.add(wrap);
+          const spanH = Math.max(size.x, size.z);
+          const dist = Math.max(size.y * 0.6 / Math.tan(fov / 2), spanH * 0.55 / (Math.tan(fov / 2) * cam2.aspect)) * 1.08 + 0.25;
+          const pitch = 0.3;
+          cam2.position.set(0, dist * Math.sin(pitch), dist * Math.cos(pitch));
+          cam2.lookAt(0, -size.y * 0.05, 0);
+          shadow.scale.setScalar(Math.max(size.x, size.z) * 1.05);
+          shadow.position.y = -size.y / 2 + 0.02;
+          pr.render(scene, cam2);
+          UNITS[id].card = pr.domElement.toDataURL("image/png");
+          scene.remove(wrap);
+        }
+        pr.dispose();
+      } catch (e) {
+        console.error("portraits failed", e);
+      }
+    }
     syncFx(dt) {
+      if (this.water) {
+        const wm = this.water.material.map;
+        wm.offset.x = this.time * 0.011;
+        wm.offset.y = this.time * 0.006 + Math.sin(this.time * 0.4) * 0.04;
+      }
+      this.animateFlags(this.time);
       for (let i = this.fxSprites.length - 1;i >= 0; i--) {
         const f = this.fxSprites[i];
         f.ttl -= dt;
@@ -35522,6 +35617,12 @@ void main() {
         }
       }
       this.fogCanvas.getContext("2d").putImageData(this.fogData, 0, 0);
+      const fb = this.fogBlur.getContext("2d");
+      fb.clearRect(0, 0, this.fogBlur.width, this.fogBlur.height);
+      fb.filter = "blur(5px)";
+      fb.imageSmoothingEnabled = true;
+      fb.drawImage(this.fogCanvas, 0, 0, this.fogBlur.width, this.fogBlur.height);
+      fb.filter = "none";
       this.fogTex.needsUpdate = true;
     }
     resize(w, h, dpr) {
@@ -35774,6 +35875,7 @@ button{cursor:pointer;border:0;border-radius:8px}
 .mm-rivet.r4{bottom:5px;right:5px}
 .mm-plate{position:absolute;top:-8px;left:12px;background:linear-gradient(180deg,#39412c,#20251a);border:1px solid #5a6444;border-radius:4px;color:#c9d6a3;font-size:7px;font-weight:800;letter-spacing:1px;padding:1px 5px;z-index:4;box-shadow:0 2px 4px rgba(0,0,0,.5);pointer-events:none}
 .mm-plate.right{left:auto;top:auto;right:12px;bottom:-8px;color:#e0b46a}
+body>canvas{filter:saturate(1.07) contrast(1.035)}
 `;
   document.head.appendChild(css);
   var sim = null;
@@ -35787,7 +35889,8 @@ button{cursor:pointer;border:0;border-radius:8px}
     const probe = new Sim(1);
     const r = new Renderer3D(cv, "assets/");
     r3d = r; window.__DBG = { r3d: r, cam };
-    r.load().then(() => {
+    r.load().then(async () => {
+      await r.makeUnitPortraits();
       ready = true;
       $("baking").style.display = "none";
       $("start").disabled = false;
