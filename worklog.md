@@ -215,3 +215,24 @@ Stage Summary:
 - Damage feedback loop complete: hit -> HP bar -> smoke -> wreck scorch.
 - Pushing to main; next candidates: AA flak, minimap frame art, damaged building
   icon states, sound mixing (positioned volume already partial).
+
+---
+Task ID: 7
+Agent: Super Z (main)
+Task: Live deploy verification of passes 4+5
+
+Work Log:
+- Pages built ab56bbe (pass 4) and 3fc697a (pass 5); live QA on production URL with fresh
+  cache-busted session (?v= param — browser had cached old game.js, note for future QA).
+- Live verified: menu faction art, red building icons + CP icon in HUD, selinfo panel,
+  team-colored selection rings, building HP bars (HQ included), damage smoke, production
+  gating (MBT/Rocket Artillery via factory), queue badges on cards, assault march across
+  the real map, artillery scorch decals + debris impacts at the enemy base, blue enemy
+  buildings vs red player forces.
+- Staged full combined-arms assault via debug API (funds+factory+enqueue) — battle loop
+  intact end to end, zero page errors.
+
+Stage Summary:
+- Live: https://nawaf-al-hussain.github.io/AOW3/ @ 3fc697a
+- Remaining candidates: AA flak vs gunship, damaged-building icon states, minimap frame
+  art, ambient birds/wind loop, unit veterancy/battle report.
