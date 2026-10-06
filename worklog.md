@@ -368,3 +368,22 @@ Stage Summary:
 - Grey map regression fixed and live (main = 2cd8b1c). Lagoon site now renders as plain
   terrain (sheets hidden); if a water look is wanted there later, needs per-sheet alpha
   textures rather than a uniform material.
+
+---
+Task ID: 12
+Agent: main (Super Z)
+Task: Fix "map looks underwater / textures ruined" feedback
+
+Work Log:
+- Diagnosed: Pass 7 "ocean world" color scheme read as submerged — pale grey-cyan clear/fog
+  (12571336) tinting every surface, 900-unit dark steel-blue water plane dominating views,
+  warm ground apron hidden.
+- Reverted to original warm scheme (pre-pass-7 values recovered from git history):
+  setClearColor(13616034) tan, Fog(13616034, 170, 560), water 560x560 repeat 26
+  roughness .32 metalness .08 opacity .92 y -0.42 (kept this.water ref + wave anim),
+  apron visible again. Kept: fog margin R11, hidden overlay sheets, portraits, etc.
+- index.html ?v=10; pushed 5fdf487; live verified.
+- QA v10: warm sand/jungle palette, bright explored zone, natural haze; zero page errors.
+
+Stage Summary:
+- Underwater tint removed; scene matches original warm desert-coast look (main = 5fdf487).
