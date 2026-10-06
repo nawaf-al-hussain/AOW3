@@ -598,3 +598,19 @@ Stage Summary:
   faction assignment, and build structure; stat values remain documented approximations
   (server-only data). Fixed-timestep docs brought in line with reality. Deployed and
   live-verified: main = 92298eb, live game.js?v=14, zero page errors.
+
+---
+Task: audit follow-ups (a) full XAPK bundle-name pass for bul_ + (b) native pinning of the 9 ambiguous EStat bindings
+
+Work Log:
+- (a) Downloaded the 6.9.18 XAPK via LFS (270,599,286 B; SHA-256 1a41e033… matches the armor-note provenance chain). Unpacked all 7 content APKs (base 6,649 entries + 6 asset packs).
+- (a) Parsed assets/aa/catalog.json — Unity Addressables main content catalog (build d8af169b…): 863 internal ids = 832 asset addresses + 31 bundle paths. Families: bul_ = 51 (41 VFX prefabs + 6 anims + 4 mats), fire_ = 24 (18 prefabs + 6 anims), expl_ = 0 — explosions are boom_expl{1..5}_s{0..6}_{ground|veh|water} incl. boom_expl5_s5_nuke; rockets are bul_rocket* / anim_rocet_boom. fire_rifle1_s1.prefab and bul_rifle1_s2.prefab exist VERBATIM. Verdict upgraded PARTIALLY CONFIRMED (MEDIUM) → CONFIRMED (HIGH). Evidence: reverse/evidence/vfx-catalog-families-6.9.18.txt.
+- (b) Extracted lib/arm64-v8a/libil2cpp.so (164,646,104 B; SHA-256 8ace05bb… verified). Wrote reverse/tools/pin_estat_bindings.py (Capstone + numpy whole-file BL scan + 150,721-method dump.cs RVA index).
+- (b) Six mine/weapon stat classes: get_Stat() is mov w0,#imm;ret → MineCostStat=WeaponMineCost/66 (NOT MinePrice/71), MineDamageFor{L,M,H}ArmorStat=61/62/63, MineExplosionRadiusStat=64, MineSetTimeStat=67.
+- (b) BuildingArmorStat..ctor and UnitArmorStat.TryCreate both call ArmorStatHelper.GetArmorMeta (0x7cb6b30) → ArmorLight/Medium/Heavy (7/8/9) per armor type — cross-confirms the armor-note UI-mapper chain.
+- (b) SpecialStat..ctor takes caller-supplied EStat; 42 call sites found, all in BuildingSpecialStatsFactory/UnitSpecialStatFactory iterators, enumerating the full unique-EStat set (19-22, 24, 25, 27-40, 41-47, 51, 56, 57). Evidence: reverse/evidence/estat/estat-native-pinning.txt. TSV now 26 MATCH / 9 MATCH_STRIPPED / 6 NATIVE_CONST / 2 NATIVE_ROUTED / 1 NATIVE_ENUM_WRAPPER / 1 DIRECT = 45/45 resolved.
+
+Stage Summary:
+- Both follow-ups closed and pushed (893c4bb, 5c25608) after rebase onto the concurrent v=14 roster pass (fa603a3).
+- Open detail noted: EStat.MinePrice/71 has no IStatModel class (likely non-UI code path).
+- Audit next-investigations: #1-#4 all closed with native/catalog evidence; only #5 remains (blocked: no 6.5.22 binary). docs/game.js untouched.
