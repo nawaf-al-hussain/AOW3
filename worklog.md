@@ -297,3 +297,29 @@ Stage Summary:
 - Push BLOCKED this session: GitHub credentials helper (/home/z/bin) lost in environment
   wipe; commits exist locally on main (pass 8 + fixes). Deliverable copied to
   /home/z/my-project/download/ for manual deploy; re-push when credentials restored.
+
+---
+Task ID: 10
+Agent: main (Super Z)
+Task: Restore GitHub credentials (user-provided token), push pass 8, live QA
+
+Work Log:
+- User supplied fresh GitHub PAT; remote set-url + ls-remote auth OK.
+- Push initially rejected: remote had 3 new doc-only commits (AGENTS.md,
+  reverse/AGENTS.md, docs/AOW3_DEVELOPMENT_PLAN.md). Rebased pass 8 onto
+  origin/main cleanly (no source conflicts), pushed 8143cd3..66bbe0e.
+- Pages verified: index 200, serves game.js?v=8b, rankTier/syncDying/paintRank present.
+- Live QA (agent-browser session p8live, fresh cache):
+  * Load + skirmish start: zero console/page errors.
+  * Veterancy: stats[kills/losses] tracked through real combat (P1 2/2, P2 2/2);
+    chevron sprites visible on veteran tanks (4/16 views), per-unit kills=1 tier=1.
+  * Death animations: 8 forced deaths (hp=0) routed through syncDying (observed
+    mode "anim"), losses 3->11, queue drained to wreck FX.
+  * Lagoons: 26 meshes on pondMat (color 507dd0, opacity .93, animated offset map).
+  * Battle report: enemy HQ hp=0 -> VICTORY verdict + full YOU/ENEMY report table
+    (7 rows: fielded/kills/lost/razed/lost/time) rendered live.
+  * Infantry portraits brighter in build bar (rifle/MG/AT readable).
+  * Reload: zero errors.
+
+Stage Summary:
+- Pass 8 fully deployed and live-verified on GitHub Pages. main = 66bbe0e.
