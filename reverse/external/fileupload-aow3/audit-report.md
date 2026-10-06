@@ -220,7 +220,10 @@ For the implementation team, later eligible items (pending their own verificatio
 
 ## Recommended Next Investigations (ranked)
 
-1. **Native analysis of `ArmorStatHelper` in 6.9.18** (resolves the only UNRESOLVED conflict).
+1. ~~**Native analysis of `ArmorStatHelper` in 6.9.18**~~ — **DONE 2026-10-06**: claim REJECTED,
+   conflict RESOLVED. See `reverse/notes/armor-stat-helper-native-analysis.md` and the §C Resolution
+   in `reverse/evidence/conflicts/version-drift-6.5.22-vs-6.9.18.md`. No coefficient exists outside
+   `CalculateWeaponArmorDamage`; the analysis also natively covered the item-2 wrappers below.
 2. **Native analysis of `CreateDamageForMediumArmor` / `GetDamageForMediumArmor`** (completes the
    damage-pipeline reconstruction beyond `CalculateWeaponArmorDamage`).
 3. **Check the asset catalog** (211 MB `aow3-extracted-assets.zip`) for `fire_*`/`bul_*`/`expl_*`
@@ -269,8 +272,9 @@ semantics, economy details — table above with verification paths.
 of the docs over direct binary evidence.
 
 ### Conflicts
-Only version drift (recorded as conflict record, status UNRESOLVED for `AttackCoeffCalculating`/
-`ARMOR_COEFF`; explanation categories: rename / moved to native / doc-author inference).
+Only version drift (recorded as conflict record — **now RESOLVED**: native analysis 2026-10-06
+rejected the `AttackCoeffCalculating`/`ARMOR_COEFF` claim; see §C Resolution in
+`reverse/evidence/conflicts/version-drift-6.5.22-vs-6.9.18.md`).
 
 ### Imported Files
 Listed under "Imported Evidence" above — 14 files added under `reverse/`, all ≤ ~2.5 MB total,

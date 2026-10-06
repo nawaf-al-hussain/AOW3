@@ -451,3 +451,21 @@ Stage Summary:
   layout (§4), tags rule status (§1.1, §7), reconciles priority vs visual phase (§32), and
   captures the de-facto deploy/QA loop (§35). AGENTS.md + worklog committed together; docs/
   unchanged (v=11 live).
+
+---
+Task ID: ArmorStatHelper-Native
+Agent: Super Z (main)
+Task: Native analysis of ArmorStatHelper to close the UNRESOLVED conflict (external ARMOR_COEFF / AttackCoeffCalculating claim)
+
+Work Log:
+- Re-fetched the repo's own 6.9.18 XAPK via the LFS media endpoint; SHA-256 1a41e033cce3f7e8595a0aa1dac07e90799d21a92793faaebbc13d3378b32c3e — byte-identical to the committed LFS OID (provenance intact).
+- Extracted config.arm64_v8a.apk → lib/arm64-v8a/libil2cpp.so (164,646,104 bytes, SHA-256 8ace05bbaa2cdfda156e377cfbcb0c0a6fb223fa68188fa3df49f677f10e90c5).
+- Wrote Capstone ARM64 disassembler with ELF64 PT_LOAD vaddr mapping + rodata float annotation (reverse/tools/armor_native_analysis.py); rodata sanity: 0.1f@0x1b09b9c (0x3DCCCCD0), 0.9f@0x1b099f0 (0x3F666666) — matches combat-stats.md.
+- Disassembled the entire armor-damage surface: ArmorStatHelper.GetArmorMeta (0x7cb6b30 — zero FP instructions; ArmorType(0..2) → (EStat 7/8/9, display-string enum); pure UI metadata), MaxStatValueProvider.Get (routes only EStat 61–63 WeaponArmor{L,M,H} + 72–74 WeaponSuperWeaponArmor{L,M,H} into the curve), CalculateWeaponArmorDamage (only float constants: 0.1f/0.9f/1.0f; no per-armor-type table, no switch), WeaponDamage{L,M,H}Value (int triad 0x28/0x2c/0x30 + int8 level scale @0x6a when layout tag==40), six WeaponStatsFactory 16-byte tail-call thunks → builders differing only in baked EStat id (61/62/63, 72/73/74), three MineStatsFactory.CreateDamageFor* (arithmetic-free delegation).
+- Metadata sweeps: 0 hits for ArmorCoeff/AttackCoeff in dump.cs (audit) AND stringliteral.json (this pass); only 6 armor strings, all UI icons/labels.
+- Verdict: no ArmorCoeff(ArmorType,WeaponType) multiplier exists in 6.9.18 metadata, string literals, or native code. External claim REJECTED; conflict RESOLVED. Browser 0.9/0.1 curve stands (native-confirmed). docs/game.js untouched.
+
+Stage Summary:
+- Conflict record status UNRESOLVED → RESOLVED with §C Resolution subsection (reverse/evidence/conflicts/version-drift-6.5.22-vs-6.9.18.md).
+- New: reverse/notes/armor-stat-helper-native-analysis.md (full evidence), reverse/tools/armor_native_analysis.py (repro script); combat-stats.md §1 addendum (EStat routing 61–63/72–74 + surface closure); audit-report next-investigation #1 marked DONE, §42 Conflicts updated; reverse/README.md contents extended.
+- Audit "Recommended Next Investigations" #1 and #2 (damage-pipeline wrappers) are both natively covered by this pass; remaining: #3 asset-catalog VFX prefixes, #4 EStat stat-list extraction, #5 (blocked: no 6.5.22 binary).

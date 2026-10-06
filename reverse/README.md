@@ -10,6 +10,8 @@ IL2CPP ARM64 build with **unencrypted** `global-metadata.dat` (metadata v31, Uni
 | `dump.cs.zip` | 63.9 MB raw | Complete C# class/method/field dump — every type, method signature and field offset of the game assembly |
 | `stringliteral.json.zip` | 2.7 MB raw | All string literals with their il2cpp addresses |
 | `notes/combat-stats.md` | — | Recovered combat model: damage/armor function, weapon triads, EStat schema |
+| `notes/armor-stat-helper-native-analysis.md` | — | Native (ARM64) analysis of `ArmorStatHelper` + the full armor-damage surface; closes the external `ARMOR_COEFF` conflict |
+| `tools/armor_native_analysis.py` | — | Capstone ARM64 disassembly script (vaddr↔file-offset ELF map, rodata float annotation) used for the note above |
 | `external/fileupload-aow3/` | — | Audited external collection (6.5.22-era name lists + cross-version verification). Start at `external/fileupload-aow3/audit-report.md` |
 | `versions/6.5.22-fileupload-collection.md` | — | Version dossier for the external 6.5.22 dataset |
 | `evidence/conflicts/` | — | Conflict/drift records (external claims vs current binary) |

@@ -1,7 +1,8 @@
 # Version Drift: FileUpload collection (6.5.22) vs current binary (6.9.18)
 
 Created: 2026-10-06 (FileUpload/AOW3 audit)
-Status: **UNRESOLVED** (for the two constants listed in §C); the remainder is classified version drift, not contradiction.
+Status: **RESOLVED** (§C closed 2026-10-06 by native analysis of `ArmorStatHelper` and the full
+armor-damage surface — see "§C Resolution" below; the remainder is classified version drift, not contradiction).
 
 ## Context
 
@@ -62,10 +63,37 @@ Possible explanations:
    elsewhere that do verify, so this one stands out);
 3. string-based artifact of the producing session's keyword extraction.
 
-Required next step: **native analysis of `ArmorStatHelper`** in 6.9.18 (`libil2cpp.so`,
-function identified from dump.cs) to confirm whether any armor-coefficient multiplier exists
-outside `CalculateWeaponArmorDamage`. Until then, the browser implementation must keep using the
-recovered 0.9/0.1 mitigation curve — no change.
+Required next step: ~~native analysis of `ArmorStatHelper`~~ — **DONE 2026-10-06**, see below.
+
+### §C Resolution (2026-10-06) — native analysis, claim REJECTED
+
+Native disassembly (Capstone ARM64, hash-verified 6.9.18 `libil2cpp.so`, SHA-256
+`8ace05bb…e90c5`) of the complete armor-damage surface —
+`ArmorStatHelper.GetArmorMeta`, `MaxStatValueProvider.Get/Calculate/CalculateWeaponArmorDamage`,
+`WeaponDamage{Light,Medium,Heavy}Value`, the six `WeaponStatsFactory.GetDamageFor*/GetSuperWeaponDamageFor*`
+thunks + their builders, and the three `MineStatsFactory.CreateDamageFor*` wrappers —
+establishes:
+
+1. `ArmorStatHelper.GetArmorMeta` (0x7cb6b30) contains **zero floating-point instructions**: it
+   maps `ArmorType(0..2) → (EStat 7/8/9, display-string enum)` for the army-info UI. No math lives there.
+2. `CalculateWeaponArmorDamage` (0x7cc1c18) is the **only** place the mitigation curve exists;
+   its only float constants are `0.1f` (rodata 0x1b09b9c), `0.9f` (rodata 0x1b099f0), `1.0f` (immediate).
+   No switch on armor type, no per-armor-class coefficient table, no second multiplier.
+3. `MaxStatValueProvider.Get` routes exactly EStat 61–63 (`WeaponArmor{L,M,H}`) and 72–74
+   (`WeaponSuperWeaponArmor{L,M,H}`) into that single curve; the six `WeaponStatsFactory` thunks
+   and three `MineStatsFactory` wrappers are arithmetic-free delegation (builders differ only in
+   the baked EStat constant 61/62/63, 72/73/74).
+4. `WeaponDamage*Value` getters read the int damage triad (0x28/0x2c/0x30) with an integer
+   weapon-level scale (int8 @0x6a, layout tag 40) — not a coefficient.
+
+Full evidence with addresses and disassembly excerpts:
+`reverse/notes/armor-stat-helper-native-analysis.md` (script: `reverse/tools/armor_native_analysis.py`).
+
+Verdict: `AttackCoeffCalculating` / `ARMOR_COEFF` are **absent from the 6.9.18 binary in metadata,
+string literals, and native code**; the external formula shape is a doc-author simplification of
+the 0.9–0.1 mitigation curve. Explanations (2)/(3) stand, (1) is natively excluded. Claim classified
+REJECTED (no authority over direct binary evidence). The browser implementation keeps the recovered
+0.9/0.1 curve — unchanged, now with native confirmation.
 
 ## D. No value-level conflicts
 

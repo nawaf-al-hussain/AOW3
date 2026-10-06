@@ -26,6 +26,17 @@ r >= 1 -> f = 0.9 * (1 + (dmg - armor) / (armor + dmg)) // -> 0.9 .. 0.0, clampe
 
 Continuous at `r == 1` (f = 0.9), matching both decompiled branch constants.
 
+**Native re-verification + surface closure (2026-10-06):** the full armor-damage surface was
+disassembled (`reverse/notes/armor-stat-helper-native-analysis.md`). `CalculateWeaponArmorDamage`
+is the ONLY mitigation-curve site; its sole float constants are 0.1f/0.9f (+1.0f immediate).
+`MaxStatValueProvider.Get` routes exactly **EStat 61–63 = `WeaponArmor{Light,Medium,Heavy}`**
+and **72–74 = `WeaponSuperWeaponArmor{Light,Medium,Heavy}`** into the curve.
+`ArmorStatHelper.GetArmorMeta` (0x7cb6b30) is UI-only: `ArmorType(0..2) → (EStat 7/8/9,
+icon/label string)` — zero FP instructions. The six `WeaponStatsFactory` damage thunks and
+three `MineStatsFactory.CreateDamageFor*` wrappers are arithmetic-free delegation (builders
+bake only the EStat id). No per-armor-type coefficient exists anywhere — external
+`ARMOR_COEFF`/`AttackCoeffCalculating` claim REJECTED.
+
 ## 2. Weapon counter-triangle
 
 `WeaponDamageLightValue @0x7fcf14c`, `WeaponDamageMediumValue @0x7fcf1b8`,
