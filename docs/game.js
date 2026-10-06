@@ -35376,10 +35376,10 @@ void main() {
         const scene = new Scene;
         const cam2 = new PerspectiveCamera(30, W / H, 0.05, 300);
         scene.add(new HemisphereLight(15066591, 10052467, 1.7));
-        const key = new DirectionalLight(16773848, 2.3);
+        const key = new DirectionalLight(16773848, 3.1);
         key.position.set(4, 7, 5);
         scene.add(key);
-        const rim = new DirectionalLight(9378239, 0.9);
+        const rim = new DirectionalLight(9378239, 1.35);
         rim.position.set(-5, 4, -5);
         scene.add(rim);
         const shadow = new Mesh(new PlaneGeometry(2.6, 2.6), new MeshBasicMaterial({ map: this.texShadow, transparent: true, depthWrite: false }));
@@ -35412,8 +35412,8 @@ void main() {
           wrap.updateMatrixWorld(true);
           scene.add(wrap);
           const spanH = Math.max(size.x, size.z);
-          const dist = Math.max(size.y * 0.6 / Math.tan(fov / 2), spanH * 0.55 / (Math.tan(fov / 2) * cam2.aspect)) * 1.08 + 0.25;
-          const pitch = 0.3;
+          const dist = Math.max(size.y * 0.62 / Math.tan(fov / 2), spanH * 0.57 / (Math.tan(fov / 2) * cam2.aspect)) * 0.94 + 0.12;
+          const pitch = 0.34;
           cam2.position.set(0, dist * Math.sin(pitch), dist * Math.cos(pitch));
           cam2.lookAt(0, -size.y * 0.05, 0);
           shadow.scale.setScalar(Math.max(size.x, size.z) * 1.05);
