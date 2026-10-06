@@ -34470,6 +34470,16 @@ void main() {
         fixS(t);
         this.texExpl = t;
       });
+      tl.load(`${base}ui/sel-ring.png`, (t) => {
+        this.texSelRing = t;
+      });
+      tl.load(`${base}ui/waypoint-ring.png`, (t) => {
+        this.texWaypoint = t;
+      });
+      tl.load(`${base}ui/flash-green.png`, (t) => {
+        fixS(t);
+        this.texFlashGreen = t;
+      });
       fetch(`${base}models/heightmap.json`).then((r) => r.json()).then((m) => {
         const img = new Image;
         img.onload = () => {
@@ -34866,7 +34876,7 @@ void main() {
         v.selRing.visible = isSel;
         if (isSel) {
           const pulse = 1 + Math.sin(this.time * 7) * 0.05;
-          const r = u.def.radius * 1.5 + 0.45;
+          const r = u.def.radius * 1.26 + 0.32;
           v.selRing.scale.setScalar(r * pulse);
         }
         if (u.captureT !== undefined && u.captureT > 0.05) {
@@ -35002,7 +35012,7 @@ void main() {
       hpSprite.visible = false;
       hpSprite.renderOrder = 40;
       this.scene.add(hpSprite);
-      const selRing = new Mesh(new RingGeometry(0.82, 1, 26), new MeshBasicMaterial({ color: 9109354, transparent: true, opacity: 0.95, depthWrite: false, side: DoubleSide }));
+      const selRing = this.texSelRing ? new Mesh(new PlaneGeometry(2, 2), new MeshBasicMaterial({ color: u.owner === 1 ? 16756832 : 6990079, map: this.texSelRing, transparent: true, opacity: 0.95, depthWrite: false, side: DoubleSide })) : new Mesh(new RingGeometry(0.82, 1, 26), new MeshBasicMaterial({ color: 9109354, transparent: true, opacity: 0.95, depthWrite: false, side: DoubleSide }));
       selRing.rotation.x = -Math.PI / 2;
       selRing.position.y = 0.07;
       selRing.visible = false;
@@ -35071,15 +35081,24 @@ void main() {
           glow.scale.setScalar(isBullet ? 0.32 : 0.7);
           this.scene.add(mesh, glow);
           this.fireEvent(p.x, p.y, p.owner);
-          v = { mesh, glow, trailAcc: 0, prev: new Vector3(p.x - MAP2, 0.6, p.y - MAP2) };
+          v = { mesh, glow, trailAcc: 0, prev: new Vector3(p.x - MAP2, 0.6, p.y - MAP2), total: Math.hypot(p.tx - p.x, p.ty - p.y) || 1 };
           this.tracerViews.set(p, v);
         }
         const [wx, wz] = t2w(p.x, p.y);
         const pos = new Vector3(wx, heightAtWorld(wx, wz) + 0.55, wz);
+        const lob = p.splash > 0.6 || p.speed < 20;
+        if (lob) {
+          const rem = Math.hypot(p.tx - p.x, p.ty - p.y);
+          const k = Math.max(0, Math.min(1, 1 - rem / v.total));
+          pos.y += Math.sin(k * Math.PI) * Math.min(5.5, 0.9 + v.total * 0.3);
+        }
         const dx = pos.x - v.prev.x, dz = pos.z - v.prev.z;
+        const dy = pos.y - v.prev.y;
         const ang = Math.atan2(dz, dx);
         v.mesh.position.copy(pos);
         v.mesh.rotation.y = -ang;
+        if (Math.hypot(dx, dz) > 1e-4)
+          v.mesh.rotation.z = lob ? Math.atan2(dy, Math.hypot(dx, dz)) : 0;
         v.glow.position.copy(pos);
         v.prev.copy(pos);
         if (p.splash > 0.6 || p.speed < 20) {
@@ -35222,7 +35241,7 @@ void main() {
           continue;
         }
         const k = 1 - mk.ttl / mk.max;
-        const grow = mk.max > 1 ? 0.5 + k * 2.6 : 0.5 + k * 1.4;
+        const grow = mk.grow ? mk.grow[0] + k * mk.grow[1] : mk.max > 1 ? 0.5 + k * 2.6 : 0.5 + k * 1.4;
         mk.ring.scale.setScalar(grow);
         mk.ring.material.opacity = 0.9 * (1 - k);
       }
@@ -35297,12 +35316,19 @@ void main() {
     }
     mark(tx, ty, kind) {
       const [wx, wz] = t2w(tx, ty);
-      const col = kind === "attack" ? 16738890 : kind === "capture" ? 16769658 : 9109354;
-      const ring = new Mesh(new RingGeometry(0.75, 1, 26), new MeshBasicMaterial({ color: col, transparent: true, opacity: 0.95, depthWrite: false, side: DoubleSide }));
+      const col = kind === "attack" ? 16738890 : kind === "capture" ? 16769658 : 5822552;
+      const ring = this.texWaypoint ? new Mesh(new PlaneGeometry(2, 2), new MeshBasicMaterial({ color: col, map: this.texWaypoint, transparent: true, opacity: 0.95, depthWrite: false, side: DoubleSide })) : new Mesh(new RingGeometry(0.75, 1, 26), new MeshBasicMaterial({ color: col, transparent: true, opacity: 0.95, depthWrite: false, side: DoubleSide }));
       ring.rotation.x = -Math.PI / 2;
       ring.position.set(wx, 0.14, wz);
       this.scene.add(ring);
-      this.markers.push({ ring, ttl: 0.55, max: 0.55 });
+      this.markers.push({ ring, ttl: 0.55, max: 0.55, grow: [0.5, 2.4] });
+      if (this.texFlashGreen) {
+        const flash = new Mesh(new PlaneGeometry(2.6, 2.6), new MeshBasicMaterial({ color: 13434828, map: this.texFlashGreen, transparent: true, opacity: 0.9, depthWrite: false, side: DoubleSide, blending: AdditiveBlending }));
+        flash.rotation.x = -Math.PI / 2;
+        flash.position.set(wx, 0.13, wz);
+        this.scene.add(flash);
+        this.markers.push({ ring: flash, ttl: 0.28, max: 0.28, grow: [0.7, 1.6] });
+      }
     }
     syncFloats(sim) {
       for (const f of sim.floats) {
@@ -35476,7 +35502,7 @@ void main() {
   <canvas id="cv"></canvas>
   <div id="selbox"></div>
 
-  <div id="menu" class="overlay">
+  <div id="menu" class="overlay"><img src="assets/ui/menu-persons.png" class="menu-persons" draggable="false">
     <div class="menu-inner">
       <div class="title-row">
         <img src="assets/emblem-red.png" class="emb" />
@@ -35508,7 +35534,7 @@ void main() {
     <img src="assets/ico-credits.png" class="ico" />
     <b id="funds" class="gold">0</b>
     <span id="income" class="green"></span>
-    <span id="cp" class="cp"></span>
+    <img src="assets/ui/ico-cp.png" class="ico-cp" draggable="false"><span id="cp" class="cp"></span>
     <button id="home">⌂ HQ</button>
   </div>
   <div id="clock" class="panel hidden">⏱ 0:00</div>
@@ -35531,10 +35557,10 @@ void main() {
 html,body{margin:0;height:100%;background:#0c100c;font-family:system-ui,Segoe UI,Roboto,sans-serif;overflow:hidden}
 #wrap{position:relative;width:100vw;height:100vh;overflow:hidden;background:#000;user-select:none;-webkit-user-select:none}
 #cv{position:absolute;inset:0;touch-action:none;cursor:crosshair}
-#selbox{position:absolute;display:none;border:1px dashed rgba(140,240,140,.9);background:rgba(140,240,140,.1);z-index:5;pointer-events:none}
-.overlay{position:absolute;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#15120c,#0a0906);text-align:center;color:#fff}
+#selbox{position:absolute;display:none;border:1px dashed rgba(255,255,255,.85);background:rgba(255,255,255,.08);z-index:5;pointer-events:none}
+.overlay{position:absolute;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(5,9,13,.62),rgba(3,5,8,.85)),url(assets/ui/menu-bg.png) center/cover;text-align:center;color:#fff}
 .overlay.hidden{display:none}
-.menu-inner{max-width:720px;padding:24px}
+.menu-inner{max-width:720px;padding:24px;background:rgba(4,8,12,.55);border-radius:12px;box-shadow:0 0 40px rgba(0,0,0,.35)}
 .title-row{display:flex;align-items:center;justify-content:center;gap:16px}
 .title-row h1{font-size:26px;letter-spacing:1px;color:#f0d896;text-shadow:0 2px 12px #000}
 .emb{height:56px}.emb-sm{height:30px}
@@ -35547,8 +35573,8 @@ button{cursor:pointer;border:0;border-radius:8px}
 #start:disabled{opacity:.5}
 #baking{color:rgba(255,255,255,.5);font-size:12px;margin-top:10px}
 .panel{position:absolute;z-index:10;display:flex;align-items:center;gap:10px;padding:8px 12px;color:#fff;
- background:linear-gradient(180deg,rgba(38,42,46,.92),rgba(16,18,20,.94));border:1px solid #565e66;
- box-shadow:0 2px 10px rgba(0,0,0,.55);border-radius:6px}
+ background:linear-gradient(180deg,rgba(28,40,48,.95),rgba(9,13,16,.97));border:1px solid rgba(110,160,180,.5);
+ box-shadow:inset 0 1px 0 rgba(160,210,230,.28),inset 0 -1px 0 rgba(0,0,0,.65),0 2px 12px rgba(0,0,0,.6);border-radius:4px}
 #resbar{left:8px;top:8px;font-size:14px}
 #clock{right:8px;top:8px;font-weight:700}
 #minimap-wrap{left:8px;bottom:8px;padding:6px}
@@ -35556,7 +35582,7 @@ button{cursor:pointer;border:0;border-radius:8px}
 #prodwrap{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);z-index:10;text-align:center}
 #bcards{position:static;display:flex;gap:6px;margin:0 auto 6px;justify-content:center;width:max-content}
 .bcard{width:74px}
-.bcard .bico{height:38px;display:flex;align-items:center;justify-content:center;font-size:20px;background:linear-gradient(180deg,#333a46,#161a20)}
+.bcard .bico{height:42px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#2b3644,#141a20)}
 .card.armed{outline:2px solid #6ee7b7;box-shadow:0 0 12px rgba(110,231,183,.65)}
 #cards{position:static;display:flex;gap:6px;overflow-x:auto;max-width:94vw}
 #prodhint{color:rgba(255,255,255,.4);font-size:10px;margin-top:4px}
@@ -35572,6 +35598,10 @@ button{cursor:pointer;border:0;border-radius:8px}
 #over{background:rgba(0,0,0,.75)}
 #verdict{font-size:52px;font-weight:900}
 .hidden{display:none!important}
+.ico-cp{height:16px;filter:drop-shadow(0 1px 1px rgba(0,0,0,.6))}
+.bimg{height:36px;max-width:66px;object-fit:contain;filter:drop-shadow(0 1px 2px rgba(0,0,0,.55))}
+.menu-persons{position:absolute;right:2vw;bottom:0;height:58%;max-height:480px;opacity:.95;pointer-events:none;filter:drop-shadow(0 8px 28px rgba(0,0,0,.75))}
+@media(max-width:820px){.menu-persons{opacity:.22}}
 `;
   document.head.appendChild(css);
   var sim = null;
@@ -35638,7 +35668,7 @@ button{cursor:pointer;border:0;border-radius:8px}
       cards.appendChild(b);
     }
   }
-  var BLD_ICON = { barracks: "\u{1F52B}", factory: "\u2699\uFE0F", heavyfactory: "\u{1F3ED}", power: "\u26A1", turret: "\u{1F5FC}", bunker: "\u{1F6E1}\uFE0F" };
+  var BLD_ICON = { barracks: '<img class="bimg" src="assets/ui/bld-barracks.png" draggable="false">', factory: '<img class="bimg" src="assets/ui/bld-factory.png" draggable="false">', heavyfactory: '<img class="bimg" src="assets/ui/bld-heavyfactory.png" draggable="false">', power: '<img class="bimg" src="assets/ui/bld-power.png" draggable="false">', turret: '<img class="bimg" src="assets/ui/bld-turret.png" draggable="false">', bunker: '<img class="bimg" src="assets/ui/bld-bunker.png" draggable="false">' };
   var HINT_DEFAULT = "drag = select \u00B7 right-click / long-press = move \u00B7 attack \u00B7 capture \u00B7 wheel / pinch = zoom \u00B7 WASD = pan";
   var placing = null;
   function startPlacing(defId) {

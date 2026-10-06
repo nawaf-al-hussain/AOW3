@@ -152,3 +152,44 @@ Stage Summary:
   all functional.
 - Next candidates: mortar/tank shell arcs, AA flak vs gunship, minimap tap-to-move
   polish, desert-side prop density (real map is sparse mid-map), sound mixing.
+
+---
+Task ID: 5
+Agent: Super Z (main)
+Task: "I am not satisfied. Please keep on working" — original-HUD reskin + FX fidelity pass 4
+
+Work Log:
+- Environment was reset again; full recovery from repo (clone + git lfs pull of XAPK + extraction zip).
+- Live QA of deployed pass 3 found the UI gap: generic dark panels, emoji building icons,
+  emoji-adjacent credits/CP glyphs, oversized plain green selection rings, flat shell tracers,
+  plain menu. Original battle-HUD sprites were already sitting in the extraction (1,144 sprites).
+- prep_ui_assets.py: extracted 15 original UI sprites into docs/assets/ui/ —
+  career_background_f1 (menu art), f1_persons (officers), ico_battle_points (CP),
+  unit_select_1 + WayPoint_Ring (rings), Grin_Ligter (move flash), and 8 f1_bld_* building
+  icons R/B-swapped to red to match the player faction (same transform the 3D models use).
+- alpha_key_rings.py: unit_select/WayPoint sprites ship as white-on-black; converted
+  luminance -> alpha so they composite cleanly.
+- surgery4.py (15 verified edits, all matched exactly once):
+  * BLD_ICON emoji -> <img> original red building icons; .bico/.bimg CSS.
+  * .panel reskin to dark steel-blue with light top edge (original panel look).
+  * resbar CP icon; menu overlay now career art + officers; .menu-inner scrim for readability.
+  * Selection rings -> textured PlaneGeometry with team tint (player #ffb060, enemy #6aa8ff),
+    scale radius*1.26+0.32 (was 1.5+0.45 — oversized); fallback to old ring if texture pending.
+  * mark() -> original WayPoint ring sprite (green move / red attack / orange capture) +
+    additive Grin flash; marker update honors per-marker grow curve.
+  * Lobbed shells (splash>0.6 || speed<20) now fly real ballistic arcs (sin(k*pi) * arcMax,
+    arcMax = min(5.5, 0.9 + dist*0.3)) and pitch along velocity; bullets stay flat tracers.
+  * Selection box white dashed like the original.
+- Local QA (agent-browser, port 8777): menu art + scrim OK; building cards show red icons;
+  CP icon OK; rings tight & team-colored; right-click orders work w/ waypoint ring + flash;
+  injected lobbed shell flies visible arc and lands; tryPlace/canPlace verified (probe loop
+  accidentally built a real barracks — tryPlace has side effects, funds math consistent);
+  barracks builds -> unit cards enable -> enqueue spawns rifle at barracks. 0 page errors.
+- node --check game.js OK. Pushing docs/ + assets/ui to main.
+
+Stage Summary:
+- Battle HUD now uses the game's own iconography and panel style; orders/selection feedback
+  matches original sprites; shells arc. Menu uses real faction art with officers.
+- Live: https://nawaf-al-hussain.github.io/AOW3/ (main:/docs)
+- Next candidates: damaged-building states (f1_bld_*_1/_2 icons exist), AA flak vs gunship,
+  minimap frame sprite, unit info panel when selecting, victory/defeat screens with art.
