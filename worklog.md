@@ -587,10 +587,14 @@ Work Log:
   implementation specifics (TICK_RATE=20, 0.25s clamp, 8-step cap) — stale "render-coupled"
   limitation removed from §31; §1.1 legend line updated. XAPK working-tree copy restored
   to LFS pointer (materialized copy kept in scripts/aow3-bin/).
-- index.html ?v=14. Live push + verify pending at time of writing.
+- index.html ?v=14 pushed as 92298eb (rebased over remote audit commits 9362b47..75c6e4d,
+  worklog conflict merged keeping both entries).
+- Live QA v=14 (fresh session, github.io): 0 page errors; 6 starters (ilight x2 + iheavy
+  per faction); all 14 additional roster unit types spawned and rendered (17 views,
+  f1 missing = 0); build bar shows the f1 roster; HUD/economy/minimap ticking.
 
 Stage Summary:
 - Browser roster now matches the native 6.9.18 faction rosters in names, ids, models,
   faction assignment, and build structure; stat values remain documented approximations
-  (server-only data). Fixed-timestep docs brought in line with reality. main to be
-  pushed as the v=14 roster commit.
+  (server-only data). Fixed-timestep docs brought in line with reality. Deployed and
+  live-verified: main = 92298eb, live game.js?v=14, zero page errors.
