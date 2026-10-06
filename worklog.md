@@ -545,3 +545,52 @@ Stage Summary:
 - Audit "Recommended Next Investigations" #3 and #4 are closed; only #5 remains (blocked: no 6.5.22 binary).
 - New canonical 6.9.18 stat taxonomy available for tribute Phase 5/26 work: 78 EStats, per-armor damage keys, mine model, 3-tier stat caps.
 - docs/game.js untouched. Commits: 9362b47 (item 4), fa6d62a (item 3), + this report update.
+Task ID: 16
+Agent: Super Z (main)
+Task: Gameplay 1:1 pass — replace invented 7-unit roster with the native-verified 6.9.18 roster (§32 priority 2: unit/building data fidelity); fix stale §7/§31 docs
+
+Work Log:
+- Verified dead end (evidence-grade): prototype stat tables are server-delivered, NOT in
+  the 6.9.18 package. Scanned all 30 Unity bundles via UnityPy (Unity 6000.0.80f1) — only
+  decor/VFX/UI/map assets; byte-grepped all 3,803 bin/Data files for UnitType/WeaponType/
+  BuildingType/etc — only global-metadata.dat hits; localization dictionary loads via
+  LoadResourceSource Web/Cache (CSMainLocalization resource loader), not local.
+- Recovered the REAL roster instead: AudioControllerCommonSounds select-sound keys
+  (ItemF1*/ItemF2*) enumerate both factions' units; UnitType.UNIT_ID_* constants confirm
+  ids and faction blocks (f1: Fortress 10, Hammer 11, Typhoon 12, Zeus 15, Torrent 16,
+  Shield 17; f2: Coyote 110, Armadillo 111, Porcupine 112, Jaguar 115, Mammoth 116,
+  Fog 117 = chameleon model; infantry Ilight 0/100, Iheavy 1/101, Sniper 102).
+  Roles cross-checked per model: typhoon b_rocket1+radars (MLRS), torrent twin guns (AA),
+  porcupine rotary mount (AA), fortress siege hull, zeus/armadillo dual w1+w2 rounds,
+  shield/chameleon NO weapon clips (support/stealth).
+- Rewrote docs/game.js roster: 15 native units (UNITS), per-faction BUILD_ORDER_F1/F2
+  (player=f1 blue, AI=f2 red), extended PRODUCER_OF, identity-faithful UNIT_MODEL (old
+  mapping showed "MBT Coyote" label over Torrent model, "Mammoth" over Fortress model,
+  "Flak" over Zeus, "Rocket Artillery" over Porcupine — all corrected), initial spawns,
+  AI build tables + counters, sfx pools, fallback meshes.
+- New sim capability: weaponless units supported (guards in updateUnits/findTarget/
+  walkingShot); Shield drone = friendly heal aura (2/s, r6, documented stand-in for
+  UNIT_TYPE_SHIELD); Chameleon = unarmed fast scout (native stealth documented as not
+  reproduced); Zeus chain-lightning shell not reproduced (documented).
+- Regression caught by QA: first splice broke the braceless `for` regen loop →
+  `ReferenceError: u is not defined` in Sim.step EVERY frame (sim advanced, render/HUD/AI
+  dead, ~180 EMPTY pageerrors). Root-caused via window error listener stack capture; fixed
+  with braces. NOTE added to §35 probes: EMPTY pageerrors must be stack-verified, not
+  assumed environmental (v12 session note may be same class).
+- Local QA v=14 (fresh sessions): 0 page errors in 15s gameplay; all 15 units spawn/render
+  both factions; combat fast-forward: kills/losses/veterancy tracked, shield aura healed
+  probes (+9/+8 hp), torrent acquires helicopter @3 tiles and kills at 4.2s; AI produced
+  full f2 roster in 60s; player production verified (tryPlace → producer/CP-gated enqueue
+  → training → spawn); HQ destruction → VICTORY + report intact.
+- Docs: reverse/notes/unit-roster-native-analysis.md (full evidence chain);
+  combat-stats.md §7 (roster + stand-ins); AGENTS.md §7 retagged [TARGET]→[NOW] with
+  implementation specifics (TICK_RATE=20, 0.25s clamp, 8-step cap) — stale "render-coupled"
+  limitation removed from §31; §1.1 legend line updated. XAPK working-tree copy restored
+  to LFS pointer (materialized copy kept in scripts/aow3-bin/).
+- index.html ?v=14. Live push + verify pending at time of writing.
+
+Stage Summary:
+- Browser roster now matches the native 6.9.18 faction rosters in names, ids, models,
+  faction assignment, and build structure; stat values remain documented approximations
+  (server-only data). Fixed-timestep docs brought in line with reality. main to be
+  pushed as the v=14 roster commit.

@@ -1,9 +1,21 @@
 (() => {
   // src/game/data/units.ts
+// Native-verified roster (6.9.18) — replaces invented 7-unit roster.
+// Evidence: reverse/notes/unit-roster-native-analysis.md
+//  - Faction rosters from CatUnitsSelectSounds (AudioControllerCommonSounds, bin/Data
+//    5d3bf6b975c6253429cd79804babcff2): ItemF1*/ItemF2* keys.
+//  - Unit ids from UnitType constants (dump.cs): f1 vehicles Fortress(10), Hammer(11),
+//    Typhoon(12), Zeus(15), Torrent(16), Shield(17); f2 vehicles Coyote(110), Armadillo(111),
+//    Porcupine(112), Jaguar(115), Mammoth(116), Fog(117 -> f2_veh_chameleon model);
+//    infantry Ilight(0), Iheavy(1), Sniper(102); helicopter models f1/f2_avia_helicopter.
+//  - Roles cross-checked against model node/clip inventory (typhoon: b_rocket1+radars;
+//    torrent: twin b_gun1/b_gun2; porcupine: rotary mount; shield/chameleon: NO weapon clips).
+// Stat VALUES remain documented approximations (prototype tables are server-delivered,
+// not present in the 6.9.18 package) — see combat-stats.md §7.
   var UNITS = {
-    rifle: {
-      id: "rifle",
-      name: "Rifle Squad",
+    ilight: {
+      id: "ilight",
+      name: "Ilight",
       kind: "infantry",
       armorClass: "light",
       armor: { light: 6, medium: 4, heavy: 2 },
@@ -19,32 +31,11 @@
       weapon: { damage: { light: 16, medium: 7, heavy: 3 }, range: 6.5, cooldown: 1.1, accStatic: 72, accWalk: 48, splash: 0, projectileSpeed: 0, walkingShot: 1 },
       card: "assets/card-infantry.png",
       tint: "#8fb573",
-      desc: "Cheap capture unit. Only infantry can seize depots."
+      desc: "Light infantry (UNIT_ID_ILIGHT_CONF=0 / ILIGHT_RES=100). Cheap capture unit."
     },
-    mg: {
-      id: "mg",
-      name: "Machine Gunner",
-      kind: "infantry",
-      armorClass: "light",
-      armor: { light: 8, medium: 5, heavy: 2 },
-      health: 150,
-      price: 180,
-      cp: 1,
-      trainTime: 5,
-      speed: 3.1,
-      view: 8.5,
-      regen: 0.6,
-      captures: true,
-      radius: 0.45,
-      antiAir: true,
-      weapon: { damage: { light: 30, medium: 9, heavy: 3 }, range: 7, cooldown: 0.9, accStatic: 70, accWalk: 52, splash: 0, projectileSpeed: 0, walkingShot: 1 },
-      card: "assets/card-infantry.png",
-      tint: "#b59b73",
-      desc: "Shreds infantry and aircraft. Nearly useless against armor."
-    },
-    rpg: {
-      id: "rpg",
-      name: "AT Team",
+    iheavy: {
+      id: "iheavy",
+      name: "Iheavy",
       kind: "infantry",
       armorClass: "light",
       armor: { light: 5, medium: 3, heavy: 2 },
@@ -60,11 +51,31 @@
       weapon: { damage: { light: 10, medium: 34, heavy: 42 }, range: 7.5, cooldown: 2.4, accStatic: 78, accWalk: 55, splash: 1.1, projectileSpeed: 14, walkingShot: 1 },
       card: "assets/card-mech.png",
       tint: "#c28f6d",
-      desc: "Rocket team — punishes vehicles and tanks."
+      desc: "Heavy rocket infantry (UNIT_ID_IHEAVY_CONF=1 / IHEAVY_RES=101). Punishes vehicles."
     },
-    tank: {
-      id: "tank",
-      name: 'MBT "Coyote"',
+    sniper: {
+      id: "sniper",
+      name: "Sniper",
+      kind: "infantry",
+      armorClass: "light",
+      armor: { light: 4, medium: 2, heavy: 1 },
+      health: 90,
+      price: 260,
+      cp: 1,
+      trainTime: 7,
+      speed: 3.1,
+      view: 12,
+      regen: 0.4,
+      captures: true,
+      radius: 0.45,
+      weapon: { damage: { light: 34, medium: 14, heavy: 4 }, range: 11, cooldown: 2.2, accStatic: 84, accWalk: 62, splash: 0, projectileSpeed: 0 },
+      card: "assets/card-infantry.png",
+      tint: "#b59b73",
+      desc: "Resistance marksman (UNIT_ID_SNIPER=102, f2 only). Long range, shreds infantry."
+    },
+    hammer: {
+      id: "hammer",
+      name: "Hammer",
       kind: "vehicle",
       armorClass: "heavy",
       armor: { light: 26, medium: 20, heavy: 14 },
@@ -80,11 +91,153 @@
       weapon: { damage: { light: 42, medium: 30, heavy: 20 }, range: 9, cooldown: 1.8, accStatic: 82, accWalk: 62, splash: 0.6, projectileSpeed: 26 },
       card: "assets/card-tank.png",
       tint: "#7d9c6a",
-      desc: "Main battle tank. Heavy armor, solid all-round gun."
+      desc: "Confederation MBT (UNIT_ID_HAMMER=11). Solid all-round gun."
+    },
+    jaguar: {
+      id: "jaguar",
+      name: "Jaguar",
+      kind: "vehicle",
+      armorClass: "heavy",
+      armor: { light: 28, medium: 22, heavy: 15 },
+      health: 660,
+      price: 540,
+      cp: 2,
+      trainTime: 11,
+      speed: 3.2,
+      view: 9,
+      regen: 0,
+      captures: false,
+      radius: 0.7,
+      weapon: { damage: { light: 44, medium: 32, heavy: 22 }, range: 9, cooldown: 1.8, accStatic: 82, accWalk: 62, splash: 0.6, projectileSpeed: 26 },
+      card: "assets/card-tank.png",
+      tint: "#9c6a6a",
+      desc: "Resistance MBT (UNIT_ID_JAGUAR=115). Heavy armor, solid gun."
+    },
+    coyote: {
+      id: "coyote",
+      name: "Coyote",
+      kind: "vehicle",
+      armorClass: "light",
+      armor: { light: 12, medium: 8, heavy: 4 },
+      health: 300,
+      price: 300,
+      cp: 1,
+      trainTime: 7,
+      speed: 4.4,
+      view: 10,
+      regen: 0,
+      captures: false,
+      radius: 0.6,
+      weapon: { damage: { light: 20, medium: 14, heavy: 6 }, range: 8, cooldown: 1.2, accStatic: 76, accWalk: 60, splash: 0, projectileSpeed: 30 },
+      card: "assets/card-tank.png",
+      tint: "#a8a06e",
+      desc: "Fast scout car (UNIT_ID_COYOTE=110). Harasses infantry, dies to cannons."
+    },
+    torrent: {
+      id: "torrent",
+      name: "Torrent",
+      kind: "vehicle",
+      armorClass: "light",
+      armor: { light: 14, medium: 10, heavy: 6 },
+      health: 280,
+      price: 340,
+      cp: 2,
+      trainTime: 8,
+      speed: 4,
+      view: 11,
+      regen: 0,
+      captures: false,
+      radius: 0.62,
+      antiAir: true,
+      weapon: { damage: { light: 14, medium: 46, heavy: 4 }, range: 10.5, cooldown: 0.55, accStatic: 84, accWalk: 70, splash: 0, projectileSpeed: 34 },
+      card: "assets/card-flak.png",
+      tint: "#a8a06e",
+      desc: "Twin-gun AA vehicle (UNIT_ID_TORRENT=16). Shreds gunships; harmless to armor."
+    },
+    porcupine: {
+      id: "porcupine",
+      name: "Porcupine",
+      kind: "vehicle",
+      armorClass: "light",
+      armor: { light: 14, medium: 11, heavy: 6 },
+      health: 300,
+      price: 350,
+      cp: 2,
+      trainTime: 8,
+      speed: 3.8,
+      view: 11,
+      regen: 0,
+      captures: false,
+      radius: 0.62,
+      antiAir: true,
+      weapon: { damage: { light: 15, medium: 48, heavy: 4 }, range: 10.5, cooldown: 0.55, accStatic: 84, accWalk: 70, splash: 0, projectileSpeed: 34 },
+      card: "assets/card-flak.png",
+      tint: "#9c8a5e",
+      desc: "Rotary-flak AA vehicle (UNIT_ID_PORCUPINE=112). Shreds gunships."
+    },
+    typhoon: {
+      id: "typhoon",
+      name: "Typhoon",
+      kind: "vehicle",
+      armorClass: "light",
+      armor: { light: 10, medium: 6, heavy: 3 },
+      health: 280,
+      price: 660,
+      cp: 2,
+      trainTime: 14,
+      speed: 2.6,
+      view: 11,
+      regen: 0,
+      captures: false,
+      radius: 0.65,
+      weapon: { damage: { light: 40, medium: 38, heavy: 46 }, range: 15, cooldown: 4.2, accStatic: 62, accWalk: 44, splash: 2.6, projectileSpeed: 12, splashScatter: 1, explosionDecr: 30 },
+      card: "assets/card-rocket.png",
+      tint: "#9c8a5e",
+      desc: "Rocket MLRS (UNIT_ID_TYPHOON=12, b_rocket1+radar nodes). Long-range splash."
+    },
+    armadillo: {
+      id: "armadillo",
+      name: "Armadillo",
+      kind: "vehicle",
+      armorClass: "medium",
+      armor: { light: 16, medium: 12, heavy: 8 },
+      health: 400,
+      price: 560,
+      cp: 2,
+      trainTime: 12,
+      speed: 3,
+      view: 10,
+      regen: 0,
+      captures: false,
+      radius: 0.65,
+      weapon: { damage: { light: 12, medium: 40, heavy: 30 }, range: 10, cooldown: 2.6, accStatic: 74, accWalk: 54, splash: 0.8, projectileSpeed: 22 },
+      card: "assets/card-mech.png",
+      tint: "#8a7a5e",
+      desc: "Rocket walker (UNIT_ID_ARMADILLO=111). Dual weapon rounds, medium punch."
+    },
+    zeus: {
+      id: "zeus",
+      name: "Zeus",
+      kind: "vehicle",
+      armorClass: "medium",
+      armor: { light: 18, medium: 14, heavy: 10 },
+      health: 440,
+      price: 640,
+      cp: 2,
+      trainTime: 13,
+      speed: 3,
+      view: 10,
+      regen: 0,
+      captures: false,
+      radius: 0.65,
+      weapon: { damage: { light: 30, medium: 34, heavy: 26 }, range: 8.5, cooldown: 1.5, accStatic: 80, accWalk: 64, splash: 0.4, projectileSpeed: 30 },
+      card: "assets/card-storm.png",
+      tint: "#739c93",
+      desc: "Dual-weapon platform (UNIT_ID_ZEUS=15). Native chain-lightning shell NOT reproduced."
     },
     mammoth: {
       id: "mammoth",
-      name: 'Heavy Tank "Mammoth"',
+      name: "Mammoth",
       kind: "vehicle",
       armorClass: "heavy",
       armor: { light: 44, medium: 36, heavy: 26 },
@@ -100,52 +253,70 @@
       weapon: { damage: { light: 64, medium: 52, heavy: 40 }, range: 9.5, cooldown: 2.6, accStatic: 84, accWalk: 60, splash: 0.8, projectileSpeed: 24 },
       card: "assets/card-storm.png",
       tint: "#6d8a5e",
-      desc: "Fortress on tracks. Slow, brutally expensive, nearly immune to infantry."
+      desc: "Super-heavy tank (UNIT_ID_MAMMOTH=116). Slow, brutally expensive."
     },
-    artillery: {
-      id: "artillery",
-      name: "Rocket Artillery",
+    fortress: {
+      id: "fortress",
+      name: "Fortress",
       kind: "vehicle",
-      armorClass: "light",
-      armor: { light: 10, medium: 6, heavy: 3 },
-      health: 260,
-      price: 640,
-      cp: 2,
-      trainTime: 14,
-      speed: 2.6,
+      armorClass: "heavy",
+      armor: { light: 34, medium: 30, heavy: 24 },
+      health: 900,
+      price: 950,
+      cp: 3,
+      trainTime: 18,
+      speed: 2.1,
       view: 11,
       regen: 0,
       captures: false,
-      radius: 0.65,
-      weapon: { damage: { light: 40, medium: 38, heavy: 46 }, range: 16, cooldown: 4.2, accStatic: 62, accWalk: 44, splash: 2.6, projectileSpeed: 12, splashScatter: 1, explosionDecr: 30 },
-      card: "assets/card-rocket.png",
-      tint: "#9c8a5e",
-      desc: "Long-range splash damage. Fragile up close."
+      radius: 0.85,
+      weapon: { damage: { light: 50, medium: 55, heavy: 60 }, range: 14, cooldown: 3.4, accStatic: 70, accWalk: 50, splash: 1.6, projectileSpeed: 16, splashScatter: 1, explosionDecr: 20 },
+      card: "assets/card-storm.png",
+      tint: "#6d8a5e",
+      desc: "Siege platform (UNIT_ID_FORTRESS=10, UNIT_TYPE_FORTRESS=24). Long-range bombard."
     },
-    flak: {
-      id: "flak",
-      name: "Flak AA",
+    shield: {
+      id: "shield",
+      name: "Shield",
       kind: "vehicle",
       armorClass: "light",
-      armor: { light: 12, medium: 10, heavy: 8 },
-      health: 260,
-      price: 340,
+      armor: { light: 10, medium: 8, heavy: 6 },
+      health: 300,
+      price: 300,
       cp: 1,
       trainTime: 8,
-      speed: 4.2,
-      view: 11,
+      speed: 3.6,
+      view: 10,
       regen: 0,
       captures: false,
-      radius: 0.62,
-      antiAir: true,
-      weapon: { damage: { light: 14, medium: 46, heavy: 4 }, range: 10.5, cooldown: 0.55, accStatic: 84, accWalk: 70, splash: 0, projectileSpeed: 34 },
-      card: "assets/card-flak.png",
-      tint: "#a8a06e",
-      desc: "Self-propelled AA gun. Shreds gunships; nearly harmless against armor."
+      radius: 0.6,
+      aura: { regen: 2, radius: 6 },
+      card: "assets/card-mech.png",
+      tint: "#739c93",
+      desc: "Support drone (UNIT_ID_SHIELD=17, model has no weapon clips). Heals nearby friendlies."
+    },
+    chameleon: {
+      id: "chameleon",
+      name: "Chameleon",
+      kind: "vehicle",
+      armorClass: "light",
+      armor: { light: 8, medium: 6, heavy: 4 },
+      health: 240,
+      price: 280,
+      cp: 1,
+      trainTime: 7,
+      speed: 6,
+      view: 14,
+      regen: 0,
+      captures: false,
+      radius: 0.6,
+      card: "assets/card-mech.png",
+      tint: "#9c8a5e",
+      desc: "Fast stealth scout (UNIT_ID_FOG=117). Unarmed; native stealth NOT reproduced."
     },
     helicopter: {
       id: "helicopter",
-      name: "Gunship",
+      name: "Helicopter",
       kind: "aircraft",
       armorClass: "medium",
       armor: { light: 16, medium: 12, heavy: 8 },
@@ -161,10 +332,13 @@
       weapon: { damage: { light: 34, medium: 26, heavy: 16 }, range: 8.5, cooldown: 1.2, accStatic: 76, accWalk: 68, splash: 0.4, projectileSpeed: 30, guided: 1 },
       card: "assets/card-gunship.png",
       tint: "#739c93",
-      desc: "Fast strike flyer. Ignores terrain \u2014 shredded by flak guns and AA MGs."
+      desc: "Gunship (ItemF1/F2AviaHelicopter). Ignores terrain \u2014 shredded by AA guns."
     }
   };
-  var BUILD_ORDER = ["rifle", "mg", "rpg", "tank", "mammoth", "artillery", "flak", "helicopter"];
+  // Native build rosters per faction (voice-key + UNIT_ID evidence). Player = f1, AI = f2.
+  var BUILD_ORDER_F1 = ["ilight", "iheavy", "hammer", "torrent", "zeus", "typhoon", "fortress", "shield", "helicopter"];
+  var BUILD_ORDER_F2 = ["ilight", "iheavy", "sniper", "coyote", "jaguar", "armadillo", "porcupine", "mammoth", "chameleon", "helicopter"];
+  var BUILD_ORDER = BUILD_ORDER_F1;
   var HQ = { id: "hq", name: "Headquarters", health: 4200, radius: 2.2, view: 13 };
   var DEPOT = { id: "depot", name: "Supply Depot", health: 600, radius: 1.6, view: 8 };
   var BLD = {
@@ -176,7 +350,7 @@
     bunker: { id: "bunker", name: "Bunker", health: 1000, radius: 1.4, view: 9, price: 350, buildTime: 10, model: "f1_bld_bunker", weapon: { damage: { light: 26, medium: 8, heavy: 2 }, range: 7.5, cooldown: 0.7, accStatic: 80, accWalk: 60, splash: 0, projectileSpeed: 0 } }
   };
   var BUILDINGS_ORDER = ["barracks", "factory", "heavyfactory", "power", "turret", "bunker"];
-  var PRODUCER_OF = { rifle: "barracks", mg: "barracks", rpg: "barracks", tank: "factory", artillery: "factory", flak: "factory", mammoth: "heavyfactory", helicopter: "heavyfactory" };
+  var PRODUCER_OF = { ilight: "barracks", iheavy: "barracks", sniper: "barracks", hammer: "factory", torrent: "factory", zeus: "factory", shield: "factory", coyote: "factory", jaguar: "factory", armadillo: "factory", porcupine: "factory", fortress: "heavyfactory", typhoon: "heavyfactory", mammoth: "heavyfactory", chameleon: "heavyfactory", helicopter: "heavyfactory" };
   var ECONOMY = {
     baseIncome: 14,
     depotIncome: 11,
@@ -459,12 +633,12 @@
       this.addBuilding("depot", 0, MAP_W / 2, 14);
       this.addBuilding("depot", 0, MAP_W / 2, MAP_H - 14);
       this.addBuilding("depot", 0, MAP_W / 2, MAP_H / 2);
-      this.spawn("rifle", 1, 12, MAP_H / 2 - 2);
-      this.spawn("rifle", 1, 12, MAP_H / 2 + 2);
-      this.spawn("mg", 1, 13, MAP_H / 2);
-      this.spawn("rifle", 2, MAP_W - 12, MAP_H / 2 - 2);
-      this.spawn("rifle", 2, MAP_W - 12, MAP_H / 2 + 2);
-      this.spawn("mg", 2, MAP_W - 13, MAP_H / 2);
+      this.spawn("ilight", 1, 12, MAP_H / 2 - 2);
+      this.spawn("ilight", 1, 12, MAP_H / 2 + 2);
+      this.spawn("iheavy", 1, 13, MAP_H / 2);
+      this.spawn("ilight", 2, MAP_W - 12, MAP_H / 2 - 2);
+      this.spawn("ilight", 2, MAP_W - 12, MAP_H / 2 + 2);
+      this.spawn("iheavy", 2, MAP_W - 13, MAP_H / 2);
     }
     newPlayer() {
       return { funds: 500, income: ECONOMY.baseIncome, cpUsed: 0, cpCap: ECONOMY.baseCP, queue: [], alive: true };
@@ -735,9 +909,16 @@
       for (const p of this.pops)
         p.t += dt;
       this.pops = this.pops.filter((p) => p.t < p.max);
-      for (const u of this.units)
+      for (const u of this.units) {
         if (u.def.regen > 0 && u.hp < u.def.health)
           u.hp = Math.min(u.def.health, u.hp + u.def.regen * dt);
+        if (u.def.aura && u.hp > 0) {
+          for (const a of this.units) {
+            if (a.owner === u.owner && a.hp > 0 && a.def.regen < u.def.aura.regen && Math.hypot(a.x - u.x, a.y - u.y) <= u.def.aura.radius)
+              a.hp = Math.min(a.def.health, a.hp + u.def.aura.regen * dt);
+          }
+        }
+      }
       const hq1 = this.buildings.some((b) => b.defId === "hq" && b.owner === 1 && b.hp > 0);
       const hq2 = this.buildings.some((b) => b.defId === "hq" && b.owner === 2 && b.hp > 0);
       if (!hq1 || !hq2) {
@@ -766,7 +947,7 @@
           }
         }
         let buildingTarget;
-        if (u.targetId === undefined && (u.order.kind === "attackMove" || u.order.kind === "idle")) {
+        if (u.def.weapon && u.targetId === undefined && (u.order.kind === "attackMove" || u.order.kind === "idle")) {
           buildingTarget = this.buildings.find((b) => b.hp > 0 && b.owner !== u.owner && b.owner !== 0 && Math.hypot(b.x - u.x, b.y - u.y) <= u.def.weapon.range + b.radius);
           if (!buildingTarget && u.order.kind === "attackMove" && u.order.x !== undefined) {
             const b2 = this.buildings.find((b) => b.hp > 0 && b.owner !== u.owner && b.owner !== 0 && u.dest && Math.hypot(b.x - u.dest.x, b.y - u.dest.y) < 6);
@@ -830,7 +1011,7 @@
           // move at targets of opportunity, using the dynamic accuracy curve; other kinds
           // only fire once stationary. Evidence: WeaponDynamicAccuracy @0x7FCF0B8 — the
           // dynamic curve is keyed on the shooter's walking state, not the target's.
-          if (u.def.weapon.walkingShot && u.cd <= 0) {
+          if (u.def.weapon && u.def.weapon.walkingShot && u.cd <= 0) {
             const t = this.findTarget(u);
             if (t) {
               const d = Math.hypot(t.x - u.x, t.y - u.y);
@@ -856,6 +1037,8 @@
       }
     }
     findTarget(u) {
+      if (!u.def.weapon)
+        return undefined;
       let best;
       let bd = u.def.weapon.range + 2.5;
       const shooterAir = u.def.kind === "aircraft";
@@ -1178,24 +1361,24 @@
         for (const u of sim.units)
           if (u.owner === this.me)
             counts[u.def.id] = (counts[u.def.id] ?? 0) + 1;
-        const all = ["rifle", "rifle", "rpg", "tank", "tank", "mg", "mg", "artillery", "flak", "flak", "mammoth", "helicopter"];
-        const want = all.filter((id) => sim.buildings.some((b) => b.owner === this.me && b.defId === PRODUCER_OF[id] && b.hp > 0 && b.built));
+        const all = ["ilight", "ilight", "iheavy", "coyote", "coyote", "jaguar", "jaguar", "armadillo", "porcupine", "porcupine", "mammoth", "chameleon", "helicopter"];
+        const want = all.filter((id) => BUILD_ORDER_F2.includes(id) && sim.buildings.some((b) => b.owner === this.me && b.defId === PRODUCER_OF[id] && b.hp > 0 && b.built));
         if (!want.length)
           return;
         let choice = want[Math.floor(Math.random() * want.length)];
         const pInf = sim.units.filter((u) => u.owner !== this.me && u.def.kind === "infantry").length;
         const pVeh = sim.units.filter((u) => u.owner !== this.me && u.def.kind === "vehicle").length;
         if (pVeh >= 3)
-          choice = Math.random() < 0.5 ? "rpg" : "mammoth";
+          choice = Math.random() < 0.5 ? "iheavy" : "mammoth";
         else if (pInf >= 5)
-          choice = "mg";
+          choice = "sniper";
         const pHeli = sim.units.filter((u) => u.owner !== this.me && u.def.kind === "aircraft").length;
-        if (pHeli >= 1 && want.includes("flak"))
-          choice = "flak";
-        if (sim.time < 60 && (choice === "mammoth" || choice === "artillery" || choice === "helicopter"))
-          choice = "tank";
+        if (pHeli >= 1 && want.includes("porcupine"))
+          choice = "porcupine";
+        if (sim.time < 60 && (choice === "mammoth" || choice === "helicopter"))
+          choice = "jaguar";
         if (counts[choice] >= 8)
-          choice = "tank";
+          choice = "jaguar";
         const def = UNITS[choice];
         if (p.funds >= def.price && p.cpUsed + def.cp <= p.cpCap)
           sim.enqueue(choice, this.me);
@@ -33443,13 +33626,21 @@ void main() {
 
   // src/game/render/glb.ts
   var UNIT_MODEL = {
-    rifle: ["f1_inf_light", "f2_inf_light"],
-    mg: ["f1_inf_heavy", "f2_inf_sniper"],
-    rpg: ["f1_inf_heavy", "f2_inf_heavy"],
-    tank: ["f1_veh_torrent", "f2_veh_jaguar"],
-    mammoth: ["f1_veh_fortress", "f2_veh_mammoth"],
-    artillery: ["f1_veh_typhoon", "f2_veh_porcupine"],
-    flak: ["f1_veh_zeus", "f2_veh_armadillo"],
+    ilight: ["f1_inf_light", "f2_inf_light"],
+    iheavy: ["f1_inf_heavy", "f2_inf_heavy"],
+    sniper: ["f2_inf_sniper", "f2_inf_sniper"],
+    hammer: ["f1_veh_hammer", "f1_veh_hammer"],
+    jaguar: ["f2_veh_jaguar", "f2_veh_jaguar"],
+    coyote: ["f2_veh_coyote", "f2_veh_coyote"],
+    torrent: ["f1_veh_torrent", "f1_veh_torrent"],
+    porcupine: ["f2_veh_porcupine", "f2_veh_porcupine"],
+    typhoon: ["f1_veh_typhoon", "f1_veh_typhoon"],
+    armadillo: ["f2_veh_armadillo", "f2_veh_armadillo"],
+    zeus: ["f1_veh_zeus", "f1_veh_zeus"],
+    mammoth: ["f2_veh_mammoth", "f2_veh_mammoth"],
+    fortress: ["f1_veh_fortress", "f1_veh_fortress"],
+    shield: ["f1_veh_shield", "f1_veh_shield"],
+    chameleon: ["f2_veh_chameleon", "f2_veh_chameleon"],
     helicopter: ["f1_avia_helicopter", "f2_avia_helicopter"]
   };
   var HQ_MODEL = "f1_bld_hq";
@@ -33874,7 +34065,7 @@ void main() {
       }
     }
     if (def.kind === "infantry") {
-      const weapon = def.id === "mg" ? "mg" : def.id === "rpg" ? "rpg" : "rifle";
+      const weapon = def.id === "iheavy" ? "rpg" : "rifle";
       const n = 3;
       const s0 = new Group;
       for (let i = 0;i < n; i++) {
@@ -33888,8 +34079,8 @@ void main() {
       }
       group.add(s0);
       height = 0.78;
-    } else if (def.id === "tank" || def.id === "mammoth") {
-      const big = def.id === "mammoth";
+    } else if (def.kind === "vehicle" && def.weapon && def.armorClass === "heavy") {
+      const big = def.id === "mammoth" || def.id === "fortress";
       const k = big ? 1.32 : 1;
       const L = 2.15 * k, W = 1.15 * k;
       group.add(tracks(f, L, W / 2 + 0.06));
@@ -33921,7 +34112,7 @@ void main() {
       turret.add(ant);
       group.add(turret);
       height = 0.95 * k;
-    } else if (def.id === "artillery") {
+    } else if (def.kind === "vehicle" && def.weapon && def.weapon.splash >= 0.8) {
       const L = 2;
       group.add(tracks(f, L * 0.8, 0.62));
       const body = mat(f.body, { rough: 0.75, metal: 0.25 });
@@ -36854,7 +37045,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
           const def = best.def;
           const splash = def.weapon && def.weapon.splash || 0;
           let pool;
-          if (def.id === "flak")
+          if (def.id === "torrent" || def.id === "porcupine")
             pool = ["w_mg4", "w_cannon2", "w_mg2"];
           else if (def.kind === "aircraft")
             pool = ["w_missile1", "w_mg2"];

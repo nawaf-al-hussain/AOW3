@@ -39,7 +39,7 @@ Rules in this document are tagged:
 * **[NOW]** — enforced on every change, starting today.
 * **[TARGET]** — architectural direction. Follow for all new code; do not deepen violations; do not rewrite working code solely to comply retroactively.
 
-The simulation-timestep rule (§7) is currently a **[TARGET]**: the simulation is still partly render-coupled (see §31). Never add new render-coupled gameplay code.
+The simulation-timestep rule (§7) is **[NOW]** and implemented (fixed 20 Hz accumulator with bounded catch-up). Never add render-coupled gameplay code.
 
 Untagged rules are **[NOW]** by default.
 
@@ -284,9 +284,16 @@ Gameplay state must not depend on rendered objects.
 
 ---
 
-# 7. Deterministic Simulation [TARGET]
+# 7. Deterministic Simulation [NOW]
 
-The simulation must run independently from rendering FPS. (Current status: not yet fully met — see §31. Treat as direction for new code, not as a description of existing code.)
+The simulation must run independently from rendering FPS.
+
+**Status (October 2026): implemented.** The main loop runs a fixed-timestep accumulator:
+`TICK_RATE = 20` (docs/game.js `src/game` loop), frame delta clamped to 0.25 s, catch-up
+capped at 8 substeps of `1/20 s` per frame; `sim.step()` and `ai.step()` run only inside
+the accumulator. The renderer smooths unit positions/yaw per frame on top of the fixed
+steps. Slow machines drop render frames, not simulation correctness. Keep all new
+gameplay state mutations inside `sim.step`; never advance game state from a render hook.
 
 Do not use:
 
@@ -1244,11 +1251,13 @@ The existing project has substantial functionality but is not yet a true 1:1 rec
 
 Known limitations include:
 
-* simulation timing is not yet fully independent of render FPS
-* some live balance numbers are unavailable from the APK
+* per-unit balance numbers (hp/price/damage) come from the developer's server-side
+  tables and cannot be recovered from the APK; browser values are documented
+  approximations (see reverse/notes/unit-roster-native-analysis.md)
 * multiplayer/backend behavior is not implemented
 * some map/water/walkability behavior remains approximate
-* some gameplay state machines require deeper reconstruction
+* some gameplay state machines require deeper reconstruction (native shell types such
+  as chain lightning, stealth/fog, and hero abilities are not reproduced)
 * some AI behavior remains approximate
 * some movement/pathfinding behavior remains approximate
 

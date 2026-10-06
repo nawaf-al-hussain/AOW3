@@ -85,3 +85,21 @@ The per-unit balance numbers (health, price, damage ints) are delivered by the
 developer's live balance tables at runtime — they are **not** embedded in the
 APK. The browser tribute therefore uses the recovered schema + formulas with
 gameplay-tuned values.
+
+## 7. Unit roster — native structure, approximated values (2026-10-06, v=14)
+
+The browser roster was rebuilt from the verified 6.9.18 structure (full evidence:
+`unit-roster-native-analysis.md`): faction unit lists from AudioController
+select-sound keys, unit ids from `UnitType.UNIT_ID_*` constants (f1 vehicles
+Fortress 10 / Hammer 11 / Typhoon 12 / Zeus 15 / Torrent 16 / Shield 17; f2 vehicles
+Coyote 110 / Armadillo 111 / Porcupine 112 / Jaguar 115 / Mammoth 116 / Fog 117;
+infantry Ilight 0/100, Iheavy 1/101, Sniper 102), roles cross-checked against model
+node/clip inventory. Prototype numeric tables are server-delivered (verified absent
+from the package), so per-unit hp/price/damage remain gameplay-tuned approximations
+distributed by role class; the accuracy curves of §6 apply unchanged on top.
+
+Browser-only stand-ins, documented: Shield support unit implemented as a friendly
+heal aura (aura.regen 2/s, radius 6) — native UNIT_TYPE_SHIELD mechanics not
+reproduced; Chameleon implemented as an unarmed fast scout — native stealth (FOG)
+not reproduced; Zeus's native chain-lightning shell type not reproduced (plain
+dual-role weapon instead).
