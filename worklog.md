@@ -530,3 +530,18 @@ Stage Summary:
 - Conflict record status UNRESOLVED → RESOLVED with §C Resolution subsection (reverse/evidence/conflicts/version-drift-6.5.22-vs-6.9.18.md).
 - New: reverse/notes/armor-stat-helper-native-analysis.md (full evidence), reverse/tools/armor_native_analysis.py (repro script); combat-stats.md §1 addendum (EStat routing 61–63/72–74 + surface closure); audit-report next-investigation #1 marked DONE, §42 Conflicts updated; reverse/README.md contents extended.
 - Audit "Recommended Next Investigations" #1 and #2 (damage-pipeline wrappers) are both natively covered by this pass; remaining: #3 asset-catalog VFX prefixes, #4 EStat stat-list extraction, #5 (blocked: no 6.5.22 binary).
+
+---
+Task: FileUpload audit follow-up — items #3 (VFX prefix check) and #4 (EStat stat-list extraction)
+
+Work Log:
+- Item #4: extracted the full EStat enum (dump.cs:168776-168858, 78 values, 0-77), EStatCategory (168861-168870), IStatModel contract (20773-20810, incl. EStat Stat property), and all 45 IStatModel implementors (22 weapon/mine TDI 396-418 in Domains.Workshop.Impl.Models.Weapon; 23 building/unit TDI 4407-4431 in com.geargames.aow.ugui.army.models.info.Stats).
+- Item #4: dump-direct proof that WeaponDamage (TDI 414) is EStat-keyed via 6 static Create*Damage factories (WeaponArmor{L,M,H} 61-63, WeaponSuperWeaponArmor{L,M,H} 72-74). MineStatsFactory.CreateList builds damage-for-3-armors + cost + fire-rate + radius. MaxStatValueProvider.StatInfo = 3-tier caps {BaseMax, FirstMax?, MegaMax?}.
+- Item #4: class->EStat mapping: 24 MATCH, 10 MATCH_STRIPPED (Building*/Unit* prefix), 8 INFERRED, 0 unresolved. Icon corroboration: 66 ico_stat_* literals (40 unique-family).
+- Item #3: pulled assets/aow3-extracted-assets.zip via LFS media endpoint, SHA-256 verified against committed OID (fff43c4d...). catalog.json inside is an empty placeholder — the 2,157 filenames are the catalog. Scanned all names: fire_ = 11 audio files with the exact fire_<weapon><n>_<v> shape (CONFIRMED at audio layer), expl = partial (frozen_expl_2 x2), bul_ = 0/2,157. Real VFX layer in subset = built_invfx_assets_all_* + atlas_vfx.
+- Deliverables: reverse/notes/units/estat-stat-models.md (Phase 26 format) + estat-classes.tsv + reverse/evidence/estat/estat-extraction.txt + reverse/tools/extract_estat_stats.py; reverse/notes/vfx-asset-prefix-check.md; audit-report.md rows (VFX -> PARTIALLY CONFIRMED MEDIUM; Economy -> structure CONFIRMED at enum level; ATTACK_INTERVAL -> representation drift via WeaponFireRate/60) and next-investigations #3/#4 marked DONE.
+
+Stage Summary:
+- Audit "Recommended Next Investigations" #3 and #4 are closed; only #5 remains (blocked: no 6.5.22 binary).
+- New canonical 6.9.18 stat taxonomy available for tribute Phase 5/26 work: 78 EStats, per-armor damage keys, mine model, 3-tier stat caps.
+- docs/game.js untouched. Commits: 9362b47 (item 4), fa6d62a (item 3), + this report update.

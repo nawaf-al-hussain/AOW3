@@ -55,7 +55,7 @@ suffixes) were classified separately before counting a name as genuinely absent.
 | Super-weapon / nuclear subsystem claimed by docs | `SuperWeapon` (114 hits), `NuclearMissile` (6) in 6.9.18 | **CONFIRMED** |
 | External constants `AttackCoeffCalculating`, `ARMOR_COEFF` | **0 hits in 6.9.18** dump | **CONFLICTING/UNVERIFIED** (see Conflicts) |
 | 6.5.22-only methods: `calcBasicDamage`, `generateBasicDamage`, `generateMineDamage`, `calcCoilTankArmorBonusFrontal`, `calcDamageByCommandoJump`, `calcGatlingWeaponMax`, `calcFireDistanceMisc`, `addCommand*` facade (~120 names), `get_Bat*` battle-stats getters, `addCommandHeroAbility*` family | Absent from 6.9.18 dump under these names | **CONFIRMED version drift** (see Conflicts) |
-| VFX asset names (`fire_rifle1_s1`, `bul_rifle1_s2`, `expl_rocket1`, …) | Not in `stringliteral.json` (they are asset-bundle paths, not C# literals); not yet checked against our 211 MB extracted-assets catalog | **UNVERIFIED** |
+| VFX asset names (`fire_rifle1_s1`, `bul_rifle1_s2`, `expl_rocket1`, …) | Not in `stringliteral.json` (they are asset-bundle paths, not C# literals); checked against the extracted-asset catalog 2026-10-07: `fire_` family CONFIRMED (11 audio, exact `fire_<weapon><n>_<v>` shape), `expl` partial (frozen_expl_2), `bul_` 0/2,157 — subset caveat applies | **PARTIALLY CONFIRMED (MEDIUM)** — `reverse/notes/vfx-asset-prefix-check.md` |
 | Doc claim: three armor types only | Consistent with 6.9.18 `ArmorType {Light, Medium, Heavy}` (our combat-stats.md) | **CONFIRMED** |
 | Doc claim: balance numbers in docs' stat tables | The collection contains **no numeric unit/weapon stat tables at all** — consistent with our finding that live balance is backend-delivered, not APK-embedded | **CONSISTENT** |
 
@@ -91,11 +91,11 @@ subsystems — their weakness is **unquantified inference**, not invention.
 
 | Claim (source file) | Why unverified | How to verify |
 |---|---|---|
-| Weapon VFX/asset naming scheme `fire_rifle1_s1…`, `bul_…`, `expl_…` (Combat_System.md) | Asset-bundle paths; absent from stringliteral.json; our pipeline map JSONs don't cover weapon FX bundles | Grep `assets/aow3-extracted-assets.zip` catalog.json (211 MB, LFS) for these prefixes |
+| Weapon VFX/asset naming scheme `fire_rifle1_s1…`, `bul_…`, `expl_…` (Combat_System.md) | ~~Asset-bundle paths; absent from stringliteral.json~~ **Checked 2026-10-07** (`reverse/notes/vfx-asset-prefix-check.md`): `fire_` family real (audio layer), `bul_` unverified in the curated subset | ~~Grep `assets/aow3-extracted-assets.zip` catalog.json~~ DONE — full 2,157-entry listing scanned; definitive `bul_` closure needs a full XAPK bundle-name pass |
 | `DamageAfterArmor = BaseDamage * ArmorCoeff(ArmorType, WeaponType)` "ArmorStatHelper" formula shape (Combat_System.md) | Pseudocode reconstruction; constants `AttackCoeffCalculating`/`ARMOR_COEFF` absent from 6.9.18 | Native analysis of `ArmorStatHelper` in 6.9.18 (`dump.cs` hit exists); runtime observation |
 | Multiplayer server topology (3 server roles, auth/tick/desync flow details) (Multiplayer_Architecture.md) | Derived from class names + speculation; server-side behavior not in APK | Runtime observation (Frida) or traffic capture; low priority for the offline tribute |
-| `ATTACK_INTERVAL_{LAND,WATER,FIGHTER,BOMBER,NUCLEAR}` enum semantics (Combat_System.md) | Enum names not located in 6.9.18 dump under these names | Locate the real enum in 6.9.18 and compare ordering/usage |
-| Economy constants and "energy/supply" model details (Economy_System.md) | Doc gives structure, no numbers, and 6.5.22-era naming | Recover `EStat`-linked stat models from 6.9.18 `IStatModel` classes (already indexed in our dump: `MineDamageFor{Light,Medium,Heavy}ArmorStat`, `CoilTankMaxTargetsStat`, …) |
+| `ATTACK_INTERVAL_{LAND,WATER,FIGHTER,BOMBER,NUCLEAR}` enum semantics (Combat_System.md) | Enum names not located in 6.9.18 dump under these names; **EStat extraction 2026-10-07 shows the 6.9.18 representation**: single `WeaponFireRate/60` stat + per-weapon balance rows | ~~Locate the real enum~~ RESOLVED AS REPRESENTATION DRIFT — `reverse/notes/units/estat-stat-models.md` §5 |
+| Economy constants and "energy/supply" model details (Economy_System.md) | ~~Doc gives structure, no numbers, and 6.5.22-era naming~~ **Structure checked 2026-10-07**: 6.9.18 `EStat` enum confirms the whole energy/supply vocabulary (SupplyIncome/14, EnergyProduction/15, EnergyNeed/16, EnergyReserve/24, EnergyConsumption/25, EnergyRegeneration/28) plus dedicated stat classes | ~~Recover `EStat`-linked stat models~~ DONE — full 78-value EStat taxonomy + 45 IStatModel classes in `reverse/notes/units/estat-stat-models.md` |
 
 ## Incorrect / Rejected Findings
 
@@ -213,7 +213,9 @@ For the implementation team, later eligible items (pending their own verificatio
 - Whether 6.5.22's `CalculateWeaponArmorDamage` used the same 0.9/0.1 constants (needs the
   6.5.22 binary or a runtime probe — out of scope here).
 - Whether `AttackCoeffCalculating`/`ARMOR_COEFF` exist in 6.9.18 under different names.
-- Whether the doc's VFX naming scheme matches our extracted asset catalog.
+- ~~Whether the doc's VFX naming scheme matches our extracted asset catalog.~~ Checked
+  2026-10-07: partially — `fire_` confirmed at the audio layer; `bul_` closure needs a full
+  XAPK bundle-name pass (`reverse/notes/vfx-asset-prefix-check.md`).
 - The producing session's own tooling and any filtering it applied to the name lists
   (the curated 1,247-name subset looks keyword-derived; absence of a name from the list is
   weak evidence of absence from the game).
@@ -226,10 +228,17 @@ For the implementation team, later eligible items (pending their own verificatio
    `CalculateWeaponArmorDamage`; the analysis also natively covered the item-2 wrappers below.
 2. **Native analysis of `CreateDamageForMediumArmor` / `GetDamageForMediumArmor`** (completes the
    damage-pipeline reconstruction beyond `CalculateWeaponArmorDamage`).
-3. **Check the asset catalog** (211 MB `aow3-extracted-assets.zip`) for `fire_*`/`bul_*`/`expl_*`
-   prefixes to verify the VFX naming lead cheaply.
-4. **Extract EStat-linked IStatModel stat list from 6.9.18 dump** (mine damage, coil-tank targets,
-   etc.) into `reverse/notes/units/` per dev-plan Phase 26 structure.
+3. ~~**Check the asset catalog** (211 MB `aow3-extracted-assets.zip`) for `fire_*`/`bul_*`/`expl_*`
+   prefixes to verify the VFX naming lead cheaply.~~ — **DONE 2026-10-07**: PARTIALLY CONFIRMED
+   (MEDIUM); `fire_` family real (11 audio files, exact naming shape), `expl` partial, `bul_`
+   0/2,157 in the curated subset. See `reverse/notes/vfx-asset-prefix-check.md`.
+4. ~~**Extract EStat-linked IStatModel stat list from 6.9.18 dump** (mine damage, coil-tank targets,
+   etc.) into `reverse/notes/units/` per dev-plan Phase 26 structure.~~ — **DONE 2026-10-07**:
+   full 78-value `EStat` taxonomy + 45 `IStatModel` classes mapped (24 name-exact,
+   10 prefix-stripped, 8 inferred, dump-direct 6-factory proof for `WeaponDamage`) in
+   `reverse/notes/units/estat-stat-models.md` + `estat-classes.tsv` +
+   `reverse/evidence/estat/estat-extraction.txt`. Resolves the Economy_System.md and
+   ATTACK_INTERVAL rows above.
 5. Only if a 6.5.22 binary ever becomes available: re-dump and diff against these lists to turn
    the drift file into a precise changelog.
 
