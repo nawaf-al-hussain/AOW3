@@ -204,6 +204,10 @@
     const armor = targetArmor[targetArmorClass];
     return raw * armorFactor(armor, raw);
   }
+  function rankTier(u) {
+    const k = (u && u.kills) || 0;
+    return k >= 6 ? 3 : k >= 3 ? 2 : k >= 1 ? 1 : 0;
+  }
   function hitChance(accStatic, accWalk, targetMoving, distance, range) {
     const base = targetMoving ? accWalk : accStatic;
     const falloff = 1 - 0.35 * (distance / range);
@@ -416,6 +420,7 @@
       this.grid = new Uint8Array(MAP_W * MAP_H);
       this.explored = new Uint8Array(MAP_W * MAP_H);
       this.visible = [new Uint8Array(MAP_W * MAP_H), new Uint8Array(MAP_W * MAP_H)];
+      this.stats = { 1: { produced: 0, kills: 0, losses: 0, bldKills: 0, bldLost: 0 }, 2: { produced: 0, kills: 0, losses: 0, bldKills: 0, bldLost: 0 } };
       this.genTerrain(seed);
       this.pf = new Pathfinder(this.grid);
       this.players = [this.newPlayer(), this.newPlayer()];
@@ -562,8 +567,11 @@
         cd: 0,
         path: [],
         vx: 0,
-        vy: 0
+        vy: 0,
+        kills: 0,
+        lastHitBy: 0
       };
+      this.stats[owner].produced++;
       this.units.push(u);
       return u;
     }
@@ -792,8 +800,15 @@
       }
       if (this.units.some((u) => u.hp <= 0)) {
         for (const u of this.units)
-          if (u.hp <= 0)
+          if (u.hp <= 0) {
             this.booms.push({ x: u.x, y: u.y, r: u.def.radius + 0.8, t: 0, max: 0.55 });
+            this.stats[u.owner].losses++;
+            const killer = this.units.find((v) => v.id === u.lastHitBy);
+            if (killer && killer !== u) {
+              killer.kills++;
+              this.stats[killer.owner].kills++;
+            }
+          }
         this.units = this.units.filter((u) => u.hp > 0);
         this.refreshEconomy();
       }
@@ -862,7 +877,7 @@
       u.cd = u.def.weapon.cooldown;
       u.facing = Math.atan2(ty - u.y, tx - u.x);
       const acc = hitChance(u.def.weapon.accStatic, u.def.weapon.accWalk, tgt.path.length > 0, d, u.def.weapon.range);
-      const dmg = effectiveDamage(u.def.weapon.damage, tgt.def.armor, tgt.def.armorClass);
+      const dmg = Math.round(effectiveDamage(u.def.weapon.damage, tgt.def.armor, tgt.def.armorClass) * (1 + 0.08 * rankTier(u)) * (1 - 0.05 * rankTier(tgt)));
       if (u.def.weapon.projectileSpeed === 0) {
         this.applyHit(u, tx, ty, tgt, dmg, acc);
       } else {
@@ -878,6 +893,7 @@
           splash: u.def.weapon.splash,
           acc,
           owner: u.owner,
+          srcId: u.id,
           targetId: tgt.id,
           airburst: tgt.def.kind === "aircraft",
           trail: 0
@@ -889,10 +905,11 @@
         return;
       u.cd = u.def.weapon.cooldown;
       u.facing = Math.atan2(b.y - u.y, b.x - u.x);
-      const dmg = effectiveDamage(u.def.weapon.damage, { light: 30, medium: 24, heavy: 18 }, "heavy");
+      const dmg = Math.round(effectiveDamage(u.def.weapon.damage, { light: 30, medium: 24, heavy: 18 }, "heavy") * (1 + 0.08 * rankTier(u)));
       if (u.def.weapon.projectileSpeed === 0) {
         if (Math.random() < 0.8) {
           b.hp -= dmg;
+          b.lastHitOwner = u.owner;
           this.floats.push({ x: b.x, y: b.y - 1, text: `${Math.round(dmg)}`, color: "#ffd28a", t: 0 });
         }
       } else {
@@ -908,6 +925,7 @@
           splash: u.def.weapon.splash,
           acc: 0.85,
           owner: u.owner,
+          srcId: u.id,
           trail: 0
         });
       }
@@ -916,6 +934,7 @@
       if (tgt) {
         if (Math.random() < acc) {
           tgt.hp -= dmg;
+          tgt.lastHitBy = u.id;
           this.floats.push({ x: tgt.x, y: tgt.y - 0.8, text: `${Math.round(dmg)}`, color: "#ffd28a", t: 0 });
         } else {
           this.floats.push({ x: tgt.x, y: tgt.y - 0.8, text: "miss", color: "#999", t: 0 });
@@ -936,6 +955,7 @@
             if (t0 && Math.hypot(t0.x - p.tx, t0.y - p.ty) < 1.6 && Math.random() < p.acc) {
               const eff = effectiveDamage(p.armorClassOfTarget === "light" ? { light: p.dmg, medium: p.dmg / 2, heavy: p.dmg / 4 } : p.armorClassOfTarget === "medium" ? { light: p.dmg / 2, medium: p.dmg, heavy: p.dmg / 2 } : { light: p.dmg / 4, medium: p.dmg / 2, heavy: p.dmg }, t0.def.armor, t0.def.armorClass);
               t0.hp -= eff;
+              t0.lastHitBy = p.srcId ?? 0;
               this.floats.push({ x: t0.x, y: t0.y - 0.8, text: `${Math.round(eff)}`, color: "#ffd28a", t: 0 });
             }
           } else if (p.splash > 0) {
@@ -947,19 +967,23 @@
               if (dd <= p.splash + t.def.radius) {
                 const eff = effectiveDamage({ light: p.dmg / 2, medium: p.dmg / 2, heavy: p.dmg / 2 }, t.def.armor, t.def.armorClass);
                 t.hp -= eff * (1 - 0.5 * (dd / p.splash));
+                t.lastHitBy = p.srcId ?? 0;
               }
             }
             for (const b of this.buildings) {
               if (b.owner === p.owner || b.owner === 0)
                 continue;
-              if (Math.hypot(b.x - p.tx, b.y - p.ty) <= p.splash + b.radius)
+              if (Math.hypot(b.x - p.tx, b.y - p.ty) <= p.splash + b.radius) {
                 b.hp -= p.dmg * 0.6;
+                b.lastHitOwner = p.owner;
+              }
             }
           } else if (p.targetId !== undefined) {
             const t = this.units.find((v) => v.id === p.targetId);
             if (t && Math.hypot(t.x - p.tx, t.y - p.ty) < 1.5 && Math.random() < p.acc) {
               const eff = effectiveDamage(p.armorClassOfTarget === "light" ? { light: p.dmg, medium: p.dmg / 2, heavy: p.dmg / 4 } : p.armorClassOfTarget === "medium" ? { light: p.dmg / 2, medium: p.dmg, heavy: p.dmg / 2 } : { light: p.dmg / 4, medium: p.dmg / 2, heavy: p.dmg }, t.def.armor, t.def.armorClass);
               t.hp -= eff;
+              t.lastHitBy = p.srcId ?? 0;
               this.floats.push({ x: t.x, y: t.y - 0.8, text: `${Math.round(eff)}`, color: "#ffd28a", t: 0 });
             } else if (t) {
               this.floats.push({ x: t.x, y: t.y - 0.8, text: "miss", color: "#999", t: 0 });
@@ -969,6 +993,7 @@
                   continue;
                 if (Math.hypot(b.x - p.tx, b.y - p.ty) < b.radius + 0.8) {
                   b.hp -= p.dmg;
+                  b.lastHitOwner = p.owner;
                   break;
                 }
               }
@@ -1021,8 +1046,14 @@
       }
       if (this.buildings.some((b) => b.hp <= 0 && b.defId !== "hq")) {
         for (const b of this.buildings)
-          if (b.hp <= 0 && b.defId !== "hq")
+          if (b.hp <= 0 && b.defId !== "hq") {
             this.booms.push({ x: b.x, y: b.y, r: (b.radius ?? 1.6) + 1.1, t: 0, max: 0.6 });
+            if (b.owner > 0)
+              this.stats[b.owner].bldLost++;
+            const who = b.lastHitOwner === 1 ? 1 : b.lastHitOwner === 2 ? 2 : 0;
+            if (who > 0)
+              this.stats[who].bldKills++;
+          }
         this.buildings = this.buildings.filter((b) => b.hp > 0 || b.defId === "hq");
         this.refreshEconomy();
       }
@@ -34244,7 +34275,14 @@ void main() {
       this.fogTex = new CanvasTexture(this.fogBlur);
       this.fogTex.magFilter = LinearFilter;
       this.fogTex.minFilter = LinearFilter;
-      const fog = new Mesh(new PlaneGeometry(MAP_W, MAP_H), new MeshBasicMaterial({ map: this.fogTex, transparent: true, depthWrite: false }));
+      const FOG_M = 90;
+      const fog = new Mesh(new PlaneGeometry(MAP_W + FOG_M * 2, MAP_H + FOG_M * 2), new MeshBasicMaterial({ map: this.fogTex, transparent: true, depthWrite: false }));
+      {
+        const uv = fog.geometry.attributes.uv;
+        const sx = (MAP_W + FOG_M * 2) / MAP_W, sz = (MAP_H + FOG_M * 2) / MAP_H;
+        for (let i = 0;i < uv.count; i++)
+          uv.setXY(i, (uv.getX(i) - 0.5) * sx + 0.5, (uv.getY(i) - 0.5) * sz + 0.5);
+      }
       fog.rotation.x = -Math.PI / 2;
       fog.position.y = 0.18;
       fog.renderOrder = 30;
@@ -34491,6 +34529,24 @@ void main() {
         this.groundMesh.visible = false;
       if (this.apron)
         this.apron.visible = false;
+      for (const im of this.scatterMeshes) {
+        const mm = Array.isArray(im.material) ? im.material : [im.material];
+        if (!mm.length || !mm[0].transparent || mm[0].opacity > 0.9)
+          continue;
+        im.geometry.computeBoundingBox();
+        const bb = im.geometry.boundingBox;
+        if (bb && bb.max.y < 1.2 && bb.min.y > -3) {
+          if (!this.pondMat) {
+            this.pondMat = new MeshStandardMaterial({ color: 4029828, roughness: 0.24, metalness: 0.15, transparent: true, opacity: 0.82, side: DoubleSide });
+            const wt = new TextureLoader().load(this.assetBase + "models/water.png");
+            wt.colorSpace = SRGBColorSpace;
+            wt.wrapS = wt.wrapT = RepeatWrapping;
+            wt.repeat.set(5, 5);
+            this.pondMat.map = wt;
+          }
+          im.material = this.pondMat;
+        }
+      }
     }
     addWater() {
       try {
@@ -35017,6 +35073,13 @@ void main() {
         } else
           v.capRing.visible = false;
         const frac = u.hp / u.def.health;
+        const rt = rankTier(u);
+        if (rt !== v.rankT) {
+          v.rankT = rt;
+          this.paintRank(v.rankCanvas, rt);
+          v.rankTex.needsUpdate = true;
+        }
+        v.rankSprite.visible = rt > 0 && (u.owner === 1 || frac < 0.999 || isSel);
         if (u.owner === 1 || frac < 0.999 || isSel) {
           v.hpSprite.visible = true;
           if (Math.abs(frac - v.lastHp) > 0.01) {
@@ -35035,19 +35098,35 @@ void main() {
         v.hpSprite.visible = false;
         v.selRing.visible = false;
         v.capRing.visible = false;
+        const uD = v.model.group.userData.unit;
         const canDie = !!v.model.anim && (v.model.anim.has("die_bullet") || v.model.anim.has("die_explosion"));
-        if (canDie) {
+        if (uD.def.kind === "aircraft") {
+          v.dieT = 0;
+          v.dieDur = 1.6;
+          v.dieMode = "crash";
+          this.dying.push(v);
+        } else if (canDie) {
           v.dieT = 0;
           v.dieDur = 1.05;
+          v.dieMode = "anim";
           const clip = v.model.anim.has("die_bullet") ? "die_bullet" : "die_explosion";
           v.model.anim.oneshot(clip, 0.05);
           this.dying.push(v);
+        } else if (uD.def.kind === "infantry") {
+          v.dieT = 0;
+          v.dieDur = 2.4;
+          v.dieMode = "fall";
+          this.prepareFade(v);
+          this.dying.push(v);
         } else {
-          this.spawnWreck(v);
-          this.scene.remove(v.model.group, v.hpSprite, v.selRing, v.capRing);
-          if (v.shadow)
-            this.scene.remove(v.shadow);
+          v.dieT = 0;
+          v.dieDur = 2.2;
+          v.dieMode = "tip";
+          this.prepareChar(v);
+          this.dying.push(v);
         }
+        if (v.shadow)
+          v.shadow.visible = false;
       }
       this.syncDying(dt());
     }
@@ -35055,20 +35134,92 @@ void main() {
       for (let i = this.dying.length - 1;i >= 0; i--) {
         const v = this.dying[i];
         v.dieT = (v.dieT ?? 0) + dt;
-        v.model.anim?.update(dt);
         const k = v.dieT / (v.dieDur ?? 1);
-        if (k >= 1) {
-          const u = v.model.group.userData.unit;
-          if (u)
-            this.spawnWreck(v);
-          this.scene.remove(v.model.group, v.hpSprite, v.selRing, v.capRing);
-          if (v.shadow)
-            this.scene.remove(v.shadow);
-          this.dying.splice(i, 1);
-        } else if (k > 0.62) {
-          v.model.group.position.y -= dt * 1.6 * ((k - 0.62) / 0.38);
+        const g = v.model.group;
+        const mode = v.dieMode || "anim";
+        if (mode === "crash") {
+          g.rotation.y += dt * 6.5;
+          g.rotation.z = Math.min(1, g.rotation.z + dt * 1.6);
+          const gy = heightAtWorld(g.position.x, g.position.z);
+          g.position.y = Math.max(gy + 0.25, g.position.y - dt * (2 + v.dieT * 4));
+          v.trailAcc = (v.trailAcc ?? 0) + dt;
+          if (v.trailAcc > 0.08) {
+            v.trailAcc = 0;
+            this.puff(g.position.x, g.position.y + 0.5, g.position.z, 0.42, 0.65, true);
+          }
+          if (k >= 1 || (g.position.y <= gy + 0.3 && v.dieT > 0.25))
+            this.finishDeath(v, i);
+        } else if (mode === "fall") {
+          g.rotation.order = "YXZ";
+          if (v.dieDir === undefined)
+            v.dieDir = Math.random() < 0.5 ? 1 : -1;
+          const kk = Math.min(1, v.dieT / 0.38);
+          g.rotation.x = v.dieDir * 1.45 * kk * kk;
+          if (v.dieT > 1.3)
+            this.fadeView(v, Math.max(0, 1 - (v.dieT - 1.3) / Math.max(0.2, (v.dieDur ?? 1) - 1.3)));
+          if (k >= 1)
+            this.finishDeath(v, i);
+        } else if (mode === "tip") {
+          g.rotation.order = "YXZ";
+          if (v.dieDir === undefined)
+            v.dieDir = (Math.random() < 0.5 ? 1 : -1) * (0.85 + Math.random() * 0.5);
+          const kk = Math.min(1, v.dieT / 0.55);
+          g.rotation.x = v.dieDir * kk * kk;
+          g.position.y = Math.max(-0.12, g.position.y - dt * 0.3 * kk);
+          v.trailAcc = (v.trailAcc ?? 0) + dt;
+          if (v.trailAcc > 0.22 && k < 0.55) {
+            v.trailAcc = 0;
+            this.puff(g.position.x, 0.5, g.position.z, 0.4, 0.7);
+          }
+          if (k >= 1)
+            this.finishDeath(v, i);
+        } else {
+          v.model.anim?.update(dt);
+          if (k >= 1)
+            this.finishDeath(v, i);
+          else if (k > 0.62)
+            g.position.y -= dt * 1.6 * ((k - 0.62) / 0.38);
         }
       }
+    }
+    finishDeath(v, i) {
+      const u = v.model.group.userData.unit;
+      if (u)
+        this.spawnWreck(v);
+      this.scene.remove(v.model.group, v.hpSprite, v.selRing, v.capRing, v.rankSprite);
+      if (v.shadow)
+        this.scene.remove(v.shadow);
+      this.dying.splice(i, 1);
+    }
+    prepareFade(v) {
+      v.model.group.traverse((o) => {
+        if (o.isMesh || o.isSkinnedMesh) {
+          o.material = Array.isArray(o.material) ? o.material.map((m) => m.clone()) : o.material.clone();
+          const mm = Array.isArray(o.material) ? o.material : [o.material];
+          for (const m2 of mm)
+            m2.transparent = true;
+        }
+      });
+    }
+    fadeView(v, op) {
+      v.model.group.traverse((o) => {
+        if (o.isMesh || o.isSkinnedMesh) {
+          const mm = Array.isArray(o.material) ? o.material : [o.material];
+          for (const m2 of mm)
+            m2.opacity = op;
+        }
+      });
+    }
+    prepareChar(v) {
+      v.model.group.traverse((o) => {
+        if (o.isMesh || o.isSkinnedMesh) {
+          o.material = Array.isArray(o.material) ? o.material.map((m) => m.clone()) : o.material.clone();
+          const mm = Array.isArray(o.material) ? o.material : [o.material];
+          for (const m2 of mm)
+            if (m2.color)
+              m2.color.multiplyScalar(0.38);
+        }
+      });
     }
     fireEvent(px, py, owner) {
       let best = null;
@@ -35140,7 +35291,16 @@ void main() {
       hpSprite.scale.set(1.9, 0.3, 1);
       hpSprite.visible = false;
       hpSprite.renderOrder = 40;
-      this.scene.add(hpSprite);
+      model.group.add(hpSprite);
+      const rankCanvas = document.createElement("canvas");
+      rankCanvas.width = 48;
+      rankCanvas.height = 18;
+      const rankTex = new CanvasTexture(rankCanvas);
+      const rankSprite = new Sprite(new SpriteMaterial({ map: rankTex, transparent: true, depthWrite: false }));
+      rankSprite.scale.set(1.4, 0.52, 1);
+      rankSprite.visible = false;
+      rankSprite.renderOrder = 41;
+      model.group.add(rankSprite);
       const selRing = this.texSelRing ? new Mesh(new PlaneGeometry(2, 2), new MeshBasicMaterial({ color: u.owner === 1 ? 16756832 : 6990079, map: this.texSelRing, transparent: true, opacity: 0.95, depthWrite: false, side: DoubleSide })) : new Mesh(new RingGeometry(0.82, 1, 26), new MeshBasicMaterial({ color: 9109354, transparent: true, opacity: 0.95, depthWrite: false, side: DoubleSide }));
       selRing.rotation.x = -Math.PI / 2;
       selRing.position.y = 0.07;
@@ -35166,7 +35326,11 @@ void main() {
         fireT: 0,
         muzzleIdx: 0,
         recoil: 0,
-        turretYaw: 0
+        turretYaw: 0,
+        rankCanvas,
+        rankTex,
+        rankSprite,
+        rankT: -1
       };
       if (u.def.kind === "aircraft") {
         const sh = new Sprite(new SpriteMaterial({ map: this.texShadow, transparent: true, depthWrite: false }));
@@ -35185,6 +35349,28 @@ void main() {
       g.strokeRect(0.5, 0.5, 63, 9);
       g.fillStyle = frac > 0.55 ? "#58d858" : frac > 0.25 ? "#d8c840" : "#e05840";
       g.fillRect(2, 2, 60 * Math.max(0, frac), 6);
+    }
+    paintRank(c, tier) {
+      const g = c.getContext("2d");
+      g.clearRect(0, 0, 48, 18);
+      if (tier <= 0)
+        return;
+      g.strokeStyle = "rgba(0,0,0,0.85)";
+      g.lineWidth = 1.5;
+      g.fillStyle = "#fcd34d";
+      for (let i = 0;i < tier; i++) {
+        const x = 24 - tier * 8 + i * 16;
+        g.beginPath();
+        g.moveTo(x, 14);
+        g.lineTo(x + 5.5, 4);
+        g.lineTo(x + 11, 14);
+        g.lineTo(x + 8.5, 14);
+        g.lineTo(x + 5.5, 8.5);
+        g.lineTo(x + 2.5, 14);
+        g.closePath();
+        g.fill();
+        g.stroke();
+      }
     }
     spawnWreck(v) {
       const u = v.model.group.userData.unit;
@@ -35418,6 +35604,9 @@ void main() {
           cam2.lookAt(0, -size.y * 0.05, 0);
           shadow.scale.setScalar(Math.max(size.x, size.z) * 1.05);
           shadow.position.y = -size.y / 2 + 0.02;
+          const inf = UNITS[id].kind === "infantry";
+          key.intensity = inf ? 4.4 : 3.1;
+          rim.intensity = inf ? 2 : 1.35;
           pr.render(scene, cam2);
           UNITS[id].card = pr.domElement.toDataURL("image/png");
           scene.remove(wrap);
@@ -35432,6 +35621,10 @@ void main() {
         const wm = this.water.material.map;
         wm.offset.x = this.time * 0.011;
         wm.offset.y = this.time * 0.006 + Math.sin(this.time * 0.4) * 0.04;
+      }
+      if (this.pondMat && this.pondMat.map) {
+        this.pondMat.map.offset.x = this.time * 0.03;
+        this.pondMat.map.offset.y = this.time * 0.02;
       }
       this.animateFlags(this.time);
       for (let i = this.fxSprites.length - 1;i >= 0; i--) {
@@ -35779,6 +35972,7 @@ void main() {
   <div id="over" class="overlay hidden">
     <h1 id="verdict">VICTORY</h1>
     <p id="verdict-sub"></p>
+    <div id="report"></div>
     <button id="rematch">⟳ REMATCH</button>
   </div>
 
@@ -35876,6 +36070,13 @@ button{cursor:pointer;border:0;border-radius:8px}
 .mm-plate{position:absolute;top:-8px;left:12px;background:linear-gradient(180deg,#39412c,#20251a);border:1px solid #5a6444;border-radius:4px;color:#c9d6a3;font-size:7px;font-weight:800;letter-spacing:1px;padding:1px 5px;z-index:4;box-shadow:0 2px 4px rgba(0,0,0,.5);pointer-events:none}
 .mm-plate.right{left:auto;top:auto;right:12px;bottom:-8px;color:#e0b46a}
 body>canvas{filter:saturate(1.07) contrast(1.035)}
+#report{margin-top:14px;color:#e5e7eb;font-size:13px}
+#report table{border-collapse:collapse;min-width:360px;margin:0 auto}
+#report th,#report td{padding:4px 14px;border-bottom:1px solid rgba(255,255,255,.12)}
+#report thead th{color:#fcd34d;font-size:12px;letter-spacing:2px}
+#report .ra{color:#f87171;font-weight:800;text-align:right}
+#report tbody th{color:rgba(255,255,255,.6);font-weight:600;text-align:center;font-size:10px;letter-spacing:1.5px}
+#report td{color:#fff;font-weight:800;text-align:center}
 `;
   document.head.appendChild(css);
   var sim = null;
@@ -36259,7 +36460,9 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
         const w = su.def.weapon || {};
         const dm = w.damage || {};
         const dmgTxt = dm.light !== undefined ? `${dm.light}/${dm.medium}/${dm.heavy}` : "—";
+        const rT = rankTier(su);
         si.innerHTML = `<b>${su.def.name}${sel.size > 1 ? " ×" + sel.size : ""}</b>` +
+          (rT > 0 ? `<span style="color:#fcd34d;font-weight:800;font-size:11px">${["", "VETERAN", "ELITE", "ACE"][rT]} · ${su.kills} kill${su.kills > 1 ? "s" : ""}</span>` : "") +
           `<div class="hpbar"><i style="width:${Math.round(fr * 100)}%;background:${fr > 0.55 ? "#58d858" : fr > 0.25 ? "#d8c840" : "#e05840"}"></i></div>` +
           `<span class="si-stats">DMG ${dmgTxt} · RNG ${w.range ?? "—"} · ARM ${su.def.armorClass ?? "—"}</span>`;
       } else
@@ -36349,6 +36552,20 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       $("verdict").textContent = win ? "VICTORY" : "DEFEAT";
       window.__sfx && window.__sfx.play(win ? "ann_victory" : "ann_defeat", { vol: 0.9 });
       $("verdict-sub").textContent = win ? "Enemy HQ destroyed. The region is yours." : "Your HQ has fallen. Regroup and try again.";
+      try {
+        const st = sim.stats;
+        const tt = Math.floor(sim.time);
+        const f = (n) => n.toLocaleString();
+        const row = (label, a, b) => `<tr><td class="ra">${a}</td><th>${label}</th><td>${b}</td></tr>`;
+        $("report").innerHTML = `<table><thead><tr><th class="ra">YOU</th><th></th><th>ENEMY</th></tr></thead><tbody>` +
+          row("Units fielded", f(st[1].produced), f(st[2].produced)) +
+          row("Enemy kills", f(st[1].kills), f(st[2].kills)) +
+          row("Units lost", f(st[1].losses), f(st[2].losses)) +
+          row("Buildings razed", f(st[1].bldKills), f(st[2].bldKills)) +
+          row("Buildings lost", f(st[1].bldLost), f(st[2].bldLost)) +
+          row("Battle time", `${Math.floor(tt / 60)}:${String(tt % 60).padStart(2, "0")}`, "—") +
+          `</tbody></table>`;
+      } catch (e2) {}
       $("over").classList.remove("hidden");
       sim = null;
     }
