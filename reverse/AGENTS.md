@@ -267,12 +267,12 @@ Combat is a major priority. The recovered damage formula and weapon field list l
 
 RE-specific investigation checklist (fields whose behavior is **not yet fully recovered**):
 
-* hit chance and the three accuracy fields (`accuracyStatic/Dynamic/Walk`) — when each applies
-* burst behavior: `shotStart`, `shotInt`, `shotCount`, `roundLen`
-* explosion falloff: `explosionRadius` × `explosionDecr`
+* ~~hit chance and the three accuracy fields (`accuracyStatic/Dynamic/Walk`)~~ — **RECOVERED 2026-10-06**: `reverse/notes/weapon-accuracy-native-analysis.md`, implemented in browser v=12. Remaining unknown: native `weaponType` id→unit-class mapping and `explosionDecr` values (server-side).
+* ~~burst behavior: `shotStart`, `shotInt`, `shotCount`, `roundLen`~~ — schema confirmed (`WeaponShotsPerMin` @0x7FCEFB0, `WeaponType` consts); live burst timing still approximate.
+* explosion falloff: `explosionRadius` × `explosionDecr` — `explosionDecr` confirmed in the accuracy curve; its damage-falloff role still unrecovered.
 * target restrictions and AA behavior
 * critical/special effects
-* `hitBonus` semantics
+* `hitBonus` semantics (field exists at `WeaponType` @0x24 — not seen in the accuracy surface)
 
 Do not assume the fields behave independently. Trace how they interact in native code (§10–§11).
 

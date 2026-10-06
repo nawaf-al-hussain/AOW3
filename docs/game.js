@@ -16,7 +16,7 @@
       regen: 0.6,
       captures: true,
       radius: 0.45,
-      weapon: { damage: { light: 16, medium: 7, heavy: 3 }, range: 6.5, cooldown: 1.1, accStatic: 72, accWalk: 48, splash: 0, projectileSpeed: 0 },
+      weapon: { damage: { light: 16, medium: 7, heavy: 3 }, range: 6.5, cooldown: 1.1, accStatic: 72, accWalk: 48, splash: 0, projectileSpeed: 0, walkingShot: 1 },
       card: "assets/card-infantry.png",
       tint: "#8fb573",
       desc: "Cheap capture unit. Only infantry can seize depots."
@@ -37,7 +37,7 @@
       captures: true,
       radius: 0.45,
       antiAir: true,
-      weapon: { damage: { light: 30, medium: 9, heavy: 3 }, range: 7, cooldown: 0.9, accStatic: 70, accWalk: 52, splash: 0, projectileSpeed: 0 },
+      weapon: { damage: { light: 30, medium: 9, heavy: 3 }, range: 7, cooldown: 0.9, accStatic: 70, accWalk: 52, splash: 0, projectileSpeed: 0, walkingShot: 1 },
       card: "assets/card-infantry.png",
       tint: "#b59b73",
       desc: "Shreds infantry and aircraft. Nearly useless against armor."
@@ -57,7 +57,7 @@
       regen: 0.5,
       captures: true,
       radius: 0.45,
-      weapon: { damage: { light: 10, medium: 34, heavy: 42 }, range: 7.5, cooldown: 2.4, accStatic: 78, accWalk: 55, splash: 1.1, projectileSpeed: 14 },
+      weapon: { damage: { light: 10, medium: 34, heavy: 42 }, range: 7.5, cooldown: 2.4, accStatic: 78, accWalk: 55, splash: 1.1, projectileSpeed: 14, walkingShot: 1 },
       card: "assets/card-mech.png",
       tint: "#c28f6d",
       desc: "Rocket team — punishes vehicles and tanks."
@@ -117,7 +117,7 @@
       regen: 0,
       captures: false,
       radius: 0.65,
-      weapon: { damage: { light: 40, medium: 38, heavy: 46 }, range: 16, cooldown: 4.2, accStatic: 62, accWalk: 44, splash: 2.6, projectileSpeed: 12 },
+      weapon: { damage: { light: 40, medium: 38, heavy: 46 }, range: 16, cooldown: 4.2, accStatic: 62, accWalk: 44, splash: 2.6, projectileSpeed: 12, splashScatter: 1, explosionDecr: 30 },
       card: "assets/card-rocket.png",
       tint: "#9c8a5e",
       desc: "Long-range splash damage. Fragile up close."
@@ -158,7 +158,7 @@
       regen: 0,
       captures: false,
       radius: 0.6,
-      weapon: { damage: { light: 34, medium: 26, heavy: 16 }, range: 8.5, cooldown: 1.2, accStatic: 76, accWalk: 68, splash: 0.4, projectileSpeed: 30 },
+      weapon: { damage: { light: 34, medium: 26, heavy: 16 }, range: 8.5, cooldown: 1.2, accStatic: 76, accWalk: 68, splash: 0.4, projectileSpeed: 30, guided: 1 },
       card: "assets/card-gunship.png",
       tint: "#739c93",
       desc: "Fast strike flyer. Ignores terrain \u2014 shredded by flak guns and AA MGs."
@@ -208,10 +208,40 @@
     const k = (u && u.kills) || 0;
     return k >= 6 ? 3 : k >= 3 ? 2 : k >= 1 ? 1 : 0;
   }
-  function hitChance(accStatic, accWalk, targetMoving, distance, range) {
-    const base = targetMoving ? accWalk : accStatic;
-    const falloff = 1 - 0.35 * (distance / range);
-    return Math.min(0.98, Math.max(0.15, base / 100 * falloff));
+  // ---- weapon accuracy: recovered 6.9.18 native curves (HIGH CONFIDENCE) ----
+  // Evidence: GUIMainUpgradeHelperFunctions.WeaponStaticAccuracy @VA 0x7FCEFF8,
+  // WeaponDynamicAccuracy @VA 0x7FCF0B8 (libil2cpp.so sha256 8ace05bb...).
+  // See reverse/notes/weapon-accuracy-native-analysis.md.
+  // CONFIRMED: branch structure + constants 100 / 1000 / 10000 / (1000-10*decr) / 10^6.
+  // APPROXIMATION (server-side balance data): mapping of native weaponType ids to unit
+  // classes and the explosionDecr values; clamps [0.15,0.98] are gameplay-tuned
+  // (the native display path clamps at 1.0). Native semantics: accuracyDynamic is
+  // about the SHOOTER walking (weaponWalkingShot), not the target moving.
+  function weaponStaticAccuracy(w, distance) {
+    if (w.splashScatter) {
+      // native default non-guided branch: 1 - 0.5*d*acc*(1000-10*decr)/(10^6*R)
+      const decr = w.explosionDecr ?? 0;
+      return 1 - 0.5 * distance * w.accStatic * (1000 - 10 * decr) / (1e6 * w.splash);
+    }
+    return w.accStatic / 100;
+  }
+  function weaponDynamicAccuracy(w, distance) {
+    if (!w.walkingShot)
+      return 0;
+    if (w.guided)
+      return w.accStatic / 100;
+    if (w.splashScatter) {
+      const decr = w.explosionDecr ?? 0;
+      return 1 - (w.accWalk + w.accStatic) * distance * (1000 - 10 * decr) / (2e6 * w.splash);
+    }
+    // native weaponType {10,40} walking branch: accWalk * accStatic / 10000
+    return w.accWalk * w.accStatic / 10000;
+  }
+  function hitChance(w, shooterMoving, distance) {
+    let acc = shooterMoving ? weaponDynamicAccuracy(w, distance) : weaponStaticAccuracy(w, distance);
+    if (!(acc > 0))
+      acc = weaponStaticAccuracy(w, distance);
+    return Math.min(0.98, Math.max(0.15, acc));
   }
 
   // src/game/engine/path.ts
@@ -876,7 +906,7 @@
         return;
       u.cd = u.def.weapon.cooldown;
       u.facing = Math.atan2(ty - u.y, tx - u.x);
-      const acc = hitChance(u.def.weapon.accStatic, u.def.weapon.accWalk, tgt.path.length > 0, d, u.def.weapon.range);
+      const acc = hitChance(u.def.weapon, u.path.length > 0, d);
       const dmg = Math.round(effectiveDamage(u.def.weapon.damage, tgt.def.armor, tgt.def.armorClass) * (1 + 0.08 * rankTier(u)) * (1 - 0.05 * rankTier(tgt)));
       if (u.def.weapon.projectileSpeed === 0) {
         this.applyHit(u, tx, ty, tgt, dmg, acc);
@@ -1033,7 +1063,7 @@
             if (best) {
               b.cd = wdef.cooldown;
               b.aim = Math.atan2(best.y - b.y, best.x - b.x);
-              const acc = hitChance(wdef.accStatic, wdef.accWalk, best.path.length > 0, bd, wdef.range);
+              const acc = hitChance(wdef, false, bd);
               const dmg = effectiveDamage(wdef.damage, best.def.armor, best.def.armorClass);
               if (wdef.projectileSpeed === 0) {
                 this.applyHit(b, best.x, best.y, best, dmg, acc);

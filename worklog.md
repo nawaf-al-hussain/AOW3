@@ -453,6 +453,50 @@ Stage Summary:
   unchanged (v=11 live).
 
 ---
+Task ID: 15
+Agent: Super Z (main)
+Task: Gameplay work — recover native weapon-accuracy formulas (6.9.18) and replace the browser hitChance model; also dedupe reverse/AGENTS.md
+
+Work Log:
+- Deduped reverse/AGENTS.md against root AGENTS.md (1274 -> 631 lines): precedence table
+  (root wins on doctrine), repeated hierarchy/confidence/commit/engine sections replaced by
+  references; all RE-specific procedures kept. Rebased over remote 00c562a (armor evidence);
+  pushed 2de3fa3.
+- Audited sim loop: fixed-timestep accumulator ALREADY implemented (TICK_RATE=20 @ game.js:399,
+  0.25s frame clamp, 8-step catch-up cap, sim.step(stepDt)+ai.step(stepDt) only inside the
+  accumulator; damage/hp mutations all within sim.step) — root AGENTS.md §31's
+  "sim not render-independent" limitation is stale; left doc update for a doc pass.
+- Gameplay gap chosen (§32 #6 weapon behavior / §13 checklist): hitChance used an invented
+  0.35 distance falloff, keyed the walk penalty on TARGET movement (semantic inversion),
+  and never used accuracyDynamic/hitBonus/distanceMin.
+- Found the native accuracy surface in dump.cs: WeaponStaticAccuracy @0x7FCEFF8 /
+  WeaponDynamicAccuracy @0x7FCF0B8 (GUIMainUpgradeHelperFunctions, same class as the
+  verified damage triad) + entity WeaponType schema (accuracy_static/dynamic/walk @0x8E/90/92,
+  guided @0x94, walking_shot @0x8A, distance_min @0x58, explosion_decr @0x84).
+- Pulled the LFS XAPK via GitHub LFS batch API (git-lfs missing in env; PAT auth), extracted
+  libil2cpp.so (sha256 8ace05bb... == armor-note provenance), wrote
+  reverse/tools/accuracy_native_analysis.py (capstone 5.0.7, self-test = documented
+  WeaponDamageLightValue body — machinery validated).
+- Recovered formulas: percent branches (acc/100), walking product accWalk*accStatic/1e4
+  (rodata 10000.0 @0x1b09d28), guided->static, scatter type 27 (1-acc/1000, 0.9+(acc-100)/-308),
+  default splash branch 1-0.5*d*acc*(1000-10*decr)/(1e6*R), dynamic splash with (accW+accS).
+- Implemented in docs/game.js: weaponStaticAccuracy/weaponDynamicAccuracy/hitChance(w,
+  shooterMoving, distance); call sites updated (shooter-side movement semantics; turret
+  static); def fields added — walkingShot for rifle/mg/rpg, guided for helicopter,
+  splashScatter+explosionDecr:30 for artillery (documented approximations). Veterancy and
+  clamps kept as gameplay layer.
+- Evidence: reverse/notes/weapon-accuracy-native-analysis.md,
+  reverse/evidence/tests/accuracy.md + accuracy.test.js (13 vectors, all pass; one md
+  arithmetic slip caught and fixed by the test itself), combat-stats.md §6,
+  reverse/AGENTS.md §13 checklist updated.
+- v=12 pushed; live QA pending at push time of this entry.
+
+Stage Summary:
+- Browser accuracy model now matches the recovered 6.9.18 native curves (HIGH CONFIDENCE
+  formula shapes; branch selection + explosionDecr documented as approximations). Old
+  invented falloff removed; shooter-vs-target movement semantics fixed.
+
+---
 Task ID: ArmorStatHelper-Native
 Agent: Super Z (main)
 Task: Native analysis of ArmorStatHelper to close the UNRESOLVED conflict (external ARMOR_COEFF / AttackCoeffCalculating claim)

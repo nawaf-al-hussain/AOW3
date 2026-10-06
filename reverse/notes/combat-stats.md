@@ -67,6 +67,18 @@ m_velocity, m_shotStart/m_shotInt/m_shotCount, m_roundLen,
 m_accuracyStatic/Dynamic/Walk, m_rotateSpeed ...
 ```
 
+## 6. Weapon accuracy — `WeaponStaticAccuracy` / `WeaponDynamicAccuracy` (2026-10-06)
+
+Recovered natively (see `weapon-accuracy-native-analysis.md`):
+`GUIMainUpgradeHelperFunctions.WeaponStaticAccuracy @0x7FCEFF8`,
+`WeaponDynamicAccuracy @0x7FCF0B8`. Dispatch on `weaponType` {10,40} / 27 / default,
+guided, and `walking_shot`; constants 100 / 1000 / 10000 / (1000−10·decr) / 10⁶.
+Key semantics: the dynamic (walking) curve is keyed on the **shooter's** `walking_shot`,
+not the target's motion; `accWalk·accStatic/10⁴` is the direct-fire walking branch;
+guided weapons always use `accStatic/100`. Browser implemented in v=12;
+deterministic vectors in `evidence/tests/accuracy.md`. The native `weaponType` id
+assignment and `explosionDecr` values are server-side (approximations documented).
+
 ## Note on numeric values
 
 The per-unit balance numbers (health, price, damage ints) are delivered by the
