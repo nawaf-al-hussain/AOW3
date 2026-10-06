@@ -34203,9 +34203,9 @@ void main() {
       this.renderer.toneMappingExposure = 1.14;
       this.renderer.shadowMap.enabled = true;
       this.renderer.shadowMap.type = PCFShadowMap;
-      this.renderer.setClearColor(12571336);
+      this.renderer.setClearColor(13616034);
       this.camera = new PerspectiveCamera(38, 1, 1, 500);
-      this.scene.fog = new Fog(12571336, 190, 620);
+      this.scene.fog = new Fog(13616034, 170, 560);
       const hemi = new HemisphereLight(15066591, 10052467, 1.95);
       this.scene.add(hemi);
       this.sun = new DirectionalLight(16773848, 2.0);
@@ -34527,8 +34527,6 @@ void main() {
       }
       if (this.groundMesh)
         this.groundMesh.visible = false;
-      if (this.apron)
-        this.apron.visible = false;
       for (const im of this.scatterMeshes) {
         const mm = Array.isArray(im.material) ? im.material : [im.material];
         if (!mm.length || !mm[0].transparent || mm[0].opacity > 0.9)
@@ -34544,14 +34542,14 @@ void main() {
         const t = new TextureLoader().load(this.assetBase + "models/water.png");
         t.colorSpace = SRGBColorSpace;
         t.wrapS = t.wrapT = RepeatWrapping;
-        t.repeat.set(42, 42);
+        t.repeat.set(26, 26);
         const mat = new MeshStandardMaterial({
-          color: 5275088, map: t, roughness: 0.28, metalness: 0.12,
-          transparent: true, opacity: 0.93
+          color: 5275088, map: t, roughness: 0.32, metalness: 0.08,
+          transparent: true, opacity: 0.92
         });
-        const w = new Mesh(new PlaneGeometry(900, 900), mat);
+        const w = new Mesh(new PlaneGeometry(560, 560), mat);
         w.rotation.x = -Math.PI / 2;
-        w.position.y = -0.3;
+        w.position.y = -0.42;
         this.scene.add(w);
         this.water = w;
       } catch (e) {}
