@@ -490,6 +490,23 @@ Work Log:
   arithmetic slip caught and fixed by the test itself), combat-stats.md §6,
   reverse/AGENTS.md §13 checklist updated.
 - v=12 pushed; live QA pending at push time of this entry.
+- QA v12 (fresh session, skirmish, zero page errors): standing rifle-vs-rifle duel hit
+  rate 0.778 (n=9) vs expected 0.72 (binomial noise OK); shots/sim-sec 0.90 == 1/1.1s
+  cooldown exactly (headless rAF throttling only slows wall-clock, not the ratio).
+- Walk-fire gap found: units ALWAYS stop to shoot (u.path=[] before shoot()) and the
+  move-order branch never targets — the recovered dynamic branch would be dead code.
+  Native walking_shot semantics = fire on the move. Implemented: walkingShot weapons
+  under move orders acquire targets of opportunity and shoot without stopping
+  (updateUnits move branch); vehicles/buildings unchanged. v=13 pushed (da8e4a8).
+- QA v13 (same fresh session reloaded): perpetual-move rifle hit rate blend 0.556
+  vs predicted 0.43*0.346 + 0.57*0.72 = 0.559 — dynamic curve confirmed live; bucketed
+  spot checks directionally correct (small n due to headless throttle; deterministic
+  vectors remain the authoritative math check, 13/13 pass).
+- Long-window confirmation: mvN=17/stN=6, blend 0.435 vs predicted 0.443 (mvShare 0.74).
+- Headless artifact note: p12 session reported ~40 EMPTY-message pageerror events
+  (no window.onerror capture, no unhandledrejection, menu clean, sim healthy, not
+  reproducible when instrumented in a fresh session p13 = zero errors) — environmental,
+  not a v12/v13 regression; flagged for future passes to watch on real browsers.
 
 Stage Summary:
 - Browser accuracy model now matches the recovered 6.9.18 native curves (HIGH CONFIDENCE
