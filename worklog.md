@@ -193,3 +193,25 @@ Stage Summary:
 - Live: https://nawaf-al-hussain.github.io/AOW3/ (main:/docs)
 - Next candidates: damaged-building states (f1_bld_*_1/_2 icons exist), AA flak vs gunship,
   minimap frame sprite, unit info panel when selecting, victory/defeat screens with art.
+
+---
+Task ID: 6
+Agent: Super Z (main)
+Task: Pass 5 — damage feedback, unit info panel, verdict art
+
+Work Log:
+- surgery5.py (6 verified edits) + 3 follow-up patches:
+  * Building HP bars now also on the HQ (were non-HQ only).
+  * Damaged buildings (<55%) emit thick dark smoke (tinted 0x2e2e2e, rising, big puffs);
+    <30% adds fire glow flickers. addFx gained optional tint param.
+  * Destroyed buildings leave a scorch decal + smoke burst (were removed instantly).
+  * #selinfo panel above the minimap: selected unit name + count, HP bar,
+    RE'd stats (DMG light/medium/heavy · RNG · ARM) — updates every minimap tick.
+  * Verdict (victory/defeat) screen uses the faction art background.
+- Local QA: selinfo shows "Rifle Squad ×3" + green bar + stats; HQ damaged to 25% shows
+  red HP bar + dark smoke plumes; zero page errors; node --check OK.
+
+Stage Summary:
+- Damage feedback loop complete: hit -> HP bar -> smoke -> wreck scorch.
+- Pushing to main; next candidates: AA flak, minimap frame art, damaged building
+  icon states, sound mixing (positioned volume already partial).

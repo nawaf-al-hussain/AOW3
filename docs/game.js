@@ -34661,6 +34661,20 @@ void main() {
           } else
             v.hpSprite.visible = false;
         }
+        if (b.built && frac < 0.55 && !underC) {
+          const R = v.def?.radius ?? 2.2;
+          v.smokeAcc = (v.smokeAcc ?? 0) + dt();
+          if (v.smokeAcc > (frac < 0.3 ? 0.22 : 0.55)) {
+            v.smokeAcc = 0;
+            const ang = Math.random() * Math.PI * 2;
+            const rr = R * (0.35 + Math.random() * 0.6);
+            this.addFx(this.texSmoke, v.group.position.x + Math.cos(ang) * rr, 0.9 + Math.random() * 1.1, v.group.position.z + Math.sin(ang) * rr, 1.1, 2.2, 2.6, false, -1.4, 0x2e2e2e);
+          }
+          if (frac < 0.3 && Math.random() < 0.16) {
+            this.addFx(this.texGlow, v.group.position.x + (Math.random() - 0.5) * R, 0.8, v.group.position.z + (Math.random() - 0.5) * R, 0.9, 0.28, 1.6, true);
+            this.addFx(this.texFlash, v.group.position.x + (Math.random() - 0.5) * R, 0.85, v.group.position.z + (Math.random() - 0.5) * R, 0.8, 0.1, 1.4, true);
+          }
+        }
         if (v.glb?.turret && v.glb.turretBaseQ && b.aim !== undefined) {
           let want = -b.aim - (v.turYaw ?? 0);
           while (want > Math.PI)
@@ -34678,6 +34692,9 @@ void main() {
       }
       for (const [id, v] of this.bldViews) {
         if (!seen.has(id)) {
+          this.addScorch(v.group.position.x, v.group.position.z, (v.def?.radius ?? 2.2) * 2.3);
+          for (let i = 0; i < 4; i++)
+            this.puff(v.group.position.x + (Math.random() - 0.5) * 1.6, 0.6 + Math.random(), v.group.position.z + (Math.random() - 0.5) * 1.6, 0.6, 1.2, false);
           this.scene.remove(v.group);
           this.bldViews.delete(id);
         }
@@ -34717,6 +34734,20 @@ void main() {
         flag.position.set(0.62, hq ? 5.05 : 6.55, 0);
         group.add(flag);
         view.flag = flag;
+        const hpCanvas = document.createElement("canvas");
+        hpCanvas.width = 64;
+        hpCanvas.height = 10;
+        const hpTex = new CanvasTexture(hpCanvas);
+        const hpSprite = new Sprite(new SpriteMaterial({ map: hpTex, transparent: true, depthWrite: false }));
+        hpSprite.scale.set(3.6, 0.5, 1);
+        hpSprite.visible = false;
+        hpSprite.renderOrder = 40;
+        hpSprite.position.y = 6.1;
+        group.add(hpSprite);
+        view.hpSprite = hpSprite;
+        view.hpCanvas = hpCanvas;
+        view.hpTex = hpTex;
+        view.lastHp = -1;
       } else {
         const isDepot = b.defId === "depot";
         const def = isDepot ? DEPOT : BLD[b.defId] || DEPOT;
@@ -35157,7 +35188,7 @@ void main() {
     puff(x, y, z, size, ttl, additive = false) {
       this.addFx(additive ? this.texGlow : this.texSmoke, x, y, z, size, ttl, size * 2.2, additive, -0.9);
     }
-    addFx(tex, x, y, z, size, ttl, grow, additive, rise = 0) {
+    addFx(tex, x, y, z, size, ttl, grow, additive, rise = 0, tint = 0) {
       const s = new Sprite(new SpriteMaterial({
         map: tex,
         transparent: true,
@@ -35165,6 +35196,8 @@ void main() {
         blending: additive ? AdditiveBlending : NormalBlending,
         opacity: 1
       }));
+      if (tint)
+        s.material.color.setHex(tint);
       s.position.set(x, y, z);
       s.scale.setScalar(size);
       s.renderOrder = 25;
@@ -35540,6 +35573,7 @@ void main() {
   <div id="clock" class="panel hidden">⏱ 0:00</div>
 
   <div id="minimap-wrap" class="panel hidden"><canvas id="mini" width="172" height="172"></canvas></div>
+  <div id="selinfo" class="panel hidden"></div>
 
   <div id="prodwrap" class="hidden">
     <div id="bcards" class="panel"></div>
@@ -35579,6 +35613,10 @@ button{cursor:pointer;border:0;border-radius:8px}
 #clock{right:8px;top:8px;font-weight:700}
 #minimap-wrap{left:8px;bottom:8px;padding:6px}
 #mini{display:block;border-radius:3px;cursor:pointer}
+#selinfo{left:8px;bottom:196px;flex-direction:column;align-items:stretch;gap:5px;min-width:180px;font-size:12px}
+#selinfo .hpbar{width:100%;height:6px;background:rgba(0,0,0,.65);border:1px solid rgba(255,255,255,.25);border-radius:3px;overflow:hidden}
+#selinfo .hpbar i{display:block;height:100%}
+#selinfo .si-stats{font-size:10px;color:rgba(255,255,255,.65)}
 #prodwrap{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);z-index:10;text-align:center}
 #bcards{position:static;display:flex;gap:6px;margin:0 auto 6px;justify-content:center;width:max-content}
 .bcard{width:74px}
@@ -35595,7 +35633,7 @@ button{cursor:pointer;border:0;border-radius:8px}
 .card .qn{position:absolute;right:4px;top:4px;background:rgba(16,185,129,.95);color:#000;font-size:10px;font-weight:800;border-radius:3px;padding:0 4px}
 .gold{color:#fcd34d}.green{color:#6ee7b7;font-size:11px;font-weight:400}.cp{color:#7dd3fc;font-size:12px;font-weight:700}
 #home{background:rgba(255,255,255,.1);color:#fff;font-size:11px;padding:4px 8px;border:1px solid rgba(255,255,255,.2)}
-#over{background:rgba(0,0,0,.75)}
+#over{background:linear-gradient(180deg,rgba(2,4,6,.86),rgba(2,4,6,.94)),url(assets/ui/menu-bg.png) center/cover}
 #verdict{font-size:52px;font-weight:900}
 .hidden{display:none!important}
 .ico-cp{height:16px;filter:drop-shadow(0 1px 1px rgba(0,0,0,.6))}
@@ -35975,6 +36013,22 @@ button{cursor:pointer;border:0;border-radius:8px}
     $("income").textContent = `+${p.income}/s`;
     $("cp").textContent = `CP ${p.cpUsed}/${p.cpCap}`;
     $("clock").textContent = `⏱ ${Math.floor(sim.time / 60)}:${String(Math.floor(sim.time % 60)).padStart(2, "0")}`;
+    const si = $("selinfo");
+    if (sel.size) {
+      const su = sim.units.find((x) => sel.has(x.id));
+      if (su) {
+        si.classList.remove("hidden");
+        const fr = su.hp / su.def.health;
+        const w = su.def.weapon || {};
+        const dm = w.damage || {};
+        const dmgTxt = dm.light !== undefined ? `${dm.light}/${dm.medium}/${dm.heavy}` : "—";
+        si.innerHTML = `<b>${su.def.name}${sel.size > 1 ? " ×" + sel.size : ""}</b>` +
+          `<div class="hpbar"><i style="width:${Math.round(fr * 100)}%;background:${fr > 0.55 ? "#58d858" : fr > 0.25 ? "#d8c840" : "#e05840"}"></i></div>` +
+          `<span class="si-stats">DMG ${dmgTxt} · RNG ${w.range ?? "—"} · ARM ${su.def.armorClass ?? "—"}</span>`;
+      } else
+        si.classList.add("hidden");
+    } else
+      si.classList.add("hidden");
     const cards = $("cards").children;
     BUILD_ORDER.forEach((id, i) => {
       const d = UNITS[id];
