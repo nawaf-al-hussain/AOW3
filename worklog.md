@@ -236,3 +236,24 @@ Stage Summary:
 - Live: https://nawaf-al-hussain.github.io/AOW3/ @ 3fc697a
 - Remaining candidates: AA flak vs gunship, damaged-building icon states, minimap frame
   art, ambient birds/wind loop, unit veterancy/battle report.
+---
+Task ID: 8
+Agent: Super Z (main)
+Task: Pass 6 — AA flak vs gunships, damaged-building states, minimap frame art, richer sound mixing
+
+Work Log:
+- Environment was wiped mid-session; recovered by cloning nawaf-al-hussain/AOW3 (XAPK + docs build inside repo).
+- Added "Flak AA" unit (f2_veh_armadillo / f1_veh_zeus models, 340¤ CP1, factory-built), card-flak.png generated with PIL.
+- AA rules: def.antiAir gates aircraft targeting in findTarget + building turret AI + commandAttack manual orders; aircraft can't target aircraft; flak/turret get -3 target priority vs air.
+- Flak projectiles tagged airburst -> sim.pops -> renderer airburst fx (flash + smoke + b_med3 pop).
+- AI builds flak and hard-counters player helicopters.
+- Building damage stages: per-instance material cloning + charring (lit 0.45-1.0 by hp frac), smoke stages (>60%/slow, <60%/fast), roofline fire sprites (texFlame tinted, additive) + glow + flash at <30%, creak sfx loop.
+- Minimap frame: bezel/corner brackets/rivets/TACTICAL RADAR + SECTOR 7 plates (CSS), radar sweep wedge in drawMinimap.
+- Sfx rewrite: master->compressor->destination, sfx/ui/amb buses, StereoPanner from camera right vector, distance low-pass + exp falloff, 28-voice cap, distant echo layering, layered explosion hook (boom + half-rate tail + metal debris), procedural ambient (wind bandpass loop + LFO, rumble bed, random bird chirps) started on first gesture.
+- QA via agent-browser headless: flak killed gunship in ~4s with airburst; rifle (non-AA) never targeted aircraft; factory at 15% shows charring+smoke+roof fire; minimap frame renders; node --check OK; zero page errors.
+- Live verified on production URL @ 78722ba (AA duel + damage states + frame art confirmed via screenshot).
+
+Stage Summary:
+- Commit 78722ba pushed; live: https://nawaf-al-hussain.github.io/AOW3/
+- Scripts: /home/z/my-project/scripts/{patch_v3.py,make_card_flak.py}
+- Candidates for next pass: flak tracer elevation toward airborne targets, veterancy/battle report, unit death animations, per-building smoke tint variety.
