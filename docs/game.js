@@ -36,10 +36,11 @@
       regen: 0.6,
       captures: true,
       radius: 0.45,
+      antiAir: true,
       weapon: { damage: { light: 30, medium: 9, heavy: 3 }, range: 7, cooldown: 0.9, accStatic: 70, accWalk: 52, splash: 0, projectileSpeed: 0 },
       card: "assets/card-infantry.png",
       tint: "#b59b73",
-      desc: "Shreds infantry. Nearly useless against armor."
+      desc: "Shreds infantry and aircraft. Nearly useless against armor."
     },
     rpg: {
       id: "rpg",
@@ -121,6 +122,27 @@
       tint: "#9c8a5e",
       desc: "Long-range splash damage. Fragile up close."
     },
+    flak: {
+      id: "flak",
+      name: "Flak AA",
+      kind: "vehicle",
+      armorClass: "light",
+      armor: { light: 12, medium: 10, heavy: 8 },
+      health: 260,
+      price: 340,
+      cp: 1,
+      trainTime: 8,
+      speed: 4.2,
+      view: 11,
+      regen: 0,
+      captures: false,
+      radius: 0.62,
+      antiAir: true,
+      weapon: { damage: { light: 14, medium: 46, heavy: 4 }, range: 10.5, cooldown: 0.55, accStatic: 84, accWalk: 70, splash: 0, projectileSpeed: 34 },
+      card: "assets/card-flak.png",
+      tint: "#a8a06e",
+      desc: "Self-propelled AA gun. Shreds gunships; nearly harmless against armor."
+    },
     helicopter: {
       id: "helicopter",
       name: "Gunship",
@@ -139,10 +161,10 @@
       weapon: { damage: { light: 34, medium: 26, heavy: 16 }, range: 8.5, cooldown: 1.2, accStatic: 76, accWalk: 68, splash: 0.4, projectileSpeed: 30 },
       card: "assets/card-gunship.png",
       tint: "#739c93",
-      desc: "Fast strike flyer. Ignores terrain, weak to AA-era MG fire."
+      desc: "Fast strike flyer. Ignores terrain \u2014 shredded by flak guns and AA MGs."
     }
   };
-  var BUILD_ORDER = ["rifle", "mg", "rpg", "tank", "mammoth", "artillery", "helicopter"];
+  var BUILD_ORDER = ["rifle", "mg", "rpg", "tank", "mammoth", "artillery", "flak", "helicopter"];
   var HQ = { id: "hq", name: "Headquarters", health: 4200, radius: 2.2, view: 13 };
   var DEPOT = { id: "depot", name: "Supply Depot", health: 600, radius: 1.6, view: 8 };
   var BLD = {
@@ -150,11 +172,11 @@
     factory: { id: "factory", name: "Factory", health: 1100, radius: 2.1, view: 9, price: 550, buildTime: 18, model: "f1_bld_factory_light" },
     heavyfactory: { id: "heavyfactory", name: "Heavy Factory", health: 1400, radius: 2.3, view: 9, price: 850, buildTime: 24, model: "f1_bld_factory_heavy" },
     power: { id: "power", name: "Power Plant", health: 700, radius: 1.7, view: 8, price: 300, buildTime: 10, model: "f1_bld_power" },
-    turret: { id: "turret", name: "Turret", health: 800, radius: 1.2, view: 11, price: 450, buildTime: 12, model: "f1_bld_tower", weapon: { damage: { light: 34, medium: 30, heavy: 20 }, range: 10.5, cooldown: 1.35, accStatic: 88, accWalk: 66, splash: 0, projectileSpeed: 30 } },
+    turret: { id: "turret", name: "Turret", health: 800, radius: 1.2, view: 11, price: 450, buildTime: 12, model: "f1_bld_tower", antiAir: true, weapon: { damage: { light: 34, medium: 30, heavy: 20 }, range: 10.5, cooldown: 1.35, accStatic: 88, accWalk: 66, splash: 0, projectileSpeed: 30 } },
     bunker: { id: "bunker", name: "Bunker", health: 1000, radius: 1.4, view: 9, price: 350, buildTime: 10, model: "f1_bld_bunker", weapon: { damage: { light: 26, medium: 8, heavy: 2 }, range: 7.5, cooldown: 0.7, accStatic: 80, accWalk: 60, splash: 0, projectileSpeed: 0 } }
   };
   var BUILDINGS_ORDER = ["barracks", "factory", "heavyfactory", "power", "turret", "bunker"];
-  var PRODUCER_OF = { rifle: "barracks", mg: "barracks", rpg: "barracks", tank: "factory", artillery: "factory", mammoth: "heavyfactory", helicopter: "heavyfactory" };
+  var PRODUCER_OF = { rifle: "barracks", mg: "barracks", rpg: "barracks", tank: "factory", artillery: "factory", flak: "factory", mammoth: "heavyfactory", helicopter: "heavyfactory" };
   var ECONOMY = {
     baseIncome: 14,
     depotIncome: 11,
@@ -380,6 +402,7 @@
     projectiles = [];
     floats = [];
     booms = [];
+    pops = [];
     players;
     tick = 0;
     time = 0;
@@ -603,9 +626,12 @@
       }
     }
     commandAttack(ids, targetId) {
+      const t = this.units.find((v) => v.id === targetId);
       for (const id of ids) {
         const u = this.units.find((v) => v.id === id);
         if (!u)
+          continue;
+        if (t && t.def.kind === "aircraft" && !u.def.antiAir)
           continue;
         u.order = { kind: "attackMove", x: undefined, y: undefined };
         u.targetId = targetId;
@@ -668,6 +694,9 @@
       for (const f of this.floats)
         f.t += dt;
       this.floats = this.floats.filter((f) => f.t < 1.2);
+      for (const p of this.pops)
+        p.t += dt;
+      this.pops = this.pops.filter((p) => p.t < p.max);
       for (const u of this.units)
         if (u.def.regen > 0 && u.hp < u.def.health)
           u.hp = Math.min(u.def.health, u.hp + u.def.regen * dt);
@@ -772,11 +801,17 @@
     findTarget(u) {
       let best;
       let bd = u.def.weapon.range + 2.5;
+      const shooterAir = u.def.kind === "aircraft";
       for (const t of this.units) {
         if (t.owner === u.owner || t.hp <= 0)
           continue;
+        const tAir = t.def.kind === "aircraft";
+        if (tAir && (!u.def.antiAir || shooterAir))
+          continue;
         const d = Math.hypot(t.x - u.x, t.y - u.y);
-        const eff = d - (t.def.kind === "infantry" ? 0 : 0.5);
+        let eff = d - (t.def.kind === "infantry" ? 0 : 0.5);
+        if (tAir && u.def.antiAir)
+          eff -= 3;
         if (eff < bd) {
           bd = eff;
           best = t;
@@ -844,6 +879,7 @@
           acc,
           owner: u.owner,
           targetId: tgt.id,
+          airburst: tgt.def.kind === "aircraft",
           trail: 0
         });
       }
@@ -894,7 +930,15 @@
         p.trail = Math.min(1, p.trail + dt * 3);
         if (d <= step) {
           p.dead = true;
-          if (p.splash > 0) {
+          if (p.airburst) {
+            this.pops.push({ x: p.tx, y: p.ty, t: 0, max: 0.4 });
+            const t0 = this.units.find((v) => v.id === p.targetId);
+            if (t0 && Math.hypot(t0.x - p.tx, t0.y - p.ty) < 1.6 && Math.random() < p.acc) {
+              const eff = effectiveDamage(p.armorClassOfTarget === "light" ? { light: p.dmg, medium: p.dmg / 2, heavy: p.dmg / 4 } : p.armorClassOfTarget === "medium" ? { light: p.dmg / 2, medium: p.dmg, heavy: p.dmg / 2 } : { light: p.dmg / 4, medium: p.dmg / 2, heavy: p.dmg }, t0.def.armor, t0.def.armorClass);
+              t0.hp -= eff;
+              this.floats.push({ x: t0.x, y: t0.y - 0.8, text: `${Math.round(eff)}`, color: "#ffd28a", t: 0 });
+            }
+          } else if (p.splash > 0) {
             this.booms.push({ x: p.tx, y: p.ty, r: p.splash, t: 0, max: 0.5 });
             for (const t of this.units) {
               if (t.owner === p.owner)
@@ -953,7 +997,9 @@
             for (const t of this.units) {
               if (t.owner === b.owner || t.hp <= 0)
                 continue;
-              const d = Math.hypot(t.x - b.x, t.y - b.y);
+              if (t.def.kind === "aircraft" && !BLD[b.defId].antiAir)
+                continue;
+              const d = Math.hypot(t.x - b.x, t.y - b.y) - (t.def.kind === "aircraft" && BLD[b.defId].antiAir ? 3 : 0);
               if (d < bd) {
                 bd = d;
                 best = t;
@@ -1059,7 +1105,7 @@
         for (const u of sim.units)
           if (u.owner === this.me)
             counts[u.def.id] = (counts[u.def.id] ?? 0) + 1;
-        const all = ["rifle", "rifle", "rpg", "tank", "tank", "mg", "artillery", "mammoth", "helicopter"];
+        const all = ["rifle", "rifle", "rpg", "tank", "tank", "mg", "mg", "artillery", "flak", "flak", "mammoth", "helicopter"];
         const want = all.filter((id) => sim.buildings.some((b) => b.owner === this.me && b.defId === PRODUCER_OF[id] && b.hp > 0 && b.built));
         if (!want.length)
           return;
@@ -1070,6 +1116,9 @@
           choice = Math.random() < 0.5 ? "rpg" : "mammoth";
         else if (pInf >= 5)
           choice = "mg";
+        const pHeli = sim.units.filter((u) => u.owner !== this.me && u.def.kind === "aircraft").length;
+        if (pHeli >= 1 && want.includes("flak"))
+          choice = "flak";
         if (sim.time < 60 && (choice === "mammoth" || choice === "artillery" || choice === "helicopter"))
           choice = "tank";
         if (counts[choice] >= 8)
@@ -33327,6 +33376,7 @@ void main() {
     tank: ["f2_veh_coyote", "f1_veh_torrent"],
     mammoth: ["f2_veh_mammoth", "f1_veh_fortress"],
     artillery: ["f2_veh_porcupine", "f1_veh_typhoon"],
+    flak: ["f2_veh_armadillo", "f1_veh_zeus"],
     helicopter: ["f2_avia_helicopter", "f1_avia_helicopter"]
   };
   var HQ_MODEL = "f1_bld_hq";
@@ -34091,6 +34141,7 @@ void main() {
     bldViews = new Map;
     tracerViews = new Map;
     handledBooms = new Set;
+    handledPops = new Set;
     fxSprites = [];
     debris = [];
     burners = [];
@@ -34466,6 +34517,10 @@ void main() {
         fixS(t);
         this.texSmoke = t;
       });
+      tl.load(`${base}fx/flame.png`, (t) => {
+        fixS(t);
+        this.texFlame = t;
+      });
       tl.load(`${base}fx/expl.png`, (t) => {
         fixS(t);
         this.texExpl = t;
@@ -34661,18 +34716,51 @@ void main() {
           } else
             v.hpSprite.visible = false;
         }
-        if (b.built && frac < 0.55 && !underC) {
+        if (v.glb && !v._charReady) {
+          v._charReady = true;
+          v._charMeshes = [];
+          v.glb.group.traverse((o) => {
+            if (o.isMesh && o.material && o.material.color) {
+              o.material = o.material.clone();
+              o.userData._base = o.material.color.getHex();
+              v._charMeshes.push(o);
+            }
+          });
+        }
+        if (v._charMeshes && v._charMeshes.length) {
+          const lit = frac >= 0.75 ? 1 : 0.45 + 0.55 * (frac / 0.75);
+          for (const o of v._charMeshes)
+            o.material.color.setHex(o.userData._base).multiplyScalar(lit);
+        }
+        if (b.built && !underC) {
           const R = v.def?.radius ?? 2.2;
-          v.smokeAcc = (v.smokeAcc ?? 0) + dt();
-          if (v.smokeAcc > (frac < 0.3 ? 0.22 : 0.55)) {
-            v.smokeAcc = 0;
-            const ang = Math.random() * Math.PI * 2;
-            const rr = R * (0.35 + Math.random() * 0.6);
-            this.addFx(this.texSmoke, v.group.position.x + Math.cos(ang) * rr, 0.9 + Math.random() * 1.1, v.group.position.z + Math.sin(ang) * rr, 1.1, 2.2, 2.6, false, -1.4, 0x2e2e2e);
-          }
-          if (frac < 0.3 && Math.random() < 0.16) {
-            this.addFx(this.texGlow, v.group.position.x + (Math.random() - 0.5) * R, 0.8, v.group.position.z + (Math.random() - 0.5) * R, 0.9, 0.28, 1.6, true);
-            this.addFx(this.texFlash, v.group.position.x + (Math.random() - 0.5) * R, 0.85, v.group.position.z + (Math.random() - 0.5) * R, 0.8, 0.1, 1.4, true);
+          const stage = frac < 0.3 ? 2 : frac < 0.6 ? 1 : 0;
+          if (stage > 0) {
+            v.smokeAcc = (v.smokeAcc ?? 0) + dt();
+            if (v.smokeAcc > (stage === 2 ? 0.18 : 0.5)) {
+              v.smokeAcc = 0;
+              const ang = Math.random() * Math.PI * 2;
+              const rr = R * (0.35 + Math.random() * 0.6);
+              this.addFx(this.texSmoke, v.group.position.x + Math.cos(ang) * rr, 0.9 + Math.random() * 1.1, v.group.position.z + Math.sin(ang) * rr, 1.1, 2.2, 2.6, false, -1.4, 0x2e2e2e);
+            }
+            if (stage === 2 && this.texFlame) {
+              v.fireAcc = (v.fireAcc ?? 0) + dt();
+              if (v.fireAcc > 0.05) {
+                v.fireAcc = 0;
+                const ang = Math.random() * Math.PI * 2;
+                const rr = R * 0.75 * Math.random();
+                const fy = (v.glbH ?? 2.4) * (0.92 + Math.random() * 0.35);
+                this.addFx(this.texFlame, v.group.position.x + Math.cos(ang) * rr, fy, v.group.position.z + Math.sin(ang) * rr, 1.25 + Math.random() * 0.7, 0.46, 1.9, true, 1.9, 0xffa14d);
+                this.addFx(this.texFlash, v.group.position.x + Math.cos(ang) * rr * 0.6, fy + 0.1, v.group.position.z + Math.sin(ang) * rr * 0.6, 0.5 + Math.random() * 0.4, 0.08, 1.5, true);
+                if (Math.random() < 0.35)
+                  this.addFx(this.texGlow, v.group.position.x + (Math.random() - 0.5) * R, 1.0, v.group.position.z + (Math.random() - 0.5) * R, 1.3, 0.34, 2.0, true);
+              }
+              v.creakAcc = (v.creakAcc ?? 0) + dt();
+              if (v.creakAcc > 2.6) {
+                v.creakAcc = 0;
+                window.__sfx?.play("b_metal", { pos: [v.group.position.x, v.group.position.z], vol: 0.2, rate: 0.6 });
+              }
+            }
           }
         }
         if (v.glb?.turret && v.glb.turretBaseQ && b.aim !== undefined) {
@@ -34720,6 +34808,7 @@ void main() {
         if (hq) {
           hq.group.rotation.y = Math.PI / 4;
           group.add(hq.group);
+          view.glb = hq;
         } else {
           const isRed = b.owner === 1;
           const m = new Mesh(new PlaneGeometry(7, 7), new MeshBasicMaterial({ map: isRed ? this.hqRed : this.hqBlue, transparent: true, depthWrite: false }));
@@ -35157,8 +35246,20 @@ void main() {
         const [wx, wz] = t2w(b.x, b.y);
         this.explosion(wx, 0.35, wz, b.r);
       }
+      for (const p of sim.pops) {
+        if (this.handledPops.has(p))
+          continue;
+        this.handledPops.add(p);
+        const [wx2, wz2] = t2w(p.x, p.y);
+        const hy = heightAtWorld(wx2, wz2) + 1.7 + Math.random() * 0.9;
+        this.addFx(this.texFlash, wx2, hy, wz2, 0.9, 0.12, 1.8, true);
+        this.addFx(this.texSmoke, wx2, hy + 0.2, wz2, 0.75, 0.9, 1.6, false, -0.7, 0x26251f);
+        window.__sfx?.play("b_med3", { pos: [wx2, wz2], vol: 0.34, rate: 1.35 });
+      }
       if (this.handledBooms.size > 500)
         this.handledBooms.clear();
+      if (this.handledPops.size > 500)
+        this.handledPops.clear();
     }
     explosion(x, y, z, r) {
       const scale = Math.max(0.8, r * 0.9);
@@ -35478,6 +35579,24 @@ void main() {
             ctx.fillRect(x * sx, y * sy, 2 * sx, 2 * sy);
         }
       ctx.globalAlpha = 1;
+      {
+        const swA = (performance.now() / 1000) * 1.1;
+        const sr = Math.max(mmW, mmH);
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(mmW / 2, mmH / 2);
+        ctx.arc(mmW / 2, mmH / 2, sr, swA - 0.55, swA);
+        ctx.closePath();
+        ctx.fillStyle = "rgba(120,255,160,0.09)";
+        ctx.fill();
+        ctx.strokeStyle = "rgba(150,255,180,0.3)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(mmW / 2, mmH / 2);
+        ctx.lineTo(mmW / 2 + Math.cos(swA) * sr, mmH / 2 + Math.sin(swA) * sr);
+        ctx.stroke();
+        ctx.restore();
+      }
       for (const b of sim.buildings) {
         if (b.defId === "depot" && b.owner !== 1 && !exp[Math.round(b.y) * MAP_W + Math.round(b.x)])
           continue;
@@ -35572,7 +35691,7 @@ void main() {
   </div>
   <div id="clock" class="panel hidden">⏱ 0:00</div>
 
-  <div id="minimap-wrap" class="panel hidden"><canvas id="mini" width="172" height="172"></canvas></div>
+  <div id="minimap-wrap" class="panel hidden"><div id="mm-frame"><div class="mm-corner c1"></div><div class="mm-corner c2"></div><div class="mm-corner c3"></div><div class="mm-corner c4"></div><div class="mm-rivet r1"></div><div class="mm-rivet r2"></div><div class="mm-rivet r3"></div><div class="mm-rivet r4"></div><div class="mm-plate">TACTICAL RADAR</div><div class="mm-plate right">SECTOR 7</div><canvas id="mini" width="172" height="172"></canvas></div></div>
   <div id="selinfo" class="panel hidden"></div>
 
   <div id="prodwrap" class="hidden">
@@ -35640,6 +35759,21 @@ button{cursor:pointer;border:0;border-radius:8px}
 .bimg{height:36px;max-width:66px;object-fit:contain;filter:drop-shadow(0 1px 2px rgba(0,0,0,.55))}
 .menu-persons{position:absolute;right:2vw;bottom:0;height:58%;max-height:480px;opacity:.95;pointer-events:none;filter:drop-shadow(0 8px 28px rgba(0,0,0,.75))}
 @media(max-width:820px){.menu-persons{opacity:.22}}
+#minimap-wrap{padding:0;background:linear-gradient(160deg,#2a2f26,#12150f);border:1px solid #3d4433;border-radius:10px;box-shadow:0 4px 18px rgba(0,0,0,.6),inset 0 0 22px rgba(0,0,0,.55)}
+#mm-frame{position:relative;padding:10px}
+#mini{display:block;border:1px solid rgba(150,165,120,.4);border-radius:4px;box-shadow:0 0 0 1px #0a0c08,inset 0 0 14px rgba(0,0,0,.7)}
+.mm-corner{position:absolute;width:14px;height:14px;border:2px solid #9aa87a;z-index:3;pointer-events:none}
+.mm-corner.c1{top:-3px;left:-3px;border-right:none;border-bottom:none;border-radius:6px 0 0 0}
+.mm-corner.c2{top:-3px;right:-3px;border-left:none;border-bottom:none;border-radius:0 6px 0 0}
+.mm-corner.c3{bottom:-3px;left:-3px;border-right:none;border-top:none;border-radius:0 0 0 6px}
+.mm-corner.c4{bottom:-3px;right:-3px;border-left:none;border-top:none;border-radius:0 0 6px 0}
+.mm-rivet{position:absolute;width:6px;height:6px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#b7c391,#3d4433 65%,#1a1d15);box-shadow:0 1px 2px rgba(0,0,0,.8);z-index:3;pointer-events:none}
+.mm-rivet.r1{top:5px;left:5px}
+.mm-rivet.r2{top:5px;right:5px}
+.mm-rivet.r3{bottom:5px;left:5px}
+.mm-rivet.r4{bottom:5px;right:5px}
+.mm-plate{position:absolute;top:-8px;left:12px;background:linear-gradient(180deg,#39412c,#20251a);border:1px solid #5a6444;border-radius:4px;color:#c9d6a3;font-size:7px;font-weight:800;letter-spacing:1px;padding:1px 5px;z-index:4;box-shadow:0 2px 4px rgba(0,0,0,.5);pointer-events:none}
+.mm-plate.right{left:auto;top:auto;right:12px;bottom:-8px;color:#e0b46a}
 `;
   document.head.appendChild(css);
   var sim = null;
@@ -36122,7 +36256,9 @@ button{cursor:pointer;border:0;border-radius:8px}
       this.base = base;
       this.ctx = null;
       this.buf = new Map;
+      this.voices = [];
       this.getDist = null;
+      this.ambOn = false;
     }
     load() {
       const AC = window.AudioContext || window.webkitAudioContext;
@@ -36133,9 +36269,26 @@ button{cursor:pointer;border:0;border-radius:8px}
       } catch (e) {
         return;
       }
-      this.master = this.ctx.createGain();
+      const c = this.ctx;
+      this.master = c.createGain();
       this.master.gain.value = 0.55;
-      this.master.connect(this.ctx.destination);
+      this.comp = c.createDynamicsCompressor();
+      this.comp.threshold.value = -14;
+      this.comp.knee.value = 22;
+      this.comp.ratio.value = 8;
+      this.comp.attack.value = 0.004;
+      this.comp.release.value = 0.24;
+      this.master.connect(this.comp);
+      this.comp.connect(c.destination);
+      this.busSfx = c.createGain();
+      this.busSfx.gain.value = 1;
+      this.busSfx.connect(this.master);
+      this.busUi = c.createGain();
+      this.busUi.gain.value = 0.85;
+      this.busUi.connect(this.master);
+      this.busAmb = c.createGain();
+      this.busAmb.gain.value = 0.5;
+      this.busAmb.connect(this.master);
       const names = ["w_rifle1", "w_rifle2", "w_gun3", "w_mg1", "w_mg2", "w_mg3", "w_mg4", "w_cannon1", "w_cannon2", "w_cannon3", "w_cannon4", "w_missile1", "w_missile2", "w_missile3", "w_bomb1", "w_flame1", "w_flame2", "b_med1", "b_med2", "b_med3", "b_big1", "b_big2", "b_big3", "b_bld_big", "b_bld_med", "b_metal", "ui_click1", "ui_click2", "ui_tap", "ann_ready", "ann_captured", "ann_flag_lost", "ann_enemy", "ann_built", "ann_defeat", "ann_arrived", "ann_base_attack", "ann_flags_lost", "ann_victory", "ann_achievement", "bld_start", "bld_end"];
       for (const n of names) {
         fetch(`${this.base}sfx/${n}.wav`).then((r) => r.ok ? r.arrayBuffer() : Promise.reject(new Error("404"))).then((ab) => this.ctx.decodeAudioData(ab)).then((b) => {
@@ -36148,26 +36301,143 @@ button{cursor:pointer;border:0;border-radius:8px}
       document.addEventListener("pointerdown", resume);
       document.addEventListener("keydown", resume);
     }
+    distCut(d) {
+      const t = Math.min(1, d / 85);
+      return Math.max(650, 16500 * Math.pow(1 - t, 1.7) + 450);
+    }
+    _busFor(name, opts) {
+      if (opts.bus)
+        return opts.bus;
+      if (name.startsWith("ann_") || name.startsWith("ui_"))
+        return this.busUi;
+      return this.busSfx;
+    }
     play(name, opts = {}) {
       const b = this.buf.get(name);
       if (!b || !this.ctx)
         return;
       this.ctx.state === "suspended" && this.ctx.resume();
       let vol = opts.vol ?? 0.7;
+      let pan = 0;
+      let d = 0;
       if (opts.pos && this.getDist) {
-        const d = this.getDist(opts.pos[0], opts.pos[1]);
-        vol *= Math.max(0.05, 1 - d / 80);
+        d = this.getDist(opts.pos[0], opts.pos[1]);
+        vol *= Math.max(0.04, Math.pow(1 - Math.min(1, d / 85), 1.35));
+        if (this.getPan)
+          pan = this.getPan(opts.pos[0], opts.pos[1]);
+        if (d > 30 && vol > 0.03 && !opts.noEcho)
+          this.play(name, { vol: opts.vol * 0.22, rate: (opts.rate || 1) * 0.42, delay: (opts.delay || 0) + 0.06, noEcho: true });
       }
+      const when = this.ctx.currentTime + (opts.delay || 0);
       try {
         const src2 = this.ctx.createBufferSource();
         src2.buffer = b;
         src2.playbackRate.value = opts.rate || 0.94 + Math.random() * 0.12;
         const g = this.ctx.createGain();
-        g.gain.value = vol;
+        g.gain.setValueAtTime(0.0001, when);
+        g.gain.linearRampToValueAtTime(vol, when + 0.014);
+        let node = g;
+        if (this.ctx.createStereoPanner) {
+          const p = this.ctx.createStereoPanner();
+          p.pan.value = Math.max(-1, Math.min(1, pan));
+          g.connect(p);
+          node = p;
+        }
+        const f = this.ctx.createBiquadFilter();
+        f.type = "lowpass";
+        f.frequency.value = opts.full ? 20000 : this.distCut(d);
+        node.connect(f);
+        f.connect(this._busFor(name, opts));
         src2.connect(g);
-        g.connect(this.master);
-        src2.start();
+        src2.start(when);
+        this.voices.push(src2);
+        src2.onended = () => {
+          const i = this.voices.indexOf(src2);
+          if (i >= 0)
+            this.voices.splice(i, 1);
+        };
+        if (this.voices.length > 28) {
+          const old = this.voices.shift();
+          try {
+            old.stop();
+          } catch (e) {}
+        }
       } catch (e) {}
+    }
+    startAmbient() {
+      if (this.ambOn || !this.ctx)
+        return;
+      this.ambOn = true;
+      const c = this.ctx;
+      const len = 4 * c.sampleRate;
+      const nb = c.createBuffer(1, len, c.sampleRate);
+      const ch = nb.getChannelData(0);
+      let last = 0;
+      for (let i = 0; i < len; i++) {
+        const w = Math.random() * 2 - 1;
+        last = last * 0.97 + w * 0.03;
+        ch[i] = last * 3.2;
+      }
+      const wind = c.createBufferSource();
+      wind.buffer = nb;
+      wind.loop = true;
+      const bp = c.createBiquadFilter();
+      bp.type = "bandpass";
+      bp.frequency.value = 420;
+      bp.Q.value = 0.6;
+      const wg = c.createGain();
+      wg.gain.value = 0.05;
+      const lfo = c.createOscillator();
+      lfo.frequency.value = 0.07;
+      const lg = c.createGain();
+      lg.gain.value = 0.028;
+      lfo.connect(lg);
+      lg.connect(wg.gain);
+      wind.connect(bp);
+      bp.connect(wg);
+      wg.connect(this.busAmb);
+      wind.start();
+      lfo.start();
+      const rb = c.createBufferSource();
+      rb.buffer = nb;
+      rb.loop = true;
+      rb.playbackRate.value = 0.5;
+      const lp = c.createBiquadFilter();
+      lp.type = "lowpass";
+      lp.frequency.value = 110;
+      const rg = c.createGain();
+      rg.gain.value = 0.05;
+      rb.connect(lp);
+      lp.connect(rg);
+      rg.connect(this.busAmb);
+      rb.start();
+      const chirp = () => {
+        if (!this.ambOn)
+          return;
+        try {
+          const t0 = c.currentTime + 0.05;
+          const o = c.createOscillator();
+          o.type = "sine";
+          const g2 = c.createGain();
+          g2.gain.value = 0;
+          o.connect(g2);
+          g2.connect(this.busAmb);
+          const f0 = 2300 + Math.random() * 900;
+          const n = 2 + (Math.random() * 3 | 0);
+          for (let i = 0; i < n; i++) {
+            const ts = t0 + i * 0.12;
+            o.frequency.setValueAtTime(f0, ts);
+            o.frequency.exponentialRampToValueAtTime(f0 * 1.35, ts + 0.05);
+            g2.gain.setValueAtTime(0.0001, ts);
+            g2.gain.linearRampToValueAtTime(0.035, ts + 0.02);
+            g2.gain.exponentialRampToValueAtTime(0.0001, ts + 0.09);
+          }
+          o.start(t0);
+          o.stop(t0 + n * 0.12 + 0.2);
+        } catch (e) {}
+        setTimeout(chirp, 7000 + Math.random() * 14000);
+      };
+      setTimeout(chirp, 4000 + Math.random() * 8000);
     }
   }
   window.__sfx = new Sfx("assets/");
@@ -36178,6 +36448,26 @@ button{cursor:pointer;border:0;border-radius:8px}
       return 0;
     return Math.hypot(r.camera.position.x - x, r.camera.position.z - z);
   };
+  window.__sfx.getPan = (x, z) => {
+    const r = window.__DBG && window.__DBG.r3d;
+    if (!r || !r.camera)
+      return 0;
+    const e = r.camera.matrixWorld.elements;
+    const dx = x - r.camera.position.x, dz = z - r.camera.position.z;
+    const len = Math.hypot(dx, dz) || 1;
+    return Math.max(-1, Math.min(1, (dx * e[0] + dz * e[2]) / len));
+  };
+  {
+    const kick = () => {
+      try {
+        window.__sfx.startAmbient();
+      } catch (e) {}
+      window.removeEventListener("pointerdown", kick);
+      window.removeEventListener("keydown", kick);
+    };
+    window.addEventListener("pointerdown", kick);
+    window.addEventListener("keydown", kick);
+  }
   {
     const _fire = Renderer3D.prototype.fireEvent;
     Renderer3D.prototype.fireEvent = function(px, py, owner) {
@@ -36210,7 +36500,9 @@ button{cursor:pointer;border:0;border-radius:8px}
           const def = best.def;
           const splash = def.weapon && def.weapon.splash || 0;
           let pool;
-          if (def.kind === "aircraft")
+          if (def.id === "flak")
+            pool = ["w_mg4", "w_cannon2", "w_mg2"];
+          else if (def.kind === "aircraft")
             pool = ["w_missile1", "w_mg2"];
           else if (splash >= 1)
             pool = ["w_missile1", "w_missile2", "w_cannon4"];
@@ -36228,7 +36520,11 @@ button{cursor:pointer;border:0;border-radius:8px}
       const res = _expl.call(this, x, y, z, r);
       try {
         const pool = r >= 2 ? ["b_big1", "b_big2", "b_bld_big"] : r >= 1.2 ? ["b_med1", "b_med2", "b_bld_med"] : ["b_med3", "b_metal"];
-        window.__sfx.play(pool[Math.floor(Math.random() * pool.length)], { pos: [x, z], vol: 0.8 });
+        const pick = pool[Math.floor(Math.random() * pool.length)];
+        window.__sfx.play(pick, { pos: [x, z], vol: 0.8 });
+        window.__sfx.play(pick, { pos: [x, z], vol: 0.5, rate: 0.45, delay: 0.09, noEcho: true });
+        if (r >= 1.2)
+          window.__sfx.play("b_metal", { pos: [x, z], vol: 0.3, rate: 1.4 + Math.random() * 0.4, delay: 0.16, noEcho: true });
       } catch (e) {}
       return res;
     };
