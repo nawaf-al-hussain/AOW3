@@ -411,3 +411,43 @@ Work Log:
 
 Stage Summary:
 - Faction identity now matches the original: blue player, red enemy (main = 61ccfb4, v=11).
+
+---
+Task ID: 14
+Agent: Super Z (main)
+Task: Assess AGENTS.md, then fix assessment findings — document redistribution rationale, correct repo map, add rule-status legend + phase note, add deploy/verify workflow
+
+Work Log:
+- Read AGENTS.md (1,300 lines) and reverse/AGENTS.md (1,274 lines); cross-checked claims
+  against the actual tree (git ls-files, LFS stubs, docs/assets contents).
+- Assessment verdict: strong doctrine (evidence hierarchy, confidence levels, anti-rewrite
+  guardrails) but 4 issues: (1) §3 banned asset redistribution while the public repo hosts the
+  270MB XAPK + 212MB asset zip via LFS — self-contradiction; (2) §4 tree did not match reality;
+  (3) deploy/QA loop (?v=N, probes, Pages) undocumented; (4) NOW-vs-TARGET rules unmarked.
+- Repo hygiene found during pre-check: 981 files showed modified — pure file-mode churn
+  (100644->100755, 0 insertions/deletions). Fixed locally with `git config core.fileMode false`;
+  tree now clean. Nothing committed for mode noise.
+- AGENTS.md §3 rewrite: added §3.1 "Redistribution Decision" — owner's documented rationale
+  (non-commercial research; publicly distributed free-to-play source package; verifiability of
+  the evidence base; no misrepresentation/attribution preserved; no competing multiplayer
+  service; takedown policy via GitHub issues) with explicit "not approval, not legal advice"
+  disclaimer; added §3.2 "Still Forbidden" (repo-internal-only redistribution; no selling/
+  reuploading/moving assets; credentials; provenance removal).
+- AGENTS.md §4 rewrite: real tree — AGENTS.md files, root XAPK (LFS), assets/aow3-extracted-
+  assets.zip (LFS), docs/ as Pages root with assets/{models,decor,ui,fx,sfx}, reverse/ with
+  notes/evidence/versions/external, pipeline/ with tools/ + map JSONs.
+- AGENTS.md new §1.1 Rule Status Legend ([NOW]/[TARGET]); §7 retagged [TARGET] with honest
+  current-status note (sim still partly render-coupled per §31).
+- AGENTS.md §32: added Current Phase Note (Oct 2026) — visual passes are legitimate
+  owner-directed work items; must not deepen render-coupled state, must pass live QA per §35.
+- AGENTS.md new §35 "Deploy & Verify Workflow [NOW]": Pages from main, ?v=N cache-bust rule
+  (currently v=11), push->wait 75s->curl verify->fresh-session QA, runtime probe reference
+  (__aow3, __DBG.cam, __DBG.fog*, r3d.unitViews/dying/water, S.spawn/S.commandMove/S.stats/
+  S.visible, MAP_W=160 fog 1:1 probe rule), worklog append protocol.
+- docs/game.js and docs/index.html untouched — no cache-bump needed for doc-only commits.
+
+Stage Summary:
+- AGENTS.md now documents the owner's redistribution decision (§3.1), matches the real repo
+  layout (§4), tags rule status (§1.1, §7), reconciles priority vs visual phase (§32), and
+  captures the de-facto deploy/QA loop (§35). AGENTS.md + worklog committed together; docs/
+  unchanged (v=11 live).

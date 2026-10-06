@@ -32,6 +32,17 @@ The Android game is the source of truth.
 
 When the browser implementation conflicts with the original Android behavior, the browser implementation is considered wrong unless there is strong evidence that the Android behavior cannot be reproduced.
 
+## 1.1 Rule Status Legend
+
+Rules in this document are tagged:
+
+* **[NOW]** — enforced on every change, starting today.
+* **[TARGET]** — architectural direction. Follow for all new code; do not deepen violations; do not rewrite working code solely to comply retroactively.
+
+The simulation-timestep rule (§7) is currently a **[TARGET]**: the simulation is still partly render-coupled (see §31). Never add new render-coupled gameplay code.
+
+Untagged rules are **[NOW]** by default.
+
 ---
 
 # 2. Source-of-Truth Hierarchy
@@ -58,13 +69,31 @@ Use only legally obtained APK/XAPK files, binaries, assets and game data.
 
 This project may use extracted game assets for private/non-commercial compatibility/research purposes as permitted by the project owner's rights and applicable law.
 
-Do not:
+## 3.1 Redistribution Decision
 
-* redistribute proprietary game assets outside the intended project
+The original **Art of War 3: Global Conflict** game, its name, and all of its assets remain the property of their respective rights holders. This project claims no ownership of them.
+
+The project owner has reviewed this repository's asset posture and has decided to allow redistribution of extracted game assets **within this repository** (including via Git LFS), based on the following documented rationale:
+
+1. **Non-commercial purpose.** This is a private research and fan-recreation project. It carries no ads, no payments, no monetization, and does not sell or license any of the original game's content.
+2. **Publicly distributed source.** The source package (AOW3 XAPK 6.9.18) was obtained from a public app-distribution channel where the publisher distributes the game free-to-play. Assets are extracted for research and interoperability study, not to bypass purchase or access controls.
+3. **Verifiability of the research.** The repository's value is that claims about the original game can be checked against its actual assets and binary. Keeping the evidence base (dump.cs, string literals, extracted models, notes) together with the implementation is what makes the reverse engineering reproducible rather than anecdotal.
+4. **No misrepresentation.** The project is clearly labeled a recreation. Extracted assets are never presented as original work of this project, and attribution/provenance information in reverse-engineering artifacts is preserved.
+5. **No competing service.** The original multiplayer/backend is not reimplemented. The browser build is a single-player fidelity study that depends on and points back to the original game.
+6. **Takedown policy.** If the rights holders object to any material in this repository, it will be removed promptly upon request (open a GitHub issue on this repository).
+
+This rationale documents the owner's decision and risk acceptance. It is not a claim that the rights holders have approved this project, and it is not legal advice.
+
+## 3.2 Still Forbidden
+
+Redistribution is allowed **within this repository only**. Do not:
+
+* sell, sublicense, or reupload the assets to asset stores, mirrors, or standalone asset dumps
+* move assets to any other project or repository outside the intended project
 * commit passwords, tokens, credentials or private keys
 * add unrelated copyrighted material
 * upload personal data
-* circumvent protections for unauthorized access
+* circumvent protections for unauthorized access beyond what interoperability research requires
 * implement multiplayer/server functionality unless explicitly requested
 
 Do not remove attribution or provenance information from reverse-engineering artifacts.
@@ -73,36 +102,52 @@ Do not remove attribution or provenance information from reverse-engineering art
 
 # 4. Repository Structure
 
-Important areas:
+Actual layout (verify with `git ls-files` rather than assuming):
 
 ```text
 AOW3/
+├── AGENTS.md                       # implementation agent instructions (this file)
+├── README.md
+├── worklog.md                      # implementation + QA log (append-only)
+│
+├── Art-of-War-3_6.9.18_apkcombo.com.xapk
+│                                   # source APK package (Git LFS, ~270 MB)
+│
 ├── assets/
-│   └── extracted/original game assets
+│   └── aow3-extracted-assets.zip   # raw extracted Unity assets (Git LFS, ~212 MB)
 │
-├── docs/
-│   ├── index.html
-│   └── game.js
+├── docs/                           # the browser client (GitHub Pages root)
+│   ├── index.html                  # entry point; cache-bust via game.js?v=N
+│   ├── game.js                     # the entire browser game (single file)
+│   ├── AOW3_DEVELOPMENT_PLAN.md
+│   └── assets/                     # browser-facing assets actually served
+│       ├── models/                 # unit/building GLBs, atlases, heightmap, map.json
+│       │   └── decor/              # extracted map-decoration GLBs (hundreds)
+│       ├── ui/                     # HUD/build-card/selection sprites
+│       ├── fx/                     # explosion/smoke/flame/glow sprites
+│       └── sfx/                    # weapon/UI/announcement audio
 │
-├── reverse/
+├── reverse/                        # the evidence base
+│   ├── AGENTS.md                   # reverse-engineering agent instructions
 │   ├── README.md
-│   ├── dump.cs.zip
-│   ├── stringliteral.json.zip
-│   ├── notes/
-│   └── other reverse-engineering evidence
+│   ├── dump.cs.zip                 # IL2CPP dump (Git LFS)
+│   ├── stringliteral.json.zip      # IL2CPP string literals (Git LFS)
+│   ├── notes/                      # e.g. combat-stats.md
+│   ├── evidence/                   # e.g. conflicts/version-drift-6.5.22-vs-6.9.18.md
+│   ├── versions/                   # per-version notes (6.5.22 …)
+│   └── external/                   # externally supplied evidence collections
 │
-├── pipeline/
-│   └── extraction/conversion tooling
-│
-├── worklog.md
-└── README.md
+└── pipeline/                       # repeatable extraction/conversion tooling
+    ├── *.py                        # unpack/assemble/export scripts
+    ├── tools/                      # map export, GLB surgery, bundle unpacking
+    └── *.json                      # map indices/extractions
 ```
 
-`docs/` is the browser client.
+`docs/` is the browser client and is what GitHub Pages serves.
 
 `reverse/` is the evidence base.
 
-`assets/` contains extracted source assets.
+`assets/` and the root XAPK are LFS-stored originals; they are not unpacked into the tree — the browser-facing copies already live under `docs/assets/`.
 
 `pipeline/` contains repeatable extraction/conversion tooling.
 
@@ -239,9 +284,9 @@ Gameplay state must not depend on rendered objects.
 
 ---
 
-# 7. Deterministic Simulation
+# 7. Deterministic Simulation [TARGET]
 
-The simulation must run independently from rendering FPS.
+The simulation must run independently from rendering FPS. (Current status: not yet fully met — see §31. Treat as direction for new code, not as a description of existing code.)
 
 Do not use:
 
@@ -1215,6 +1260,10 @@ Do not hide these limitations.
 
 Prioritize gameplay correctness over visual polish.
 
+### Current Phase Note (October 2026)
+
+Work currently alternates between gameplay-fidelity passes and visual-fidelity passes at the project owner's direction, and the owner's live feedback (screenshots, look complaints) currently makes visual parity an active work item — recent examples: ocean-scheme revert (v10), faction asset-mapping correction (v11). This does not suspend §32: within a gameplay pass the ordering below governs. Visual passes must not deepen render-coupled gameplay state (§8), must preserve extracted map data (§17), and must be QA-verified on the live site per §35 before being called done.
+
 Recommended order:
 
 1. Fixed deterministic simulation clock.
@@ -1297,3 +1346,48 @@ Assume it is AOW3
 The goal is not to make the browser version "feel like" AOW3.
 
 The goal is to make the browser version **behave like AOW3**.
+
+---
+
+# 35. Deploy & Verify Workflow [NOW]
+
+`docs/` is served by GitHub Pages from `main`. There is no build step: what is committed to `docs/` is what runs.
+
+## 35.1 Cache busting
+
+Any change to `docs/game.js` MUST bump the version query in `docs/index.html`:
+
+```html
+<script src="game.js?v=N"></script>
+```
+
+Increment N by exactly 1 each time (currently v=11). Skipping this serves stale cached code and produces false regression reports.
+
+## 35.2 Push and verify
+
+1. `git add <only the relevant files>` → commit with a clear message.
+2. `PATH=/home/z/bin:$PATH git push origin main` (the remote is already configured locally with credentials; never embed credentials in docs or scripts).
+3. Wait ~75 seconds for Pages to rebuild.
+4. Verify the served version:
+
+```bash
+curl -s https://nawaf-al-hussain.github.io/AOW3/index.html | grep -o 'game.js?v=[0-9]*'
+```
+
+5. Open the live site in a **fresh browser session** (bypassing cached game.js) and QA the specific change plus the regression checklist (§26).
+
+## 35.3 Runtime probes
+
+The browser build exposes debug handles for QA (never use them as gameplay state):
+
+* `__aow3()` → `{ sim, r3d }` — simulation and renderer instances
+* `__DBG.cam.{x,y,dist,yaw}` — camera control; `__DBG.fogCanvas` / `__DBG.fogTex` — fog debug
+* `r3d.unitViews` (Map of unit → view, `.rankSprite`), `r3d.dying` (`.dieMode`), `r3d.water`, `r3d.raycaster`
+* `S.spawn(defId, owner, x, y)` / `S.commandMove(...)` — spawn units and issue orders for tests
+* `S.stats[owner]` — live kill/loss tracking; `S.visible[0]` — fog Uint8Array; `rankTier(u)` — global
+
+**Fog probes:** `MAP_W = 160`; fog tile coordinates map 1:1 onto fog-canvas pixels. Never divide fog coordinates by another constant — this once produced a false "units don't reveal fog" bug report.
+
+## 35.4 Worklog
+
+After each verified change, append a section to `worklog.md` (Task ID, agent, task, work log, stage summary) and commit it. Never overwrite or reorder prior entries.
