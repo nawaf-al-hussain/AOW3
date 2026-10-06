@@ -776,7 +776,7 @@
                 d.captureBy = 0;
                 u.captureT = undefined;
                 u.order = { kind: "idle" };
-                this.floats.push({ x: d.x, y: d.y - 2, text: "DEPOT CAPTURED", color: u.owner === 1 ? "#ff7a6a" : "#6ab4ff", t: 0 });
+                this.floats.push({ x: d.x, y: d.y - 2, text: "DEPOT CAPTURED", color: u.owner === 1 ? "#6ab4ff" : "#ff7a6a", t: 0 });
               }
             } else
               this.moveToward(u, d.x, d.y, dt);
@@ -33401,14 +33401,14 @@ void main() {
 
   // src/game/render/glb.ts
   var UNIT_MODEL = {
-    rifle: ["f2_inf_light", "f1_inf_light"],
-    mg: ["f2_inf_heavy", "f1_inf_heavy"],
-    rpg: ["f2_inf_sniper", "f1_inf_heavy"],
-    tank: ["f2_veh_coyote", "f1_veh_torrent"],
-    mammoth: ["f2_veh_mammoth", "f1_veh_fortress"],
-    artillery: ["f2_veh_porcupine", "f1_veh_typhoon"],
-    flak: ["f2_veh_armadillo", "f1_veh_zeus"],
-    helicopter: ["f2_avia_helicopter", "f1_avia_helicopter"]
+    rifle: ["f1_inf_light", "f2_inf_light"],
+    mg: ["f1_inf_heavy", "f2_inf_sniper"],
+    rpg: ["f1_inf_heavy", "f2_inf_heavy"],
+    tank: ["f1_veh_torrent", "f2_veh_jaguar"],
+    mammoth: ["f1_veh_fortress", "f2_veh_mammoth"],
+    artillery: ["f1_veh_typhoon", "f2_veh_porcupine"],
+    flak: ["f1_veh_zeus", "f2_veh_armadillo"],
+    helicopter: ["f1_avia_helicopter", "f2_avia_helicopter"]
   };
   var HQ_MODEL = "f1_bld_hq";
   var templates = new Map;
@@ -33594,7 +33594,7 @@ void main() {
       return null;
     const group = new Group;
     const inst = cloneScaled(t);
-    if (owner === 1) {
+    if (owner === 2) {
       inst.traverse((o) => {
         const mesh = o;
         if (!mesh.isMesh)
@@ -33678,7 +33678,7 @@ void main() {
       return null;
     const group = new Group;
     const inst = cloneScaled(t);
-    if (owner === 1)
+    if (owner === 2)
       swapRedBlue(inst);
     const wrap = new Group;
     wrap.add(inst);
@@ -33711,8 +33711,8 @@ void main() {
 
   // src/game/render/models.ts
   var FACTION = {
-    1: { body: 11026478, accent: 14184526, dark: 6168084, light: 13129784 },
-    2: { body: 3828392, accent: 6725848, dark: 1849956, light: 4882622 },
+    1: { body: 3828392, accent: 6725848, dark: 1849956, light: 4882622 },
+    2: { body: 11026478, accent: 14184526, dark: 6168084, light: 13129784 },
     0: { body: 9078136, accent: 11907232, dark: 5591626, light: 10130826 }
   };
   var GUNMETAL = 3817284;
@@ -34765,7 +34765,7 @@ void main() {
             const shown = underC ? b.buildT / b.buildTotal : frac;
             if (Math.abs(shown - v.lastHp) > 0.01) {
               v.lastHp = shown;
-              this.paintHp(v.hpCanvas, shown);
+              this.paintHp(v.hpCanvas, shown, b.owner === 2);
               v.hpTex.needsUpdate = true;
             }
           } else
@@ -34865,7 +34865,7 @@ void main() {
           group.add(hq.group);
           view.glb = hq;
         } else {
-          const isRed = b.owner === 1;
+          const isRed = b.owner === 2;
           const m = new Mesh(new PlaneGeometry(7, 7), new MeshBasicMaterial({ map: isRed ? this.hqRed : this.hqBlue, transparent: true, depthWrite: false }));
           m.position.y = 2.6;
           m.renderOrder = 5;
@@ -34874,7 +34874,7 @@ void main() {
         const pole = new Mesh(new CylinderGeometry(0.045, 0.045, 1.7, 6), mat(5592405, { metal: 0.5, rough: 0.5 }));
         pole.position.set(0, hq ? 4.6 : 6.1, 0);
         group.add(pole);
-        const flag = new Mesh(new PlaneGeometry(1.15, 0.7, 8, 4), new MeshBasicMaterial({ color: 13157556, side: DoubleSide }));
+        const flag = new Mesh(new PlaneGeometry(1.15, 0.7, 8, 4), new MeshBasicMaterial({ color: b.owner === 1 ? 4027360 : 12599312, side: DoubleSide }));
         flag.position.set(0.62, hq ? 5.05 : 6.55, 0);
         group.add(flag);
         view.flag = flag;
@@ -34916,7 +34916,7 @@ void main() {
           const pole = new Mesh(new CylinderGeometry(0.04, 0.04, 2.1, 6), mat(5592405, { metal: 0.5, rough: 0.5 }));
           pole.position.set(def.radius * 0.85, 1.05, -def.radius * 0.6);
           group.add(pole);
-          const flag = new Mesh(new PlaneGeometry(0.85, 0.5, 8, 4), new MeshBasicMaterial({ color: 13157556, side: DoubleSide }));
+          const flag = new Mesh(new PlaneGeometry(0.85, 0.5, 8, 4), new MeshBasicMaterial({ color: b.owner === 1 ? 4027360 : 12599312, side: DoubleSide }));
           flag.position.set(def.radius * 0.85 + 0.45, 1.95, -def.radius * 0.6);
           group.add(flag);
           view.flag = flag;
@@ -35076,7 +35076,7 @@ void main() {
           v.hpSprite.visible = true;
           if (Math.abs(frac - v.lastHp) > 0.01) {
             v.lastHp = frac;
-            this.paintHp(v.hpCanvas, frac);
+            this.paintHp(v.hpCanvas, frac, u.owner !== 1);
             v.hpTex.needsUpdate = true;
           }
           v.hpSprite.position.y = v.model.height + 0.55;
@@ -35293,7 +35293,7 @@ void main() {
       rankSprite.visible = false;
       rankSprite.renderOrder = 41;
       model.group.add(rankSprite);
-      const selRing = this.texSelRing ? new Mesh(new PlaneGeometry(2, 2), new MeshBasicMaterial({ color: u.owner === 1 ? 16756832 : 6990079, map: this.texSelRing, transparent: true, opacity: 0.95, depthWrite: false, side: DoubleSide })) : new Mesh(new RingGeometry(0.82, 1, 26), new MeshBasicMaterial({ color: 9109354, transparent: true, opacity: 0.95, depthWrite: false, side: DoubleSide }));
+      const selRing = this.texSelRing ? new Mesh(new PlaneGeometry(2, 2), new MeshBasicMaterial({ color: u.owner === 1 ? 5363281 : 16728128, map: this.texSelRing, transparent: true, opacity: 0.95, depthWrite: false, side: DoubleSide })) : new Mesh(new RingGeometry(0.82, 1, 26), new MeshBasicMaterial({ color: 9109354, transparent: true, opacity: 0.95, depthWrite: false, side: DoubleSide }));
       selRing.rotation.x = -Math.PI / 2;
       selRing.position.y = 0.07;
       selRing.visible = false;
@@ -35332,14 +35332,14 @@ void main() {
       }
       return view;
     }
-    paintHp(c, frac) {
+    paintHp(c, frac, enemy) {
       const g = c.getContext("2d");
       g.clearRect(0, 0, 64, 10);
       g.fillStyle = "rgba(8,8,8,0.78)";
       g.fillRect(0, 0, 64, 10);
       g.strokeStyle = "rgba(0,0,0,0.9)";
       g.strokeRect(0.5, 0.5, 63, 9);
-      g.fillStyle = frac > 0.55 ? "#58d858" : frac > 0.25 ? "#d8c840" : "#e05840";
+      g.fillStyle = enemy ? "#e05840" : frac > 0.55 ? "#58d858" : frac > 0.25 ? "#d8c840" : "#e05840";
       g.fillRect(2, 2, 60 * Math.max(0, frac), 6);
     }
     paintRank(c, tier) {
@@ -35886,7 +35886,7 @@ void main() {
       for (const b of sim.buildings) {
         if (b.defId === "depot" && b.owner !== 1 && !exp[Math.round(b.y) * MAP_W + Math.round(b.x)])
           continue;
-        const col = b.owner === 1 ? "#ff8a70" : b.owner === 2 ? "#7ab4ff" : "#e8e4d0";
+        const col = b.owner === 1 ? "#7ab4ff" : b.owner === 2 ? "#ff8a70" : "#e8e4d0";
         ctx.fillStyle = col;
         const s = b.defId === "hq" ? 6 : 4;
         ctx.fillRect(b.x * sx - s / 2, b.y * sy - s / 2, s, s);
@@ -35894,7 +35894,7 @@ void main() {
       for (const u of sim.units) {
         if (u.owner !== 1 && !vis[Math.round(u.y) * MAP_W + Math.round(u.x)])
           continue;
-        ctx.fillStyle = u.owner === 1 ? sel.has(u.id) ? "#ffffff" : "#ffb060" : "#6aa8ff";
+        ctx.fillStyle = u.owner === 1 ? sel.has(u.id) ? "#ffffff" : "#6ab8ff" : "#ff8a70";
         ctx.fillRect(u.x * sx - 1.5, u.y * sy - 1.5, 3, 3);
       }
       const corners = [[0, 0], [viewW, 0], [viewW, viewH], [0, viewH]];
@@ -35969,7 +35969,7 @@ void main() {
   </div>
 
   <div id="resbar" class="panel hidden">
-    <img src="assets/emblem-red.png" class="emb-sm" />
+    <img src="assets/emblem-blue.png" class="emb-sm" />
     <img src="assets/ico-credits.png" class="ico" />
     <b id="funds" class="gold">0</b>
     <span id="income" class="green"></span>
