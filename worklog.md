@@ -342,3 +342,29 @@ Work Log:
 Stage Summary:
 - Audit complete per Definition of Done: all archives inventoried+hashed, versions identified (6.5.22 vs 6.9.18), provenance documented, claims verified independently, conflicts recorded, duplicates detected (single-source rule applied), curated imports with provenance + confidence levels, browser implementation untouched.
 - New leads: ArmorStatHelper native analysis (resolves UNRESOLVED conflict), CreateDamageForMediumArmor pipeline, MineDamageFor*ArmorStat stat models, redeploy mechanic, asset-catalog VFX check.
+
+---
+Task ID: 11
+Agent: main (Super Z)
+Task: Fix "everything is grey" map regression
+
+Work Log:
+- Reproduced on live v=8b fresh session: flat grey terrain around base; units/HP bars normal.
+- Binary search: hid fog plane -> still grey; raycast screen -> top hit = pondMat sheets at
+  y=1.6 covering terrain near base; hid 26 pondMat meshes -> terrain lush again (causality).
+- Root cause: pass 8 R12 lagoon re-material iterated ALL scatterMeshes and applied opaque-ish
+  pondMat (opacity .93) to every flat translucent sheet (26 stacked waterfall/mist/lagoon
+  overlay sheets, cnt:1 each, one site) -> giant grey-blue slab over the base area.
+- Fog-of-war verified intact (alpha histogram 0/74/195 = revealed/explored/unexplored;
+  sim.visible=1 + canvas alpha 0 at unit positions; R11 UV remap re-derived = correct).
+- Remaining dark flat areas = ocean (by design) + unexplored fog (correct).
+- Fix: R12 block now sets im.visible=false on those stacked overlay sheets instead of
+  re-materialling them; pondMat creation removed (syncFx guard handles undefined).
+  index.html cache-bust ?v=9. Stashed unrelated .gitattributes renormalization noise
+  from remote audit commit; rebased; pushed 37945d0..2cd8b1c.
+- Live QA v9: base terrain lush (trees, HQ, props), fog reveal works, ocean dark, zero errors.
+
+Stage Summary:
+- Grey map regression fixed and live (main = 2cd8b1c). Lagoon site now renders as plain
+  terrain (sheets hidden); if a water look is wanted there later, needs per-sheet alpha
+  textures rather than a uniform material.
