@@ -826,6 +826,18 @@
             }
           }
           this.followPath(u, dt);
+          // native walking_shot semantics: walking-capable shooters (infantry) fire on the
+          // move at targets of opportunity, using the dynamic accuracy curve; other kinds
+          // only fire once stationary. Evidence: WeaponDynamicAccuracy @0x7FCF0B8 — the
+          // dynamic curve is keyed on the shooter's walking state, not the target's.
+          if (u.def.weapon.walkingShot && u.cd <= 0) {
+            const t = this.findTarget(u);
+            if (t) {
+              const d = Math.hypot(t.x - u.x, t.y - u.y);
+              if (d <= u.def.weapon.range)
+                this.shoot(u, t.x, t.y, t, d);
+            }
+          }
         }
       }
       if (this.units.some((u) => u.hp <= 0)) {
