@@ -35937,7 +35937,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       const b = document.createElement("button");
       b.className = "card";
       b.title = `${d.name} — ${d.desc}`;
-      b.innerHTML = `<img src="${d.card}?v=2" alt="${d.name}"/><div class="nm">${d.name.split('"')[0]}</div>
+      b.innerHTML = `<img src="${d.card}${d.card.startsWith("data:") ? "" : "?v=2"}" alt="${d.name}"/><div class="nm">${d.name.split('"')[0]}</div>
       <div class="pr">${d.price}¤<span class="cp">CP${d.cp}</span></div>`;
       b.onclick = () => sim?.enqueue(id, 1);
       cards.appendChild(b);
