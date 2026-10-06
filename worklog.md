@@ -387,3 +387,27 @@ Work Log:
 
 Stage Summary:
 - Underwater tint removed; scene matches original warm desert-coast look (main = 5fdf487).
+
+---
+Task ID: 13
+Agent: main (Super Z)
+Task: Fix "wrong assets mapped to models" — faction swap correction
+
+Work Log:
+- Rendered all 19 unit GLBs in a local three.js grid viewer + compared with APK card art
+  (card-infantry = BLUE soldier, card-tank = BLUE tank) and bld-*.png UI icons.
+- Root cause: player (owner 1) was assigned f2 (RED faction) models; enemy got f1 (BLUE).
+  The real game's player is the blue faction. Also "tank" for f2 mapped to f2_veh_coyote
+  (scout armored car) instead of f2_veh_jaguar (actual MBT); enemy AT used f2_inf_sniper
+  instead of the rocket-tube f2_inf_heavy.
+- UNIT_MODEL reordered to [f1, f2] with pair[owner-1]; tank->jaguar, rpg->f2_inf_heavy,
+  mg->f2_inf_sniper. buildGlbHq/buildGlbBuilding red-tint now applies to owner 2.
+- Team colors corrected everywhere: FACTION fallback, sel ring (player green / enemy red),
+  minimap dots (player blue / enemy red), enemy HP bars always red, flags per owner,
+  HUD emblem -> blue, depot-capture float colors.
+- v=11 pushed (61ccfb4). Live QA: blue player lineup (Torrent/Fortress/Zeus/heli), red enemy
+  lineup with Jaguar MBT, blue HQ + blue flag, red enemy HQ + red flag, blue build cards,
+  minimap correct, combat kills tracked (P1 2/1), zero page errors.
+
+Stage Summary:
+- Faction identity now matches the original: blue player, red enemy (main = 61ccfb4, v=11).
