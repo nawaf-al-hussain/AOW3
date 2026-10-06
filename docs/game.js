@@ -34535,13 +34535,13 @@ void main() {
           continue;
         im.geometry.computeBoundingBox();
         const bb = im.geometry.boundingBox;
-        if (bb && bb.max.y < 1.2 && bb.min.y > -3) {
+        if (bb && bb.max.y < 1.2 && bb.min.y > -3 && (bb.max.x - bb.min.x > 9 || bb.max.z - bb.min.z > 9)) {
           if (!this.pondMat) {
-            this.pondMat = new MeshStandardMaterial({ color: 4029828, roughness: 0.24, metalness: 0.15, transparent: true, opacity: 0.82, side: DoubleSide });
+            this.pondMat = new MeshStandardMaterial({ color: 5275088, roughness: 0.28, metalness: 0.12, transparent: true, opacity: 0.93, side: DoubleSide });
             const wt = new TextureLoader().load(this.assetBase + "models/water.png");
             wt.colorSpace = SRGBColorSpace;
             wt.wrapS = wt.wrapT = RepeatWrapping;
-            wt.repeat.set(5, 5);
+            wt.repeat.set(10, 10);
             this.pondMat.map = wt;
           }
           im.material = this.pondMat;
@@ -34654,23 +34654,26 @@ void main() {
           const gx = Math.round(x + MAP2), gz = Math.round(z + MAP2);
           if (gx < 2 || gz < 2 || gx >= MAP_W - 2 || gz >= MAP_H - 2)
             continue;
+          const gy = heightAtWorld(x, z);
+          if (gy < -0.15)
+            continue;
           const kind = rand();
           if (kind < 0.45) {
             const col = containerCols[Math.floor(rand() * containerCols.length)];
             const c = new Mesh(new BoxGeometry(2.6, 1.15, 1.15), mat(col, { rough: 0.7, metal: 0.35 }));
-            c.position.set(x, 0.58, z);
+            c.position.set(x, gy + 0.58, z);
             c.rotation.y = rand() * Math.PI;
             c.castShadow = true;
             props.add(c);
           } else if (kind < 0.75) {
             const s = new Mesh(new BoxGeometry(1.7, 0.55, 0.5), mat(12560506, { rough: 1 }));
-            s.position.set(x, 0.28, z);
+            s.position.set(x, gy + 0.28, z);
             s.rotation.y = rand() * Math.PI;
             s.castShadow = true;
             props.add(s);
           } else {
             const b = new Mesh(new CylinderGeometry(0.3, 0.3, 0.72, 9), mat(11561520, { rough: 0.7, metal: 0.3 }));
-            b.position.set(x, 0.36, z);
+            b.position.set(x, gy + 0.36, z);
             b.castShadow = true;
             props.add(b);
           }

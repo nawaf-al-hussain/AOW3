@@ -257,3 +257,43 @@ Stage Summary:
 - Commit 78722ba pushed; live: https://nawaf-al-hussain.github.io/AOW3/
 - Scripts: /home/z/my-project/scripts/{patch_v3.py,make_card_flak.py}
 - Candidates for next pass: flak tracer elevation toward airborne targets, veterancy/battle report, unit death animations, per-building smoke tint variety.
+
+---
+Task ID: 9+10
+Agent: Super Z (main)
+Task: Pass 7 (1:1 look) + Pass 8 (veterancy, battle report, death anims, pond fix, portraits)
+
+Work Log (pass 7, recovered from wiped session — commits 6447d88..5b8365d):
+- Ocean world: clear/fog color tan -> sea haze, apron hidden on real map, water 900x900 animated.
+- Waving team flags (8x4 cloth + animateFlags), GLB unit portraits (makeUnitPortraits,
+  offscreen renderer, matched tone; card data-URL ?v=2 bug fixed; index.html cache-bust v=7).
+- Smooth fog (2x blur composite), CSS color pop, portrait polish.
+
+Work Log (pass 8, patch_v5.py 30 edits + 3 fixes):
+- Veterancy: sim.stats per player, u.kills + lastHitBy/srcId tracking through every damage
+  path (direct, airburst, splash, single-target, building hits); rankTier 1/3/6 kills ->
+  Veteran/Elite/Ace; damage x(1+0.08*tier), incoming x(1-0.05*tier); kill/loss credit on
+  unit + building death blocks.
+- Rank UI: gold chevron sprite (paintRank, 48x18 canvas) above units, selinfo shows
+  "VETERAN/ELITE/ACE · N kills".
+- Battle report: #report table on the verdict screen (Units fielded / Enemy kills /
+  Units lost / Buildings razed / Buildings lost / Battle time, YOU vs ENEMY).
+- Death animations: all deaths now route through syncDying with modes — aircraft crash
+  (spin + tilt + descend + smoke trail, explode on impact), infantry fall (rotate to
+  ground + material fade), vehicle tip (tip over + charred clone materials + smoke),
+  GLB die_bullet/die_explosion clips still honored; finishDeath -> wreck FX.
+- West-cliff blue artifact: was TWO things — (a) translucent waterfall/lagoon sheets
+  sampling flat blue atlas region: re-materialled with animated sea-matching water
+  material (pondMat, bb+opacity filter); (b) a blue shipping-container base prop:
+  placeBaseProps now snaps props to heightAtWorld and skips underwater spots.
+- Fog plane enlarged +90 margin with UV remap + clamp so unexplored dark extends over sea.
+- Infantry portraits brighter (key 4.4 / rim 2.0 for infantry).
+- FIX: unit HP bars were scene children (never followed units) -> parented to model group;
+  rank sprite likewise.
+- Local QA (headless): chevrons + ACE panel verified, crash/tip aftermath verified,
+  report table verified (10 kills / 10 losses), lagoons blend, no page errors.
+
+Stage Summary:
+- Push BLOCKED this session: GitHub credentials helper (/home/z/bin) lost in environment
+  wipe; commits exist locally on main (pass 8 + fixes). Deliverable copied to
+  /home/z/my-project/download/ for manual deploy; re-push when credentials restored.
