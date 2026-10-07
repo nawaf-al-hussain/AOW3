@@ -996,6 +996,16 @@
             }
           }
         } else if (u.order.x !== undefined && u.order.y !== undefined) {
+          // patrol: re-sync dest to the CURRENT leg target — a chase (dest =
+          // chase point) must not strand the route or fake an arrival
+          if (u.order.kind === "patrol") {
+            const lx0 = u.order.back ? u.order.ax : u.order.x;
+            const ly0 = u.order.back ? u.order.ay : u.order.y;
+            if (!u.dest || Math.hypot(u.dest.x - lx0, u.dest.y - ly0) > 1) {
+              u.dest = { x: lx0, y: ly0 };
+              u.path = this.pf.find(u.x, u.y, lx0, ly0, u.def.kind === "aircraft" && !u.grounded) ?? [];
+            }
+          }
           if (!u.path.length && u.dest) {
             if (Math.hypot(u.dest.x - u.x, u.dest.y - u.y) < 0.8) {
               if (u.order.kind === "patrol") {

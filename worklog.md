@@ -915,6 +915,12 @@ Work Log:
   50 — ALL PASS. node --check clean; index.html bumped v=23.
 - Harness bug found by tests and fixed: terrain fingerprint must come from a
   fresh constructor probe sim (capture-time grid embeds player-built structures).
+- Live QA (v=23) found a patrol defect: a mid-route chase drags u.dest to the
+  chase point; on target death the stale dest faked arrivals and the leg repath
+  could find zero path at the leg target -> patrol silently cancelled to idle.
+  FIX: patrol orders re-sync dest/path to the CURRENT leg target every tick
+  (patrol-only guard; move/attackMove behavior untouched). 6 regression vectors
+  added (chase-interruption) -> phase5 53/53. Shipped as v=24.
 
 Stage Summary:
 - v=23: Phase 5 combat-reconstruction gaps closed (minRange/patrol/garrison,

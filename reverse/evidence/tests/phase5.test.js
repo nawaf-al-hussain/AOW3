@@ -164,6 +164,25 @@ section('patrol: engages targets of opportunity, resumes route after kill');
   check('patrol keeps walking (path or dest alive)', u.order.back === false || u.order.back === true, true);
 }
 
+section('patrol: survives chase interruptions (QA-found: dest dragged by pursuit)');
+{
+  const { sim } = loadKernel(13);
+  clearInitial(sim);
+  const u = sim.spawn('ilight', 1, 20, 80);
+  sim.commandPatrol([u.id], 34, 80);
+  const foe = sim.spawn('ilight', 2, 26, 88); // off-route: pulls the unit into a chase
+  run(sim, 60); // acquire + chase away from the route
+  check('chase happened (unit pulled off route)', Math.hypot(u.x - 20, u.y - 80) > 2, true);
+  check('dest was dragged to the chase point', u.dest && Math.hypot(u.dest.x - foe.x, u.dest.y - foe.y) < 3, true);
+  foe.hp = 0; // target dies mid-pursuit
+  run(sim, 40);
+  check('still patrolling after the chase', u.order.kind, 'patrol');
+  check('dest re-synced to the current leg target', u.dest && (Math.abs(u.dest.x - u.order.x) < 1.2 || Math.abs(u.dest.x - u.order.ax) < 1.2), true);
+  const tFlip = stepUntil(sim, () => u.order.back === true, 900);
+  check('route completes after interruption (leg 1 flip)', tFlip > 0, true);
+  check('no idle-cancel of the patrol order', u.order.kind, 'patrol');
+}
+
 section('patrol: through Commands.issue (journal + validation)');
 {
   const { sim, K } = loadKernel(8);
