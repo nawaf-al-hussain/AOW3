@@ -1,0 +1,1459 @@
+==============================================================================
+WeaponType combat surface — native analysis (6.9.18)
+binary: libil2cpp.so sha256 8ace05bbaa2cdfda156e377cfbcb0c0a6fb223fa68188fa3df49f677f10e90c5
+source: Art-of-War-3_6.9.18_apkcombo.com.xapk sha256 1a41e033cce3f7e8595a0aa1dac07e90799d21a92793faaebbc13d3378b32c3e
+dump.cs sha256 0050e67d23f898588f0771c69ba7f30f9122cd6eccd66674c0f7c87b7f24714b
+tool: reverse/tools/weapon_type_surface_native_analysis.py
+==============================================================================
+
+==============================================================================
+PART A — WeaponType behavior surface (com.geargames.aow.entities, TDI 11545)
+==============================================================================
+
+===== WeaponType.get_ConeFire =====
+VA 0x45b621c  file 0x45b221c  body<=0x20 bytes
+  0x45b621c: ldrsh    w8, [x0, #0x98]
+  0x45b6220: cmp      w8, #0
+  0x45b6224: cset     w0, gt
+  0x45b6228: ret      
+
+===== WeaponType.usingObjTerritory =====
+VA 0x45b622c  file 0x45b222c  body<=0x3c bytes
+  0x45b622c: ldrh     w8, [x0, #0x24]
+  0x45b6230: cmp      w8, #0x17
+  0x45b6234: b.ne     #0x45b625c
+  0x45b6238: str      x30, [sp, #-0x10]!
+  0x45b623c: ldr      w0, [x0, #0x10]
+  0x45b6240: mov      w1, #0x267
+  0x45b6244: mov      w2, wzr
+  0x45b6248: mov      x3, xzr
+  0x45b624c: bl       #0x4684418   ; call 0x4684418 <BattleAct..ctor @0x4684418>
+  0x45b6250: eor      w8, w0, #1
+  0x45b6254: ldr      x30, [sp], #0x10
+  0x45b6258: b        #0x45b6260
+  0x45b625c: mov      w8, wzr
+  0x45b6260: and      w0, w8, #1
+  0x45b6264: ret      
+
+===== WeaponType.canBombard =====
+VA 0x45b6268  file 0x45b2268  body<=0x20 bytes
+  0x45b6268: ldrh     w8, [x0, #0x24]
+  0x45b626c: and      w0, w8, #1
+  0x45b6270: ret      
+
+===== WeaponType.get_AntiAirOnly =====
+VA 0x45b6274  file 0x45b2274  body<=0x78 bytes
+  0x45b6274: stp      x30, x21, [sp, #-0x20]!
+  0x45b6278: stp      x20, x19, [sp, #0x10]
+  0x45b627c: adrp     x21, #0x9d11000
+  0x45b6280: adrp     x20, #0x9677000
+  0x45b6284: mov      x19, x0
+  0x45b6288: ldrb     w8, [x21, #0x335]
+  0x45b628c: ldr      x20, [x20, #0xb98]
+  0x45b6290: tbnz     w8, #0, #0x45b62a8
+  0x45b6294: adrp     x0, #0x9677000
+  0x45b6298: ldr      x0, [x0, #0xb98]
+  0x45b629c: bl       #0x3cc7948   ; call 0x3cc7948
+  0x45b62a0: mov      w8, #1
+  0x45b62a4: strb     w8, [x21, #0x335]
+  0x45b62a8: ldr      x0, [x20]
+  0x45b62ac: ldrb     w21, [x19, #0x8b]
+  0x45b62b0: ldr      w8, [x0, #0xe4]
+  0x45b62b4: cbz      w8, #0x45b62c0
+  0x45b62b8: mov      w8, w21
+  0x45b62bc: b        #0x45b62cc
+  0x45b62c0: bl       #0x3cc7ac8   ; call 0x3cc7ac8
+  0x45b62c4: ldr      x0, [x20]
+  0x45b62c8: ldrb     w8, [x19, #0x8b]
+  0x45b62cc: ldr      x9, [x0, #0xb8]
+  0x45b62d0: ldp      x20, x19, [sp, #0x10]
+  0x45b62d4: ldrb     w9, [x9, #2]
+  0x45b62d8: and      w9, w9, w21
+  0x45b62dc: cmp      w9, w8
+  0x45b62e0: cset     w0, eq
+  0x45b62e4: ldp      x30, x21, [sp], #0x20
+  0x45b62e8: ret      
+
+===== WeaponType.get_AirAiming =====
+VA 0x45b636c  file 0x45b236c  body<=0x20 bytes
+  0x45b636c: ldrb     w0, [x0, #0x8c]
+  0x45b6370: ret      
+
+===== WeaponType.get_HitBonus =====
+VA 0x45b64dc  file 0x45b24dc  body<=0x20 bytes
+  0x45b64dc: ldrb     w0, [x0, #0x48]
+  0x45b64e0: ret      
+
+===== WeaponType.set_HitBonus =====
+VA 0x45b64e4  file 0x45b24e4  body<=0x20 bytes
+  0x45b64e4: strb     w1, [x0, #0x48]
+  0x45b64e8: ret      
+
+===== WeaponType.get_ShellType =====
+VA 0x45b64ec  file 0x45b24ec  body<=0x20 bytes
+  0x45b64ec: ldrb     w0, [x0, #0x78]
+  0x45b64f0: ret      
+
+===== WeaponType.get_Aiming =====
+VA 0x45b659c  file 0x45b259c  body<=0x20 bytes
+  0x45b659c: ldrb     w0, [x0, #0x8b]
+  0x45b65a0: ret      
+
+===== WeaponType.get_Priority =====
+VA 0x45b65ac  file 0x45b25ac  body<=0x20 bytes
+  0x45b65ac: ldrb     w0, [x0, #0x8d]
+  0x45b65b0: ret      
+
+===== WeaponType.get_WalkingShot =====
+VA 0x45b65bc  file 0x45b25bc  body<=0x20 bytes
+  0x45b65bc: ldrb     w0, [x0, #0x8a]
+  0x45b65c0: ret      
+
+===== WeaponType.get_DamagePriority =====
+VA 0x45b645c  file 0x45b245c  body<=0x20 bytes
+  0x45b645c: ldr      x0, [x0, #0x40]
+  0x45b6460: ret      
+
+===== WeaponType.get_ExplosionDecr =====
+VA 0x45b64ac  file 0x45b24ac  body<=0x20 bytes
+  0x45b64ac: ldrb     w0, [x0, #0x84]
+  0x45b64b0: ret      
+
+===== WeaponType.get_ExplosionRadius =====
+VA 0x45b64bc  file 0x45b24bc  body<=0x20 bytes
+  0x45b64bc: ldr      w0, [x0, #0x7c]
+  0x45b64c0: ret      
+
+===== WeaponType.get_Guided =====
+VA 0x45b63bc  file 0x45b23bc  body<=0x20 bytes
+  0x45b63bc: ldrb     w0, [x0, #0x94]
+  0x45b63c0: ret      
+
+==============================================================================
+PART B — target restrictions: CreateTargets + 7 EWeaponTarget predicates
+EWeaponTarget (dump.cs:19803): None=0 Bomber=1 Fighter=2 Helicopter=3
+                              Marine=4 Submarine=5 LandForce=6 Infantry=7
+==============================================================================
+
+===== WeaponStatsFactory.CreateTargets =====
+VA 0x80f02e0  file 0x80ec2e0  body<=0x5d8 bytes
+  0x80f02e0: str      x30, [sp, #-0x50]!
+  0x80f02e4: stp      x26, x25, [sp, #0x10]
+  0x80f02e8: stp      x24, x23, [sp, #0x20]
+  0x80f02ec: stp      x22, x21, [sp, #0x30]
+  0x80f02f0: stp      x20, x19, [sp, #0x40]
+  0x80f02f4: adrp     x21, #0x9d22000
+  0x80f02f8: adrp     x22, #0x96ef000
+  0x80f02fc: mov      x19, x2
+  0x80f0300: ldrb     w8, [x21, #0xaae]
+  0x80f0304: ldr      x22, [x22, #0x910]
+  0x80f0308: mov      x20, x1
+  0x80f030c: tbnz     w8, #0, #0x80f03b4
+  0x80f0310: adrp     x0, #0x96d9000
+  0x80f0314: ldr      x0, [x0, #0x18]
+  0x80f0318: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80f031c: adrp     x0, #0x96e9000
+  0x80f0320: ldr      x0, [x0, #0x8b8]
+  0x80f0324: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80f0328: adrp     x0, #0x96e9000
+  0x80f032c: ldr      x0, [x0, #0x8c0]
+  0x80f0330: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80f0334: adrp     x0, #0x96e9000
+  0x80f0338: ldr      x0, [x0, #0x8c8]
+  0x80f033c: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80f0340: adrp     x0, #0x96ef000
+  0x80f0344: ldr      x0, [x0, #0x918]
+  0x80f0348: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80f034c: adrp     x0, #0x96ef000
+  0x80f0350: ldr      x0, [x0, #0x920]
+  0x80f0354: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80f0358: adrp     x0, #0x96ef000
+  0x80f035c: ldr      x0, [x0, #0x928]
+  0x80f0360: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80f0364: adrp     x0, #0x96ef000
+  0x80f0368: ldr      x0, [x0, #0x930]
+  0x80f036c: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80f0370: adrp     x0, #0x96ef000
+  0x80f0374: ldr      x0, [x0, #0x938]
+  0x80f0378: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80f037c: adrp     x0, #0x96ef000
+  0x80f0380: ldr      x0, [x0, #0x940]
+  0x80f0384: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80f0388: adrp     x0, #0x96ef000
+  0x80f038c: ldr      x0, [x0, #0x948]
+  0x80f0390: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80f0394: adrp     x0, #0x96ef000
+  0x80f0398: ldr      x0, [x0, #0x910]
+  0x80f039c: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80f03a0: adrp     x0, #0x96e9000
+  0x80f03a4: ldr      x0, [x0, #0x8d0]
+  0x80f03a8: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80f03ac: mov      w8, #1
+  0x80f03b0: strb     w8, [x21, #0xaae]
+  0x80f03b4: ldr      x0, [x22]
+  0x80f03b8: bl       #0x3cc7be4   ; call 0x3cc7be4
+  0x80f03bc: mov      x1, xzr
+  0x80f03c0: mov      x21, x0
+  0x80f03c4: bl       #0x8f91cdc   ; call 0x8f91cdc <Object..ctor @0x8f91cdc>
+  0x80f03c8: cbz      x21, #0x80f08b4
+  0x80f03cc: adrp     x22, #0x96e9000
+  0x80f03d0: adrp     x23, #0x96e9000
+  0x80f03d4: adrp     x25, #0x96d9000
+  0x80f03d8: adrp     x26, #0x96ef000
+  0x80f03dc: adrp     x24, #0x96e9000
+  0x80f03e0: ldr      x22, [x22, #0x8c8]
+  0x80f03e4: ldr      x23, [x23, #0x8c0]
+  0x80f03e8: ldr      x25, [x25, #0x18]
+  0x80f03ec: ldr      x26, [x26, #0x918]
+  0x80f03f0: ldr      x24, [x24, #0x8d0]
+  0x80f03f4: mov      x0, x21
+  0x80f03f8: mov      x1, x20
+  0x80f03fc: str      x20, [x0, #0x10]!
+  0x80f0400: bl       #0x3cc78ec   ; call 0x3cc78ec
+  0x80f0404: ldr      x0, [x22]
+  0x80f0408: bl       #0x3cc7be4   ; call 0x3cc7be4
+  0x80f040c: ldr      x1, [x23]
+  0x80f0410: mov      x20, x0
+  0x80f0414: bl       #0x59acef4   ; call 0x59acef4 <CommandLine.ToString @0x59acef4>
+  0x80f0418: ldr      x0, [x25]
+  0x80f041c: bl       #0x3cc7be4   ; call 0x3cc7be4
+  0x80f0420: ldr      x2, [x26]
+  0x80f0424: mov      x1, x21
+  0x80f0428: mov      x3, xzr
+  0x80f042c: mov      x23, x0
+  0x80f0430: bl       #0x5559b40   ; call 0x5559b40 <CommandLine.ToString @0x5559b40>
+  0x80f0434: ldr      x0, [x24]
+  0x80f0438: bl       #0x3cc7be4   ; call 0x3cc7be4
+  0x80f043c: mov      w1, #7
+  0x80f0440: mov      w2, #0x2c9
+  0x80f0444: mov      w3, #0x2da1
+  0x80f0448: mov      x4, x23
+  0x80f044c: mov      x5, x19
+  0x80f0450: mov      x22, x0
+  0x80f0454: bl       #0x80f08c0   ; call 0x80f08c0 <WeaponTarget..ctor @0x80f08c0>
+  0x80f0458: cbz      x20, #0x80f08b4
+  0x80f045c: adrp     x26, #0x96e9000
+  0x80f0460: ldr      x26, [x26, #0x8b8]
+  0x80f0464: ldr      w10, [x20, #0x1c]
+  0x80f0468: ldr      x8, [x20, #0x10]
+  0x80f046c: ldr      x9, [x26]
+  0x80f0470: add      w10, w10, #1
+  0x80f0474: str      w10, [x20, #0x1c]
+  0x80f0478: cbz      x8, #0x80f08b4
+  0x80f047c: ldrsw    x10, [x20, #0x18]
+  0x80f0480: ldr      w11, [x8, #0x18]
+  0x80f0484: adrp     x23, #0x96ef000
+  0x80f0488: ldr      x23, [x23, #0x920]
+  0x80f048c: cmp      w10, w11
+  0x80f0490: b.hs     #0x80f04b0
+  0x80f0494: add      x0, x8, x10, lsl #3
+  0x80f0498: add      w9, w10, #1
+  0x80f049c: mov      x1, x22
+  0x80f04a0: str      w9, [x20, #0x18]
+  0x80f04a4: str      x22, [x0, #0x20]!
+  0x80f04a8: bl       #0x3cc78ec   ; call 0x3cc78ec
+  0x80f04ac: b        #0x80f04c8
+  0x80f04b0: ldr      x8, [x9, #0x20]
+  0x80f04b4: mov      x0, x20
+  0x80f04b8: mov      x1, x22
+  0x80f04bc: ldr      x8, [x8, #0xc0]
+  0x80f04c0: ldr      x2, [x8, #0x70]
+  0x80f04c4: bl       #0x59ad75c   ; call 0x59ad75c <CommandLine.ToString @0x59ad75c>
+  0x80f04c8: ldr      x0, [x25]
+  0x80f04cc: bl       #0x3cc7be4   ; call 0x3cc7be4
+  0x80f04d0: ldr      x2, [x23]
+  0x80f04d4: mov      x1, x21
+  0x80f04d8: mov      x3, xzr
+  0x80f04dc: mov      x23, x0
+  0x80f04e0: bl       #0x5559b40   ; call 0x5559b40 <CommandLine.ToString @0x5559b40>
+  0x80f04e4: ldr      x0, [x24]
+  0x80f04e8: bl       #0x3cc7be4   ; call 0x3cc7be4
+  0x80f04ec: mov      w1, #6
+  0x80f04f0: mov      w2, #0x2c5
+  0x80f04f4: mov      w3, #0x2da0
+  0x80f04f8: mov      x4, x23
+  0x80f04fc: mov      x5, x19
+  0x80f0500: mov      x22, x0
+  0x80f0504: bl       #0x80f08c0   ; call 0x80f08c0 <WeaponTarget..ctor @0x80f08c0>
+  0x80f0508: ldr      w10, [x20, #0x1c]
+  0x80f050c: ldr      x8, [x20, #0x10]
+  0x80f0510: ldr      x9, [x26]
+  0x80f0514: add      w10, w10, #1
+  0x80f0518: str      w10, [x20, #0x1c]
+  0x80f051c: cbz      x8, #0x80f08b4
+  0x80f0520: ldrsw    x10, [x20, #0x18]
+  0x80f0524: ldr      w11, [x8, #0x18]
+  0x80f0528: adrp     x23, #0x96ef000
+  0x80f052c: ldr      x23, [x23, #0x928]
+  0x80f0530: cmp      w10, w11
+  0x80f0534: b.hs     #0x80f0554
+  0x80f0538: add      x0, x8, x10, lsl #3
+  0x80f053c: add      w9, w10, #1
+  0x80f0540: mov      x1, x22
+  0x80f0544: str      w9, [x20, #0x18]
+  0x80f0548: str      x22, [x0, #0x20]!
+  0x80f054c: bl       #0x3cc78ec   ; call 0x3cc78ec
+  0x80f0550: b        #0x80f056c
+  0x80f0554: ldr      x8, [x9, #0x20]
+  0x80f0558: mov      x0, x20
+  0x80f055c: mov      x1, x22
+  0x80f0560: ldr      x8, [x8, #0xc0]
+  0x80f0564: ldr      x2, [x8, #0x70]
+  0x80f0568: bl       #0x59ad75c   ; call 0x59ad75c <CommandLine.ToString @0x59ad75c>
+  0x80f056c: ldr      x0, [x25]
+  0x80f0570: bl       #0x3cc7be4   ; call 0x3cc7be4
+  0x80f0574: ldr      x2, [x23]
+  0x80f0578: mov      x1, x21
+  0x80f057c: mov      x3, xzr
+  0x80f0580: mov      x23, x0
+  0x80f0584: bl       #0x5559b40   ; call 0x5559b40 <CommandLine.ToString @0x5559b40>
+  0x80f0588: ldr      x0, [x24]
+  0x80f058c: bl       #0x3cc7be4   ; call 0x3cc7be4
+  0x80f0590: mov      w1, #4
+  0x80f0594: mov      w2, #0x2dd
+  0x80f0598: mov      w3, #0x2da6
+  0x80f059c: mov      x4, x23
+  0x80f05a0: mov      x5, x19
+  0x80f05a4: mov      x22, x0
+  0x80f05a8: bl       #0x80f08c0   ; call 0x80f08c0 <WeaponTarget..ctor @0x80f08c0>
+  0x80f05ac: ldr      w10, [x20, #0x1c]
+  0x80f05b0: ldr      x8, [x20, #0x10]
+  0x80f05b4: ldr      x9, [x26]
+  0x80f05b8: add      w10, w10, #1
+  0x80f05bc: str      w10, [x20, #0x1c]
+  0x80f05c0: cbz      x8, #0x80f08b4
+  0x80f05c4: ldrsw    x10, [x20, #0x18]
+  0x80f05c8: ldr      w11, [x8, #0x18]
+  0x80f05cc: adrp     x23, #0x96ef000
+  0x80f05d0: ldr      x23, [x23, #0x930]
+  0x80f05d4: cmp      w10, w11
+  0x80f05d8: b.hs     #0x80f05f8
+  0x80f05dc: add      x0, x8, x10, lsl #3
+  0x80f05e0: add      w9, w10, #1
+  0x80f05e4: mov      x1, x22
+  0x80f05e8: str      w9, [x20, #0x18]
+  0x80f05ec: str      x22, [x0, #0x20]!
+  0x80f05f0: bl       #0x3cc78ec   ; call 0x3cc78ec
+  0x80f05f4: b        #0x80f0610
+  0x80f05f8: ldr      x8, [x9, #0x20]
+  0x80f05fc: mov      x0, x20
+  0x80f0600: mov      x1, x22
+  0x80f0604: ldr      x8, [x8, #0xc0]
+  0x80f0608: ldr      x2, [x8, #0x70]
+  0x80f060c: bl       #0x59ad75c   ; call 0x59ad75c <CommandLine.ToString @0x59ad75c>
+  0x80f0610: ldr      x0, [x25]
+  0x80f0614: bl       #0x3cc7be4   ; call 0x3cc7be4
+  0x80f0618: ldr      x2, [x23]
+  0x80f061c: mov      x1, x21
+  0x80f0620: mov      x3, xzr
+  0x80f0624: mov      x23, x0
+  0x80f0628: bl       #0x5559b40   ; call 0x5559b40 <CommandLine.ToString @0x5559b40>
+  0x80f062c: ldr      x0, [x24]
+  0x80f0630: bl       #0x3cc7be4   ; call 0x3cc7be4
+  0x80f0634: mov      w1, #5
+  0x80f0638: mov      w2, #0x2de
+  0x80f063c: mov      w3, #0x2da7
+  0x80f0640: mov      x4, x23
+  0x80f0644: mov      x5, x19
+  0x80f0648: mov      x22, x0
+  0x80f064c: bl       #0x80f08c0   ; call 0x80f08c0 <WeaponTarget..ctor @0x80f08c0>
+  0x80f0650: ldr      w10, [x20, #0x1c]
+  0x80f0654: ldr      x8, [x20, #0x10]
+  0x80f0658: ldr      x9, [x26]
+  0x80f065c: add      w10, w10, #1
+  0x80f0660: str      w10, [x20, #0x1c]
+  0x80f0664: cbz      x8, #0x80f08b4
+  0x80f0668: ldrsw    x10, [x20, #0x18]
+  0x80f066c: ldr      w11, [x8, #0x18]
+  0x80f0670: adrp     x23, #0x96ef000
+  0x80f0674: ldr      x23, [x23, #0x938]
+  0x80f0678: cmp      w10, w11
+  0x80f067c: b.hs     #0x80f069c
+  0x80f0680: add      x0, x8, x10, lsl #3
+  0x80f0684: add      w9, w10, #1
+  0x80f0688: mov      x1, x22
+  0x80f068c: str      w9, [x20, #0x18]
+  0x80f0690: str      x22, [x0, #0x20]!
+  0x80f0694: bl       #0x3cc78ec   ; call 0x3cc78ec
+  0x80f0698: b        #0x80f06b4
+  0x80f069c: ldr      x8, [x9, #0x20]
+  0x80f06a0: mov      x0, x20
+  0x80f06a4: mov      x1, x22
+  0x80f06a8: ldr      x8, [x8, #0xc0]
+  0x80f06ac: ldr      x2, [x8, #0x70]
+  0x80f06b0: bl       #0x59ad75c   ; call 0x59ad75c <CommandLine.ToString @0x59ad75c>
+  0x80f06b4: ldr      x0, [x25]
+  0x80f06b8: bl       #0x3cc7be4   ; call 0x3cc7be4
+  0x80f06bc: ldr      x2, [x23]
+  0x80f06c0: mov      x1, x21
+  0x80f06c4: mov      x3, xzr
+  0x80f06c8: mov      x23, x0
+  0x80f06cc: bl       #0x5559b40   ; call 0x5559b40 <CommandLine.ToString @0x5559b40>
+  0x80f06d0: ldr      x0, [x24]
+  0x80f06d4: bl       #0x3cc7be4   ; call 0x3cc7be4
+  0x80f06d8: mov      w1, #1
+  0x80f06dc: mov      w2, #0x2d9
+  0x80f06e0: mov      w3, #0x2da2
+  0x80f06e4: mov      x4, x23
+  0x80f06e8: mov      x5, x19
+  0x80f06ec: mov      x22, x0
+  0x80f06f0: bl       #0x80f08c0   ; call 0x80f08c0 <WeaponTarget..ctor @0x80f08c0>
+  0x80f06f4: ldr      w10, [x20, #0x1c]
+  0x80f06f8: ldr      x8, [x20, #0x10]
+  0x80f06fc: ldr      x9, [x26]
+  0x80f0700: add      w10, w10, #1
+  0x80f0704: str      w10, [x20, #0x1c]
+  0x80f0708: cbz      x8, #0x80f08b4
+  0x80f070c: ldrsw    x10, [x20, #0x18]
+  0x80f0710: ldr      w11, [x8, #0x18]
+  0x80f0714: adrp     x23, #0x96ef000
+  0x80f0718: ldr      x23, [x23, #0x940]
+  0x80f071c: cmp      w10, w11
+  0x80f0720: b.hs     #0x80f0740
+  0x80f0724: add      x0, x8, x10, lsl #3
+  0x80f0728: add      w9, w10, #1
+  0x80f072c: mov      x1, x22
+  0x80f0730: str      w9, [x20, #0x18]
+  0x80f0734: str      x22, [x0, #0x20]!
+  0x80f0738: bl       #0x3cc78ec   ; call 0x3cc78ec
+  0x80f073c: b        #0x80f0758
+  0x80f0740: ldr      x8, [x9, #0x20]
+  0x80f0744: mov      x0, x20
+  0x80f0748: mov      x1, x22
+  0x80f074c: ldr      x8, [x8, #0xc0]
+  0x80f0750: ldr      x2, [x8, #0x70]
+  0x80f0754: bl       #0x59ad75c   ; call 0x59ad75c <CommandLine.ToString @0x59ad75c>
+  0x80f0758: ldr      x0, [x25]
+  0x80f075c: bl       #0x3cc7be4   ; call 0x3cc7be4
+  0x80f0760: ldr      x2, [x23]
+  0x80f0764: mov      x1, x21
+  0x80f0768: mov      x3, xzr
+  0x80f076c: mov      x23, x0
+  0x80f0770: bl       #0x5559b40   ; call 0x5559b40 <CommandLine.ToString @0x5559b40>
+  0x80f0774: ldr      x0, [x24]
+  0x80f0778: bl       #0x3cc7be4   ; call 0x3cc7be4
+  0x80f077c: mov      w1, #2
+  0x80f0780: mov      w2, #0x2da
+  0x80f0784: mov      w3, #0x2da3
+  0x80f0788: mov      x4, x23
+  0x80f078c: mov      x5, x19
+  0x80f0790: mov      x22, x0
+  0x80f0794: bl       #0x80f08c0   ; call 0x80f08c0 <WeaponTarget..ctor @0x80f08c0>
+  0x80f0798: ldr      w10, [x20, #0x1c]
+  0x80f079c: ldr      x8, [x20, #0x10]
+  0x80f07a0: ldr      x9, [x26]
+  0x80f07a4: add      w10, w10, #1
+  0x80f07a8: str      w10, [x20, #0x1c]
+  0x80f07ac: cbz      x8, #0x80f08b4
+  0x80f07b0: ldrsw    x10, [x20, #0x18]
+  0x80f07b4: ldr      w11, [x8, #0x18]
+  0x80f07b8: adrp     x23, #0x96ef000
+  0x80f07bc: ldr      x23, [x23, #0x948]
+  0x80f07c0: cmp      w10, w11
+  0x80f07c4: b.hs     #0x80f07e4
+  0x80f07c8: add      x0, x8, x10, lsl #3
+  0x80f07cc: add      w9, w10, #1
+  0x80f07d0: mov      x1, x22
+  0x80f07d4: str      w9, [x20, #0x18]
+  0x80f07d8: str      x22, [x0, #0x20]!
+  0x80f07dc: bl       #0x3cc78ec   ; call 0x3cc78ec
+  0x80f07e0: b        #0x80f07fc
+  0x80f07e4: ldr      x8, [x9, #0x20]
+  0x80f07e8: mov      x0, x20
+  0x80f07ec: mov      x1, x22
+  0x80f07f0: ldr      x8, [x8, #0xc0]
+  0x80f07f4: ldr      x2, [x8, #0x70]
+  0x80f07f8: bl       #0x59ad75c   ; call 0x59ad75c <CommandLine.ToString @0x59ad75c>
+  0x80f07fc: ldr      x0, [x25]
+  0x80f0800: bl       #0x3cc7be4   ; call 0x3cc7be4
+  0x80f0804: ldr      x2, [x23]
+  0x80f0808: mov      x1, x21
+  0x80f080c: mov      x3, xzr
+  0x80f0810: mov      x22, x0
+  0x80f0814: bl       #0x5559b40   ; call 0x5559b40 <CommandLine.ToString @0x5559b40>
+  0x80f0818: ldr      x0, [x24]
+  0x80f081c: bl       #0x3cc7be4   ; call 0x3cc7be4
+  0x80f0820: mov      w1, #3
+  0x80f0824: mov      w2, #0x2db
+  0x80f0828: mov      w3, #0x2da4
+  0x80f082c: mov      x4, x22
+  0x80f0830: mov      x5, x19
+  0x80f0834: mov      x21, x0
+  0x80f0838: bl       #0x80f08c0   ; call 0x80f08c0 <WeaponTarget..ctor @0x80f08c0>
+  0x80f083c: ldr      w10, [x20, #0x1c]
+  0x80f0840: ldr      x8, [x20, #0x10]
+  0x80f0844: ldr      x9, [x26]
+  0x80f0848: add      w10, w10, #1
+  0x80f084c: str      w10, [x20, #0x1c]
+  0x80f0850: cbz      x8, #0x80f08b4
+  0x80f0854: ldrsw    x10, [x20, #0x18]
+  0x80f0858: ldr      w11, [x8, #0x18]
+  0x80f085c: cmp      w10, w11
+  0x80f0860: b.hs     #0x80f0880
+  0x80f0864: add      x0, x8, x10, lsl #3
+  0x80f0868: add      w9, w10, #1
+  0x80f086c: mov      x1, x21
+  0x80f0870: str      w9, [x20, #0x18]
+  0x80f0874: str      x21, [x0, #0x20]!
+  0x80f0878: bl       #0x3cc78ec   ; call 0x3cc78ec
+  0x80f087c: b        #0x80f0898
+  0x80f0880: ldr      x8, [x9, #0x20]
+  0x80f0884: mov      x0, x20
+  0x80f0888: mov      x1, x21
+  0x80f088c: ldr      x8, [x8, #0xc0]
+  0x80f0890: ldr      x2, [x8, #0x70]
+  0x80f0894: bl       #0x59ad75c   ; call 0x59ad75c <CommandLine.ToString @0x59ad75c>
+  0x80f0898: mov      x0, x20
+  0x80f089c: ldp      x20, x19, [sp, #0x40]
+  0x80f08a0: ldp      x22, x21, [sp, #0x30]
+  0x80f08a4: ldp      x24, x23, [sp, #0x20]
+  0x80f08a8: ldp      x26, x25, [sp, #0x10]
+  0x80f08ac: ldr      x30, [sp], #0x50
+  0x80f08b0: ret      
+
+===== WeaponStatsFactory.<CreateTargets>b__0 =====
+VA 0x80f0c4c  file 0x80ecc4c  body<=0x110 bytes
+  0x80f0c4c: ldr      x8, [x0, #0x10]
+  0x80f0c50: cbz      x8, #0x80f0c64
+  0x80f0c54: mov      x0, x1
+  0x80f0c58: mov      x1, x8
+  0x80f0c5c: mov      w2, #1
+  0x80f0c60: b        #0x80f01b8
+  0x80f0c64: mov      w0, wzr
+  0x80f0c68: ret      
+
+===== WeaponStatsFactory.<CreateTargets>b__1 =====
+VA 0x80f0c6c  file 0x80ecc6c  body<=0xf0 bytes
+  0x80f0c6c: stp      x30, x19, [sp, #-0x10]!
+  0x80f0c70: ldr      x8, [x0, #0x10]
+  0x80f0c74: cbz      x8, #0x80f0cac
+  0x80f0c78: mov      x19, x0
+  0x80f0c7c: mov      x0, x1
+  0x80f0c80: mov      x1, x8
+  0x80f0c84: mov      w2, #1
+  0x80f0c88: bl       #0x80f01b8   ; call 0x80f01b8 <WeaponStatsFactory.HasAiming @0x80f01b8>
+  0x80f0c8c: tbz      w0, #0, #0x80f0cac
+  0x80f0c90: ldr      x8, [x19, #0x10]
+  0x80f0c94: cbz      x8, #0x80f0cb8
+  0x80f0c98: ldr      w8, [x8, #0x10]
+  0x80f0c9c: and      w8, w8, #0xfffffffd
+  0x80f0ca0: cmp      w8, #0x1f4
+  0x80f0ca4: cset     w0, ne
+  0x80f0ca8: b        #0x80f0cb0
+  0x80f0cac: mov      w0, wzr
+  0x80f0cb0: ldp      x30, x19, [sp], #0x10
+  0x80f0cb4: ret      
+
+===== WeaponStatsFactory.<CreateTargets>b__2 =====
+VA 0x80f0cbc  file 0x80eccbc  body<=0xa0 bytes
+  0x80f0cbc: ldr      x8, [x0, #0x10]
+  0x80f0cc0: cbz      x8, #0x80f0cd4
+  0x80f0cc4: mov      x0, x1
+  0x80f0cc8: mov      x1, x8
+  0x80f0ccc: mov      w2, #4
+  0x80f0cd0: b        #0x80f01b8
+  0x80f0cd4: mov      w0, wzr
+  0x80f0cd8: ret      
+
+===== WeaponStatsFactory.<CreateTargets>b__3 =====
+VA 0x80f0cdc  file 0x80eccdc  body<=0x80 bytes
+  0x80f0cdc: ldr      x8, [x0, #0x10]
+  0x80f0ce0: cbz      x8, #0x80f0cf4
+  0x80f0ce4: mov      x0, x1
+  0x80f0ce8: mov      x1, x8
+  0x80f0cec: mov      w2, #0x20
+  0x80f0cf0: b        #0x80f01b8
+  0x80f0cf4: mov      w0, wzr
+  0x80f0cf8: ret      
+
+===== WeaponStatsFactory.<CreateTargets>b__4 =====
+VA 0x80f0cfc  file 0x80eccfc  body<=0x60 bytes
+  0x80f0cfc: ldr      x8, [x0, #0x10]
+  0x80f0d00: cbz      x8, #0x80f0d14
+  0x80f0d04: mov      x0, x1
+  0x80f0d08: mov      x1, x8
+  0x80f0d0c: mov      w2, #0x10
+  0x80f0d10: b        #0x80f01b8
+  0x80f0d14: mov      w0, wzr
+  0x80f0d18: ret      
+
+===== WeaponStatsFactory.<CreateTargets>b__5 =====
+VA 0x80f0d1c  file 0x80ecd1c  body<=0x40 bytes
+  0x80f0d1c: ldr      x8, [x0, #0x10]
+  0x80f0d20: cbz      x8, #0x80f0d34
+  0x80f0d24: mov      x0, x1
+  0x80f0d28: mov      x1, x8
+  0x80f0d2c: mov      w2, #8
+  0x80f0d30: b        #0x80f01b8
+  0x80f0d34: mov      w0, wzr
+  0x80f0d38: ret      
+
+===== WeaponStatsFactory.<CreateTargets>b__6 =====
+VA 0x80f0d3c  file 0x80ecd3c  body<=0x20 bytes
+  0x80f0d3c: ldr      x8, [x0, #0x10]
+  0x80f0d40: cbz      x8, #0x80f0d54
+  0x80f0d44: mov      x0, x1
+  0x80f0d48: mov      x1, x8
+  0x80f0d4c: mov      w2, #2
+  0x80f0d50: b        #0x80f01b8
+  0x80f0d54: mov      w0, wzr
+  0x80f0d58: ret      
+
+===== WeaponTarget..ctor(bool) =====
+VA 0x80f2018  file 0x80ee018  body<=0x10c bytes
+  0x80f2018: stp      x30, x27, [sp, #-0x50]!
+  0x80f201c: stp      x26, x25, [sp, #0x10]
+  0x80f2020: stp      x24, x23, [sp, #0x20]
+  0x80f2024: stp      x22, x21, [sp, #0x30]
+  0x80f2028: stp      x20, x19, [sp, #0x40]
+  0x80f202c: adrp     x25, #0x9d22000
+  0x80f2030: adrp     x26, #0x96ef000
+  0x80f2034: mov      x22, x5
+  0x80f2038: ldrb     w8, [x25, #0xabf]
+  0x80f203c: ldr      x26, [x26, #0x9e8]
+  0x80f2040: mov      w24, w4
+  0x80f2044: mov      w20, w3
+  0x80f2048: mov      w21, w2
+  0x80f204c: mov      w23, w1
+  0x80f2050: mov      x19, x0
+  0x80f2054: tbnz     w8, #0, #0x80f2084
+  0x80f2058: adrp     x0, #0x96d9000
+  0x80f205c: ldr      x0, [x0, #0x18]
+  0x80f2060: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80f2064: adrp     x0, #0x96ef000
+  0x80f2068: ldr      x0, [x0, #0x9f0]
+  0x80f206c: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80f2070: adrp     x0, #0x96ef000
+  0x80f2074: ldr      x0, [x0, #0x9e8]
+  0x80f2078: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80f207c: mov      w8, #1
+  0x80f2080: strb     w8, [x25, #0xabf]
+  0x80f2084: ldr      x0, [x26]
+  0x80f2088: bl       #0x3cc7be4   ; call 0x3cc7be4
+  0x80f208c: mov      x1, xzr
+  0x80f2090: mov      x25, x0
+  0x80f2094: bl       #0x8f91cdc   ; call 0x8f91cdc <Object..ctor @0x8f91cdc>
+  0x80f2098: cbz      x25, #0x80f2120
+  0x80f209c: adrp     x26, #0x96d9000
+  0x80f20a0: adrp     x27, #0x96ef000
+  0x80f20a4: and      w8, w24, #1
+  0x80f20a8: ldr      x26, [x26, #0x18]
+  0x80f20ac: ldr      x27, [x27, #0x9f0]
+  0x80f20b0: mov      x0, x19
+  0x80f20b4: mov      x1, xzr
+  0x80f20b8: strb     w8, [x25, #0x10]
+  0x80f20bc: bl       #0x8f91cdc   ; call 0x8f91cdc <Object..ctor @0x8f91cdc>
+  0x80f20c0: mov      x0, x19
+  0x80f20c4: mov      x1, x22
+  0x80f20c8: str      w23, [x19, #0x18]
+  0x80f20cc: str      x22, [x0, #0x28]!
+  0x80f20d0: bl       #0x3cc78ec   ; call 0x3cc78ec
+  0x80f20d4: sxth     w8, w21
+  0x80f20d8: sxth     w9, w20
+  0x80f20dc: ldr      x0, [x26]
+  0x80f20e0: stp      w8, w9, [x19, #0x1c]
+  0x80f20e4: bl       #0x3cc7be4   ; call 0x3cc7be4
+  0x80f20e8: ldr      x2, [x27]
+  0x80f20ec: mov      x1, x25
+  0x80f20f0: mov      x3, xzr
+  0x80f20f4: mov      x20, x0
+  0x80f20f8: bl       #0x5559b40   ; call 0x5559b40 <CommandLine.ToString @0x5559b40>
+  0x80f20fc: str      x20, [x19, #0x10]!
+  0x80f2100: mov      x0, x19
+  0x80f2104: mov      x1, x20
+  0x80f2108: ldp      x20, x19, [sp, #0x40]
+  0x80f210c: ldp      x22, x21, [sp, #0x30]
+  0x80f2110: ldp      x24, x23, [sp, #0x20]
+  0x80f2114: ldp      x26, x25, [sp, #0x10]
+  0x80f2118: ldp      x30, x27, [sp], #0x50
+  0x80f211c: b        #0x3cc78ec
+  0x80f2120: bl       #0x3cc7bf4   ; call 0x3cc7bf4
+
+===== WeaponTarget..ctor(func) =====
+VA 0x80f08c0  file 0x80ec8c0  body<=0x70 bytes
+  0x80f08c0: str      x30, [sp, #-0x40]!
+  0x80f08c4: stp      x24, x23, [sp, #0x10]
+  0x80f08c8: stp      x22, x21, [sp, #0x20]
+  0x80f08cc: stp      x20, x19, [sp, #0x30]
+  0x80f08d0: mov      w23, w1
+  0x80f08d4: mov      x1, xzr
+  0x80f08d8: mov      x19, x5
+  0x80f08dc: mov      x20, x4
+  0x80f08e0: mov      w21, w3
+  0x80f08e4: mov      w22, w2
+  0x80f08e8: mov      x24, x0
+  0x80f08ec: bl       #0x8f91cdc   ; call 0x8f91cdc <Object..ctor @0x8f91cdc>
+  0x80f08f0: sxth     w8, w22
+  0x80f08f4: sxth     w9, w21
+  0x80f08f8: mov      x0, x24
+  0x80f08fc: mov      x1, x20
+  0x80f0900: str      x20, [x0, #0x10]!
+  0x80f0904: stp      w23, w8, [x24, #0x18]
+  0x80f0908: str      w9, [x24, #0x20]
+  0x80f090c: bl       #0x3cc78ec   ; call 0x3cc78ec
+  0x80f0910: str      x19, [x24, #0x28]!
+  0x80f0914: mov      x0, x24
+  0x80f0918: mov      x1, x19
+  0x80f091c: ldp      x20, x19, [sp, #0x30]
+  0x80f0920: ldp      x22, x21, [sp, #0x20]
+  0x80f0924: ldp      x24, x23, [sp, #0x10]
+  0x80f0928: ldr      x30, [sp], #0x40
+  0x80f092c: b        #0x3cc78ec
+
+===== WeaponTarget.GetState =====
+VA 0x80f212c  file 0x80ee12c  body<=0x28 bytes
+  0x80f212c: ldr      x8, [x0, #0x10]
+  0x80f2130: cbz      x8, #0x80f2144
+  0x80f2134: ldr      x0, [x8, #0x40]
+  0x80f2138: ldr      x2, [x8, #0x28]
+  0x80f213c: ldr      x3, [x8, #0x18]
+  0x80f2140: br       x3
+  0x80f2144: str      x30, [sp, #-0x10]!
+  0x80f2148: bl       #0x3cc7bf4   ; call 0x3cc7bf4
+  0x80f214c: ldrb     w0, [x0, #0x10]
+  0x80f2150: ret      
+
+==============================================================================
+PART C — whole-file direct-BL xref (call-site attribution via dump.cs index)
+==============================================================================
+
+--- WeaponType.get_HitBonus (0x45B64DC): 0 direct call site(s)
+
+--- WeaponType.set_HitBonus (0x45B64E4): 0 direct call site(s)
+
+--- WeaponType.get_AntiAirOnly (0x45B6274): 0 direct call site(s)
+
+--- WeaponType.canBombard (0x45B6268): 0 direct call site(s)
+
+--- WeaponType.get_ConeFire (0x45B621C): 0 direct call site(s)
+
+--- WeaponType.usingObjTerritory (0x45B622C): 0 direct call site(s)
+
+--- WeaponType.get_AirAiming (0x45B636C): 0 direct call site(s)
+
+--- WeaponType.get_ShellType (0x45B64EC): 0 direct call site(s)
+
+--- WeaponType.get_Priority (0x45B65AC): 0 direct call site(s)
+
+--- WeaponType.get_Aiming (0x45B659C): 0 direct call site(s)
+
+--- WeaponType.get_WalkingShot (0x45B65BC): 0 direct call site(s)
+
+--- WeaponType.get_DamagePriority (0x45B645C): 0 direct call site(s)
+
+--- WeaponType.get_ExplosionDecr (0x45B64AC): 0 direct call site(s)
+
+--- WeaponType.get_ExplosionRadius (0x45B64BC): 0 direct call site(s)
+
+--- WeaponType.init (0x45B2E6C): 3 direct call site(s)
+  bl from va 0x458ecf4 in BuildingLevelType.init (fn va 0x458ec30)
+  bl from va 0x45b2b80 in UnitStateType.init (fn va 0x45b2a2c)
+  bl from va 0x45b3ef4 in UnitType.abilityWeaponInit (fn va 0x45b3e0c)
+
+--- WeaponType.tuning (0x45B61C8): 0 direct call site(s)
+
+--- WeaponStatsFactory.CreateTargets (0x80F02E0): 0 direct call site(s)
+
+--- WeaponTarget..ctor(bool) (0x80F2018): 7 direct call site(s)
+  bl from va 0x7fe6c5c in MineStatsFactory.CreateTargets (fn va 0x7fe6ab0)
+  bl from va 0x7fe6cec in MineStatsFactory.CreateTargets (fn va 0x7fe6ab0)
+  bl from va 0x7fe6d70 in MineStatsFactory.CreateTargets (fn va 0x7fe6ab0)
+  bl from va 0x7fe6df4 in MineStatsFactory.CreateTargets (fn va 0x7fe6ab0)
+  bl from va 0x7fe6e78 in MineStatsFactory.CreateTargets (fn va 0x7fe6ab0)
+  bl from va 0x7fe6efc in MineStatsFactory.CreateTargets (fn va 0x7fe6ab0)
+  bl from va 0x7fe6f80 in MineStatsFactory.CreateTargets (fn va 0x7fe6ab0)
+
+--- WeaponTarget..ctor(func) (0x80F08C0): 7 direct call site(s)
+  bl from va 0x80f0454 in WeaponStatsFactory.CreateTargets (fn va 0x80f02e0)
+  bl from va 0x80f0504 in WeaponStatsFactory.CreateTargets (fn va 0x80f02e0)
+  bl from va 0x80f05a8 in WeaponStatsFactory.CreateTargets (fn va 0x80f02e0)
+  bl from va 0x80f064c in WeaponStatsFactory.CreateTargets (fn va 0x80f02e0)
+  bl from va 0x80f06f0 in WeaponStatsFactory.CreateTargets (fn va 0x80f02e0)
+  bl from va 0x80f0794 in WeaponStatsFactory.CreateTargets (fn va 0x80f02e0)
+  bl from va 0x80f0838 in WeaponStatsFactory.CreateTargets (fn va 0x80f02e0)
+
+--- WeaponTarget.GetState (0x80F212C): 0 direct call site(s)
+
+--- MineType.get_ExplosionDecr (0x459D724): 0 direct call site(s)
+
+--- GUIMainUpgradeHelperFunctions.WeaponStaticAccuracy (0x7FCEFF8): 1 direct call site(s)
+  bl from va 0x80ecdd0 in WeaponAccuracyStat.CalcStaticValue (fn va 0x80ec9a8)
+
+--- GUIMainUpgradeHelperFunctions.WeaponDynamicAccuracy (0x7FCF0B8): 1 direct call site(s)
+  bl from va 0x80ed3ac in WeaponAccuracyStat.CalcDynamicValue (fn va 0x80ece08)
+
+==============================================================================
+PART D — where does the accuracy helpers' weaponType argument come from?
+Disassembly of each direct caller; look for WeaponType field loads
+(shell_type @0x78 short; hit_bonus @0x48 sbyte; walking_shot @0x8A).
+==============================================================================
+
+--- callers of GUIMainUpgradeHelperFunctions.WeaponStaticAccuracy: 1 site(s)
+
+  caller: WeaponAccuracyStat.CalcStaticValue (fn va 0x80ec9a8) — call site 0x80ecdd0
+  
+===== WeaponAccuracyStat.CalcStaticValue =====
+  VA 0x80ec9a8  file 0x80e89a8  body<=0x460 bytes
+    0x80ec9a8: stp      d13, d12, [sp, #-0x80]!
+    0x80ec9ac: stp      d11, d10, [sp, #0x10]
+    0x80ec9b0: stp      d9, d8, [sp, #0x20]
+    0x80ec9b4: stp      x30, x27, [sp, #0x30]
+    0x80ec9b8: stp      x26, x25, [sp, #0x40]
+    0x80ec9bc: stp      x24, x23, [sp, #0x50]
+    0x80ec9c0: stp      x22, x21, [sp, #0x60]
+    0x80ec9c4: stp      x20, x19, [sp, #0x70]
+    0x80ec9c8: adrp     x21, #0x9d22000
+    0x80ec9cc: mov      x19, x1
+    0x80ec9d0: mov      x20, x0
+    0x80ec9d4: ldrb     w8, [x21, #0xa7f]
+    0x80ec9d8: tbnz     w8, #0, #0x80eca38
+    0x80ec9dc: adrp     x0, #0x96ef000
+    0x80ec9e0: ldr      x0, [x0, #0x758]
+    0x80ec9e4: bl       #0x3cc7948   ; call 0x3cc7948
+    0x80ec9e8: adrp     x0, #0x96e9000
+    0x80ec9ec: ldr      x0, [x0, #0x7e0]
+    0x80ec9f0: bl       #0x3cc7948   ; call 0x3cc7948
+    0x80ec9f4: adrp     x0, #0x96e9000
+    0x80ec9f8: ldr      x0, [x0, #0x800]
+    0x80ec9fc: bl       #0x3cc7948   ; call 0x3cc7948
+    0x80eca00: adrp     x0, #0x96e9000
+    0x80eca04: ldr      x0, [x0, #0x808]
+    0x80eca08: bl       #0x3cc7948   ; call 0x3cc7948
+    0x80eca0c: adrp     x0, #0x96e9000
+    0x80eca10: ldr      x0, [x0, #0x810]
+    0x80eca14: bl       #0x3cc7948   ; call 0x3cc7948
+    0x80eca18: adrp     x0, #0x9699000
+    0x80eca1c: ldr      x0, [x0, #0xb08]
+    0x80eca20: bl       #0x3cc7948   ; call 0x3cc7948
+    0x80eca24: adrp     x0, #0x96e9000
+    0x80eca28: ldr      x0, [x0, #0x820]
+    0x80eca2c: bl       #0x3cc7948   ; call 0x3cc7948
+    0x80eca30: mov      w8, #1
+    0x80eca34: strb     w8, [x21, #0xa7f]
+    0x80eca38: cbz      x19, #0x80ece04
+    0x80eca3c: adrp     x24, #0x96ef000
+    0x80eca40: adrp     x10, #0x9699000
+    0x80eca44: adrp     x26, #0x96e9000
+    0x80eca48: ldr      x24, [x24, #0x758]
+    0x80eca4c: ldr      x10, [x10, #0xb08]
+    0x80eca50: ldr      x8, [x19]
+    0x80eca54: ldr      x26, [x26, #0x7e0]
+    0x80eca58: ldr      x21, [x20, #0x10]
+    0x80eca5c: ldr      x23, [x24]
+    0x80eca60: ldrh     w9, [x8, #0x12e]
+    0x80eca64: ldr      x22, [x10]
+    0x80eca68: ldr      x1, [x23, #0x20]
+    0x80eca6c: ldrh     w2, [x23, #0x50]
+    0x80eca70: cbz      x9, #0x80eca94
+    0x80eca74: ldr      x10, [x8, #0xb0]
+    0x80eca78: add      x10, x10, #8   ; -> va 0x9699008
+    0x80eca7c: ldur     x11, [x10, #-8]
+    0x80eca80: cmp      x11, x1
+    0x80eca84: b.eq     #0x80ecaa0
+    0x80eca88: subs     x9, x9, #1
+    0x80eca8c: add      x10, x10, #0x10   ; -> va 0x9699010
+    0x80eca90: b.ne     #0x80eca7c
+    0x80eca94: mov      x0, x19
+    0x80eca98: bl       #0x3d00398   ; call 0x3d00398
+    0x80eca9c: b        #0x80ecab0
+    0x80ecaa0: ldr      w9, [x10]
+    0x80ecaa4: add      w9, w9, w2
+    0x80ecaa8: add      x8, x8, w9, sxtw #4
+    0x80ecaac: add      x0, x8, #0x138
+    0x80ecab0: adrp     x25, #0x96e9000
+    0x80ecab4: mov      x1, x23
+    0x80ecab8: ldr      x25, [x25, #0x808]
+    0x80ecabc: ldr      x0, [x0, #8]
+    0x80ecac0: bl       #0x3cc7ac4   ; call 0x3cc7ac4
+    0x80ecac4: ldr      x8, [x0, #8]
+    0x80ecac8: mov      x3, x0
+    0x80ecacc: mov      x0, x19
+    0x80ecad0: mov      x1, x22
+    0x80ecad4: mov      x2, x21
+    0x80ecad8: blr      x8
+    0x80ecadc: ldr      x8, [x19]
+    0x80ecae0: ldr      x23, [x24]
+    0x80ecae4: fmov     s8, s0
+    0x80ecae8: ldr      x21, [x20, #0x10]
+    0x80ecaec: ldr      x22, [x26]
+    0x80ecaf0: ldrh     w9, [x8, #0x12e]
+    0x80ecaf4: ldr      x1, [x23, #0x20]
+    0x80ecaf8: ldrh     w2, [x23, #0x50]
+    0x80ecafc: cbz      x9, #0x80ecb20
+    0x80ecb00: ldr      x10, [x8, #0xb0]
+    0x80ecb04: add      x10, x10, #8   ; -> va 0x9699008
+    0x80ecb08: ldur     x11, [x10, #-8]
+    0x80ecb0c: cmp      x11, x1
+    0x80ecb10: b.eq     #0x80ecb2c
+    0x80ecb14: subs     x9, x9, #1
+    0x80ecb18: add      x10, x10, #0x10   ; -> va 0x9699010
+    0x80ecb1c: b.ne     #0x80ecb08
+    0x80ecb20: mov      x0, x19
+    0x80ecb24: bl       #0x3d00398   ; call 0x3d00398
+    0x80ecb28: b        #0x80ecb3c
+    0x80ecb2c: ldr      w9, [x10]
+    0x80ecb30: add      w9, w9, w2
+    0x80ecb34: add      x8, x8, w9, sxtw #4
+    0x80ecb38: add      x0, x8, #0x138
+    0x80ecb3c: adrp     x26, #0x96e9000
+    0x80ecb40: mov      x1, x23
+    0x80ecb44: ldr      x26, [x26, #0x800]
+    0x80ecb48: ldr      x0, [x0, #8]
+    0x80ecb4c: bl       #0x3cc7ac4   ; call 0x3cc7ac4
+    0x80ecb50: ldr      x8, [x0, #8]
+    0x80ecb54: mov      x3, x0
+    0x80ecb58: mov      x0, x19
+    0x80ecb5c: mov      x1, x22
+    0x80ecb60: mov      x2, x21
+    0x80ecb64: blr      x8
+    0x80ecb68: ldr      x8, [x19]
+    0x80ecb6c: ldr      x23, [x24]
+    0x80ecb70: fmov     s9, s0
+    0x80ecb74: ldr      x21, [x20, #0x10]
+    0x80ecb78: ldr      x22, [x25]
+    0x80ecb7c: ldrh     w9, [x8, #0x12e]
+    0x80ecb80: ldr      x1, [x23, #0x20]
+    0x80ecb84: ldrh     w2, [x23, #0x50]
+    0x80ecb88: cbz      x9, #0x80ecbac
+    0x80ecb8c: ldr      x10, [x8, #0xb0]
+    0x80ecb90: add      x10, x10, #8   ; -> va 0x9699008
+    0x80ecb94: ldur     x11, [x10, #-8]
+    0x80ecb98: cmp      x11, x1
+    0x80ecb9c: b.eq     #0x80ecbb8
+    0x80ecba0: subs     x9, x9, #1
+    0x80ecba4: add      x10, x10, #0x10   ; -> va 0x9699010
+    0x80ecba8: b.ne     #0x80ecb94
+    0x80ecbac: mov      x0, x19
+    0x80ecbb0: bl       #0x3d00398   ; call 0x3d00398
+    0x80ecbb4: b        #0x80ecbc8
+    0x80ecbb8: ldr      w9, [x10]
+    0x80ecbbc: add      w9, w9, w2
+    0x80ecbc0: add      x8, x8, w9, sxtw #4
+    0x80ecbc4: add      x0, x8, #0x138
+    0x80ecbc8: adrp     x27, #0x96e9000
+    0x80ecbcc: mov      x1, x23
+    0x80ecbd0: ldr      x27, [x27, #0x810]
+    0x80ecbd4: ldr      x0, [x0, #8]
+    0x80ecbd8: bl       #0x3cc7ac4   ; call 0x3cc7ac4
+    0x80ecbdc: ldr      x8, [x0, #8]
+    0x80ecbe0: mov      x3, x0
+    0x80ecbe4: mov      x0, x19
+    0x80ecbe8: mov      x1, x22
+    0x80ecbec: mov      x2, x21
+    0x80ecbf0: blr      x8
+    0x80ecbf4: ldr      x8, [x19]
+    0x80ecbf8: ldr      x23, [x24]
+    0x80ecbfc: fmov     s10, s0
+    0x80ecc00: ldr      x21, [x20, #0x10]
+    0x80ecc04: ldr      x22, [x26]
+    0x80ecc08: ldrh     w9, [x8, #0x12e]
+    0x80ecc0c: ldr      x1, [x23, #0x20]
+    0x80ecc10: ldrh     w2, [x23, #0x50]
+    0x80ecc14: cbz      x9, #0x80ecc38
+    0x80ecc18: ldr      x10, [x8, #0xb0]
+    0x80ecc1c: add      x10, x10, #8   ; -> va 0x9699008
+    0x80ecc20: ldur     x11, [x10, #-8]
+    0x80ecc24: cmp      x11, x1
+    0x80ecc28: b.eq     #0x80ecc44
+    0x80ecc2c: subs     x9, x9, #1
+    0x80ecc30: add      x10, x10, #0x10   ; -> va 0x9699010
+    0x80ecc34: b.ne     #0x80ecc20
+    0x80ecc38: mov      x0, x19
+    0x80ecc3c: bl       #0x3d00398   ; call 0x3d00398
+    0x80ecc40: b        #0x80ecc54
+    0x80ecc44: ldr      w9, [x10]
+    0x80ecc48: add      w9, w9, w2
+    0x80ecc4c: add      x8, x8, w9, sxtw #4
+    0x80ecc50: add      x0, x8, #0x138
+    0x80ecc54: adrp     x25, #0x96e9000
+    0x80ecc58: mov      x1, x23
+    0x80ecc5c: ldr      x25, [x25, #0x820]
+    0x80ecc60: ldr      x0, [x0, #8]
+    0x80ecc64: bl       #0x3cc7ac4   ; call 0x3cc7ac4
+    0x80ecc68: ldr      x8, [x0, #8]
+    0x80ecc6c: mov      x3, x0
+    0x80ecc70: mov      x0, x19
+    0x80ecc74: mov      x1, x22
+    0x80ecc78: mov      x2, x21
+    0x80ecc7c: blr      x8
+    0x80ecc80: ldr      x8, [x19]
+    0x80ecc84: ldr      x23, [x24]
+    0x80ecc88: fmov     s11, s0
+    0x80ecc8c: ldr      x21, [x20, #0x10]
+    0x80ecc90: ldr      x22, [x27]
+    0x80ecc94: ldrh     w9, [x8, #0x12e]
+    0x80ecc98: ldr      x1, [x23, #0x20]
+    0x80ecc9c: ldrh     w2, [x23, #0x50]
+    0x80ecca0: cbz      x9, #0x80eccc4
+    0x80ecca4: ldr      x10, [x8, #0xb0]
+    0x80ecca8: add      x10, x10, #8   ; -> va 0x9699008
+    0x80eccac: ldur     x11, [x10, #-8]
+    0x80eccb0: cmp      x11, x1
+    0x80eccb4: b.eq     #0x80eccd0
+    0x80eccb8: subs     x9, x9, #1
+    0x80eccbc: add      x10, x10, #0x10   ; -> va 0x9699010
+    0x80eccc0: b.ne     #0x80eccac
+    0x80eccc4: mov      x0, x19
+    0x80eccc8: bl       #0x3d00398   ; call 0x3d00398
+    0x80ecccc: b        #0x80ecce0
+    0x80eccd0: ldr      w9, [x10]
+    0x80eccd4: add      w9, w9, w2
+    0x80eccd8: add      x8, x8, w9, sxtw #4
+    0x80eccdc: add      x0, x8, #0x138
+    0x80ecce0: ldr      x0, [x0, #8]
+    0x80ecce4: mov      x1, x23
+    0x80ecce8: bl       #0x3cc7ac4   ; call 0x3cc7ac4
+    0x80eccec: ldr      x8, [x0, #8]
+    0x80eccf0: mov      x3, x0
+    0x80eccf4: mov      x0, x19
+    0x80eccf8: mov      x1, x22
+    0x80eccfc: mov      x2, x21
+    0x80ecd00: blr      x8
+    0x80ecd04: ldr      x8, [x19]
+    0x80ecd08: ldr      x22, [x24]
+    0x80ecd0c: fmov     s12, s0
+    0x80ecd10: ldr      x20, [x20, #0x10]
+    0x80ecd14: ldr      x21, [x25]
+    0x80ecd18: ldrh     w9, [x8, #0x12e]
+    0x80ecd1c: ldr      x1, [x22, #0x20]
+    0x80ecd20: ldrh     w2, [x22, #0x50]
+    0x80ecd24: cbz      x9, #0x80ecd48
+    0x80ecd28: ldr      x10, [x8, #0xb0]
+    0x80ecd2c: add      x10, x10, #8   ; -> va 0x9699008
+    0x80ecd30: ldur     x11, [x10, #-8]
+    0x80ecd34: cmp      x11, x1
+    0x80ecd38: b.eq     #0x80ecd54
+    0x80ecd3c: subs     x9, x9, #1
+    0x80ecd40: add      x10, x10, #0x10   ; -> va 0x9699010
+    0x80ecd44: b.ne     #0x80ecd30
+    0x80ecd48: mov      x0, x19
+    0x80ecd4c: bl       #0x3d00398   ; call 0x3d00398
+    0x80ecd50: b        #0x80ecd64
+    0x80ecd54: ldr      w9, [x10]
+    0x80ecd58: add      w9, w9, w2
+    0x80ecd5c: add      x8, x8, w9, sxtw #4
+    0x80ecd60: add      x0, x8, #0x138
+    0x80ecd64: mov      w8, #0x7f800000
+    0x80ecd68: fcvtzs   w9, s11
+    0x80ecd6c: fcvtzs   w10, s10
+    0x80ecd70: fmov     s13, w8
+    0x80ecd74: mov      w8, #-0x80000000
+    0x80ecd78: ldr      x0, [x0, #8]
+    0x80ecd7c: mov      x1, x22
+    0x80ecd80: fcmp     s11, s13
+    0x80ecd84: csel     w23, w8, w9, eq
+    0x80ecd88: fcmp     s10, s13
+    0x80ecd8c: csel     w24, w8, w10, eq
+    0x80ecd90: bl       #0x3cc7ac4   ; call 0x3cc7ac4
+    0x80ecd94: ldr      x8, [x0, #8]
+    0x80ecd98: mov      x3, x0
+    0x80ecd9c: mov      x0, x19
+    0x80ecda0: mov      x1, x21
+    0x80ecda4: mov      x2, x20
+    0x80ecda8: blr      x8
+    0x80ecdac: fcvtzs   w8, s8
+    0x80ecdb0: fmov     s2, s0
+    0x80ecdb4: mov      w1, w24
+    0x80ecdb8: fcmp     s8, s13
+    0x80ecdbc: fmov     s0, s9
+    0x80ecdc0: mov      w2, w23
+    0x80ecdc4: fmov     s1, s12
+    0x80ecdc8: mov      x3, xzr
+    0x80ecdcc: csel     w0, wzr, w8, eq
+    0x80ecdd0: bl       #0x7fceff8   ; call 0x7fceff8 <GUIMainUpgradeHelperFunctions.WeaponStaticAccuracy @0x7fceff8>
+    0x80ecdd4: mov      w8, #0x42c80000
+    0x80ecdd8: ldp      x20, x19, [sp, #0x70]
+    0x80ecddc: fmov     s1, w8
+    0x80ecde0: ldp      x22, x21, [sp, #0x60]
+    0x80ecde4: ldp      x24, x23, [sp, #0x50]
+    0x80ecde8: ldp      x26, x25, [sp, #0x40]
+    0x80ecdec: ldp      x30, x27, [sp, #0x30]
+    0x80ecdf0: fmul     s0, s0, s1
+    0x80ecdf4: ldp      d9, d8, [sp, #0x20]
+    0x80ecdf8: ldp      d11, d10, [sp, #0x10]
+    0x80ecdfc: ldp      d13, d12, [sp], #0x80
+    0x80ece00: ret      
+
+--- callers of GUIMainUpgradeHelperFunctions.WeaponDynamicAccuracy: 1 site(s)
+
+  caller: WeaponAccuracyStat.CalcDynamicValue (fn va 0x80ece08) — call site 0x80ed3ac
+  
+===== WeaponAccuracyStat.CalcDynamicValue =====
+  VA 0x80ece08  file 0x80e8e08  body<=0x750 bytes
+    0x80ece08: sub      sp, sp, #0xb0
+    0x80ece0c: stp      d15, d14, [sp, #0x10]
+    0x80ece10: stp      d13, d12, [sp, #0x20]
+    0x80ece14: stp      d11, d10, [sp, #0x30]
+    0x80ece18: stp      d9, d8, [sp, #0x40]
+    0x80ece1c: stp      x29, x30, [sp, #0x50]
+    0x80ece20: stp      x28, x27, [sp, #0x60]
+    0x80ece24: stp      x26, x25, [sp, #0x70]
+    0x80ece28: stp      x24, x23, [sp, #0x80]
+    0x80ece2c: stp      x22, x21, [sp, #0x90]
+    0x80ece30: stp      x20, x19, [sp, #0xa0]
+    0x80ece34: adrp     x21, #0x9d22000
+    0x80ece38: mov      x19, x1
+    0x80ece3c: mov      x20, x0
+    0x80ece40: ldrb     w8, [x21, #0xa80]
+    0x80ece44: tbnz     w8, #0, #0x80ecebc
+    0x80ece48: adrp     x0, #0x96ef000
+    0x80ece4c: ldr      x0, [x0, #0x758]
+    0x80ece50: bl       #0x3cc7948   ; call 0x3cc7948
+    0x80ece54: adrp     x0, #0x96e9000
+    0x80ece58: ldr      x0, [x0, #0x788]
+    0x80ece5c: bl       #0x3cc7948   ; call 0x3cc7948
+    0x80ece60: adrp     x0, #0x96e9000
+    0x80ece64: ldr      x0, [x0, #0x790]
+    0x80ece68: bl       #0x3cc7948   ; call 0x3cc7948
+    0x80ece6c: adrp     x0, #0x96e9000
+    0x80ece70: ldr      x0, [x0, #0x7e0]
+    0x80ece74: bl       #0x3cc7948   ; call 0x3cc7948
+    0x80ece78: adrp     x0, #0x96e9000
+    0x80ece7c: ldr      x0, [x0, #0x800]
+    0x80ece80: bl       #0x3cc7948   ; call 0x3cc7948
+    0x80ece84: adrp     x0, #0x96e9000
+    0x80ece88: ldr      x0, [x0, #0x808]
+    0x80ece8c: bl       #0x3cc7948   ; call 0x3cc7948
+    0x80ece90: adrp     x0, #0x96e9000
+    0x80ece94: ldr      x0, [x0, #0x810]
+    0x80ece98: bl       #0x3cc7948   ; call 0x3cc7948
+    0x80ece9c: adrp     x0, #0x9699000
+    0x80ecea0: ldr      x0, [x0, #0xb08]
+    0x80ecea4: bl       #0x3cc7948   ; call 0x3cc7948
+    0x80ecea8: adrp     x0, #0x96e9000
+    0x80eceac: ldr      x0, [x0, #0x820]
+    0x80eceb0: bl       #0x3cc7948   ; call 0x3cc7948
+    0x80eceb4: mov      w8, #1
+    0x80eceb8: strb     w8, [x21, #0xa80]
+    0x80ecebc: cbz      x19, #0x80ed3ec
+    0x80ecec0: adrp     x24, #0x96ef000
+    0x80ecec4: adrp     x10, #0x96e9000
+    0x80ecec8: adrp     x26, #0x96e9000
+    0x80ececc: ldr      x24, [x24, #0x758]
+    0x80eced0: ldr      x10, [x10, #0x790]
+    0x80eced4: ldr      x8, [x19]
+    0x80eced8: ldr      x26, [x26, #0x808]
+    0x80ecedc: ldr      x21, [x20, #0x10]
+    0x80ecee0: ldr      x23, [x24]
+    0x80ecee4: ldrh     w9, [x8, #0x12e]
+    0x80ecee8: ldr      x22, [x10]
+    0x80eceec: ldr      x1, [x23, #0x20]
+    0x80ecef0: ldrh     w2, [x23, #0x50]
+    0x80ecef4: cbz      x9, #0x80ecf18
+    0x80ecef8: ldr      x10, [x8, #0xb0]
+    0x80ecefc: add      x10, x10, #8   ; -> va 0x96e9008
+    0x80ecf00: ldur     x11, [x10, #-8]
+    0x80ecf04: cmp      x11, x1
+    0x80ecf08: b.eq     #0x80ecf24
+    0x80ecf0c: subs     x9, x9, #1
+    0x80ecf10: add      x10, x10, #0x10   ; -> va 0x96e9010
+    0x80ecf14: b.ne     #0x80ecf00
+    0x80ecf18: mov      x0, x19
+    0x80ecf1c: bl       #0x3d00398   ; call 0x3d00398
+    0x80ecf20: b        #0x80ecf34
+    0x80ecf24: ldr      w9, [x10]
+    0x80ecf28: add      w9, w9, w2
+    0x80ecf2c: add      x8, x8, w9, sxtw #4
+    0x80ecf30: add      x0, x8, #0x138
+    0x80ecf34: adrp     x25, #0x96e9000
+    0x80ecf38: mov      x1, x23
+    0x80ecf3c: ldr      x25, [x25, #0x7e0]
+    0x80ecf40: ldr      x0, [x0, #8]
+    0x80ecf44: bl       #0x3cc7ac4   ; call 0x3cc7ac4
+    0x80ecf48: ldr      x8, [x0, #8]
+    0x80ecf4c: mov      x3, x0
+    0x80ecf50: mov      x0, x19
+    0x80ecf54: mov      x1, x22
+    0x80ecf58: mov      x2, x21
+    0x80ecf5c: blr      x8
+    0x80ecf60: ldr      x8, [x19]
+    0x80ecf64: ldr      x23, [x24]
+    0x80ecf68: fmov     s8, s0
+    0x80ecf6c: ldr      x21, [x20, #0x10]
+    0x80ecf70: ldr      x22, [x26]
+    0x80ecf74: ldrh     w9, [x8, #0x12e]
+    0x80ecf78: ldr      x1, [x23, #0x20]
+    0x80ecf7c: ldrh     w2, [x23, #0x50]
+    0x80ecf80: cbz      x9, #0x80ecfa4
+    0x80ecf84: ldr      x10, [x8, #0xb0]
+    0x80ecf88: add      x10, x10, #8   ; -> va 0x96e9008
+    0x80ecf8c: ldur     x11, [x10, #-8]
+    0x80ecf90: cmp      x11, x1
+    0x80ecf94: b.eq     #0x80ecfb0
+    0x80ecf98: subs     x9, x9, #1
+    0x80ecf9c: add      x10, x10, #0x10   ; -> va 0x96e9010
+    0x80ecfa0: b.ne     #0x80ecf8c
+    0x80ecfa4: mov      x0, x19
+    0x80ecfa8: bl       #0x3d00398   ; call 0x3d00398
+    0x80ecfac: b        #0x80ecfc0
+    0x80ecfb0: ldr      w9, [x10]
+    0x80ecfb4: add      w9, w9, w2
+    0x80ecfb8: add      x8, x8, w9, sxtw #4
+    0x80ecfbc: add      x0, x8, #0x138
+    0x80ecfc0: adrp     x26, #0x9699000
+    0x80ecfc4: mov      x1, x23
+    0x80ecfc8: ldr      x26, [x26, #0xb08]
+    0x80ecfcc: ldr      x0, [x0, #8]
+    0x80ecfd0: bl       #0x3cc7ac4   ; call 0x3cc7ac4
+    0x80ecfd4: ldr      x8, [x0, #8]
+    0x80ecfd8: mov      x3, x0
+    0x80ecfdc: mov      x0, x19
+    0x80ecfe0: mov      x1, x22
+    0x80ecfe4: mov      x2, x21
+    0x80ecfe8: blr      x8
+    0x80ecfec: ldr      x8, [x19]
+    0x80ecff0: ldr      x23, [x24]
+    0x80ecff4: fmov     s9, s0
+    0x80ecff8: ldr      x21, [x20, #0x10]
+    0x80ecffc: ldr      x22, [x25]
+    0x80ed000: ldrh     w9, [x8, #0x12e]
+    0x80ed004: ldr      x1, [x23, #0x20]
+    0x80ed008: ldrh     w2, [x23, #0x50]
+    0x80ed00c: cbz      x9, #0x80ed030
+    0x80ed010: ldr      x10, [x8, #0xb0]
+    0x80ed014: add      x10, x10, #8   ; -> va 0x96e9008
+    0x80ed018: ldur     x11, [x10, #-8]
+    0x80ed01c: cmp      x11, x1
+    0x80ed020: b.eq     #0x80ed03c
+    0x80ed024: subs     x9, x9, #1
+    0x80ed028: add      x10, x10, #0x10   ; -> va 0x96e9010
+    0x80ed02c: b.ne     #0x80ed018
+    0x80ed030: mov      x0, x19
+    0x80ed034: bl       #0x3d00398   ; call 0x3d00398
+    0x80ed038: b        #0x80ed04c
+    0x80ed03c: ldr      w9, [x10]
+    0x80ed040: add      w9, w9, w2
+    0x80ed044: add      x8, x8, w9, sxtw #4
+    0x80ed048: add      x0, x8, #0x138
+    0x80ed04c: adrp     x25, #0x96e9000
+    0x80ed050: mov      x1, x23
+    0x80ed054: ldr      x25, [x25, #0x788]
+    0x80ed058: ldr      x0, [x0, #8]
+    0x80ed05c: bl       #0x3cc7ac4   ; call 0x3cc7ac4
+    0x80ed060: ldr      x8, [x0, #8]
+    0x80ed064: mov      x3, x0
+    0x80ed068: mov      x0, x19
+    0x80ed06c: mov      x1, x22
+    0x80ed070: mov      x2, x21
+    0x80ed074: blr      x8
+    0x80ed078: ldr      x8, [x19]
+    0x80ed07c: ldr      x23, [x24]
+    0x80ed080: fmov     s10, s0
+    0x80ed084: ldr      x21, [x20, #0x10]
+    0x80ed088: ldr      x22, [x26]
+    0x80ed08c: ldrh     w9, [x8, #0x12e]
+    0x80ed090: ldr      x1, [x23, #0x20]
+    0x80ed094: ldrh     w2, [x23, #0x50]
+    0x80ed098: cbz      x9, #0x80ed0bc
+    0x80ed09c: ldr      x10, [x8, #0xb0]
+    0x80ed0a0: add      x10, x10, #8   ; -> va 0x96e9008
+    0x80ed0a4: ldur     x11, [x10, #-8]
+    0x80ed0a8: cmp      x11, x1
+    0x80ed0ac: b.eq     #0x80ed0c8
+    0x80ed0b0: subs     x9, x9, #1
+    0x80ed0b4: add      x10, x10, #0x10   ; -> va 0x96e9010
+    0x80ed0b8: b.ne     #0x80ed0a4
+    0x80ed0bc: mov      x0, x19
+    0x80ed0c0: bl       #0x3d00398   ; call 0x3d00398
+    0x80ed0c4: b        #0x80ed0d8
+    0x80ed0c8: ldr      w9, [x10]
+    0x80ed0cc: add      w9, w9, w2
+    0x80ed0d0: add      x8, x8, w9, sxtw #4
+    0x80ed0d4: add      x0, x8, #0x138
+    0x80ed0d8: adrp     x26, #0x96e9000
+    0x80ed0dc: mov      x1, x23
+    0x80ed0e0: ldr      x26, [x26, #0x800]
+    0x80ed0e4: ldr      x0, [x0, #8]
+    0x80ed0e8: bl       #0x3cc7ac4   ; call 0x3cc7ac4
+    0x80ed0ec: ldr      x8, [x0, #8]
+    0x80ed0f0: mov      x3, x0
+    0x80ed0f4: mov      x0, x19
+    0x80ed0f8: mov      x1, x22
+    0x80ed0fc: mov      x2, x21
+    0x80ed100: blr      x8
+    0x80ed104: ldr      x8, [x19]
+    0x80ed108: ldr      x23, [x24]
+    0x80ed10c: fmov     s11, s0
+    0x80ed110: ldr      x21, [x20, #0x10]
+    0x80ed114: ldr      x22, [x25]
+    0x80ed118: ldrh     w9, [x8, #0x12e]
+    0x80ed11c: ldr      x1, [x23, #0x20]
+    0x80ed120: ldrh     w2, [x23, #0x50]
+    0x80ed124: cbz      x9, #0x80ed148
+    0x80ed128: ldr      x10, [x8, #0xb0]
+    0x80ed12c: add      x10, x10, #8   ; -> va 0x96e9008
+    0x80ed130: ldur     x11, [x10, #-8]
+    0x80ed134: cmp      x11, x1
+    0x80ed138: b.eq     #0x80ed154
+    0x80ed13c: subs     x9, x9, #1
+    0x80ed140: add      x10, x10, #0x10   ; -> va 0x96e9010
+    0x80ed144: b.ne     #0x80ed130
+    0x80ed148: mov      x0, x19
+    0x80ed14c: bl       #0x3d00398   ; call 0x3d00398
+    0x80ed150: b        #0x80ed164
+    0x80ed154: ldr      w9, [x10]
+    0x80ed158: add      w9, w9, w2
+    0x80ed15c: add      x8, x8, w9, sxtw #4
+    0x80ed160: add      x0, x8, #0x138
+    0x80ed164: adrp     x25, #0x96e9000
+    0x80ed168: mov      x1, x23
+    0x80ed16c: ldr      x25, [x25, #0x810]
+    0x80ed170: ldr      x0, [x0, #8]
+    0x80ed174: bl       #0x3cc7ac4   ; call 0x3cc7ac4
+    0x80ed178: ldr      x8, [x0, #8]
+    0x80ed17c: mov      x3, x0
+    0x80ed180: mov      x0, x19
+    0x80ed184: mov      x1, x22
+    0x80ed188: mov      x2, x21
+    0x80ed18c: blr      x8
+    0x80ed190: ldr      x8, [x19]
+    0x80ed194: ldr      x23, [x24]
+    0x80ed198: fmov     s12, s0
+    0x80ed19c: ldr      x21, [x20, #0x10]
+    0x80ed1a0: ldr      x22, [x26]
+    0x80ed1a4: ldrh     w9, [x8, #0x12e]
+    0x80ed1a8: ldr      x1, [x23, #0x20]
+    0x80ed1ac: ldrh     w2, [x23, #0x50]
+    0x80ed1b0: cbz      x9, #0x80ed1d4
+    0x80ed1b4: ldr      x10, [x8, #0xb0]
+    0x80ed1b8: add      x10, x10, #8   ; -> va 0x96e9008
+    0x80ed1bc: ldur     x11, [x10, #-8]
+    0x80ed1c0: cmp      x11, x1
+    0x80ed1c4: b.eq     #0x80ed1e0
+    0x80ed1c8: subs     x9, x9, #1
+    0x80ed1cc: add      x10, x10, #0x10   ; -> va 0x96e9010
+    0x80ed1d0: b.ne     #0x80ed1bc
+    0x80ed1d4: mov      x0, x19
+    0x80ed1d8: bl       #0x3d00398   ; call 0x3d00398
+    0x80ed1dc: b        #0x80ed1f0
+    0x80ed1e0: ldr      w9, [x10]
+    0x80ed1e4: add      w9, w9, w2
+    0x80ed1e8: add      x8, x8, w9, sxtw #4
+    0x80ed1ec: add      x0, x8, #0x138
+    0x80ed1f0: adrp     x26, #0x96e9000
+    0x80ed1f4: mov      x1, x23
+    0x80ed1f8: ldr      x26, [x26, #0x820]
+    0x80ed1fc: ldr      x0, [x0, #8]
+    0x80ed200: bl       #0x3cc7ac4   ; call 0x3cc7ac4
+    0x80ed204: ldr      x8, [x0, #8]
+    0x80ed208: mov      x3, x0
+    0x80ed20c: mov      x0, x19
+    0x80ed210: mov      x1, x22
+    0x80ed214: mov      x2, x21
+    0x80ed218: blr      x8
+    0x80ed21c: ldr      x8, [x19]
+    0x80ed220: ldr      x23, [x24]
+    0x80ed224: fmov     s13, s0
+    0x80ed228: ldr      x21, [x20, #0x10]
+    0x80ed22c: ldr      x22, [x25]
+    0x80ed230: ldrh     w9, [x8, #0x12e]
+    0x80ed234: ldr      x1, [x23, #0x20]
+    0x80ed238: ldrh     w2, [x23, #0x50]
+    0x80ed23c: cbz      x9, #0x80ed260
+    0x80ed240: ldr      x10, [x8, #0xb0]
+    0x80ed244: add      x10, x10, #8   ; -> va 0x96e9008
+    0x80ed248: ldur     x11, [x10, #-8]
+    0x80ed24c: cmp      x11, x1
+    0x80ed250: b.eq     #0x80ed26c
+    0x80ed254: subs     x9, x9, #1
+    0x80ed258: add      x10, x10, #0x10   ; -> va 0x96e9010
+    0x80ed25c: b.ne     #0x80ed248
+    0x80ed260: mov      x0, x19
+    0x80ed264: bl       #0x3d00398   ; call 0x3d00398
+    0x80ed268: b        #0x80ed27c
+    0x80ed26c: ldr      w9, [x10]
+    0x80ed270: add      w9, w9, w2
+    0x80ed274: add      x8, x8, w9, sxtw #4
+    0x80ed278: add      x0, x8, #0x138
+    0x80ed27c: ldr      x0, [x0, #8]
+    0x80ed280: mov      x1, x23
+    0x80ed284: bl       #0x3cc7ac4   ; call 0x3cc7ac4
+    0x80ed288: ldr      x8, [x0, #8]
+    0x80ed28c: mov      x3, x0
+    0x80ed290: mov      x0, x19
+    0x80ed294: mov      x1, x22
+    0x80ed298: mov      x2, x21
+    0x80ed29c: blr      x8
+    0x80ed2a0: ldr      x8, [x19]
+    0x80ed2a4: ldr      x22, [x24]
+    0x80ed2a8: fmov     s14, s0
+    0x80ed2ac: ldr      x20, [x20, #0x10]
+    0x80ed2b0: ldr      x21, [x26]
+    0x80ed2b4: ldrh     w9, [x8, #0x12e]
+    0x80ed2b8: ldr      x1, [x22, #0x20]
+    0x80ed2bc: ldrh     w2, [x22, #0x50]
+    0x80ed2c0: cbz      x9, #0x80ed2e4
+    0x80ed2c4: ldr      x10, [x8, #0xb0]
+    0x80ed2c8: add      x10, x10, #8   ; -> va 0x96e9008
+    0x80ed2cc: ldur     x11, [x10, #-8]
+    0x80ed2d0: cmp      x11, x1
+    0x80ed2d4: b.eq     #0x80ed2f0
+    0x80ed2d8: subs     x9, x9, #1
+    0x80ed2dc: add      x10, x10, #0x10   ; -> va 0x96e9010
+    0x80ed2e0: b.ne     #0x80ed2cc
+    0x80ed2e4: mov      x0, x19
+    0x80ed2e8: bl       #0x3d00398   ; call 0x3d00398
+    0x80ed2ec: b        #0x80ed300
+    0x80ed2f0: ldr      w9, [x10]
+    0x80ed2f4: add      w9, w9, w2
+    0x80ed2f8: add      x8, x8, w9, sxtw #4
+    0x80ed2fc: add      x0, x8, #0x138
+    0x80ed300: mov      w8, #0x7f800000
+    0x80ed304: fcvtzs   w9, s14
+    0x80ed308: mov      w29, #-0x80000000
+    0x80ed30c: fmov     s15, w8
+    0x80ed310: fcvtzs   w8, s13
+    0x80ed314: ldr      x0, [x0, #8]
+    0x80ed318: mov      x1, x22
+    0x80ed31c: fcmp     s14, s15
+    0x80ed320: csel     w23, w29, w9, eq
+    0x80ed324: fcmp     s13, s15
+    0x80ed328: fcvtzs   w9, s12
+    0x80ed32c: csel     w24, w29, w8, eq
+    0x80ed330: fcmp     s12, s15
+    0x80ed334: fcvtzs   w8, s11
+    0x80ed338: csel     w25, w29, w9, eq
+    0x80ed33c: fcmp     s11, s15
+    0x80ed340: fcvtzs   w9, s10
+    0x80ed344: csel     w26, w29, w8, eq
+    0x80ed348: fcmp     s10, s15
+    0x80ed34c: fcvtzs   w8, s9
+    0x80ed350: csel     w27, w29, w9, eq
+    0x80ed354: fcmp     s9, s15
+    0x80ed358: csel     w28, w29, w8, eq
+    0x80ed35c: bl       #0x3cc7ac4   ; call 0x3cc7ac4
+    0x80ed360: ldr      x8, [x0, #8]
+    0x80ed364: mov      x3, x0
+    0x80ed368: mov      x0, x19
+    0x80ed36c: mov      x1, x21
+    0x80ed370: mov      x2, x20
+    0x80ed374: blr      x8
+    0x80ed378: fcvtzs   w8, s0
+    0x80ed37c: fcmp     s0, s15
+    0x80ed380: mov      w1, w28
+    0x80ed384: fcvtzs   w9, s8
+    0x80ed388: mov      w2, w27
+    0x80ed38c: mov      w3, w26
+    0x80ed390: mov      w4, w25
+    0x80ed394: mov      w5, w24
+    0x80ed398: mov      w6, w23
+    0x80ed39c: str      xzr, [sp]
+    0x80ed3a0: csel     w7, w29, w8, eq
+    0x80ed3a4: fcmp     s8, s15
+    0x80ed3a8: csel     w0, w29, w9, eq
+    0x80ed3ac: bl       #0x7fcf0b8   ; call 0x7fcf0b8 <GUIMainUpgradeHelperFunctions.WeaponDynamicAccuracy @0x7fcf0b8>
+    0x80ed3b0: mov      w8, #0x42c80000
+    0x80ed3b4: ldp      x20, x19, [sp, #0xa0]
+    0x80ed3b8: fmov     s1, w8
+    0x80ed3bc: ldp      x22, x21, [sp, #0x90]
+    0x80ed3c0: ldp      x24, x23, [sp, #0x80]
+    0x80ed3c4: ldp      x26, x25, [sp, #0x70]
+    0x80ed3c8: ldp      x28, x27, [sp, #0x60]
+    0x80ed3cc: fmul     s0, s0, s1
+    0x80ed3d0: ldp      x29, x30, [sp, #0x50]
+    0x80ed3d4: ldp      d9, d8, [sp, #0x40]
+    0x80ed3d8: ldp      d11, d10, [sp, #0x30]
+    0x80ed3dc: ldp      d13, d12, [sp, #0x20]
+    0x80ed3e0: ldp      d15, d14, [sp, #0x10]
+    0x80ed3e4: add      sp, sp, #0xb0
+    0x80ed3e8: ret      

@@ -267,12 +267,12 @@ Combat is a major priority. The recovered damage formula and weapon field list l
 
 RE-specific investigation checklist (fields whose behavior is **not yet fully recovered**):
 
-* ~~hit chance and the three accuracy fields (`accuracyStatic/Dynamic/Walk`)~~ — **RECOVERED 2026-10-06**: `reverse/notes/weapon-accuracy-native-analysis.md`, implemented in browser v=12. Remaining unknown: native `weaponType` id→unit-class mapping and `explosionDecr` values (server-side).
+* ~~hit chance and the three accuracy fields (`accuracyStatic/Dynamic/Walk`)~~ — **RECOVERED 2026-10-06**: `reverse/notes/weapon-accuracy-native-analysis.md`, implemented in browser v=12. Remaining unknown: per-weapon `explosionDecr` values (server-side). Bonus 2026-10-07: the dispatch ids are now dump-anchored — `weaponType` = `WeaponType.type` (0x24, short) with `SHELL_TYPE_*` constants ({10,40}=BULLET/FIRE percent branches, 27=NUCLEAR_MISSILE special curve); see `reverse/notes/weapon-type-surface-native-analysis.md` §3.1.
 * ~~burst behavior: `shotStart`, `shotInt`, `shotCount`, `roundLen`~~ — schema confirmed (`WeaponShotsPerMin` @0x7FCEFB0, `WeaponType` consts); live burst timing still approximate.
-* explosion falloff: `explosionRadius` × `explosionDecr` — `explosionDecr` confirmed in the accuracy curve; its damage-falloff role still unrecovered.
-* target restrictions and AA behavior
-* critical/special effects
-* `hitBonus` semantics (field exists at `WeaponType` @0x24 — not seen in the accuracy surface)
+* ~~explosion falloff: `explosionRadius` × `explosionDecr`~~ — **CLOSED 2026-10-07**: the client's only `explosion_decr` consumers are the accuracy scatter branches (`WeaponAccuracyStat.Calc{Static,Dynamic}Value`, sole callers of the two accuracy helpers); no damage-falloff consumer exists in the binary — any splash falloff is server-side. See `weapon-type-surface-native-analysis.md` §3.6.
+* ~~target restrictions and AA behavior~~ — **RECOVERED 2026-10-07**: `WeaponType.aiming` (0x8B) is a 6-bit target-class mask (ground/heli/marine/fighter/bomber/submarine); `CreateTargets` builds 7 `EWeaponTarget` predicates (`HasAiming: (bit & value) != 0`); `get_AntiAirOnly` = `(Unit.OCCUPATION_FOR_AIR=0x1A & aiming) == aiming`; mines hard-disable air. Full taxonomy + `Unit.OCCUPATION_FOR_{AURA,MINES,AIR}` cctor values in `weapon-type-surface-native-analysis.md` §3.2-3.4.
+* ~~critical/special effects~~ — **CLOSED 2026-10-07**: no critical-hit system exists in the client ("Critical" is a log level only); special effects are shell-type-driven (PSIONIC/LIGHTNING_CHAIN/hero ability shell ids). `weapon-type-surface-native-analysis.md` §3.7.
+* ~~`hitBonus` semantics~~ — **CLOSED 2026-10-07**: field at `WeaponType` 0x48 (not 0x24 — that offset is `type`); zero client consumers (getter/setter have 0 direct BL sites; no `"hit_bonus"` in the `WEAPON_*` serialization schema) — client-inert, server-side if used at all. `weapon-type-surface-native-analysis.md` §3.5.
 
 Do not assume the fields behave independently. Trace how they interact in native code (§10–§11).
 

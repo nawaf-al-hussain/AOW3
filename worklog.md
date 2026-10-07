@@ -843,3 +843,19 @@ Live QA (Pages v=22, agent-browser fresh sessions):
 - Zero page errors on all sessions (desktop 16:9 + iPhone 14); mobile HUD/cards
   intact. Regressions: unit-fsm 29, accuracy 13, data-model 379 PASS;
   node --check clean. main = 1eb0572.
+
+---
+Task ID: 21
+Agent: Super Z (main)
+Task: RE — WeaponType combat-surface completion (reverse/AGENTS.md §13 remaining rows: hitBonus, target restrictions/AA, explosionDecr falloff role, critical/special effects)
+
+Work Log:
+- Re-read all updated docs first (estat-stat-models.md incl. §6.7 MinePrice, damage-pipeline-native-analysis.md, vfx-asset-prefix-check.md CONFIRMED(HIGH), armor/accuracy/state-machines/command notes, reverse/AGENTS.md §13, FileUpload audit report — all 4 ranked investigations CLOSED); identified §13 as the standing open surface.
+- Re-fetched LFS chain fresh: XAPK 270,599,286B sha256 1a41e033… (== LFS OID) → libil2cpp.so 164,646,104B sha256 8ace05bb… (== armor note §1); dump.cs sha256 0050e67d… (== extraction log).
+- dump.cs recon: full WeaponType entity table (TDI 11545) — hit_bonus is 0x48 NOT 0x24; 0x24 = `type` (short) = shell-type id; EWeaponTarget enum (None/Bomber/Fighter/Helicopter/Marine/Submarine/LandForce/Infantry); WeaponTarget : IWeaponTarget {Type, Hint, NegativeHint, GetState}; 7 compiled predicates b__0..b__6; no crit system (only DebugLevel.Critical); hit_bonus absent from WEAPON_* serialization schema.
+- Native (3 new tools, all committed): weapon_type_surface_native_analysis.py (getter bodies + CreateTargets + lambdas + WeaponTarget ctors + whole-file BL xref, 150,721-method index / 2,982,071 BL — totals reproduce); weapon_type_followup_scan.py (.rela.dyn 1,158,475 R_AARCH64_RELATIVE, slot table 0x96ef918..0x948 runtime-filled; HasAiming body; MineStatsFactory.CreateTargets bool-state list); weapon_type_aa_mask_writer_scan.py (strict ADRP+LDR slot scan → Unit..cctor writer).
+- Findings: aiming (0x8B) = 6-bit target-class mask (1 ground, 2 heli, 4 marine, 8 fighter, 0x10 bomber, 0x20 submarine); HasAiming = (bit & (int)statValue) != 0 through the stat-modification pipeline; get_AntiAirOnly = (Unit.OCCUPATION_FOR_AIR & aiming) == aiming; Unit..cctor (0x45b1e88) natively writes OCCUPATION_FOR_AURA=0x05 / OCCUPATION_FOR_MINES=0x25 (non-air) / OCCUPATION_FOR_AIR=0x1A (air) — three-way corroboration of the bit taxonomy; canBombard = type&1 (odd shell types 21/23/27/31 = bombard variants); accuracy dispatch {10,40}/27 = SHELL_TYPE_BULLET/FIRE vs NUCLEAR_MISSILE (resolves accuracy-note APPROXIMATION); mines: air targets hard-false with hint=-1, ground/sea states from balance data; hit_bonus client-inert (0 BL sites, not serialized client-side); explosion_decr has no damage-falloff consumer (accuracy scatter only — §13 row closed); no crit system; WeaponType.init callers = BuildingLevelType.init / UnitStateType.init / UnitType.abilityWeaponInit.
+- reverse/notes/weapon-type-surface-native-analysis.md written (Phase 26 format, CONFIRMED-native/HIGH classifications, honesty notes on the runtime-filled delegate slots and the source-order lambda pairing); reverse/AGENTS.md §13 all rows struck with pointers; combat-stats.md §5 corrected + new §8.
+
+Stage Summary:
+- reverse/AGENTS.md §13 combat checklist is now fully closed (all 6 rows recovered or closed with native evidence). The combat knowledge base: damage triad + 0.9/0.1 curve (armor note), accuracy curves (accuracy note), pipeline end-to-end (damage-pipeline note), target-class masks + AA + shell-type semantics (this pass). Balance values remain server-side (standing). No game.js change required — doc-only findings; implementation guidance recorded in the note §5.

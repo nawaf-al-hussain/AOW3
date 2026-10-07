@@ -67,6 +67,9 @@ m_velocity, m_shotStart/m_shotInt/m_shotCount, m_roundLen,
 m_accuracyStatic/Dynamic/Walk, m_rotateSpeed ...
 ```
 
+(For the authoritative entity offsets: `WeaponType.hit_bonus` is **0x48**; offset
+0x24 is `type` — the shell-type id. See §8.)
+
 ## 6. Weapon accuracy — `WeaponStaticAccuracy` / `WeaponDynamicAccuracy` (2026-10-06)
 
 Recovered natively (see `weapon-accuracy-native-analysis.md`):
@@ -78,6 +81,31 @@ not the target's motion; `accWalk·accStatic/10⁴` is the direct-fire walking b
 guided weapons always use `accStatic/100`. Browser implemented in v=12;
 deterministic vectors in `evidence/tests/accuracy.md`. The native `weaponType` id
 assignment and `explosionDecr` values are server-side (approximations documented).
+
+## 8. WeaponType combat surface — shell type, target classes, AntiAir (2026-10-07)
+
+Full native pass: `weapon-type-surface-native-analysis.md`. Highlights:
+
+- **`type` (0x24, short, serialized `"type"`)** carries the `SHELL_TYPE_*` constants
+  (`BULLET=10, BALL=20/21/23, NUCLEAR_MISSILE=27, ROCKET=30/31/34, FIRE=40, PSIONIC=50,
+  MINE=60, LIGHTNING_CHAIN=70`, hero abilities 502-623). `canBombard() = type & 1`
+  (odd values = bombard variants). The accuracy dispatch of §6 is therefore anchored:
+  `{10, 40}` = BULLET/FIRE → percent; `27` = NUCLEAR_MISSILE → special curve;
+  default → distance/explosion scatter.
+- **`aiming` (0x8B, sbyte)** is the allowed-target-class **bitmask**:
+  `0x01` ground (LandForce+Infantry), `0x02` Helicopter, `0x04` Marine,
+  `0x08` Fighter, `0x10` Bomber, `0x20` Submarine.
+  `WeaponStatsFactory.CreateTargets` builds 7 `EWeaponTarget` entries whose predicates
+  are `HasAiming(mods, weapon, bit) = (bit & (int)statValue) != 0`;
+  `get_AntiAirOnly = (Unit.OCCUPATION_FOR_AIR & aiming) == aiming` with
+  **OCCUPATION_FOR_AIR = 0x1A** (heli|fighter|bomber),
+  **OCCUPATION_FOR_MINES = 0x25** (all non-air — mines never target air; their
+  ground/sea per-class states are balance data), **OCCUPATION_FOR_AURA = 0x05**
+  (surface). All three initialized natively in `Unit..cctor` (0x45b1e88).
+- **`hit_bonus` (0x48)**: zero client consumers, absent from the client's `WEAPON_*`
+  serialization schema — client-inert (server-side if used).
+- **No critical-hit system** in the client; `explosion_decr` has **no damage-falloff
+  role** in the client (accuracy scatter only).
 
 ## Note on numeric values
 
