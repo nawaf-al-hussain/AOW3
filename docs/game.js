@@ -36915,8 +36915,11 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
         stopPlacing();
       cmd.issue({ type: "cancel" });
     }
-    // Phase 4: stop via the command layer (native task -> TASK_WAIT)
-    if (e.key.toLowerCase() === "s" && sim && sel.size && !placing && e.target === document.body)
+    // Phase 4: stop via the command layer (native task -> TASK_WAIT).
+    // Accept body OR focused UI buttons (after clicking a card, focus leaves
+    // body); only real text-entry targets are excluded.
+    const tg = e.target && e.target.tagName;
+    if (e.key.toLowerCase() === "s" && sim && sel.size && !placing && (e.target === document.body || tg === "BUTTON") && !/^(INPUT|TEXTAREA)$/.test(tg || ""))
       cmd.issue({ type: "stop", ids: [...sel] });
   });
   window.addEventListener("keyup", (e) => keys.delete(e.key.toLowerCase()));
