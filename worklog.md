@@ -770,3 +770,13 @@ Stage Summary:
   micro-management (wait_for_moving/forced) and min-range data not reconstructed
   (documented); seeded PRNG + state hashes remain backlog. Next per plan: Phase 4
   command system, or determinism gaps.
+
+Live QA (Pages v=18, agent-browser fresh session):
+- FSM fields present on live units; rotate sample 10 (infantry). commandStop via
+  sim + S hotkey through the real keyboard path both halt correctly (idle,
+  path empty, guard in place); commandAttack sets sticky objPreferred.
+- Retaliation + WARNED_BY_NEARBY_FRIENDS verified live (victim + nearby friend
+  target the attacker). Combat: facing turned, engagement + wounds observed.
+- Corpse lifecycle: created on death with dieT 0.9 (infantry), purged after
+  die_time; roster removal unchanged (6->5). Zero page errors (only the
+  pre-existing GLTF skinning warning). 16:9 desktop + iPhone 14 layouts intact.
