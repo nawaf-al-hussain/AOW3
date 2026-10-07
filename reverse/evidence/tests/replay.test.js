@@ -262,6 +262,29 @@ section('replay: REAL AI live-style loop — build/produce/capture all journaled
   check('barracks reproduced in replay', out.sim.buildings.some((b) => b.defId === 'barracks' && b.owner === 2), true);
 }
 
+section('replay: command issued AT the capture tick is not dropped');
+{
+  // Regression (live-QA-found): a command recorded at exactly finalTick took
+  // effect in the capture-time state, but play() exited before applying it ->
+  // final-hash mismatch with zero journal divergences.
+  const { sim, K } = loadKernel(31415);
+  const cmd = new K.Commands(sim);
+  const ids = sim.units.filter((u) => u.owner === 1).map((u) => u.id);
+  for (let t = 0; t < 200; t++) {
+    if (t === 100)
+      cmd.issue({ type: 'move', ids, x: 28, y: 80 });
+    sim.step(TICK);
+  }
+  // last command issued at sim.tick === 200 (== the tick capture runs at)
+  cmd.issue({ type: 'stop', ids });
+  const rec = K.Replay.capture(sim, [{ ownerTag: 1, full: cmd.full }]);
+  check('boundary command recorded at finalTick', rec.commands[rec.commands.length - 1].tick, rec.finalTick);
+  const out = K.Replay.play(rec);
+  check('all commands applied incl. boundary', out.applied, rec.commands.length);
+  check('zero divergences (boundary flush)', out.divergences.length, 0);
+  check('hash reproduced with boundary command', out.sim.hashState(), sim.hashState());
+}
+
 section('replay: JSON round-trip (serialize -> parse -> play)');
 {
   const script = (sim, cmd, at) => {

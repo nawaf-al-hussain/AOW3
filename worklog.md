@@ -931,6 +931,13 @@ Work Log:
   ai.step + player commands) end-to-end: capture -> play -> zero divergences,
   7 new vectors -> replay 41/41. Shipped as v=25. Desync lesson recorded:
   every sim mutation must be reachable ONLY through Commands.issue.
+- Deeper live replay (584 ticks, attack command included) exposed a SECOND
+  harness edge: a command recorded at exactly finalTick was dropped by play()
+  (loop exits at sim.tick === finalTick before flushing it) while the capture-
+  time finalHash already included its effect -> final-hash mismatch with ALL
+  1 Hz marks clean. FIX: boundary flush of commands with tick <= sim.tick after
+  the loop, before the final comparison. Regression vector added -> replay 45/45.
+  Shipped as v=26. Live re-verified: divergences [], hashMatch true.
 
 Stage Summary:
 - v=23: Phase 5 combat-reconstruction gaps closed (minRange/patrol/garrison,

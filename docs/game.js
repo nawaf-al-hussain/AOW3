@@ -1732,6 +1732,13 @@
             out.divergences.push({ tick: sim.tick, why: "state hash divergence", got: sim.hashState(), want });
         }
       }
+      // flush commands recorded AT the final tick — they took effect in the
+      // capture-time state (issue() applies immediately), so the final-hash
+      // comparison must see them too (live-QA-found boundary gap)
+      while (ci < cmds.length && cmds[ci].tick <= sim.tick) {
+        rep.issue(cmds[ci].cmd);
+        ci++;
+      }
       out.applied = ci;
       if (!out.divergences.length && rec.finalHash !== undefined && sim.tick === rec.finalTick && sim.winner === null && sim.hashState() !== rec.finalHash)
         out.divergences.push({ tick: sim.tick, why: "final hash mismatch", got: sim.hashState(), want: rec.finalHash });
