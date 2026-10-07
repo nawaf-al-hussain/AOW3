@@ -328,18 +328,70 @@ determinism + hash coverage).
   every leg, `order.pts`/`leg` hashed via rt/lg tokens; legacy two-leg flip
   preserved verbatim for no-pts calls; shift+right-click stages waypoints).
 
-### Remaining unknowns (documented, after v=34)
+### Siege transform build (v=36, native chassis + timings + tribute reconstruction)
+
+- **Chassis identities CLOSED (CONFIRMED, enum literals)** — the v=30 "chassis bytes
+  22/23/31" are `UnitType` consts (dump.cs:395418+): **22 = UNIT_TYPE_SHIELD,
+  23 = UNIT_TYPE_FOG, 31 = UNIT_TYPE_FIGHTER** — the Seraphim-family triple
+  transform targets (ToSiege/ToShield/ToFog); the act-2/3 arm's `cmp #0x17` at
+  0x45f685c is the FOG-chassis check. Full chassis taxonomy 10..90 captured in
+  `reverse/evidence/combat/siege-native.txt` (MARINE 10 … KODOMASH_TOWER 90),
+  spec bytes SPEC_SIEGE=1 / SPEC_SNIPER=2 … SPEC_KODOMASH=5.
+- **Stage machine data CONFIRMED** — `Unit.SIEGE_STAGE_SEIZE_FIRE = 0 /
+  ROTATE_WEAPONS = 1 / TRANSFORM = 2` (393233-393235) with Unit fields
+  `siege_stage` 0xA1 / `siegeTick` 0xA4 / `siegeAfterWalkTick` 0xA8 /
+  `siege_blocked` 0x1C4; durations = `UnitType.tick_to_spec` 0x4D /
+  `tick_from_spec` 0x4E sbytes (display-domain names: EStat 20/21
+  TransitionToMarchModeTime / TransitionToSiegeModeTime, 168800-168801);
+  faction defaults on `Fraction`: `siege_hp` 0xA4, `autoSiegeDelay` 0xF4,
+  `fireRadiusInc` 0xF6. Stage + tick are server-simulated and STREAMED
+  (Unit serializer reads siege_stage @0x44a4d9c; the ST deserializer is the
+  single direct `set_SiegeTick` BL site @0x4553444).
+- **Vtable maps derived (anchored)** — Unit property slots: siege stage
+  0xDC8/0xDE0, siegeTick 0xDF8/0xE10, afterWalk 0xE28/0xE40, blocked
+  0xE58/0xE70 (base anchored on get_Task = 0x1008, the specmode act-7 arm
+  pair); UnitType slots: get_Spec 0x3B8, get_TickFromSpec 0x418,
+  get_TickToSpec 0x448, get_Type 0x4D8 (anchored on the act-2/3 arm pair).
+  Caveat: offsets are klass-relative, not globally unique — whole-binary
+  scans on them alone are noise (documented in the evidence file).
+- **Sim driver located** — `$ce(Battle, Unit)` @0x47501f0 (20 956 B) is the
+  per-tick siege machine (calls the v=30 siege helper `$hi` @0x4831fe4, reads
+  the UnitType duration shape ×10, writes siegeTick); `$fe(Battle, Unit)`
+  @0x475afa4 carries the after-walk/auto-siege timers. Confidence HIGH for
+  the identification, MEDIUM for the exact per-stage tick split (full
+  20 KB-state decode not completed; the split is reconstructed, not read).
+- **Tribute reconstruction (v=36)** — `commandSiege(ids, on)`:
+  artillery-family gate (`minRange > 0`, the GetBombardUnitsOnly family — the
+  roster has no Seraphim/shield/fog chassis), R-key toggle (native hotkeys
+  UnitSpecTo/FromSiegeMode = 27/28, 255735-255736), stage ladder
+  SEIZE_FIRE(0) -> ROTATE_WEAPONS(1) -> TRANSFORM(2) over
+  `SIEGE_TICK_TO = 1.6s`, release over `SIEGE_TICK_FROM = 1.2s` (both
+  reconstruction constants — per-type sbyte data lives in server files, not
+  client literals); movement locked at once, weapons rotate (no fire) while
+  stage < 2, TRANSFORM extends the band `+SIEGE_FIRE_RADIUS_INC = 2`
+  (fireRadiusInc analog, `siegeRange(u)`), any other order releases (task
+  replacement), U-line `sg<dir>.<stage>` hash token, Commands case "siege"
+  rides LOCKSTEP_NET_TYPES.
+  Tests: phase5.test.js 176 -> 199 vectors (capability gate, ladder
+  progression/timing, movement lock, fire-block during transform, band
+  extension reach, release ladder, task replacement, U-line + determinism).
+
+### Remaining unknowns (documented, after v=36)
 
 - Defend leash VALUE and the full `$Pg` chase micro-logic (44 KB state machine; the
   anchor mechanism + task flow are proven, the numeric leash is server-side).
 - Native TakePositions formation algorithm (how the sim distributes per-unit
-  Coordinates when the player places a group).
-- Siege transform stage timings (SIEGE_STAGE_* progression inside the Unit tick) and
-  the chassis-byte identities (22/23/31 via the UnitType interface).
+  Coordinates when the player places a group; client surface decoded:
+  `UnitTakePositionsManager` occupancy masks All/HelicopterBehaviour/Land +
+  `SendNearestUnitToCell(Point2i)` 0x81D4954 — the placement is PLAYER-driven
+  on a masked grid, not a server formation solver).
+- Siege stage-boundary SPLIT inside `tick_to_spec` (how the duration divides
+  across SEIZE_FIRE/ROTATE_WEAPONS/TRANSFORM — the fields and ladder are
+  CONFIRMED, the per-stage tick math inside `$ce` is MEDIUM).
 - DontShoot task-vs-spec exclusivity nuance (sticky toggle vs task replacement).
 
 ## Coverage
-- `reverse/evidence/tests/phase5.test.js` — 176 vectors (min-range gates, patrol
+- `reverse/evidence/tests/phase5.test.js` — 199 vectors (min-range gates, patrol
   oscillation/engagement/resume/journal, garrison enter/protect/crew-fire/exit/
   capacity/death/rejections, hold stance entry/window-fire/no-pursuit/
   retaliation/minRange-aggro/building/melee/warn-join/interplay/release,
@@ -350,7 +402,9 @@ determinism + hash coverage).
   detect-gate/fire-reveal/release/determinism, cross-feature determinism incl.
   fireHold + hiding + sameSpeed in the hash, samespeed cap/control/release/
   command-surface/determinism, multipoint-patrol route-shape/cyclic-legs/
-  legacy-compat/pts-gate/determinism).
+  legacy-compat/pts-gate/determinism, siege capability/ladder-timing/
+  move-lock/fire-block/band-extension/release/task-replacement/hash-
+  determinism).
 - `reverse/evidence/tests/replay.test.js` — 45 vectors (bit-exact reproduction,
   baseline, cross-issuer ordering, tamper detection seed/drop/alter/terrain,
   540-command journal vs 512 ring, live-shaped build+patrol+garrison run, JSON
@@ -360,4 +414,9 @@ determinism + hash coverage).
   AICommUnitsSpec/Bombard/HoldPosition executors, WeaponType.canBombard,
   Unit stance accessors; sha256 8ace05bb…), tool
   `reverse/tools/specmode_native_analysis.py`.
+- Siege native (v=36): `reverse/evidence/combat/siege-native.txt`
+  (chassis table, stage consts, field map, vtable slot maps, $ce/$fe
+  identification, serializer proof) + `siege-ce-fe-windows.txt`
+  (annotated disasm) + `siege-stage-scan.txt` (field-access attribution),
+  tools `reverse/tools/siege_stage_scan.py` / `siege_native_analysis.py`.
 - Regressions: unit-fsm 29, accuracy 13, data-model 379, commands-determinism 50.

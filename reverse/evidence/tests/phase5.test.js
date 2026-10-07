@@ -965,5 +965,107 @@ section('multipoint patrol: legacy two-leg unchanged + command surface');
   check('route patrol deterministic (hash equal)', a.sim.hashState(), b.sim.hashState());
 }
 
+section('siege: ACT_SIEGE_TO/FROM — capability gate, SIEGE_STAGE ladder, timings');
+{
+  // native: GAICommandSpecMode ACT_SIEGE_TO = 2 / ACT_SIEGE_FROM = 3
+  // (dump.cs:410916), siege_stage ladder SEIZE_FIRE=0 -> ROTATE_WEAPONS=1 ->
+  // TRANSFORM=2 (Unit consts 393233-393235), durations UnitType.tick_to_spec
+  // 0x4D / tick_from_spec 0x4E, siege fields Unit 0xA1/0xA4/0xA8 streamed via
+  // the Unit serializer (0x44a4d9c). Artillery-family gate = minRange > 0
+  // (GetBombardUnitsOnly family); native hotkeys 27/28 (255735-255736).
+  const { sim, K } = loadKernel(9101);
+  clearInitial(sim);
+  const ty = sim.spawn('fortress', 1, 20, 80);
+  const inf = sim.spawn('ilight', 1, 21, 80);
+  sim.commandSiege([ty.id], true);
+  check('artillery accepts the siege order', ty.order.kind, 'siege');
+  check('siege handle created (dir=+1, stage 0 SEIZE_FIRE)', ty.siege && ty.siege.dir === 1 && ty.siege.stage === 0, true);
+  sim.commandSiege([inf.id], true);
+  check('non-artillery rejected (no transform spec)', inf.order.kind, 'idle');
+  check('non-artillery has no siege handle', inf.siege === undefined, true);
+  run(sim, 9); // 0.45s: still inside stage 0 (f < 0.3 of 1.6s)
+  check('stage 0 holds while f < 0.3', ty.siege && ty.siege.stage, 0);
+  run(sim, 10); // ~0.95s: f >= 0.3 -> ROTATE_WEAPONS
+  check('stage advances to ROTATE_WEAPONS (1)', ty.siege.stage, 1);
+  run(sim, 20); // ~1.95s: f >= 1 -> TRANSFORM complete
+  check('stage reaches TRANSFORM (2)', ty.siege.stage, 2);
+  check('to-siege persists after completion (stance stays)', ty.siege.dir, 1);
+  check('order stays siege (stance, not a one-shot)', ty.order.kind, 'siege');
+}
+
+section('siege: movement lock + fire blocked while transforming');
+{
+  const { sim } = loadKernel(9102);
+  clearInitial(sim);
+  const ty = sim.spawn('fortress', 1, 20, 80);
+  const x0 = ty.x, y0 = ty.y;
+  sim.commandMove([ty.id], 26, 80);
+  sim.commandSiege([ty.id], true); // task replacement: move order gone
+  run(sim, 40);
+  check('siege locks movement (2s in place)', Math.hypot(ty.x - x0, ty.y - y0) < 0.01, true);
+  check('path cleared by the siege order', ty.path.length, 0);
+  // enemy in the normal band but fire must wait for the ladder
+  const foe = sim.spawn('coyote', 2, 30, 80);
+  sim.commandHold([foe.id]); // pin (v=25 lesson: idle foes walk)
+  const shots0 = sim.projectiles.length;
+  run(sim, 24); // 1.2s: still inside the transform (f < 0.75)
+  check('no fire while the ladder is running', sim.projectiles.length, shots0);
+}
+
+section('siege: TRANSFORM extends the weapon band (fireRadiusInc analog)');
+{
+  const { sim } = loadKernel(9103);
+  clearInitial(sim);
+  const ty = sim.spawn('fortress', 1, 20, 80); // range 14, minRange 4
+  const foe = sim.spawn('coyote', 2, 36, 80);  // 16 away: beyond 14, inside 16
+  sim.commandHold([foe.id]);
+  const check0 = sim.projectiles.length;
+  run(sim, 40); // 2s standing fire window at normal band
+  check('beyond normal range: no fire before sieging', sim.projectiles.length, check0);
+  sim.commandSiege([ty.id], true);
+  run(sim, 40); // transform completes at 1.6s; shot needs aim + cooldown
+  const got = stepUntil(sim, () => sim.projectiles.length > 0, 600);
+  check('sieged band (+2) reaches the target: first shell away', got > 0, true);
+  check('shell fired at the sieged-band target', sim.projectiles.length > 0, true);
+}
+
+section('siege: release ladder + task replacement');
+{
+  const { sim } = loadKernel(9104);
+  clearInitial(sim);
+  const ty = sim.spawn('fortress', 1, 20, 80);
+  sim.commandSiege([ty.id], true);
+  run(sim, 40); // fully transformed
+  sim.commandSiege([ty.id], false);
+  check('release restarts the ladder (weapons rotate back)', ty.siege && ty.siege.dir === -1, true);
+  run(sim, 30); // SIEGE_TICK_FROM = 1.2s = 24 ticks
+  check('release completes: siege handle cleared', ty.siege === undefined, true);
+  check('stance returns to a plain hold-like order', ty.order.kind, 'siege');
+  sim.commandMove([ty.id], 24, 80);
+  run(sim, 2);
+  check('any other order releases instantly (task replacement)', ty.siege === undefined, true);
+  check('unit walks again after release', ty.order.kind, 'move');
+}
+
+section('siege: U-line hash coverage + determinism');
+{
+  const { sim } = loadKernel(9105);
+  clearInitial(sim);
+  const ty = sim.spawn('fortress', 1, 20, 80);
+  sim.commandSiege([ty.id], true);
+  run(sim, 10);
+  const h = sim.stateString();
+  check('siege serialized in the U-line (sg token)', /,sg1\.\d/.test(h), true);
+  const a = loadKernel(9106), b = loadKernel(9106);
+  clearInitial(a.sim); clearInitial(b.sim);
+  const ua = a.sim.spawn('fortress', 1, 20, 80), ub = b.sim.spawn('fortress', 1, 20, 80);
+  a.sim.commandSiege([ua.id], true);
+  b.sim.commandSiege([ub.id], true);
+  run(a.sim, 200); run(b.sim, 200);
+  check('siege ladder deterministic (hash equal)', a.sim.hashState(), b.sim.hashState());
+  const ok = new a.K.Commands(a.sim, new Set([ua.id])).execute({ type: 'siege', ids: [ua.id], on: false });
+  check('Commands.execute passes the siege case through', ok === true, true);
+}
+
 console.log(`\nphase5: ${total - fail}/${total} PASS${fail ? ` — ${fail} FAILED` : ''}`);
 process.exit(fail ? 1 : 0);

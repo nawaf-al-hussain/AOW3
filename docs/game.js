@@ -170,6 +170,20 @@
   // (Unit.VISIBLE_HIDDEN = 1 / VISIBLE_DETECTED = 3, dump.cs:393226; detect
   // radius server-side, tuned here)
   const HIDE_DETECT = 2.5;
+  // siege transform (native siege_stage SIEGE_STAGE_SEIZE_FIRE=0 ->
+  // SIEGE_STAGE_ROTATE_WEAPONS=1 -> SIEGE_STAGE_TRANSFORM=2, Unit consts
+  // dump.cs:393233-393235). Durations = UnitType.tick_to_spec (0x4D) /
+  // tick_from_spec (0x4E) sbytes per unit type — server data files, not
+  // client literals (EStat 20/21 TransitionToMarchModeTime/
+  // TransitionToSiegeModeTime are the display-domain names of the same
+  // ticks). Fraction.autoSiegeDelay 0xF4 / siege_hp 0xA4 / fireRadiusInc 0xF6
+  // are the faction-level defaults. SIEGE_TICK_* below are reconstruction
+  // constants (per-type data not extractable from this binary);
+  // SIEGE_FIRE_RADIUS_INC = Fraction.fireRadiusInc analog — the sieged
+  // weapon-band extension.
+  const SIEGE_TICK_TO = 1.6;
+  const SIEGE_TICK_FROM = 1.2;
+  const SIEGE_FIRE_RADIUS_INC = 2;
   const FSM_DEFAULTS = {
     // hull turn rate rad/s (native UnitStateType.rotate)
     rotate: { infantry: 10, vehicle: 3.2, aircraft: 4.5 },
@@ -649,7 +663,7 @@
           s.push(`Q${qq.defId},${q(qq.t)}`);
       }
       for (const u of this.units)
-        s.push(`U${u.id},${u.def.id},${u.owner},${q(u.x)},${q(u.y)},${q(u.hp)},${q(u.facing)},${u.order.kind},${o(u.order.x)},${o(u.order.y)},${o(u.order.depotId)},${o(u.targetId)},${o(u.preferredId)},${u.path.length},${xy(u.dest)},${xy(u.guard)},${u.grounded ? 1 : 0},${u.burstLeft},${q(u.aimT)},${q(u.cd)},${u.state},${u.kills},${q(u.captureT ?? -1)},${o(u.lastHitBy)},${o(u.lastTargetId)},${o(u.garrison)},${o(u.order.ax)},${o(u.order.ay)},${u.order.back ? 1 : 0},${u.hiding ? 1 : 0},${u.fireHold ? 1 : 0},${u.sameSpeed !== undefined ? 'ss' + q(u.sameSpeed) : '-'}${u.order.pts ? ',rt' + u.order.pts.map((p) => q(p.x) + '.' + q(p.y)).join('_') + ',lg' + (u.order.leg ?? 0) : ''}`);
+        s.push(`U${u.id},${u.def.id},${u.owner},${q(u.x)},${q(u.y)},${q(u.hp)},${q(u.facing)},${u.order.kind},${o(u.order.x)},${o(u.order.y)},${o(u.order.depotId)},${o(u.targetId)},${o(u.preferredId)},${u.path.length},${xy(u.dest)},${xy(u.guard)},${u.grounded ? 1 : 0},${u.burstLeft},${q(u.aimT)},${q(u.cd)},${u.state},${u.kills},${q(u.captureT ?? -1)},${o(u.lastHitBy)},${o(u.lastTargetId)},${o(u.garrison)},${o(u.order.ax)},${o(u.order.ay)},${u.order.back ? 1 : 0},${u.hiding ? 1 : 0},${u.fireHold ? 1 : 0},${u.sameSpeed !== undefined ? 'ss' + q(u.sameSpeed) : '-'}${u.order.pts ? ',rt' + u.order.pts.map((p) => q(p.x) + '.' + q(p.y)).join('_') + ',lg' + (u.order.leg ?? 0) : ''}${u.siege ? ',sg' + u.siege.dir + '.' + u.siege.stage : ''}`);
       for (const b of this.buildings)
         s.push(`B${b.id},${b.defId},${b.owner},${q(b.x)},${q(b.y)},${q(b.hp)},${b.built ? 1 : 0},${q(b.captureT)},${b.captureBy},${o(b.lastHitOwner)}`);
       for (const p of this.projectiles)
@@ -802,6 +816,50 @@
         this.floats.push({ x: u.x, y: u.y - 1.8, text: "HIDE", color: '#a3e635', t: 0 });
         i++;
       }
+    }
+    commandSiege(ids, on = true) {
+      // native: GAICommandSpecMode ACT_SIEGE_TO = 2 / ACT_SIEGE_FROM = 3
+      // (dump.cs:410916) — one sim command per direction, gated on the
+      // type-spec transform bits (ToSiege 16 / FromSiege 32; the act-2 arm
+      // additionally verifies the chassis byte == UNIT_TYPE (Seraphim-family
+      // triple transform: ToSiege/ToShield/ToFog; chassis identities:
+      // UNIT_TYPE_SHIELD = 22 / UNIT_TYPE_FOG = 23 / UNIT_TYPE_FIGHTER = 31,
+      // dump.cs:395427-395445; SPEC_SIEGE = 1 dump.cs:395467). Progression =
+      // siege_stage 0xA1 through SIEGE_STAGE_SEIZE_FIRE/ROTATE_WEAPONS/
+      // TRANSFORM with siegeTick 0xA4 / siegeAfterWalkTick 0xA8 on Unit
+      // (dump.cs:393716-393719); stage + tick are server-simulated and
+      // streamed (Unit serializer reads siege_stage @0x44a4d9c; ST
+      // deserializer calls set_SiegeTick). Durations UnitType.tick_to_spec
+      // 0x4D / tick_from_spec 0x4E; SniperLikeSiegeMode is the spec-2
+      // variant. Reconstruction: artillery-family units only (minRange > 0,
+      // the same family GetBombardUnitsOnly filters for bombard — the tribute
+      // roster has no Seraphim/shield/fog chassis to model). Siege locks
+      // movement at once (sieze fire), weapons rotate (no fire) through the
+      // stage ladder, TRANSFORM completes to the extended band
+      // (+SIEGE_FIRE_RADIUS_INC); release runs the reverse ladder. Any other
+      // order releases instantly (native task replacement semantics).
+      for (const id of ids) {
+        const u = this.units.find((v) => v.id === id);
+        if (!u || u.garrison !== undefined)
+          continue;
+        if (!u.def.weapon || !(u.def.weapon.minRange > 0))
+          continue;
+        u.order = { kind: "siege" };
+        u.targetId = undefined;
+        u.preferredId = undefined;
+        u.path = [];
+        u.dest = undefined;
+        u.sameSpeed = undefined;
+        u.hiding = undefined;
+        u.guard = { x: u.x, y: u.y };
+        u.siege = { dir: on ? 1 : -1, t: 0, stage: on ? 0 : 2 };
+        this.floats.push({ x: u.x, y: u.y - 1.8, text: on ? "SIEGE" : "UN-SIEGE", color: "#fbbf24", t: 0 });
+      }
+    }
+    siegeRange(u) {
+      // native Fraction.fireRadiusInc (0xF6): the sieged weapon-band
+      // extension — live only once SIEGE_STAGE_TRANSFORM is reached
+      return u.def.weapon.range + (u.siege && u.siege.dir > 0 && u.siege.stage >= 2 ? SIEGE_FIRE_RADIUS_INC : 0);
     }
     commandHold(ids) {
       // native: ClientUnitTaskType.HoldPosition = 3 (dump.cs:271217) +
@@ -1166,15 +1224,31 @@
         // not stacked)
         if (u.hiding && u.order.kind !== "hide")
           u.hiding = undefined;
+        // siege transform progression (native siege_stage ladder + siegeTick):
+        // any other order releases (task replacement); the ladder advances
+        // SEIZE_FIRE -> ROTATE_WEAPONS -> TRANSFORM over tick_to_spec, release
+        // over tick_from_spec then clears to a plain stance
+        if (u.siege && u.order.kind !== "siege")
+          u.siege = undefined;
+        if (u.siege) {
+          u.siege.t += dt;
+          const T = u.siege.dir > 0 ? SIEGE_TICK_TO : SIEGE_TICK_FROM;
+          const f = u.siege.t / T;
+          const st = f >= 1 ? 2 : f >= 0.3 ? 1 : 0;
+          if (st !== u.siege.stage)
+            u.siege.stage = st;
+          if (u.siege.t >= T && u.siege.dir < 0)
+            u.siege = undefined;
+        }
         // native orient -> orient_dest at UnitStateType.rotate (hull rotation)
         this.updateRotation(u, dt);
         // native obj lifecycle: validation, objPreferred stickiness, acquisition
         this.updateTargeting(u);
         let buildingTarget;
-        if (u.def.weapon && u.targetId === undefined && (u.order.kind === "attackMove" || u.order.kind === "idle" || u.order.kind === "patrol" || u.order.kind === "hold" || u.order.kind === "defend" || (u.order.kind === "hide" && u.hiding))) {
+        if (u.def.weapon && u.targetId === undefined && (u.order.kind === "attackMove" || u.order.kind === "idle" || u.order.kind === "patrol" || u.order.kind === "hold" || u.order.kind === "defend" || u.order.kind === "siege" || (u.order.kind === "hide" && u.hiding))) {
           buildingTarget = this.buildings.find((b) => {
             const bd2 = Math.hypot(b.x - u.x, b.y - u.y);
-            return b.hp > 0 && b.owner !== u.owner && b.owner !== 0 && bd2 <= u.def.weapon.range + b.radius && bd2 >= (u.def.weapon.minRange || 0) + b.radius;
+            return b.hp > 0 && b.owner !== u.owner && b.owner !== 0 && bd2 <= this.siegeRange(u) + b.radius && bd2 >= (u.def.weapon.minRange || 0) + b.radius;
           });
           if (!buildingTarget && (u.order.kind === "attackMove" || u.order.kind === "patrol") && u.order.x !== undefined) {
             const b2 = this.buildings.find((b) => b.hp > 0 && b.owner !== u.owner && b.owner !== 0 && u.dest && Math.hypot(b.x - u.dest.x, b.y - u.dest.y) < 6);
@@ -1194,7 +1268,7 @@
             if (u.burstT <= 0) {
               u.burstLeft--;
               u.burstT = u.def.weapon.shotInt ?? 0.2;
-              if (d >= minR && d <= u.def.weapon.range)
+              if (d >= minR && d <= this.siegeRange(u) && !(u.siege && u.siege.stage < 2))
                 this.fireShell(u, tgt.x, tgt.y, tgt, d);
             }
           }
@@ -1210,14 +1284,14 @@
             // ground (artillery vulnerability — screen it with escorts)
             u.path = [];
             u.orientDest = Math.atan2(tgt.y - u.y, tgt.x - u.x);
-          } else if (d <= u.def.weapon.range) {
+          } else if (d <= this.siegeRange(u) && !(u.siege && u.siege.stage < 2)) {
             u.path = [];
             u.orientDest = Math.atan2(tgt.y - u.y, tgt.x - u.x);
             if (u.aimT > 0)
               u.aimT = Math.max(0, u.aimT - dt);
             else if (this.facingOk(u, tgt.x, tgt.y, fsmStat(u, "fireArc")))
               this.shoot(u, tgt.x, tgt.y, tgt, d);
-          } else if (u.order.kind === "hold" || (u.order.kind === "hide" && u.hiding)) {
+          } else if (u.order.kind === "hold" || u.order.kind === "siege" || (u.order.kind === "hide" && u.hiding)) {
             // hold never pursues (native ClientUnitTaskType.HoldPosition = 3);
             // hide behaves the same once ambushed (native task 4)
             u.path = [];
@@ -1258,8 +1332,8 @@
               this.shootBuilding(u, buildingTarget, d);
           } else if (d < minR2 + buildingTarget.radius)
             u.path = []; // dead zone: hold (distance_min symmetric with the unit gate)
-          else if (u.order.kind === "hold" || (u.order.kind === "hide" && u.hiding))
-            u.path = []; // hold/hide never pursue a building outside the window
+          else if (u.order.kind === "hold" || u.order.kind === "siege" || (u.order.kind === "hide" && u.hiding))
+            u.path = []; // hold/siege/hide never pursue a building outside the window
           else if (u.order.kind === "defend" && u.guard && Math.hypot(u.guard.x - buildingTarget.x, u.guard.y - buildingTarget.y) > DEFEND_TETHER + u.def.weapon.range)
             u.path = []; // defend: building beyond the tether — break off
           else
@@ -1486,7 +1560,7 @@
       }
       if (u.targetId === undefined || !this.units.some((t) => t.id === u.targetId && t.hp > 0 && t.garrison === undefined)) {
         u.targetId = undefined;
-        if (u.order.kind === "idle" || u.order.kind === "attackMove" || u.order.kind === "patrol" || u.order.kind === "hold" || u.order.kind === "defend" || (u.order.kind === "hide" && u.hiding)) {
+        if (u.order.kind === "idle" || u.order.kind === "attackMove" || u.order.kind === "patrol" || u.order.kind === "hold" || u.order.kind === "defend" || u.order.kind === "siege" || (u.order.kind === "hide" && u.hiding)) {
           const t = this.findTarget(u);
           if (t) {
             u.targetId = t.id;
@@ -1507,7 +1581,7 @@
       if (!u.def.weapon)
         return undefined;
       let best;
-      let bd = u.def.weapon.range + 2.5;
+      let bd = this.siegeRange(u) + 2.5;
       const shooterAir = (u.def.kind === "aircraft" || u.def.aircraft) && !u.grounded;
       for (const t of this.units) {
         if (t.owner === u.owner || t.hp <= 0)
@@ -2024,7 +2098,7 @@
   // Gameplay command types that must be replicated in lockstep multiplayer.
   // select/cancel are issuer-local UI state (per-player selection) and never
   // travel on the wire.
-  var LOCKSTEP_NET_TYPES = new Set(["move", "patrol", "garrison", "ungarrison", "attack", "stop", "hold", "defend", "bombard", "dontshoot", "canshoot", "takepos", "hide", "samespeed", "capture", "build", "produce", "special"]);
+  var LOCKSTEP_NET_TYPES = new Set(["move", "patrol", "garrison", "ungarrison", "attack", "stop", "hold", "defend", "bombard", "dontshoot", "canshoot", "takepos", "hide", "samespeed", "siege", "capture", "build", "produce", "special"]);
   class Commands {
     constructor(sim = null, sel = new Set()) {
       this.sim = sim;
@@ -2140,6 +2214,13 @@
           if (!sim || !cmd.ids || !cmd.ids.length || cmd.x === undefined || cmd.y === undefined)
             return false;
           sim.commandHide(cmd.ids, cmd.x, cmd.y);
+          break;
+        case "siege":
+          // native ACT_SIEGE_TO = 2 / ACT_SIEGE_FROM = 3 (GAICommandSpecMode)
+          // — artillery-family transform with the SIEGE_STAGE ladder
+          if (!sim || !cmd.ids || !cmd.ids.length)
+            return false;
+          sim.commandSiege(cmd.ids, cmd.on !== false);
           break;
         case "samespeed":
           // native SameSpeed spec 8388608 (own ST serializer pair 368192/368207)
@@ -38912,6 +38993,22 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       hideArmed = true;
       if ($("prodhint"))
         $("prodhint").textContent = "HIDE armed — right-click the ambush spot (infantry only)";
+    }
+    // Siege transform: R toggles (native hotkeys UnitSpecToSiegeMode = 27 /
+    // UnitSpecFromSiegeMode = 28, dump.cs:255735-255736) — artillery-family
+    // only; runs the SIEGE_STAGE ladder (seize -> rotate -> transformed)
+    if (e.key.toLowerCase() === "r" && sim && sel.size && !placing && cmdTarget) {
+      const ids = [...sel].filter((id) => {
+        const u = sim.units.find((v) => v.id === id);
+        return u && u.def.weapon && u.def.weapon.minRange > 0;
+      });
+      if (ids.length) {
+        const anySieged = ids.every((id) => {
+          const u = sim.units.find((v) => v.id === id);
+          return u && u.siege && u.siege.dir > 0;
+        });
+        cmd.issue({ type: "siege", ids, on: !anySieged });
+      }
     }
     // Phase 5 gaps: F toggles fire discipline (native DontShoot = 8 / spec
     // 1048576 vs CanShoot = 2097152, hotkeys 26/32) — HOLD FIRE / WEAPONS FREE

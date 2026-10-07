@@ -1,0 +1,127 @@
+BUILD A — SIEGE TRANSFORM STAGE MACHINE + TIMINGS + CHASSIS IDENTITIES
+(native extraction, game 6.9.18)
+libil2cpp.so sha256 8ace05bbaa2cdfda156e377cfbcb0c0a6fb223fa68188fa3df49f677f10e90c5
+dump.cs      sha256 0050e67d23f898588f0771c69ba7f30f9122cd6eccd66674c0f7c87b7f24714b
+Tool: reverse/tools/siege_stage_scan.py (+ siege_native_analysis.py BL sweep)
+Evidence companions: siege-stage-scan.txt (raw field-access scan),
+siege-ce-fe-windows.txt (annotated disasm windows in $ce/$fe).
+
+====================================================================
+1. CHASSIS IDENTITIES — CLOSED (CONFIRMED, enum literals)
+====================================================================
+UnitType consts (dump.cs:395418+, class UnitType : Prototype, TypeDefIndex 11532):
+  UNIT_TYPE_MARINE = 10      UNIT_TYPE_INFANTRY = 11    UNIT_TYPE_FIREBAT = 12
+  UNIT_TYPE_SNIPER = 13      UNIT_TYPE_SABOTEUR = 14    UNIT_TYPE_PSIONIC = 15
+  UNIT_TYPE_ZOMBIE = 16      UNIT_TYPE_UFO = 17         UNIT_TYPE_VEHICLE = 20
+  UNIT_TYPE_MINE_LAYER = 21  UNIT_TYPE_SHIELD = 22      UNIT_TYPE_FOG = 23
+  UNIT_TYPE_FORTRESS = 24    UNIT_TYPE_ARTILLERY = 25   UNIT_TYPE_TRANSPORT_LAND = 26
+  UNIT_TYPE_SCIENCE = 27     UNIT_TYPE_HELICOPTER = 30  UNIT_TYPE_FIGHTER = 31
+  UNIT_TYPE_BOMBER = 32      UNIT_TYPE_SHIP = 40        UNIT_TYPE_SKIRTED = 41
+  UNIT_TYPE_AMPHIBIAN = 42   UNIT_TYPE_TRANSPORT_WATER = 43
+  UNIT_TYPE_NUCLEAR_MISSILE = 50                         UNIT_TYPE_COMMANDO = 60
+  UNIT_TYPE_SERAPHIM = 61    UNIT_TYPE_SOLARIS = 62     UNIT_TYPE_BEHOLDER = 63
+  UNIT_TYPE_PSI_TANK = 64    UNIT_TYPE_ATLAS = 65       UNIT_TYPE_CRYOTANK = 66
+  UNIT_TYPE_WASP = 70        UNIT_TYPE_KODOMASH = 71    UNIT_TYPE_LEVIATHAN = 72
+  UNIT_TYPE_GATLING = 73     UNIT_TYPE_SALAMANDER = 74  UNIT_TYPE_COIL_TANK = 75
+  UNIT_TYPE_RAILGUN = 76     UNIT_TYPE_KODOMASH_TOWER = 90
+=> the v=30 "chassis bytes 22/23/31" unknown: 22 = SHIELD, 23 = FOG,
+   31 = FIGHTER. The act-2/3 arm byte==23 check (0x45f685c, cmp #0x17) is the
+   FOG chassis of the Seraphim triple transform (ToSiege/ToShield/ToFog).
+Spec bytes (same class): SPEC_NOTHING = 0, SPEC_SIEGE = 1, SPEC_SNIPER = 2,
+  SPEC_GRENADEER = 3, SPEC_SUBMARINE = 4, SPEC_KODOMASH = 5.
+UnitType fields: type sbyte @0x31 (chassis), spec @0x4C, tick_to_spec @0x4D,
+  tick_from_spec @0x4E; bool get_SniperLikeSiegeMode @0x45B43F4.
+Accessors: get_Spec 0x45B4828 (ldrb [x0,#0x4C]), get_TickToSpec 0x45B4858
+  (ldrb [x0,#0x4D]), get_TickFromSpec 0x45B4848 (ldrb [x0,#0x4E]).
+
+====================================================================
+2. SIEGE STAGE LITERAL SET — CONFIRMED
+====================================================================
+Unit consts (dump.cs:393233-393235, class Unit : Dynamic, IShooter, TDI 11521):
+  SIEGE_STAGE_SEIZE_FIRE    = 0
+  SIEGE_STAGE_ROTATE_WEAPONS= 1
+  SIEGE_STAGE_TRANSFORM     = 2
+EStat names of the durations (display domain), dump.cs:168800-168801:
+  TransitionToMarchModeTime = 20, TransitionToSiegeModeTime = 21
+Unit fields (dump.cs:393716-393719 region):
+  siege_stage        sbyte // 0xA1
+  siegeTick          int   // 0xA4
+  siegeAfterWalkTick int   // 0xA8
+  siege_blocked      bool  // 0x1C4
+Fraction (faction defaults, TDI 11407):
+  siege_hp int @0xA4 (get_SiegeHp 0x4597DC0)
+  autoSiegeDelay short @0xF4 (get_AutoSiegeDelay 0x4598020)
+  fireRadiusInc short @0xF6
+Networked: the Unit serializer reads siege_stage (0x44a4d9c) and the ST
+deserializer BLs Unit.set_SiegeTick (0x4553444 -> 0x45B1324) — the stage +
+tick are server-simulated state streamed to the client.
+
+====================================================================
+3. VTABLE SLOT MAPS (derived, anchored)
+====================================================================
+Unit vtable blob found in-file at file offset 0x138A480 (anchored on the
+act-7 get_Task = [klass+0x1008] pair already verified in specmode-native.txt
+0x45f6730). Property-slot byte offsets (klass-relative):
+  get/set_Patrol 0xBE8/0xC00   get/set_PatrolDefend 0xC18/0xC30
+  get/set_SiegeStage 0xDC8/0xDE0
+  get/set_SiegeTick 0xDF8/0xE10
+  get/set_SiegeAfterWalkTick 0xE28/0xE40
+  get/set_SiegeBlocked 0xE58/0xE70
+  get/set_Task 0x1008/0x1020   get/set_TaskUntilTick 0x1068/0x1080
+UnitType vtable (anchored on get_Type = [klass+0x4D8] verified in the act-2/3
+arm of GAICommandSpecMode.execute, specmode-native.txt 0x45f6830..0x45f6864):
+  get_SniperLikeSiegeMode 0x70, get_Spec 0x3B8, get_TickFromSpec 0x418,
+  get_TickToSpec 0x448, get_Type 0x4D8.
+CAVEAT (documented): these offsets are NOT globally unique — other classes
+carry methods at the same vtable offsets, so a whole-binary LDR scan on the
+offset alone is noise-dominated (siege-vt-scan/untype-vt-scan runs). The maps
+above are valid as Unit/UnitType-klass offsets for call-shape reading, not as
+global call-site filters.
+
+====================================================================
+4. SIM CONSUMERS — WHERE THE FIELD SITES LIVE (scan + attribution)
+====================================================================
+Direct field writes (siege-stage-scan.txt, STRw [0xA4] = siegeTick, attributed
+to sim functions; noise = framework classes sharing the offset):
+  $ch(Battle,Unit,int x6,sbyte[],...)      @0x48777d0  spawn/init path
+  $Cg(Battle,Unit,Unit,int,int,bool)       @0x4825ff8
+  $Ie(Battle,Unit,sbyte,short,short,bool)  @0x475e9e8  task-dispatch machine
+  $SD(Battle,Unit,Ability)                 @0x4739fc4
+  $Xg(Battle,Unit,Weapon)                  @0x484bac8
+  $fe(Battle,Unit)                         @0x475afa4
+  $yG(Battle,Unit,int)                     @0x480cb44
+  $ce(Battle,Unit)                         @0x47501f0  (siegeTick writer +
+                                           10 TickFromSpec-shaped calls)
+siege_stage byte (0xA1) is touched OUTSIDE the accessors only by
+  Unit.get_SeraphimSiege @0x45b0474 (reads [this+0xA1] at 0x45b04bc) —
+  every other reader/writer goes through the virtual accessors above.
+ sieOnWalk/get_SeraphimSiege/get_TypeAutoSiege/get_StateAutoSiege:
+  0 direct BL callers — vtable-dispatched (Unit slots in section 3).
+
+====================================================================
+5. STAGE-MACHINE IDENTIFICATION ($ce) — HIGH for the function, MEDIUM for
+   the exact per-stage tick math (20 956-byte state machine; full decode
+   not completed this pass)
+====================================================================
+$ce(Battle, Unit) @0x47501f0..0x47553cc (siege-ce-fe-windows.txt):
+  - calls $hi(Battle,Unit,int,int) @0x4831fe4 — the siege helper family
+    already resolved in v=30 (ACT_SIEGE_TO/FROM arm helpers $hi/$Yh)
+  - calls $be(Battle,Unit) @0x474ce70 between transform steps
+  - repeatedly loads a short from the unit's UnitType-shaped object and
+    compares it against scaled tick products (mul w8,w8,w9 / cmp) — the
+    tick_to_spec/tick_from_spec consumption shape
+  - writes siegeTick (0xA4) and reads walk/siege interplay fields
+$fe(Battle, Unit) @0x475afa4..0x475c2d4: second siege-relevant consumer
+  (auto-siege / after-walk timer shape: siegeAfterWalkTick writes).
+Documented verdict: durations = UnitType.tick_to_spec (to-siege) /
+  tick_from_spec (from-siege) in sim ticks, progression through the three
+  named stages, siege_blocked gating during the transform, stage+tick
+  server-authoritative and streamed. The precise stage boundary split
+  (how tick_to_spec divides across stages 0/1/2) remains MEDIUM.
+
+====================================================================
+6. RAW WINDOWS
+====================================================================
+See siege-ce-fe-windows.txt for the annotated disassembly windows around
+every TickToSpec/TickFromSpec/siegeTick site in $ce and $fe, and
+siege-stage-scan.txt for the full field-access attribution tables.
