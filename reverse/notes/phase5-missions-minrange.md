@@ -410,17 +410,68 @@ formation solver; placement is PLAYER-driven per cell through
   leftovers untouched, determinism; the v=28 index-order expectation updated
   to the decoded semantics with a note).
 
+### Defend leash build (v=36, native source pinned — Build C)
+
+The `$Pg` leash question is CLOSED at the mechanism level with full-coverage
+evidence (`reverse/evidence/combat/pg-leash-native.txt`, tools
+`pg_constants_scan.py` + `pg_ug_windows.py`):
+- `$Pg(Battle, Unit)` = 0x483C244..0x48470D0, 44,684 bytes / 11,171
+  instructions disassembled end-to-end. **The leash is not a literal** — the
+  whole machine contains nine cmp-immediates, all class-init/0/1 tests.
+- The leash VALUE arrives as DATA: the int argument of the
+  `$UG(Battle, Unit, int)` gate (0x481ED28, 3 sites) and the
+  `$yG(Battle, Unit, int)` reposition (0x480CB44, 3 sites) is composed at
+  0x483EFF8..0x483F014 as `ldp w9, w8, [UnitAct statics + 0xC]; eor w8, w8,
+  w9; ldr w9, [sp, #0x134]; add w2, w8, w9` — **two UnitAct STATIC balance
+  fields XOR-combined, offset by the local distance band**. The client only
+  reads the value; per-scenario server data supplies it. The tuned
+  `DEFEND_TETHER = 4` stands as the documented stand-in.
+- Helper inventory of the machine (call histogram): weapon selection
+  ($fI/$qg/$fh/$yg/$AG/$wg), path machinery ($Qc, the anchor Coordinate ctor
+  re-verified at 0x4840068), target teardown ($he/$ii), distance probes
+  $dC x3, geometry gates $ZG/$PA. The per-branch micro-logic enumeration of
+  the 44 KB remains the residual (structure + data flow documented).
+
+### DontShoot nuance resolved (v=36 — Build D)
+
+The act-7 (ACT_DONT_SHOOT) arm of `GAICommandSpecMode.execute`
+(0x45F6700..0x45F6824) is fully decoded with every call target named
+(`reverse/evidence/combat/dontshoot-native.txt`):
+- **Runtime state = TASK 8, not a sticky spec** — the arm finalizes with
+  `$Hi(Battle, Unit, 8)` (0x48178FC, the same set-task helper the HIDE arm
+  calls with 4); task 8 = `ClientUnitTaskType.DontShoot` (271222). Entering
+  fire discipline is TASK REPLACEMENT like any other order.
+- **Entry is idempotent** — `cmp w8, #8; b.eq exit`: a unit already in task
+  8 skips the arm.
+- **The paired specs are per-TYPE capability gates** — `tbz w0, #0x14`
+  tests bit 20 (= 0x100000 = ClientUnitStateSpecType.DontShoot 1048576) of
+  the unit type's spec mask; a type without the capability ignores the
+  order. CanShoot = 2097152 is the complementary gate on its own toggle
+  path (hotkey 32).
+- Entry teardown: clear target ([+0x798] setter w1 = 0),
+  `$he(Battle, Unit, -1)` 0x4758128, set_Obj(null) ([+0xAB8]),
+  `$Gi(Battle, Unit, (short)X, (short)Y)` 0x4809330 (halt at the CURRENT
+  position), and a short-field setter with 0xFFFF (indefinite marker;
+  slot [0x4B8] not in the verified map — flagged, not guessed).
+- **Tribute fidelity note (explicit model choice)**: v=28 keeps fireHold
+  sticky (explicit attack does NOT bypass). Native enters via task
+  replacement, so a subsequent attack task would end discipline natively
+  unless the server re-asserts it (attack path not decoded this pass). The
+  F-toggle UX and vectors stand; a fidelity fix would clear fireHold on
+  task-carrying orders and update the fire-discipline vectors.
+
 ### Remaining unknowns (documented, after v=36)
 
-- Defend leash VALUE and the full `$Pg` chase micro-logic (44 KB state machine; the
-  anchor mechanism + task flow are proven, the numeric leash is server-side).
+- Defend `$Pg` per-branch micro-logic enumeration (44 KB; the anchor, task
+  flow, helper inventory and the leash DATA SOURCE are all pinned, the
+  branch-by-branch semantics are not).
 - Siege stage-boundary SPLIT inside `tick_to_spec` (how the duration divides
   across SEIZE_FIRE/ROTATE_WEAPONS/TRANSFORM — the fields and ladder are
   CONFIRMED, the per-stage tick math inside `$ce` is MEDIUM).
-- DontShoot task-vs-spec exclusivity nuance (sticky toggle vs task replacement).
-- TakePositions cell-class SEMANTICS of the 15 occupancy bits (the mask values
-  and category rules are CONFIRMED; the per-bit meaning of the underlying
-  cell-surface classes is inferential).
+- DontShoot: whether a subsequent attack task RE-ASSERTS discipline
+  (attack-command path not decoded; entry semantics CONFIRMED as task
+  replacement). TakePositions 15-bit cell-class SEMANTICS (masks + rules
+  CONFIRMED, per-bit meaning inferential).
 
 ## Coverage
 - `reverse/evidence/tests/phase5.test.js` — 208 vectors (min-range gates, patrol
@@ -455,4 +506,12 @@ formation solver; placement is PLAYER-driven per cell through
   (occupancy masks, category rules, nearest-match, Forced move style —
   annotated disasm of all seven UnitTakePositionsManager methods), tool
   `reverse/tools/takepos_disasm.py`.
+- Defend leash native (v=36): `reverse/evidence/combat/pg-leash-native.txt`
+  (44,684-byte $Pg end-to-end scan, static-XOR leash source at 0x483EFF8,
+  helper inventory), tools `reverse/tools/pg_constants_scan.py` /
+  `pg_ug_windows.py`.
+- DontShoot native (v=36): `reverse/evidence/combat/dontshoot-native.txt`
+  (act-7 arm 0x45F6700..0x45F6824 with resolved call targets:
+  $Hi(…,8) task replacement, capability bit 20, idempotent entry,
+  $he/$Gi teardown).
 - Regressions: unit-fsm 29, accuracy 13, data-model 379, commands-determinism 50.

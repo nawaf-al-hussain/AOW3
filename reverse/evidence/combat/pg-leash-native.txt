@@ -1,0 +1,364 @@
+BUILD C — DEFEND CHASE ($Pg) LEASH SOURCE PINNED (6.9.18)
+libil2cpp.so sha256 8ace05bbaa2cdfda156e377cfbcb0c0a6fb223fa68188fa3df49f677f10e90c5
+dump.cs      sha256 0050e67d23f898588f0771c69ba7f30f9122cd6eccd66674c0f7c87b7f24714b
+Tools: reverse/tools/pg_constants_scan.py + pg_ug_windows.py
+
+VERDICT (full-coverage confirmation of the v=30 finding, with the load site):
+
+1. $Pg(Battle, Unit) bounds 0x483C244..0x48470D0 = 44,684 bytes, 11,171
+   instructions disassembled end-to-end.
+
+2. THE LEASH IS NOT A LITERAL — CONFIRMED at full coverage: the entire
+   function contains only NINE cmp-with-immediate instructions
+   (0x483c414 cmp #0x116 = IL2CPP class-init check; the rest are #0/#1
+   null/flag tests). There is no numeric constant in any plausible leash
+   range anywhere in the machine.
+
+3. THE LEASH'S DATA SOURCE IS PINNED: the int argument of the
+   $UG(Battle, Unit, int) gate (0x481ED28, 3 call sites in $Pg) and of the
+   $yG(Battle, Unit, int) reposition (0x480CB44, 3 call sites) is composed
+   at 0x483EFF8..0x483F014 (and 0x483E3B8..0x483E3D4) as:
+
+       ldp  w9, w8, [x8, #0xC]     ; TWO 32-bit STATIC FIELDS of the
+                                   ; enclosing UnitAct class (statics base
+                                   ; = [klass+0xB8], offsets 0xC and 0x10)
+       eor  w8, w8, w9             ; staticA XOR staticB
+       ldr  w9, [sp, #0x134]       ; computed distance/band local
+       add  w2, w8, w9             ; leash_arg = (A ^ B) + dist
+       bl   $UG / $yG
+
+   i.e. the leash value arrives from PER-SCENARIO BALANCE DATA loaded into
+   UnitAct static fields (XOR-combined, then offset by the local distance
+   band). This is the precise mechanism behind "the numeric leash is
+   server-side": the client binary only reads it, never hard-codes it.
+
+4. Supporting structure (call histogram, 44 KB): weapon helpers
+   ($fI/$qg/$fh/$yg/$AG/$wg), path machinery ($Qc on sbyte[][] paths,
+   Coordinate ctor .ctor(id,xLogic,yLogic) at 0x4840068 = the defend anchor
+   construction re-verified inside $Pg), target teardown ($he/$ii), EmptyTarget
+   $tg, geometry gates $ZG/$PA, distance probes $dC(Battle,Unit,Dynamic) x3
+   (int return consumed as w27 into comparisons against locals).
+
+================ RAW OUTPUT ================
+$Pg (0x483c244..0x48470d0, 44684 bytes) constant-pool + structure scan
+sha256 8ace05bb… / 0050e67d…
+
+== BL target histogram (top 40) ==
+   435x  sub_3cc7ac8   first@0x483c35c
+    17x  sub_3cc7948   first@0x483c27c
+     8x  sub_5265b74   first@0x483c7c4
+     7x  sub_3cc7f74   first@0x484709c
+     5x  sub_59ad48c   first@0x483dfdc
+     3x  sub_3cc7be4   first@0x483c7dc
+     3x  protected internal static void $yG(Battle 1, Unit 1, int 1) { }   first@0x483e3d4
+     3x  public static int $dC(Battle 1, Unit 1, Dynamic 1) { }   first@0x483e868
+     3x  public static bool $UG(Battle 1, Unit 1, int 1) { }   first@0x483f014
+     2x  public static Bullet $Ye(Battle 1, Unit 1, Building 1, Weapon 1, Dynamic 1, Bullet 1, Weap   first@0x483c9f8
+     2x  public static void $fI(Battle 1, Unit 1, Weapon 1) { }   first@0x483cb58
+     2x  public static Coordinate $Qc(sbyte[][] 1, int 1, int 1) { }   first@0x483e478
+     2x  sub_3d00398   first@0x483f734
+     2x  public static sbyte $CC(Battle 1, Dynamic 1) { }   first@0x483fd80
+     2x  private static void $fh(Battle 1, Unit 1, Weapon 1, int 1) { }   first@0x483fe00
+     2x  private static void $Qg(Weapon 1, Weapon 1) { }   first@0x48402f8
+     2x  private static void $qg(Battle 1, Unit 1, Weapon 1, int 1) { }   first@0x48405cc
+     2x  public static void $Vg(Battle 1, Unit 1) { }   first@0x4841edc
+     1x  private static sbyte $li(Battle 1) { }   first@0x483c714
+     1x  public void .ctor(int sideId, int dynId, sbyte type, sbyte color, sbyte visibility, sbyte    first@0x483c800
+     1x  public static void $xg(Battle 1, Unit 1) { }   first@0x483c8ec
+     1x  public static bool $ZG(int 1, int 1, int 1) { }   first@0x483d02c
+     1x  public static bool $PA(int 1, int 1, bool 1) { }   first@0x483d824
+     1x  sub_71178e8   first@0x483de94
+     1x  public static bool $cG(Battle 1, Unit 1) { }   first@0x483e120
+     1x  public static void $he(Battle 1, Unit 1, int 1) { }   first@0x483e300
+     1x  private static EmptyTarget $tg(Battle 1, Unit 1, Weapon 1, int 1) { }   first@0x483f74c
+     1x  private static bool $zH(Battle 1, Unit 1) { }   first@0x483f80c
+     1x  public static void $ii(Battle 1, Unit 1, bool 1) { }   first@0x483fa34
+     1x  public void .ctor(int id, int xLogic, int yLogic) { }   first@0x4840068
+     1x  private static void $Zg(Battle 1, Unit 1) { }   first@0x484021c
+     1x  public static void $FI(Battle 1, Unit 1) { }   first@0x48404b0
+     1x  private static void $yg(Battle 1, Unit 1, Weapon 1) { }   first@0x484068c
+     1x  private static Coordinate $Rg(Battle 1, Unit 1, Weapon 1, int 1) { }   first@0x4840888
+     1x  public static void $GI(Battle 1, Unit 1, Weapon 1, short 1) { }   first@0x48408ac
+     1x  public void .ctor() { }   first@0x4840ae4
+     1x  private static void $AG(Battle 1, Unit 1, Weapon 1) { }   first@0x4841058
+     1x  public static bool $wg(Battle 1, Unit 1, Weapon 1) { }   first@0x484139c
+     1x  private static void $Mg(Battle 1, Unit 1) { }   first@0x48413e0
+     1x  public static void $Tg(Battle 1, Unit 1) { }   first@0x4841a54
+
+== cmp immediates (9) ==
+  0x483c414: cmp #0x116
+  0x483d810: cmp #0
+  0x483f720: cmp #1
+  0x4840760: cmp #0
+  0x4840e38: cmp #0
+  0x48431b0: cmp #0
+  0x48431b8: cmp #0
+  0x484389c: cmp #0
+  0x4846b00: cmp #1
+
+== mov constants > 10 (106, first 80) ==
+  0x483c68c: 15416
+  0x483c690: movk #0xcb5e, lsl #16
+  0x483c7a4: 36031
+  0x483c7a8: 1704
+  0x483c7ac: 61
+  0x483c7b0: movk #0x2742, lsl #16
+  0x483caf8: 44957
+  0x483cafc: movk #0x21e7, lsl #16
+  0x483d65c: 1703
+  0x483d660: movk #0x8529, lsl #16
+  0x483d814: 56463
+  0x483d818: movk #0x8189, lsl #16
+  0x483da08: 8101
+  0x483da0c: 1703
+  0x483da10: movk #0xc2f, lsl #16
+  0x483da14: movk #0x8529, lsl #16
+  0x483dba4: 43902
+  0x483dba8: 1712
+  0x483dbac: 17
+  0x483dbb0: movk #0x2927, lsl #16
+  0x483dcf8: 15416
+  0x483dcfc: movk #0xcb5e, lsl #16
+  0x483de88: 1703
+  0x483de8c: movk #0x8529, lsl #16
+  0x483e030: 15416
+  0x483e034: movk #0xcb5e, lsl #16
+  0x483e508: 8101
+  0x483e510: movk #0xc2f, lsl #16
+  0x483e514: 1703
+  0x483e520: movk #0x8529, lsl #16
+  0x483e704: 15416
+  0x483e708: movk #0xcb5e, lsl #16
+  0x483e938: 1703
+  0x483e940: movk #0x8529, lsl #16
+  0x483e944: 1703
+  0x483e950: movk #0x8529, lsl #16
+  0x483e9e8: 15416
+  0x483e9ec: movk #0xcb5e, lsl #16
+  0x483f23c: 3479
+  0x483f244: movk #0x468c, lsl #16
+  0x483f4ec: 51848
+  0x483f4f0: movk #0x7fe0, lsl #16
+  0x483f590: 15416
+  0x483f594: movk #0xcb5e, lsl #16
+  0x483f894: 15416
+  0x483f898: movk #0xcb5e, lsl #16
+  0x483fac4: 15416
+  0x483fac8: movk #0xcb5e, lsl #16
+  0x483fd88: 15416
+  0x483fd90: movk #0xcb5e, lsl #16
+  0x483fe60: 3479
+  0x483fe64: movk #0x468c, lsl #16
+  0x48409a4: 60810
+  0x48409ac: movk #0xf0e2, lsl #16
+  0x4841140: 36031
+  0x4841144: 1708
+  0x4841148: 61
+  0x484114c: movk #0x2742, lsl #16
+  0x4841298: 10264
+  0x484129c: movk #0xb409, lsl #16
+  0x4841910: 15416
+  0x4841914: movk #0xcb5e, lsl #16
+  0x4842004: 15416
+  0x4842008: movk #0xcb5e, lsl #16
+  0x484268c: 8101
+  0x4842694: movk #0xc2f, lsl #16
+  0x48426a8: 1703
+  0x48426ac: movk #0x8529, lsl #16
+  0x4842a5c: 31690
+  0x4842a60: 1700
+  0x4842a64: 22
+  0x4842a68: movk #0xdabd, lsl #16
+  0x4843074: 31690
+  0x4843078: 1688
+  0x484307c: 22
+  0x4843080: movk #0xdabd, lsl #16
+  0x4843298: 65197
+  0x48432a4: movk #0x350d, lsl #16
+  0x48434e4: 43902
+  0x48434e8: 1692
+
+== float regs used (50, first 40) ==
+  0x483c244: sub sp, sp, #0x1d0
+  0x483c290: ldr x0, [x0, #0x3d0]
+  0x483c2a8: ldr x0, [x0, #0x5d0]
+  0x483c560: ldr x1, [x8, #0x5d0]
+  0x483c9b8: cbnz w9, #0x483c9d0
+  0x483ce58: add x8, x8, #0xad0
+  0x483d044: cbnz w8, #0x483d058
+  0x483d0ec: b #0x4845bd0
+  0x483d3a4: b #0x48433d0
+  0x483d8a4: b #0x48456d0
+  0x483d8b8: cbnz w9, #0x483d8d0
+  0x483dc48: b.gt #0x48458d0
+  0x483dcc0: ldr x1, [x8, #0x6d0]
+  0x483de80: ldr x9, [x9, #0x3d0]
+  0x483dff8: ldr x1, [x8, #0x6d0]
+  0x483e1bc: cbnz w8, #0x483e1d0
+  0x483e720: b.ne #0x48433d0
+  0x483efcc: add x8, x9, #0xbd0
+  0x483f558: ldr x1, [x8, #0x6d0]
+  0x483f734: bl #0x3d00398
+  0x483f85c: ldr x1, [x8, #0x6d0]
+  0x483fcec: b.eq #0x4843ad0
+  0x483fcf4: cbnz w9, #0x483fd0c
+  0x4840b58: ldr x1, [x8, #0xbd0]
+  0x4840d20: b.ne #0x48433d0
+  0x48413ac: tbz w0, #0, #0x48458d0
+  0x48413e4: b #0x48430d0
+  0x4841540: ldr x1, [x8, #0x6d0]
+  0x48418d8: ldr x1, [x8, #0x6d0]
+  0x4841fcc: ldr x1, [x8, #0x6d0]
+  0x484243c: ldr x8, [x8, #0x5d0]
+  0x484246c: ldr x1, [x8, #0x8d0]
+  0x4842b24: b.eq #0x48456d0
+  0x4842bbc: b.eq #0x48433d0
+  0x4842cf4: cbnz w9, #0x4842d0c
+  0x484309c: b.ne #0x48430d0
+  0x4843454: bl #0x48470d0
+  0x484363c: b #0x48458d0
+  0x4843aac: add x8, x8, #0x8d0
+  0x4843ec0: cbnz w9, #0x4843ed0
+
+== field-offset histogram (top 40) ==
+
+
+$Pg leash-source windows: $UG / $dC / $yG call sites
+
+---- window around call @0x483f014 ----
+  0x483efa4: cmp      w10, w24, sxth
+  0x483efa8: b.ne     #0x4842f58
+  0x483efac: ldr      w10, [x8, #0xe4]   ; UNIT.walk_state
+  0x483efb0: cbnz     w10, #0x483efcc
+  0x483efb4: mov      x0, x8
+  0x483efb8: bl       #0x3cc7ac8
+  0x483efbc: adrp     x8, #0x968e000
+  0x483efc0: ldr      x8, [x8, #0x4d8]
+  0x483efc4: ldr      x8, [x8]
+  0x483efc8: ldr      x9, [x8, #0xb8]
+  0x483efcc: add      x8, x9, #0xbd0
+  0x483efd0: b        #0x483c410
+  0x483efd4: adrp     x8, #0x968e000
+  0x483efd8: ldr      x8, [x8, #0x4d8]
+  0x483efdc: ldr      x0, [x8]
+  0x483efe0: ldr      w8, [x0, #0xe4]   ; UNIT.walk_state
+  0x483efe4: cbnz     w8, #0x483eff8
+  0x483efe8: bl       #0x3cc7ac8
+  0x483efec: adrp     x8, #0x968e000
+  0x483eff0: ldr      x8, [x8, #0x4d8]
+  0x483eff4: ldr      x0, [x8]
+  0x483eff8: ldr      x8, [x0, #0xb8]
+  0x483effc: ldr      x0, [sp, #0x158]
+  0x483f000: ldr      x1, [sp, #0x168]
+  0x483f004: ldp      w9, w8, [x8, #0xc]
+  0x483f008: eor      w8, w8, w9
+  0x483f00c: ldr      w9, [sp, #0x134]
+  0x483f010: add      w2, w8, w9
+  0x483f014: bl       #0x481ed28   ; -> public static bool $UG(Battle 1, Unit 1, int 1) { }
+  0x483f018: cbz      x22, #0x4847090
+  0x483f01c: ldr      x8, [x22]
+  0x483f020: mov      x0, x22
+  0x483f024: ldp      x9, x1, [x8, #0x1b8]
+  0x483f028: blr      x9
+  0x483f02c: cbnz     x0, #0x48464d4
+  0x483f030: adrp     x8, #0x968e000
+  0x483f034: ldr      x8, [x8, #0x4d8]
+  0x483f038: ldr      x0, [x8]
+  0x483f03c: ldr      w8, [x0, #0xe4]   ; UNIT.walk_state
+  0x483f040: cbnz     w8, #0x483f054
+  0x483f044: bl       #0x3cc7ac8
+  0x483f048: adrp     x8, #0x968e000
+  0x483f04c: ldr      x8, [x8, #0x4d8]
+  0x483f050: ldr      x0, [x8]
+
+---- window around call @0x483e868 ----
+  0x483e7f8: mov      x28, x22
+  0x483e7fc: ldr      x9, [sp, #0xe0]
+  0x483e800: str      x11, [sp, #0x148]
+  0x483e804: ldr      w8, [x0, #0xe4]   ; UNIT.walk_state
+  0x483e808: cbnz     w8, #0x483e814
+  0x483e80c: bl       #0x3cc7ac8
+  0x483e810: ldr      x9, [sp, #0xe0]
+  0x483e814: str      x9, [sp, #0xe0]
+  0x483e818: cbz      x20, #0x4847090
+  0x483e81c: ldr      x8, [x26]
+  0x483e820: str      x29, [sp, #0x118]
+  0x483e824: str      x27, [sp, #0x140]
+  0x483e828: ldr      x8, [x8, #0xb8]
+  0x483e82c: ldp      w8, w9, [x8, #4]
+  0x483e830: mul      w8, w8, w9
+  0x483e834: ldr      w9, [x20, #0x18]
+  0x483e838: cmp      w8, w9
+  0x483e83c: b.hs     #0x4847094
+  0x483e840: add      x8, x20, w8, sxtw #1
+  0x483e844: ldr      x20, [sp, #0x158]
+  0x483e848: ldr      x26, [sp, #0x78]
+  0x483e84c: mov      x1, x19
+  0x483e850: mov      x19, x28
+  0x483e854: mov      x3, xzr
+  0x483e858: ldrsh    w28, [x8, #0x20]
+  0x483e85c: mov      x0, x20
+  0x483e860: mov      x2, x26
+  0x483e864: str      w24, [sp, #0x164]
+  0x483e868: bl       #0x46e61cc   ; -> public static int $dC(Battle 1, Unit 1, Dynamic 1) { }
+  0x483e86c: cbz      x20, #0x4847090
+  0x483e870: str      w21, [sp, #0x124]
+  0x483e874: mov      x11, x20
+  0x483e878: mov      w27, w0
+  0x483e87c: str      x19, [sp, #0x138]
+  0x483e880: adrp     x19, #0x968e000
+  0x483e884: mov      x0, x11
+  0x483e888: ldr      x19, [x19, #0x4d8]
+  0x483e88c: ldr      x9, [x20]
+  0x483e890: ldr      x10, [sp, #0x108]
+  0x483e894: ldr      x8, [x19]
+  0x483e898: ldr      x1, [x9, #0x9a0]
+  0x483e89c: ldr      w22, [x10, #0x5c]
+  0x483e8a0: ldr      x8, [x8, #0xb8]
+  0x483e8a4: ldp      w21, w20, [x8, #0xc]
+
+---- window around call @0x483e3d4 ----
+  0x483e364: ldr      x0, [sp, #0x168]
+  0x483e368: ldr      x8, [x19]
+  0x483e36c: ldr      x9, [x0]
+  0x483e370: ldr      x8, [x8, #0xb8]
+  0x483e374: ldr      x2, [x9, #0x6b0]
+  0x483e378: ldr      w1, [x8, #0x50]
+  0x483e37c: ldr      x8, [x9, #0x6a8]
+  0x483e380: blr      x8
+  0x483e384: ldr      x8, [x19]
+  0x483e388: tbz      w0, #0, #0x48458f8
+  0x483e38c: mov      x19, x24
+  0x483e390: b        #0x4844c0c
+  0x483e394: adrp     x8, #0x968e000
+  0x483e398: ldr      x8, [x8, #0x4d8]
+  0x483e39c: ldr      x0, [x8]
+  0x483e3a0: ldr      w8, [x0, #0xe4]   ; UNIT.walk_state
+  0x483e3a4: cbnz     w8, #0x483e3b8
+  0x483e3a8: bl       #0x3cc7ac8
+  0x483e3ac: adrp     x8, #0x968e000
+  0x483e3b0: ldr      x8, [x8, #0x4d8]
+  0x483e3b4: ldr      x0, [x8]
+  0x483e3b8: ldr      x8, [x0, #0xb8]
+  0x483e3bc: ldr      x0, [sp, #0x158]
+  0x483e3c0: ldr      x1, [sp, #0x168]
+  0x483e3c4: ldp      w9, w8, [x8, #0xc]
+  0x483e3c8: eor      w8, w8, w9
+  0x483e3cc: ldr      w9, [sp, #0x134]
+  0x483e3d0: add      w2, w8, w9
+  0x483e3d4: bl       #0x480cb44   ; -> protected internal static void $yG(Battle 1, Unit 1, int 1) { }
+  0x483e3d8: b        #0x48464d4
+  0x483e3dc: mov      x8, x19
+  0x483e3e0: adrp     x19, #0x968e000
+  0x483e3e4: ldr      x19, [x19, #0x4d8]
+  0x483e3e8: ldr      x0, [sp, #0x158]
+  0x483e3ec: str      x25, [sp, #0x150]
+  0x483e3f0: str      x22, [sp, #0x138]
+  0x483e3f4: cbz      x0, #0x4847090
+  0x483e3f8: mov      x25, x8
+  0x483e3fc: ldr      x8, [x0]
+  0x483e400: mov      x11, x27
+  0x483e404: mov      w27, w26
+  0x483e408: mov      w26, w21
+  0x483e40c: ldr      x21, [sp, #0xf0]
+  0x483e410: ldr      x9, [x8, #0xc88]

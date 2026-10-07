@@ -1,0 +1,130 @@
+BUILD D — DONTSHOOT TASK-VS-SPEC NUANCE RESOLVED (6.9.18)
+libil2cpp.so sha256 8ace05bbaa2cdfda156e377cfbcb0c0a6fb223fa68188fa3df49f677f10e90c5
+dump.cs      sha256 0050e67d23f898588f0771c69ba7f30f9122cd6eccd66674c0f7c87b7f24714b
+Source: the ACT_DONT_SHOOT (= 7) arm of GAICommandSpecMode.execute
+(VA 0x45F61E0), body 0x45F6700..0x45F6824 (raw disasm below, from
+specmode-native.txt with call targets now resolved).
+
+RESOLUTION (CONFIRMED, direct decode):
+
+1. RUNTIME STATE = TASK 8, NOT A STICKY SPEC. The arm finalizes with
+       bl $Hi(Battle, Unit, 8)        ; 0x48178FC = set_Task helper
+   ($Hi(Battle,Unit,sbyte) is the same setter the HIDE arm calls with 4 and
+   the RESET_SPEED path with 0 — one helper, sbyte task id; task value 8 =
+   ClientUnitTaskType.DontShoot, dump.cs:271222). Entering fire discipline
+   REPLACES the unit's task, exactly like any other order.
+
+2. ENTRY IS IDEMPOTENT: 0x45F6744 `and w0, #0xff; cmp w8, #8; b.eq exit` —
+   a unit already in task 8 skips the whole arm (re-issue is a no-op).
+
+3. THE PAIRED SPECS ARE PER-TYPE CAPABILITY GATES, NOT RUNTIME STATE:
+   0x45F6728 `tbz w0, #0x14, exit` tests BIT 20 (= 0x100000 =
+   ClientUnitStateSpecType.DontShoot = 1048576) of the unit TYPE's spec
+   mask — a unit whose type lacks the fire-discipline capability ignores
+   the order entirely. CanShoot = 2097152 is the complementary capability
+   bit (its own toggle path, hotkey 32).
+
+4. ENTRY TEARDOWN (the discipline posture): clear target
+   ([unit+0x798] setter with w1 = 0), $he(Battle, Unit, -1) 0x4758128
+   (obj-notify with -1 = none), set_Obj(null) ([unit+0xAB8] pair),
+   $Gi(Battle, Unit, (short)unit.X, (short)unit.Y) 0x4809330 (halt/route
+   at the CURRENT position — the two shorts are the unit's own
+   coordinates), and a short-field setter with 0xFFFF (indefinite marker;
+   slot [0x4B8] not in the verified map — flagged, not guessed).
+
+5. NUANCE VERDICT: DontShoot = task replacement (task 8) + per-type
+   capability gating. It is sticky ONLY in the sense that no tick-time
+   machine expires it (the 0xFFFF marker); any subsequent task-carrying
+   order (attack/move/patrol...) REPLACES task 8 by the normal task
+   pipeline. CanShoot ends it by replacing it back.
+
+6. TRIBUTE FIDELITY NOTE (documented model choice): the v=28 tribute keeps
+   fireHold as a sticky bit that an explicit attack does NOT bypass. The
+   native entry is task replacement, so a subsequent attack task would end
+   discipline natively UNLESS the server re-asserts it (the attack path was
+   not decoded this pass). Left as an explicit, documented divergence — the
+   F-toggle UX and its vectors stand; a fidelity fix would clear fireHold
+   on task-carrying orders and update the fire-discipline vectors.
+
+================ RAW DISASM (0x45F66E8..0x45F6824) ================
+  0x45f66e8: cmp      w8, #5   ; ; cmp #5
+  0x45f66ec: b.eq     #0x45f6870
+  0x45f66f0: cmp      w8, #6   ; ; cmp #6
+  0x45f66f4: b.eq     #0x45f6b8c
+  0x45f66f8: cmp      w8, #7   ; ; cmp #7
+  0x45f66fc: b.ne     #0x45f6324
+  0x45f6700: ldr      x8, [x21]   ; = 0x9d11000
+  0x45f6704: ldr      x1, [x8, #0x310]   ; = 0x9682310
+  0x45f6708: ldr      x9, [x8, #0x308]   ; = 0x9682308
+  0x45f670c: mov      x0, x21
+  0x45f6710: blr      x9
+  0x45f6714: cbz      x0, #0x45f6e40
+  0x45f6718: ldr      x8, [x0]   ; = 0x9686000
+  0x45f671c: ldr      x1, [x8, #0x5e0]   ; = 0x96825e0
+  0x45f6720: ldr      x9, [x8, #0x5d8]   ; = 0x96825d8
+  0x45f6724: blr      x9
+  0x45f6728: tbz      w0, #0x14, #0x45f6324
+  0x45f672c: ldr      x8, [x21]   ; = 0x9d11000
+  0x45f6730: ldr      x1, [x8, #0x1010]   ; = 0x9683010
+  0x45f6734: ldr      x9, [x8, #0x1008]   ; = 0x9683008
+  0x45f6738: mov      x0, x21
+  0x45f673c: blr      x9
+  0x45f6740: and      w8, w0, #0xff
+  0x45f6744: cmp      w8, #8   ; ; cmp #8
+  0x45f6748: b.eq     #0x45f6324
+  0x45f674c: ldr      x8, [x21]   ; = 0x9d11000
+  0x45f6750: ldr      x9, [x8, #0x798]   ; = 0x9682798
+  0x45f6754: ldr      x2, [x8, #0x7a0]   ; = 0x96827a0
+  0x45f6758: mov      x0, x21
+  0x45f675c: mov      w1, wzr
+  0x45f6760: blr      x9
+  0x45f6764: mov      x0, x19
+  0x45f6768: mov      x1, x21
+  0x45f676c: mov      w2, #-1
+  0x45f6770: mov      x3, xzr
+  0x45f6774: bl       #0x4758128
+  0x45f6778: ldr      x8, [x21]   ; = 0x9d11000
+  0x45f677c: ldr      x9, [x8, #0xab8]   ; = 0x9682ab8
+  0x45f6780: ldr      x2, [x8, #0xac0]   ; = 0x9682ac0
+  0x45f6784: mov      x0, x21
+  0x45f6788: mov      x1, xzr
+  0x45f678c: blr      x9
+  0x45f6790: ldr      x8, [x21]   ; = 0x9d11000
+  0x45f6794: ldr      x1, [x8, #0x1110]   ; = 0x9683110
+  0x45f6798: ldr      x9, [x8, #0x1108]   ; = 0x9683108
+  0x45f679c: mov      x0, x21
+  0x45f67a0: blr      x9
+  0x45f67a4: ldr      x8, [x21]   ; = 0x9d11000
+  0x45f67a8: mov      w22, w0
+  0x45f67ac: ldr      x1, [x8, #0x1130]   ; = 0x9683130
+  0x45f67b0: ldr      x9, [x8, #0x1128]   ; = 0x9683128
+  0x45f67b4: mov      x0, x21
+  0x45f67b8: blr      x9
+  0x45f67bc: sxth     w2, w22
+  0x45f67c0: sxth     w3, w0
+  0x45f67c4: mov      x0, x19
+  0x45f67c8: mov      x1, x21
+  0x45f67cc: mov      x4, xzr
+  0x45f67d0: bl       #0x4809330
+  0x45f67d4: ldr      x8, [x21]   ; = 0x9d11000
+  0x45f67d8: ldr      x9, [x8, #0x4b8]   ; = 0x96824b8
+  0x45f67dc: ldr      x2, [x8, #0x4c0]   ; = 0x96824c0
+  0x45f67e0: mov      x0, x21
+  0x45f67e4: mov      w1, #0xffff
+  0x45f67e8: blr      x9
+  0x45f67ec: mov      x0, x19
+  0x45f67f0: mov      x1, x21
+  0x45f67f4: mov      w2, wzr
+  0x45f67f8: mov      x3, xzr
+  0x45f67fc: bl       #0x4817a8c
+  0x45f6800: mov      x0, x19
+  0x45f6804: mov      x1, x21
+  0x45f6808: mov      x2, xzr
+  0x45f680c: bl       #0x4832100
+  0x45f6810: mov      x0, x19
+  0x45f6814: mov      x1, x21
+  0x45f6818: mov      w2, #8
+  0x45f681c: mov      x3, xzr
+  0x45f6820: bl       #0x48178fc
+  0x45f6824: b        #0x45f6324
+  0x45f6828: ldr      x9, [x21]   ; = 0x9d11000

@@ -1126,3 +1126,17 @@ Work Log:
 
 Stage Summary:
 - The TakePositions unknown is closed (mechanism CONFIRMED, tribute behavior aligned); phase5 coverage now 208 vectors. Remaining: defend $Pg leash VALUE + micro-logic, siege stage-boundary split (MEDIUM), DontShoot task-vs-spec nuance, TakePositions 15-bit cell-class semantics (inferential).
+
+---
+Task ID: 33
+Agent: Super Z (main)
+Task: Feature-sized builds C+D — defend $Pg leash SOURCE pinned (44,684-byte end-to-end scan) + DontShoot task-vs-spec nuance resolved (act-7 arm decode) (v=36 notes/evidence)
+
+Work Log:
+- Build C: $Pg(Battle, Unit) 0x483C244..0x48470D0 disassembled end-to-end (44,684 B, 11,171 ins). CONFIRMED at full coverage: NO leash literal (nine cmp-immediates total, all init/0/1). Leash SOURCE pinned: the int arg of $UG (0x481ED28) and $yG (0x480CB44) is composed at 0x483EFF8 as ldp w9,w8,[UnitAct statics+0xC]; eor; + distance local — two UnitAct STATIC balance fields XOR-combined + local band; the client only reads the value (server balance data). Helper inventory captured (weapon/path/teardown/geometry helpers; anchor Coordinate ctor re-verified at 0x4840068). DEFEND_TETHER = 4 stands as the documented tuned stand-in.
+- Build D: the ACT_DONT_SHOOT arm (0x45F6700..0x45F6824) fully decoded with all call targets resolved: finalizes $Hi(Battle, Unit, 8) — 0x48178FC is the set-task helper (HIDE arm calls it with 4) — DontShoot is TASK 8 (ClientUnitTaskType.DontShoot 271222), i.e. TASK REPLACEMENT, not a sticky spec; entry idempotent (cmp task,#8 skip); the paired specs DontShoot=1048576 / CanShoot=2097152 are per-TYPE capability gates (tbz bit 20 test); entry teardown = clear target + $he(-1) + set_Obj(null) + $Gi at the current position + a 0xFFFF indefinite short marker (slot [0x4B8] flagged unverified).
+- Tribute fidelity note recorded as an explicit model choice: v=28 fireHold is sticky; native entry is task replacement — whether an attack task re-asserts discipline natively (attack path) is the documented residual. F-toggle UX and vectors unchanged this pass.
+- Evidence: combat/pg-leash-native.txt, combat/dontshoot-native.txt; tools pg_constants_scan.py, pg_ug_windows.py. No code changes (both builds are knowledge-delivery); suites were green at the last run and game.js is untouched since 208/208.
+
+Stage Summary:
+- The two oldest documented unknowns are now closed or reduced to precisely-bounded residuals: the defend leash is external balance data with its load site pinned; DontShoot is task replacement with capability gating. Remaining surfaces: $Pg branch enumeration, siege stage-boundary split, attack-path re-assertion check, TakePositions 15-bit cell-class semantics.
