@@ -34483,6 +34483,36 @@ void main() {
   }
   var w2t = (x, z) => [x + MAP2, z + MAP2];
 
+  // AOW3_VFX_TAXONOMY — authentic 6.9.18 VFX naming, folded into the tribute's FX emitters.
+  // Source: the game's own Addressables catalog (assets/aa/catalog.json inside the 6.9.18
+  // XAPK, 832 asset addresses) — see reverse/notes/vfx-asset-prefix-check.md and
+  // reverse/evidence/vfx-catalog-families-6.9.18.txt in the repo. Family counts are the
+  // verbatim catalog numbers; per-effect assignment for a given unit/weapon is balance
+  // data (not shipped in the APK), so the tribute's emitter tokens are family-accurate
+  // and heuristic at the sub-variant level. Exposed as window.__vfxTaxonomy for debugging.
+  const AOW3_VFX_TAXONOMY = Object.freeze({
+    version: "6.9.18",
+    families: Object.freeze([
+      { prefix: "bul_", role: "projectile / bullet VFX prefabs", count: 41, example: "bul_rifle1_s2.prefab", note: "rockets also live here: bul_rocket1_s2_*.anim" },
+      { prefix: "fire_", role: "muzzle fire flash prefabs", count: 18, example: "fire_rifle1_s1.prefab", note: "audio layer mirrors it: com.geargames.aow_fire_<class><idx>_<variant>.wav (11 files)" },
+      { prefix: "boom_", role: "explosion prefabs", count: 66, example: "boom_expl5_s5_ground", note: "boom_expl{1..5}_s{0..6}_{ground|veh|water}; buildings = boom_bld_expl*; nuke = boom_expl5_s5_nuke*; there is no literal expl_ prefix (0 hits)" },
+      { prefix: "hero_", role: "hero/ability VFX prefabs", count: 246, example: null, note: null },
+      { prefix: "eff_", role: "generic effect prefabs", count: 81, example: null, note: null },
+      { prefix: "debris_", role: "debris prefabs", count: 8, example: null, note: null },
+      { prefix: "impact_", role: "impact prefabs", count: 4, example: null, note: null }
+    ]),
+    // tribute emitter -> authentic family (tokens tagged on spawned fx objects)
+    emitters: Object.freeze({
+      muzzleFlash: "fire_<class><idx>_s<variant>",          // Renderer3D.fireEvent
+      tracer: "bul_<class><idx>_s<variant>",                // Renderer3D.syncProjectiles (rockets: bul_rocket*)
+      explosion: "boom_expl{1..5}_s{0..6}_{ground|water}",  // Renderer3D.explosion (veh variant unused: no per-hit surface data)
+      unitPop: "impact_*"                                   // Renderer3D.syncBooms pops
+    })
+  });
+  try {
+    window.__vfxTaxonomy = AOW3_VFX_TAXONOMY;
+  } catch (e) {}
+
   class Renderer3D {
     canvas;
     assetBase;
@@ -35559,6 +35589,10 @@ void main() {
         return;
       }
       const v = best;
+      // VFX token — authentic muzzle-fire family (fire_rifle1_s1-style); class is a def-kind
+      // heuristic (per-unit class ids are balance data) — see AOW3_VFX_TAXONOMY above
+      const udef0 = v.model.group.userData.unit?.def;
+      const fireCls = udef0?.weapon && udef0.weapon.splash >= 1 ? "fire_missile" : udef0?.kind === "infantry" ? "fire_rifle" : udef0?.kind === "aircraft" ? "fire_missile" : "fire_gun";
       const moving = Math.hypot(v.model.group.userData.unit ? v.model.group.userData.unit.vx : 0, v.model.group.userData.unit?.vy ?? 0) > 0.008;
       const muz = v.model.muzzles;
       if (muz && muz.length) {
@@ -35566,7 +35600,7 @@ void main() {
         v.muzzleIdx = (v.muzzleIdx + 1) % Math.max(1, muz.length);
         const wp = new Vector3;
         m.getWorldPosition(wp);
-        this.addFx(this.texFlash, wp.x, wp.y, wp.z, 0.55, 0.06, 1.4, true);
+        this.addFx(this.texFlash, wp.x, wp.y, wp.z, 0.55, 0.06, 1.4, true).vfx = fireCls;
         this.addFx(this.texSmoke, wp.x, wp.y, wp.z, 0.3, 0.5, 0.9, false, -0.6);
       } else {
         this.flash(px, py);
@@ -35716,7 +35750,9 @@ void main() {
           glow.scale.setScalar(isBullet ? 0.32 : 0.7);
           this.scene.add(mesh, glow);
           this.fireEvent(p.x, p.y, p.owner);
-          v = { mesh, glow, trailAcc: 0, prev: new Vector3(p.x - MAP2, 0.6, p.y - MAP2), total: Math.hypot(p.tx - p.x, p.ty - p.y) || 1 };
+          const vfxFamily = isBullet ? "bul" : "bul_rocket";
+          mesh.userData.vfx = vfxFamily + "_";
+          v = { mesh, glow, vfxFamily, trailAcc: 0, prev: new Vector3(p.x - MAP2, 0.6, p.y - MAP2), total: Math.hypot(p.tx - p.x, p.ty - p.y) || 1 };
           this.tracerViews.set(p, v);
         }
         const [wx, wz] = t2w(p.x, p.y);
@@ -35767,7 +35803,7 @@ void main() {
         this.handledPops.add(p);
         const [wx2, wz2] = t2w(p.x, p.y);
         const hy = heightAtWorld(wx2, wz2) + 1.7 + Math.random() * 0.9;
-        this.addFx(this.texFlash, wx2, hy, wz2, 0.9, 0.12, 1.8, true);
+        this.addFx(this.texFlash, wx2, hy, wz2, 0.9, 0.12, 1.8, true).vfx = "impact";
         this.addFx(this.texSmoke, wx2, hy + 0.2, wz2, 0.75, 0.9, 1.6, false, -0.7, 0x26251f);
         window.__sfx?.play("b_med3", { pos: [wx2, wz2], vol: 0.34, rate: 1.35 });
       }
@@ -35778,13 +35814,19 @@ void main() {
     }
     explosion(x, y, z, r) {
       const scale = Math.max(0.8, r * 0.9);
-      this.addFx(this.texFlash, x, y + 0.4, z, scale * 2.4, 0.09, 1.6, true);
+      // VFX token — authentic explosion family: boom_expl{size}_s{variant}_{surface}; the
+      // expl-size ladder is bucketed from radius and the surface read from terrain height
+      // (water plane y = -0.42) — indicative mapping, see AOW3_VFX_TAXONOMY above
+      const boomTok = "boom_expl" + (r >= 2 ? 5 : r >= 1.2 ? 3 : 1) + "_s" + Math.min(6, Math.max(0, Math.round(r * 2))) + "_" + (heightAtWorld(x, z) < -0.4 ? "water" : "ground");
+      this.addFx(this.texFlash, x, y + 0.4, z, scale * 2.4, 0.09, 1.6, true).vfx = boomTok;
       this.addFx(this.texGlow, x, y + 0.55, z, scale * 1.4, 0.42, scale * 3.4, true, 0.5);
       const ring = new Mesh(new RingGeometry(0.75, 1, 26), new MeshBasicMaterial({ color: 16767120, transparent: true, opacity: 0.85, depthWrite: false, side: DoubleSide, blending: AdditiveBlending }));
       ring.rotation.x = -Math.PI / 2;
       ring.position.set(x, heightAtWorld(x, z) + 0.12, z);
-      if (this.texExpl)
-        this.addFx(this.texExpl, x, y + 0.9, z, scale * 3.8, 0.55, scale * 2.6, true, 0.9);
+      if (this.texExpl) {
+        const bfx = this.addFx(this.texExpl, x, y + 0.9, z, scale * 3.8, 0.55, scale * 2.6, true, 0.9);
+        bfx.vfx = boomTok;
+      }
       this.scene.add(ring);
       this.markers.push({ ring, ttl: 0.38, max: 0.38 });
       for (let i = 0;i < 5; i++) {

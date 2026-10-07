@@ -678,3 +678,18 @@ Stage Summary:
 - Plans internalized; next highest-leverage work per both docs = determinism
   (seeded sim PRNG + state hashes/replay fixtures) and data-model extraction,
   NOT Wasm/multiplayer yet.
+
+Task: audit item #2 (damage pipeline) + MinePrice/71 xref + VFX taxonomy fold-in
+
+Work Log:
+- Rebuilt the native workspace (LFS download of the 6.9.18 XAPK; SHA-256 1a41e033… chain intact; libil2cpp.so SHA-256 8ace05bb… verified) and wrote reverse/tools/damage_pipeline_native_analysis.py (Capstone + numpy BL xref over 2,982,071 BLs + 150,721-method dump.cs index) + mine_getkey_sweep.py + pipeline_followup_scan.py.
+- Audit item #2 CLOSED: WeaponDamage.CreateMediumDamage (0x80ede50) builds the stat model with baked EStat=62 + name/hint ids 630/720; full 6-factory table extracted (61/62/63/72/73/74, ids 629-631/719-721); ctor field layout natively confirmed (Stat→0x40, Category=Base(1) constant); Calculate = 3 modification-collection dispatches + #0x28-guard combine; CalculateProgress interface-tail-calls m_max.Get(value, ownStat). Mine leg: CreateDamageForMediumArmor → MineDamageForMediumArmorStat..ctor (0x80e9948); Calculate is a mine-prototype-keyed modification adapter. Xref: CalculateWeaponArmorDamage has exactly ONE native caller (MaxStatValueProvider.Get); all Get calls are interface-dispatched (7 indirect sites proven). Note: reverse/notes/damage-pipeline-native-analysis.md; evidence: reverse/evidence/damage-pipeline/.
+- MinePrice/71 RESOLVED natively: whole-binary scans (0 direct literal-71 call sites, 0 get_Stat==71 compares, 0 hits in UI icon/color pipeline) left exactly one literal — an indirect interface tail-call in MineCostStat.CalculateProgress (mov w1,#0x47 @0x80e8f00 → m_max.Get(value,71)). Sweep of all six mine CalculateProgress: cap keys 61/62/63/64/67 + MineCost→71 (only class with cap key ≠ value key). Verdict: MinePrice/71 = the MaxStatValueProvider tier-cap key for mine cost; no icon, no IStatModel class. estat-stat-models.md §6.7 + Unknowns closed; TSV MineCostStat row updated.
+- Audit report: item #2 struck DONE (Recommended Next Investigations + leads + browser-impact sections).
+- Tribute FX taxonomy fold-in (docs/game.js): added frozen AOW3_VFX_TAXONOMY registry (7 authentic Addressables families with verbatim counts/examples, evidence-cited) exposed as window.__vfxTaxonomy; tagged the four FX emitters with taxonomy tokens — muzzle flash → fire_{rifle|gun|missile} (def-kind heuristic), tracers → bul_ / bul_rocket_, explosions → boom_expl{1|3|5}_s{0..6}_{ground|water} (water plane y=-0.42), pops → impact_. Additive only (48 insertions, 6 deletions); sim untouched.
+- QA: node --check clean; headless browser run (fresh load → skirmish → 30 s combat): 0 page errors, 0 console errors, __vfxTaxonomy live (7 families); index.html cache-buster bumped v=14 → v=16 (v=15 was taken by the concurrent hero/card pass).
+
+Stage Summary:
+- Damage pipeline now reconstructed end-to-end with native evidence at every hop; the only damage math remains the 0.9/0.1 curve + counter-triangle int triad + level scaling.
+- EStat MinePrice/71 consumer account complete (78/78 stat usage surfaces accounted).
+- Tribute FX naming now anchored to the confirmed 6.9.18 Addressables taxonomy; battle verified error-free.
