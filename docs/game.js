@@ -2548,8 +2548,17 @@
       }
     }
     onHubHello(from, m) {
-      // duplicate hello from a known rid = the pre-game guest's 2 s keepalive
+      // duplicate hello from a known rid: pre-game it is the guest's 2 s
+      // keepalive; once the match is live it can only come from a client whose
+      // welcome was never consumed (it started loading assets after the join
+      // and its startGame threw the payload away) — re-run the live join path
+      // so it gets a FRESH welcome with an up-to-date snapshot. Clients that
+      // actually started stop helloing (their timer is cleared on success).
       if (from && (from === this.lastHello || this.clients.has(from))) {
+        if (this.opts && this.opts.isLive && this.opts.isLive()) {
+          this.onLiveHello(from, m);
+          return;
+        }
         this.onPeerHello(m);
         return;
       }
@@ -2559,16 +2568,7 @@
         return;
       }
       if (this.opts && this.opts.isLive && this.opts.isLive()) {
-        // match in progress: spectator, or P2 seat reclaim if vacant
-        let role = m.role === "spectator" ? "spec" : "player";
-        if (role === "player" && this.activeP2())
-          role = "spec";
-        this.clients.set(from, { role, slot: role === "spec" ? 0 : 2, seen: -1, live: false, raw: false });
-        const snap = this.opts.snapshot ? this.opts.snapshot() : null;
-        this.sendTo(from, {
-          a: "welcome", proto: PROTO, role, slot: role === "spec" ? 0 : 2,
-          seed: snap.seed, tick: snap.tick, arch: snap.arch, hashes: snap.hashes, gen: this.matchGen
-        });
+        this.onLiveHello(from, m);
         return;
       }
       if (this.lastHello || this.activeP2()) {
@@ -2579,6 +2579,21 @@
       }
       this.lastHello = from;
       this.onPeerHello(m);
+    }
+    // match in progress: spectator, or P2 seat reclaim if vacant (fresh join
+    // AND retry of a registered client — the role decision is re-run either
+    // way and the client entry is overwritten, so a waiting "player" joiner
+    // is upgraded to the reclaimed seat if it freed up in the meantime)
+    onLiveHello(from, m) {
+      let role = m.role === "spectator" ? "spec" : "player";
+      if (role === "player" && this.activeP2())
+        role = "spec";
+      this.clients.set(from, { role, slot: role === "spec" ? 0 : 2, seen: -1, live: false, raw: false });
+      const snap = this.opts.snapshot ? this.opts.snapshot() : null;
+      this.sendTo(from, {
+        a: "welcome", proto: PROTO, role, slot: role === "spec" ? 0 : 2,
+        seed: snap.seed, tick: snap.tick, arch: snap.arch, hashes: snap.hashes, gen: this.matchGen
+      });
     }
     // host, right before launching: seat the pre-game guest, hand waiting
     // spectators a fresh tick-0 welcome, message everyone their part
@@ -38400,6 +38415,12 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       }
     },
     launch() {
+      // the start packet seats the guest BEFORE the host's own startGame — if
+      // local assets are still baking the host would strand its own match
+      if (!ready) {
+        this.st("Still loading — the match can start once the map is ready.");
+        return;
+      }
       const seed = Math.floor(Math.random() * 1e9);
       if (this.helloTimer) {
         clearInterval(this.helloTimer);
@@ -38432,6 +38453,20 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
         this.armed = false;
         this.pending = false;
         this.st(spec ? "Spectating — catching up…" : "Rejoined — catching up…");
+      } else {
+        // assets were still baking: the payload above is discarded with the
+        // failed startGame — re-hello so the host issues a fresh welcome once
+        // we are actually ready. KEEP this (already fed) session: a brand-new
+        // one would ingest the hub's raw c broadcasts unfed and poison its
+        // buffer with single-slot frames; beginFed is re-entrant and the next
+        // welcome supersedes both archive and live frames.
+        this.st("Still loading assets — will rejoin when ready…");
+        const hello = () => {
+          if (this.session && !this.session.dead)
+            this.session.send({ a: "hello", proto: PROTO, role: "player" });
+        };
+        this.helloTimer = setInterval(hello, 2500);
+        setTimeout(hello, 2500);
       }
     },
     begin(seed, slot) {

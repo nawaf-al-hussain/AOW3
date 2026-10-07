@@ -402,5 +402,71 @@ console.log('lockstep-jip: PROTO', PROTO);
   ok(!host.sess.desynced && !spec.sess.desynced, 'rematch: no desync anywhere');
 }
 
+// ---- 7. welcome-lost retry: a re-hello from a registered client while the
+// match is live must be answered with a FRESH welcome (the joiner's page was
+// still baking assets, so its startGame discarded the first payload; the
+// stranded-forever regression). Host-side contract: re-run the live join path
+// (role re-decided, client entry overwritten, up-to-date snapshot).
+{
+  NET.length = 0; // isolate: sections 1-6 endpoints share the bus and their
+                  // still-live hosts would answer this section's hellos too
+  const host = makeEndpoint('host', 1, {
+    isLive: () => !!(host.sim && host.sim.tick > 0),
+    snapshot: () => ({
+      seed: host.sim.seed, tick: host.sim.tick,
+      arch: [...host.sess.arch].map(([t, f]) => ({ t, f1: f[1], f2: f[2] })),
+      hashes: [...host.sess.hashArch].flatMap(([t, h]) => [
+        ...(h[1] !== undefined ? [{ t, h: h[1], s: 1 }] : []),
+        ...(h[2] !== undefined ? [{ t, h: h[2], s: 2 }] : [])
+      ])
+    })
+  });
+  const guest = makeEndpoint('guest', 2);
+  attachGame(host, 888111222, 1, false);
+  attachGame(guest, 0, 2, false);
+  guest.tr.send({ a: 'hello', proto: PROTO, role: 'player' });
+  host.sess.beginMatch(737373);
+  attachGame(host, 737373, 1, false);
+  attachGame(guest, 737373, 2, false);
+  for (let f = 0; f < 120; f++) { stepEP(host); stepEP(guest); issueOrders(host, guest, null); }
+  // joiner whose assets are still baking: a bare transport with a welcome
+  // collector and NO session/game (startGame would fail, payload discarded)
+  const welcomes = [];
+  const joiner = new FakeTr(NET);
+  joiner._msg = (m) => { if (m.a === 'welcome') welcomes.push(m); };
+  joiner.send({ a: 'hello', proto: PROTO, role: 'player' });
+  ok(welcomes.length === 1, 'retry: live join answered with welcome #1');
+  // the joiner discards welcome #1 (!ready) and keeps its hello timer alive
+  for (let f = 0; f < 40; f++) { stepEP(host); stepEP(guest); issueOrders(host, guest, null); }
+  joiner.send({ a: 'hello', proto: PROTO, role: 'player' }); // the retry
+  ok(welcomes.length === 2, 'retry: re-hello answered with a SECOND welcome (was: stranded)');
+  ok(welcomes[1].tick > welcomes[0].tick, 'retry: welcome #2 carries a fresher snapshot (t=' + welcomes[0].tick + ' -> ' + welcomes[1].tick + ')');
+  ok(welcomes[1].role === 'spec' && welcomes[1].slot === 0, 'retry: seat still occupied -> downgraded to spectator');
+  ok(welcomes[1].gen === host.sess.matchGen, 'retry: welcome gen matches the live match');
+  // full consumer path on welcome #2: the joiner finally "becomes ready" —
+  // attach the session + game ON the joiner's own transport (its rid is the
+  // registered client the host's targeted cf stream addresses). Session slot 2
+  // (hub=false, like Mp.makeSession(2)); the spectator's sim views as slot 1.
+  const spec = { name: 'late-spec', tr: joiner, sess: null, sim: null, cmds: null };
+  spec.sess = new LockstepSession(joiner, 2, null, {});
+  const sessMsg = joiner._msg;
+  joiner._msg = (m) => { if (m.a === 'welcome') welcomes.push(m); sessMsg(m); };
+  attachGame(spec, welcomes[1].seed, 1, true);
+  spec.sess.beginFed(welcomes[1]);
+  for (let f = 0; f < 600 && spec.sim.tick < welcomes[1].tick + 60; f++) {
+    stepEP(host); stepEP(guest); stepEP(spec);
+    issueOrders(host, guest, null);
+  }
+  ok(spec.sess.liveSent, 'retry: consumer reached the live edge on welcome #2');
+  ok(spec.sim.hashState() === host.sim.hashState(), 'retry: late spectator hash == host live hash');
+  // seat upgrade: the guest leaves, the SAME re-hello now reclaims the seat
+  guest.tr.send({ a: 'bye' });
+  for (let f = 0; f < 10; f++) stepEP(host);
+  const welcomesN = welcomes.length;
+  joiner.send({ a: 'hello', proto: PROTO, role: 'player' });
+  const up = welcomes[welcomes.length - 1];
+  ok(welcomes.length === welcomesN + 1 && up.role === 'player' && up.slot === 2, 'retry: vacant seat -> re-hello upgraded the joiner to a player');
+}
+
 console.log('\nlockstep-jip: ' + pass + ' assertions passed, ' + fail + ' failed');
 process.exit(fail ? 1 : 0);
