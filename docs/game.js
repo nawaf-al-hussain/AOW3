@@ -303,6 +303,28 @@
     }
   }
 
+  // Phase 4 determinism helpers (DOM-free, inside the kernel):
+  // mulberry32 — seeded PRNG (Sim uses a state-inspectable inline variant so
+  // rngState is part of the hash); fnv1a — 32-bit hash for state digests.
+  function mulberry32(seed) {
+    let a = seed >>> 0;
+    return function () {
+      a = a + 0x6D2B79F5 | 0;
+      let t = a;
+      t = Math.imul(t ^ t >>> 15, t | 1);
+      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function fnv1a(str) {
+    let h = 0x811c9dc5;
+    for (let i = 0; i < str.length; i++) {
+      h ^= str.charCodeAt(i);
+      h = Math.imul(h, 0x01000193);
+    }
+    return (h >>> 0).toString(16).padStart(8, "0");
+  }
+
   // src/game/engine/sim.ts
   var TICK_RATE = 20;
   var MAP_W = 160;
@@ -327,6 +349,11 @@
     visible;
     pf;
     constructor(seed = 12345) {
+      // Phase 4 determinism: every sim random draw flows through this.rng()
+      // (mulberry32 seeded from `seed`); seed/rngState/hashes are inspectable.
+      this.seed = seed >>> 0;
+      this.rngState = (this.seed ^ 0x9E3779B9) >>> 0;
+      this.hashes = [];
       this.grid = new Uint8Array(MAP_W * MAP_H);
       this.explored = new Uint8Array(MAP_W * MAP_H);
       this.visible = [new Uint8Array(MAP_W * MAP_H), new Uint8Array(MAP_W * MAP_H)];
@@ -345,6 +372,13 @@
       this.spawn("ilight", 2, MAP_W - 12, MAP_H / 2 - 2);
       this.spawn("ilight", 2, MAP_W - 12, MAP_H / 2 + 2);
       this.spawn("iheavy", 2, MAP_W - 13, MAP_H / 2);
+    }
+    rng() {
+      let a = this.rngState = this.rngState + 0x6D2B79F5 | 0;
+      let t = a;
+      t = Math.imul(t ^ t >>> 15, t | 1);
+      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
     }
     newPlayer() {
       return { funds: 500, income: ECONOMY.baseIncome, cpUsed: 0, cpCap: ECONOMY.baseCP, queue: [], alive: true };
@@ -525,6 +559,34 @@
         p.cpUsed = this.cpUsed(o);
       }
     }
+    stateString() {
+      // Canonical quantized serialization of ALL behavior-affecting sim state
+      // (Phase 4 determinism). floats/booms/pops are presentation feedback and
+      // intentionally excluded. Quantization = 1/100 tile to absorb float drift.
+      const q = (v) => Math.round((v || 0) * 100);
+      const o = (v) => v === undefined || v === null ? "-" : String(q(v));
+      const xy = (p) => p === undefined || p === null ? "-" : q(p.x) + ":" + q(p.y);
+      const s = [];
+      s.push(`T${this.tick},t${q(this.time)},n${this.nextId},w${this.winner},r${this.rngState}`);
+      for (let i = 0; i < this.players.length; i++) {
+        const p = this.players[i];
+        s.push(`P${i},${q(p.funds)},${q(p.income)},${p.cpUsed},${p.cpCap},${p.alive ? 1 : 0}`);
+        for (const qq of p.queue)
+          s.push(`Q${qq.defId},${q(qq.t)}`);
+      }
+      for (const u of this.units)
+        s.push(`U${u.id},${u.def.id},${u.owner},${q(u.x)},${q(u.y)},${q(u.hp)},${q(u.facing)},${u.order.kind},${o(u.order.x)},${o(u.order.y)},${o(u.order.depotId)},${o(u.targetId)},${o(u.preferredId)},${u.path.length},${xy(u.dest)},${xy(u.guard)},${u.grounded ? 1 : 0},${u.burstLeft},${q(u.aimT)},${q(u.cd)},${u.state},${u.kills},${q(u.captureT ?? -1)},${o(u.lastHitBy)},${o(u.lastTargetId)}`);
+      for (const b of this.buildings)
+        s.push(`B${b.id},${b.defId},${b.owner},${q(b.x)},${q(b.y)},${q(b.hp)},${b.built ? 1 : 0},${q(b.captureT)},${b.captureBy},${o(b.lastHitOwner)}`);
+      for (const p of this.projectiles)
+        s.push(`J${q(p.x)},${q(p.y)},${q(p.tx)},${q(p.ty)},${q(p.speed)},${p.dmg},${o(p.owner)},${o(p.srcId)},${o(p.targetId)},${p.airburst ? 1 : 0},${q(p.trail)},${p.dead ? 1 : 0}`);
+      for (const c of this.corpses)
+        s.push(`C${c.id},${c.defId},${c.owner},${c.kind},${q(c.x)},${q(c.y)},${q(c.t)}`);
+      return s.join("|");
+    }
+    hashState() {
+      return fnv1a(this.stateString());
+    }
     commandMove(ids, x, y, attackMove = false) {
       let i = 0;
       for (const id of ids) {
@@ -626,7 +688,7 @@
             const prod = this.buildings.find((b) => b.defId === producer && b.owner === o && b.hp > 0 && b.built) || this.buildings.find((b) => b.defId === "hq" && b.owner === o);
             if (prod) {
               const dir = o === 1 ? 1 : -1;
-              const u = this.spawn(q.defId, o, prod.x + dir * (prod.radius + 1), prod.y + (Math.random() * 3 - 1.5));
+              const u = this.spawn(q.defId, o, prod.x + dir * (prod.radius + 1), prod.y + (this.rng() * 3 - 1.5));
               u.order = { kind: "move", x: prod.x + dir * (prod.radius + 4.5), y: u.y };
               u.path = this.pf.find(u.x, u.y, u.order.x, u.order.y, u.def.kind === "aircraft" && !u.grounded) ?? [];
             }
@@ -669,6 +731,13 @@
         this.winner = hq1 ? 1 : 2;
         for (const o of [1, 2])
           this.players[o - 1].alive = this.winner === o;
+      }
+      if (this.tick % 20 === 0) {
+        // Phase 4 determinism: 1 Hz state-hash journal (10-minute ring) for
+        // replay/divergence verification (roadmap Phase D groundwork).
+        this.hashes.push({ tick: this.tick, h: this.hashState() });
+        if (this.hashes.length > 600)
+          this.hashes.shift();
       }
     }
     passable(u, x, y) {
@@ -1036,7 +1105,7 @@
       if (u.lastMode === "gun")
         u.cd = Math.max(u.cd, 1.5);
       u.lastMode = "melee";
-      const crit = Math.random() < mw.crit;
+      const crit = this.rng() < mw.crit;
       const dmg = Math.round(effectiveDamage(mw.damage, tgt.def.armor, tgt.def.armorClass) * (crit ? mw.critMul : 1));
       this.applyHit(u, tgt.x, tgt.y, tgt, dmg, 1);
       if (crit)
@@ -1068,7 +1137,7 @@
       u.facing = Math.atan2(b.y - u.y, b.x - u.x);
       const dmg = Math.round(effectiveDamage(u.def.weapon.damage, { light: 30, medium: 24, heavy: 18 }, "heavy") * (1 + 0.08 * rankTier(u)));
       if (u.def.weapon.projectileSpeed === 0) {
-        if (Math.random() < 0.8) {
+        if (this.rng() < 0.8) {
           b.hp -= dmg;
           b.lastHitOwner = u.owner;
           this.floats.push({ x: b.x, y: b.y - 1, text: `${Math.round(dmg)}`, color: "#ffd28a", t: 0 });
@@ -1105,7 +1174,7 @@
           if (rel < Math.PI / 2)
             dmg2 = Math.round(dmg2 * (1 - tgt.def.frontal));
         }
-        if (Math.random() < acc) {
+        if (this.rng() < acc) {
           tgt.hp -= dmg2;
           if (u)
             tgt.lastHitBy = u.id;
@@ -1174,7 +1243,7 @@
           if (p.airburst) {
             this.pops.push({ x: p.tx, y: p.ty, t: 0, max: 0.4 });
             const t0 = this.units.find((v) => v.id === p.targetId);
-            if (t0 && Math.hypot(t0.x - p.tx, t0.y - p.ty) < 1.6 && Math.random() < p.acc) {
+            if (t0 && Math.hypot(t0.x - p.tx, t0.y - p.ty) < 1.6 && this.rng() < p.acc) {
               const eff = effectiveDamage(p.armorClassOfTarget === "light" ? { light: p.dmg, medium: p.dmg / 2, heavy: p.dmg / 4 } : p.armorClassOfTarget === "medium" ? { light: p.dmg / 2, medium: p.dmg, heavy: p.dmg / 2 } : { light: p.dmg / 4, medium: p.dmg / 2, heavy: p.dmg }, t0.def.armor, t0.def.armorClass);
               t0.hp -= eff;
               t0.lastHitBy = p.srcId ?? 0;
@@ -1202,7 +1271,7 @@
             }
           } else if (p.targetId !== undefined) {
             const t = this.units.find((v) => v.id === p.targetId);
-            if (t && Math.hypot(t.x - p.tx, t.y - p.ty) < 1.5 && Math.random() < p.acc) {
+            if (t && Math.hypot(t.x - p.tx, t.y - p.ty) < 1.5 && this.rng() < p.acc) {
               const eff = effectiveDamage(p.armorClassOfTarget === "light" ? { light: p.dmg, medium: p.dmg / 2, heavy: p.dmg / 4 } : p.armorClassOfTarget === "medium" ? { light: p.dmg / 2, medium: p.dmg, heavy: p.dmg / 2 } : { light: p.dmg / 4, medium: p.dmg / 2, heavy: p.dmg }, t.def.armor, t.def.armorClass);
               t.hp -= eff;
               t.lastHitBy = p.srcId ?? 0;
@@ -1330,6 +1399,96 @@
       return this.buildings.find((b) => b.defId === "hq" && b.owner === owner);
     }
   }
+  // ---- Phase 4: unified command layer ----
+  // One authoritative entry point per the plan: Mouse / Keyboard / Touch /
+  // Minimap / AI -> Commands -> Simulation. Selection and build-preview are
+  // issuer state (plain ids, DOM-free); every order routes to a sim command
+  // method. Failed commands are rejected BEFORE journalling, so the log is a
+  // faithful replay record: seed + journal = replay (roadmap Phase D).
+  class Commands {
+    constructor(sim = null, sel = new Set()) {
+      this.sim = sim;
+      this.sel = sel;
+      this.placing = null;
+      this.log = [];
+    }
+    attach(sim) {
+      this.sim = sim;
+    }
+    issue(cmd) {
+      if (!cmd || !cmd.type)
+        return false;
+      const sim = this.sim;
+      switch (cmd.type) {
+        case "select":
+          {
+            const mode = cmd.mode || "set";
+            if (mode === "clear")
+              this.sel.clear();
+            else if (mode === "set") {
+              this.sel.clear();
+              for (const id of cmd.ids || []) this.sel.add(id);
+            } else if (mode === "add") {
+              if (!cmd.keep)
+                this.sel.clear();
+              for (const id of cmd.ids || []) this.sel.add(id);
+            } else if (mode === "type") {
+              this.sel.clear();
+              if (cmd.defId !== undefined && sim)
+                for (const u of sim.units)
+                  if (u.owner === (cmd.owner ?? 1) && u.def.id === cmd.defId)
+                    this.sel.add(u.id);
+            } else
+              return false;
+            break;
+          }
+        case "move":
+          if (!sim || !cmd.ids || !cmd.ids.length || cmd.x === undefined || cmd.y === undefined)
+            return false;
+          sim.commandMove(cmd.ids, cmd.x, cmd.y, !!cmd.attackMove);
+          break;
+        case "attack":
+          if (!sim || !cmd.ids || !cmd.ids.length)
+            return false;
+          sim.commandAttack(cmd.ids, cmd.targetId);
+          break;
+        case "stop":
+          if (!sim || !cmd.ids)
+            return false;
+          sim.commandStop(cmd.ids);
+          break;
+        case "capture":
+          if (!sim || !cmd.ids || !cmd.ids.length)
+            return false;
+          sim.commandCapture(cmd.ids, cmd.buildingId);
+          break;
+        case "build":
+          if (!sim || !cmd.defId || !sim.tryPlace(cmd.owner ?? 1, cmd.defId, cmd.x, cmd.y))
+            return false;
+          break;
+        case "produce":
+          if (!sim || !cmd.defId || !sim.enqueue(cmd.defId, cmd.owner ?? 1))
+            return false;
+          break;
+        case "special":
+          if (!sim || !cmd.ids || !cmd.ids.length)
+            return false;
+          sim.commandLandDepart(cmd.ids);
+          break;
+        case "cancel":
+          this.placing = null;
+          this.sel.clear();
+          break;
+        default:
+          return false;
+      }
+      this.log.push({ tick: sim ? sim.tick : -1, cmd });
+      if (this.log.length > 512)
+        this.log.shift();
+      return true;
+    }
+  }
+
   // ---- SIM KERNEL END ----
 
   // src/game/engine/ai.ts
@@ -1343,6 +1502,11 @@
     constructor(sim, me = 2) {
       this.sim = sim;
       this.me = me;
+      // Phase 4: AI issues the SAME command types as the player through its
+      // own Commands instance; AI randomness flows from a seeded stream
+      // derived from the sim seed (determinism).
+      this.cmd = new Commands(sim);
+      this.rng = mulberry32((sim.seed ^ Math.imul(me, 0x9E3779B9)) >>> 0);
     }
     step(dt) {
       if (this.sim.winner !== null)
@@ -1363,11 +1527,11 @@
         const want = all.filter((id) => BUILD_ORDER_F2.includes(id) && sim.buildings.some((b) => b.owner === this.me && b.defId === PRODUCER_OF[id] && b.hp > 0 && b.built));
         if (!want.length)
           return;
-        let choice = want[Math.floor(Math.random() * want.length)];
+        let choice = want[Math.floor(this.rng() * want.length)];
         const pInf = sim.units.filter((u) => u.owner !== this.me && u.def.kind === "infantry").length;
         const pVeh = sim.units.filter((u) => u.owner !== this.me && u.def.kind === "vehicle").length;
         if (pVeh >= 3)
-          choice = Math.random() < 0.5 ? "iheavy" : "mammoth";
+          choice = this.rng() < 0.5 ? "iheavy" : "mammoth";
         else if (pInf >= 5)
           choice = "sniper";
         const pHeli = sim.units.filter((u) => u.owner !== this.me && u.def.kind === "aircraft").length;
@@ -1382,14 +1546,14 @@
         const myHeroQueued = p.queue.some((q) => UNITS[q.defId].hero);
         if (hasHeroBld && !myHeroAlive && !myHeroQueued) {
           const f2Heroes = HERO_ORDER.filter((h) => UNITS[h].faction === 2);
-          const pick = f2Heroes[Math.floor(Math.random() * f2Heroes.length)];
+          const pick = f2Heroes[Math.floor(this.rng() * f2Heroes.length)];
           const hdef = UNITS[pick];
           if (p.funds >= hdef.price && p.cpUsed + hdef.cp <= p.cpCap)
-            sim.enqueue(pick, this.me);
+            this.cmd.issue({ type: "produce", defId: pick, owner: this.me });
         }
         const def = UNITS[choice];
         if (p.funds >= def.price && p.cpUsed + def.cp <= p.cpCap)
-          sim.enqueue(choice, this.me);
+          this.cmd.issue({ type: "produce", defId: choice, owner: this.me });
       }
       const myInf = sim.units.filter((u) => u.owner === this.me && u.def.captures && u.order.kind === "idle");
       const depots = sim.buildings.filter((b) => b.defId === "depot" && b.owner !== this.me);
@@ -1401,24 +1565,18 @@
         const ids = squad.map((u) => u.id);
         if (escort)
           ids.push(escort.id);
-        sim.commandCapture(ids, d.id);
-        if (escort) {
-          escort.order = { kind: "attackMove", x: d.x, y: d.y };
-          escort.dest = { x: d.x, y: d.y };
-          escort.path = [];
-        }
+        this.cmd.issue({ type: "capture", ids, buildingId: d.id });
+        if (escort)
+          this.cmd.issue({ type: "move", ids: [escort.id], x: d.x, y: d.y, attackMove: true });
       }
       const hq = sim.hq(this.me);
       if (hq) {
         const threat = sim.units.filter((u) => u.owner !== this.me && Math.hypot(u.x - hq.x, u.y - hq.y) < 14);
         if (threat.length) {
           const defenders = sim.units.filter((u) => u.owner === this.me && Math.hypot(u.x - hq.x, u.y - hq.y) < 40);
-          for (const d of defenders) {
-            const tgt = threat[d.order.x ? 0 : 0];
-            d.order = { kind: "attackMove", x: hq.x, y: hq.y };
-            d.dest = { x: hq.x, y: hq.y };
-            d.path = [];
-          }
+          const dIds = defenders.map((u) => u.id);
+          if (dIds.length)
+            this.cmd.issue({ type: "move", ids: dIds, x: hq.x, y: hq.y, attackMove: true });
           return;
         }
       }
@@ -1426,12 +1584,7 @@
       const enemyHq = sim.hq(1);
       if (enemyHq && myArmy.length >= this.waveSize && !this.wavePushing) {
         this.wavePushing = true;
-        for (const u of myArmy) {
-          u.order = { kind: "attackMove", x: enemyHq.x, y: enemyHq.y };
-          u.dest = { x: enemyHq.x, y: enemyHq.y };
-          u.path = [];
-        }
-        sim.commandMove(myArmy.map((u) => u.id), enemyHq.x, enemyHq.y, true);
+        this.cmd.issue({ type: "move", ids: myArmy.map((u) => u.id), x: enemyHq.x, y: enemyHq.y, attackMove: true });
       }
       if (this.wavePushing) {
         const stillAlive = sim.units.filter((u) => u.owner === this.me && !u.def.captures).length;
@@ -36383,6 +36536,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
   var ready = false;
   var cam = { x: MAP_W / 2, y: MAP_H / 2, dist: 12.5 };
   var sel = new Set;
+  var cmd = new Commands(null, sel);
   var keys = new Set;
   {
     const probe = new Sim(1);
@@ -36396,16 +36550,21 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
     }).catch(console.error);
     window.__aow3 = () => ({ get sim() {
       return sim;
-    }, r3d, cam, sel });
+    }, r3d, cam, sel, get ai() {
+      return ai;
+    }, cmd });
   }
   function start() {
     if (!ready)
       return;
-    sim = new Sim(Math.floor(Math.random() * 1e9));
+    const mSeed = /[#&]seed=(\d+)/.exec(location.hash || "");
+    sim = new Sim(mSeed ? +mSeed[1] >>> 0 : Math.floor(Math.random() * 1e9));
     try {
       window.__aow3sim = sim;
     } catch (e) {}
     ai = new AI(sim, 2);
+    cmd.attach(sim);
+    console.info("[AOW3] sim seed", sim.seed);
     sel.clear();
     r3d.applyTerrainGrid(sim.grid);
     const hq = sim.hq(1);
@@ -36441,7 +36600,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       b.title = `${d.name} — ${d.desc}`;
       b.innerHTML = `<img src="${d.card}${d.card.startsWith("data:") ? "" : "?v=2"}" alt="${d.name}"/><div class="nm">${d.name.split('"')[0]}</div>
       <div class="pr">${d.price}¤<span class="cp">CP${d.cp}</span></div>`;
-      b.onclick = () => sim?.enqueue(id, 1);
+      b.onclick = () => cmd.issue({ type: "produce", defId: id, owner: 1 });
       cards.appendChild(b);
     }
     for (const id of HERO_ORDER) {
@@ -36453,21 +36612,25 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       b.title = `${d.name} — ${d.desc}`;
       b.innerHTML = `<img src="${d.card}"/><div class="nm">${d.name.split('"')[1] || d.name}</div>
       <div class="pr">${d.price}¤<span class="cp">CP${d.cp}</span></div>`;
-      b.onclick = () => sim?.enqueue(id, 1);
+      b.onclick = () => cmd.issue({ type: "produce", defId: id, owner: 1 });
       cards.appendChild(b);
     }
   }
   var BLD_ICON = { herobld: '<img class="bimg" src="assets/ui/bld-hero.png" draggable="false">', barracks: '<img class="bimg" src="assets/ui/bld-barracks.png" draggable="false">', factory: '<img class="bimg" src="assets/ui/bld-factory.png" draggable="false">', heavyfactory: '<img class="bimg" src="assets/ui/bld-heavyfactory.png" draggable="false">', power: '<img class="bimg" src="assets/ui/bld-power.png" draggable="false">', turret: '<img class="bimg" src="assets/ui/bld-turret.png" draggable="false">', bunker: '<img class="bimg" src="assets/ui/bld-bunker.png" draggable="false">' };
-  var HINT_DEFAULT = "drag = select \u00B7 right-click / long-press = move \u00B7 attack \u00B7 capture \u00B7 wheel / pinch = zoom \u00B7 WASD = pan";
+  var HINT_DEFAULT = "drag = select \u00B7 right-click / long-press = move \u00B7 ctrl+right-click = attack-move \u00B7 attack \u00B7 capture \u00B7 minimap right-click = move \u00B7 wheel / pinch = zoom \u00B7 WASD = pan";
   var placing = null;
   function startPlacing(defId) {
     placing = defId;
+    if (cmd)
+      cmd.placing = defId;
     r3d?.setGhost(defId);
     $("prodhint").textContent = "Click to place " + BLD[defId].name + " near your base \u00B7 right-click / ESC cancels \u00B7 Shift-click places more";
     document.querySelectorAll("#bcards .card").forEach((b) => b.classList.toggle("armed", b.dataset.id === defId));
   }
   function stopPlacing() {
     placing = null;
+    if (cmd)
+      cmd.placing = null;
     r3d?.setGhost(null);
     const ph = $("prodhint");
     if (ph)
@@ -36498,7 +36661,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
   $("selinfo")?.addEventListener("click", (e) => {
     const b = e.target.closest && e.target.closest(".hbtn");
     if (b && sim)
-      sim.commandLandDepart([...sel]);
+      cmd.issue({ type: "special", ids: [...sel] });
   });
   var pointers = new Map;
   var pinchDist = 0;
@@ -36510,7 +36673,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
     const r = cv.getBoundingClientRect();
     return { x: e.clientX - r.left, y: e.clientY - r.top };
   };
-  function orderAt(sx, sy) {
+  function orderAt(sx, sy, attackMove = false) {
     if (!sim || !sel.size || !r3d)
       return;
     const t = r3d.screenToTile(sx, sy);
@@ -36531,18 +36694,18 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
     }
     const ids = [...sel];
     if (enemy) {
-      sim.commandAttack(ids, enemy.id);
+      cmd.issue({ type: "attack", ids, targetId: enemy.id });
       r3d.mark(enemy.x, enemy.y, "attack");
       return;
     }
     const depot = sim.buildings.find((b) => b.defId === "depot" && b.owner !== 1 && Math.hypot(b.x - t.x, b.y - t.y) < DEPOT.radius + 1);
     if (depot && ids.some((id) => sim.units.find((u) => u.id === id && u.def.captures))) {
-      sim.commandCapture(ids.filter((id) => sim.units.find((u) => u.id === id && u.def.captures)), depot.id);
+      cmd.issue({ type: "capture", ids: ids.filter((id) => sim.units.find((u) => u.id === id && u.def.captures)), buildingId: depot.id });
       r3d.mark(depot.x, depot.y, "capture");
       return;
     }
-    sim.commandMove(ids, Math.max(1, Math.min(MAP_W - 2, t.x)), Math.max(1, Math.min(MAP_H - 2, t.y)), false);
-    r3d.mark(t.x, t.y, "move");
+    cmd.issue({ type: "move", ids, x: Math.max(1, Math.min(MAP_W - 2, t.x)), y: Math.max(1, Math.min(MAP_H - 2, t.y)), attackMove });
+    r3d.mark(t.x, t.y, attackMove ? "attack" : "move");
   }
   cv.addEventListener("pointerdown", (e) => {
     cv.setPointerCapture(e.pointerId);
@@ -36569,7 +36732,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
         if (t) {
           const cx = Math.max(4, Math.min(MAP_W - 5, t.x));
           const cy = Math.max(4, Math.min(MAP_H - 5, t.y));
-          if (sim.tryPlace(1, placing, cx, cy)) {
+          if (cmd.issue({ type: "build", defId: placing, owner: 1, x: cx, y: cy })) {
             window.__sfx?.play("bld_start", { vol: 0.8 });
             r3d.mark(t.x, t.y, "capture");
             if (!e.shiftKey)
@@ -36582,7 +36745,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       return;
     }
     if (e.button === 2) {
-      orderAt(p.x, p.y);
+      orderAt(p.x, p.y, e.ctrlKey);
       return;
     }
     if (e.button === 1 || e.shiftKey) {
@@ -36680,14 +36843,15 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
     if (drag.box) {
       const x0 = Math.min(drag.sx, drag.cx), x1 = Math.max(drag.sx, drag.cx);
       const y0 = Math.min(drag.sy, drag.cy), y1 = Math.max(drag.sy, drag.cy);
-      sel.clear();
+      const boxIds = [];
       for (const u of sim.units) {
         if (u.owner !== 1)
           continue;
         const s = r3d.tileToScreen(u.x, u.y);
         if (s.sx >= x0 - 4 && s.sx <= x1 + 4 && s.sy >= y0 - 8 && s.sy <= y1 + 4)
-          sel.add(u.id);
+          boxIds.push(u.id);
       }
+      cmd.issue({ type: "select", mode: "set", ids: boxIds });
     } else {
       let hit;
       let bd = 30;
@@ -36704,14 +36868,9 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       const now = performance.now();
       if (hit) {
         if (now - lastTap.t < 350 && lastTap.id === hit.id) {
-          sel.clear();
-          for (const u of sim.units)
-            if (u.owner === 1 && u.def.id === hit.def.id)
-              sel.add(u.id);
+          cmd.issue({ type: "select", mode: "type", defId: hit.def.id });
         } else {
-          if (!e.ctrlKey)
-            sel.clear();
-          sel.add(hit.id);
+          cmd.issue({ type: "select", mode: "add", ids: [hit.id], keep: e.ctrlKey });
         }
         lastTap = { t: now, id: hit.id };
       } else {
@@ -36730,10 +36889,10 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
           }
         }
         if (foe && sel.size) {
-          sim.commandAttack([...sel], foe.id);
+          cmd.issue({ type: "attack", ids: [...sel], targetId: foe.id });
           r3d.mark(foe.x, foe.y, "attack");
         } else if (!e.ctrlKey)
-          sel.clear();
+          cmd.issue({ type: "select", mode: "clear" });
       }
     }
   });
@@ -36752,18 +36911,28 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
     if (e.key === "Escape") {
       if (placing)
         stopPlacing();
-      sel.clear();
+      cmd.issue({ type: "cancel" });
     }
-    // Phase 3: stop command (native task -> TASK_WAIT); full command UI = Phase 4
+    // Phase 4: stop via the command layer (native task -> TASK_WAIT)
     if (e.key.toLowerCase() === "s" && sim && sel.size && !placing && e.target === document.body)
-      sim.commandStop([...sel]);
+      cmd.issue({ type: "stop", ids: [...sel] });
   });
   window.addEventListener("keyup", (e) => keys.delete(e.key.toLowerCase()));
   mini.addEventListener("pointerdown", (e) => {
     const r = mini.getBoundingClientRect();
-    cam.x = (e.clientX - r.left) / r.width * MAP_W;
-    cam.y = (e.clientY - r.top) / r.height * MAP_H;
+    const mx = (e.clientX - r.left) / r.width * MAP_W;
+    const my = (e.clientY - r.top) / r.height * MAP_H;
+    // Phase 4: minimap as a command source — right-click moves the selection
+    // there (same move command as the game view); left-click pans.
+    if (e.button === 2) {
+      if (sim && sel.size)
+        cmd.issue({ type: "move", ids: [...sel], x: Math.max(1, Math.min(MAP_W - 2, mx)), y: Math.max(1, Math.min(MAP_H - 2, my)) });
+      return;
+    }
+    cam.x = mx;
+    cam.y = my;
   });
+  mini.addEventListener("contextmenu", (e) => e.preventDefault());
   function refreshHud() {
     if (!sim)
       return;

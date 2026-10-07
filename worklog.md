@@ -788,3 +788,40 @@ Work Log:
 
 Stage Summary:
 - Full 12-hero roster live (v=18) in the Phase 2 data-module structure; only the chassis GLBs remain stand-ins (documented swap points in UNIT_MODEL). Note: reverse/notes/hero-prefabs-10-remaining.md.
+---
+Task ID: 20
+Agent: Super Z (main)
+Task: Phase 4 — unified command system + determinism gaps (seeded PRNG / state hashes), v=19 (shipped v=20 after colliding with the concurrent hero-roster pass v=19)
+
+Work Log:
+- RE: dump.cs AIComm* protocol (com.geargames.aow.entities.battle.aicomm) — 45
+  command messages (UnitsMove/UnitsStop/Squad/BuyUnit/BuSet/AircraftRebase/CRC*)
+  with tick-stamped ctor (senderTick+side); AICommandLogWriter/Reader = native
+  command journal; CRCRequest/Verify/SyncTest = native state-hash desync
+  detection -> reverse/notes/command-system-native-analysis.md (mapping table).
+- Kernel: Commands class (issue() routes select/move/attack/stop/capture/build/
+  produce/special/cancel; validation BEFORE journal; 512-entry tick-stamped ring
+  per issuer); mulberry32 + fnv1a helpers; Sim.seed/rngState/hashes fields;
+  Sim.rng() (inline mulberry32) replaces all 6 sim Math.random draws;
+  stateString()/hashState() (FNV-1a over quantized state; floats/booms/pops
+  excluded); 1 Hz hash journal in step() (600-entry ring).
+- AI: own Commands instance + own seeded rng; produce/capture/escort/defense/
+  wave all via command layer (direct u.order mutations removed, incl. dead
+  threat[...] line); AI rng = mulberry32(seed ^ imul(owner, 0x9E3779B9)).
+- Input: mouse/keyboard/touch/minimap adapters emit typed commands (orderAt
+  gained ctrl+right-click attack-move; minimap right-click = move command;
+  card clicks = produce; build placement = build command; S/Escape via layer);
+  #seed=N URL override; seed logged; __aow3 probe exposes cmd + ai.
+- Tests: commands-determinism.test.js 50/50 PASS (same-seed hash equality incl.
+  journal, seed divergence, single-command divergence, routing/selection/journal
+  semantics, seeded combat duel, AI seed derivation); regressions PASS: unit-fsm
+  29, accuracy 13, data-model 265; node --check clean; index.html v=19.
+- Docs: AGENTS.md §32 updated (Phase 4 + determinism DONE; remaining Phase D:
+  replay playback harness, lockstep networking).
+
+Stage Summary:
+- Phase 4 + determinism live (v=19 -> v=20 cache-bust after collision): one authoritative command layer fed by
+  every input source (plan's Phase 4 architecture diagram realized), fully
+  seeded sim+AI randomness, state hashing + command journals as Phase D
+  groundwork. Next per plan: Phase 5 combat reconstruction gaps (min-range,
+  patrol/hold tasks) or replay playback harness.

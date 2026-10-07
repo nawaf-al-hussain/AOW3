@@ -1282,6 +1282,8 @@ stages must not skip the evidence/boundary/determinism stages beneath them; neit
 plan justifies a wholesale rewrite of docs/game.js. Implementation status against
 these plans: Phase 0 (evidence pipeline), Phase 1 fixed-timestep stepping,
 Phase 2 data-model extraction, and Phase 3 unit state machines are DONE.
+Phase 4 (unified command system) and the determinism gaps (seeded PRNG, state
+hashes) are DONE as of v=19.
 Phase 2 (v=17, bumped from v=16 after colliding with the concurrent remote FX pass 2f0bd7f): gameplay data lives in
 `docs/data/*.js` (`AOW3_DATA`: stats/weapons/units/buildings/factions) instead of
 hardcoded tables in game.js — schema machine-extracted to
@@ -1295,10 +1297,21 @@ retaliate+warn/guard-return/commandStop/die-state) — evidence and clone mappin
 in `reverse/notes/unit-state-machines-native-analysis.md`, deterministic
 coverage in `reverse/evidence/tests/unit-fsm.test.js` (29 vectors, runs the
 SHIPPED sim kernel extracted between the game.js SIM KERNEL markers). The sim
-kernel region is DOM-free by rule — keep it that way. Known gaps remain: seeded
-randomness (sim still uses Math.random()) and state-hash/replay fixtures
-(roadmap Phase D); renderer interpolation between sim states is approximated by
-per-frame smoothing.
+kernel region is DOM-free by rule — keep it that way. Phase 4 (v=19): one
+authoritative command layer — `Commands.issue()` in the kernel routes
+select/move/attack/stop/capture/build/produce/special/cancel from EVERY input
+source (mouse, keyboard, touch, minimap, AI); AI issues the same command types
+as the player through its own Commands instance (no direct u.order mutation
+remains); commands journal (per issuer, 512-entry ring, tick-stamped,
+failures-not-journalled) = seed + journal = replay. Determinism: all sim+AI
+randomness flows through mulberry32 (Sim.rng() with inspectable rngState;
+AI stream derived from sim.seed ⊕ owner), `#seed=N` URL override for
+reproducible maps, `sim.stateString()`/`hashState()` (FNV-1a over quantized
+behavior-affecting state, 1 Hz ring journal `sim.hashes`) — coverage in
+`reverse/evidence/tests/commands-determinism.test.js` (50 vectors, same-shipped
+kernel extraction method as Phase 3). Remaining roadmap Phase D items: replay
+PLAYBACK harness and lockstep networking. Renderer interpolation between sim
+states is approximated by per-frame smoothing.
 
 Recommended order:
 
