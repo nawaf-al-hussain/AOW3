@@ -57,6 +57,65 @@
     const k = (u && u.kills) || 0;
     return k >= 6 ? 3 : k >= 3 ? 2 : k >= 1 ? 1 : 0;
   }
+  // ---- MaxStatValueProvider tier caps: native literal extraction (CONFIRMED) ----
+  // Evidence: MaxStatValueProvider..ctor(ILogger) VA 0x7CC0C00..0x7CC1640 populates
+  // m_statInfos : Dictionary<EStat, StatInfo {BaseMax, FirstMax?, MegaMax?}>
+  // (dump.cs 6.9.18 sha256 0050e67d...); every entry is a constructor float literal
+  // parsed by reverse/tools/extract_maxstat_tiers.py -> reverse/evidence/estat/
+  // estat-tiers.txt (72/78 EStats registered). Full analysis:
+  // reverse/notes/units/estat-stat-models.md section 7. Unregistered (run uncapped):
+  // None/0, WeaponFireRate/60, WeaponMineCost/66, WeaponSuperWeaponCP/70. Three-tier
+  // caps exist only for Health and the six weapon-armor keys (the veterancy/mega
+  // surfaces); two-tier: Price, Speed, armor triad, DeminingSpeed. Native consumers
+  // use Get(value, stat) as the UI stat-panel progress-bar maximum (display
+  // normalization domain), not additional sim math. Shape: EStat id ->
+  // [BaseMax, FirstMax|null, MegaMax|null].
+  var AOW3_MAX_STAT_TIERS = {
+    1: [8000, 25000, 45000], 2: [1000, 2600, null], 3: [5, null, null],
+    4: [15, null, null], 5: [150, null, null], 6: [100, 450, null],
+    7: [80, 530, null], 8: [80, 530, null], 9: [80, 530, null],
+    10: [20, null, null], 11: [11, null, null], 12: [140, null, null],
+    13: [10, null, null], 14: [250, null, null], 15: [250, null, null],
+    16: [300, null, null], 17: [9, null, null], 18: [2000, null, null],
+    19: [7, null, null], 20: [2.2, null, null], 21: [2.2, null, null],
+    22: [2, null, null], 23: [100, 450, null], 24: [300, null, null],
+    25: [200, null, null], 26: [100, null, null], 27: [5, null, null],
+    28: [400, null, null], 29: [2, null, null], 30: [2, null, null],
+    31: [5, null, null], 32: [2, null, null], 33: [2, null, null],
+    34: [4, null, null], 35: [5, null, null], 36: [10, null, null],
+    37: [300, null, null], 38: [200, null, null], 39: [400, null, null],
+    40: [2, null, null], 41: [2, null, null], 42: [2, null, null],
+    43: [4.5, null, null], 44: [150, null, null], 45: [2, null, null],
+    46: [60, null, null], 47: [2500, null, null], 48: [20, null, null],
+    49: [20, null, null], 50: [19, null, null], 51: [20, null, null],
+    52: [100, null, null], 53: [2.5, null, null], 54: [10, null, null],
+    55: [10, null, null], 56: [530, null, null], 57: [10, null, null],
+    58: [16, null, null], 59: [100, null, null], 61: [300, 4000, 20000],
+    62: [300, 4000, 20000], 63: [300, 4000, 20000], 64: [2.5, null, null],
+    65: [5, null, null], 67: [7.5, null, null], 71: [30, null, null],
+    72: [300, 4000, 55000], 73: [300, 4000, 55000], 74: [300, 4000, 55000],
+    75: [40, null, null], 76: [100, null, null], 77: [12, null, null]
+  };
+  // Tier cap resolution: rank tier 0 -> BaseMax; 1 -> FirstMax (falls back to
+  // BaseMax when the tier is unregistered for the stat); 2/3 -> MegaMax (falls
+  // back down the chain). Unregistered EStat -> null (uncapped domain).
+  function maxStatCap(statKey, tier) {
+    const e = AOW3_MAX_STAT_TIERS[statKey];
+    if (!e)
+      return null;
+    const t = tier >= 2 ? 2 : tier >= 1 ? 1 : 0;
+    if (t === 2 && e[2] !== null && e[2] !== undefined)
+      return e[2];
+    if (t >= 1 && e[1] !== null && e[1] !== undefined)
+      return e[1];
+    return e[0];
+  }
+  // Native IMaxStatValueProvider.Get(value, stat) analog (dump.cs:168886): clamp
+  // the value to the stat's tier cap; unregistered stats pass through unchanged.
+  function maxStatGet(value, statKey, tier) {
+    const cap = maxStatCap(statKey, tier);
+    return cap === null ? value : Math.min(value, cap);
+  }
   // ---- weapon accuracy: recovered 6.9.18 native curves (HIGH CONFIDENCE) ----
   // Evidence: GUIMainUpgradeHelperFunctions.WeaponStaticAccuracy @VA 0x7FCEFF8,
   // WeaponDynamicAccuracy @VA 0x7FCF0B8 (libil2cpp.so sha256 8ace05bb...).
@@ -38336,10 +38395,20 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
         const dm = w.damage || {};
         const dmgTxt = dm.light !== undefined ? `${dm.light}/${dm.medium}/${dm.heavy}` : "—";
         const rT = rankTier(su);
+        // Native stat-panel normalization: MaxStatValueProvider caps are the UI
+        // progress-bar maxima (estat-stat-models.md section 7) — render the weapon
+        // damage of the unit's own armor-mirror class as % of the tier cap that
+        // matches its rank tier (BASE/FIRST/MEGA), the native display domain.
+        const capCls = su.def.armorClass === "light" ? 61 : su.def.armorClass === "heavy" ? 63 : 62;
+        const capVal = maxStatCap(capCls, rT);
+        const capName = rT >= 2 ? "MEGA" : rT === 1 ? "FIRST" : "BASE";
+        const capDmg = w.damage && w.damage[su.def.armorClass || "medium"] !== undefined ? w.damage[su.def.armorClass || "medium"] : null;
+        const capPct = capDmg !== null && capVal ? Math.min(100, Math.round(capDmg / capVal * 100)) : null;
         si.innerHTML = `<b>${su.def.name}${sel.size > 1 ? " ×" + sel.size : ""}</b>` +
           (su.def.hero ? `<span style="color:#fcd34d;font-weight:800;font-size:11px">HERO</span>` : rT > 0 ? `<span style="color:#fcd34d;font-weight:800;font-size:11px">${["", "VETERAN", "ELITE", "ACE"][rT]} · ${su.kills} kill${su.kills > 1 ? "s" : ""}</span>` : "") +
           `<div class="hpbar"><i style="width:${Math.round(fr * 100)}%;background:${fr > 0.55 ? "#58d858" : fr > 0.25 ? "#d8c840" : "#e05840"}"></i></div>` +
           `<span class="si-stats">DMG ${dmgTxt} · RNG ${w.range ?? "—"} · ARM ${su.def.armorClass ?? "—"}</span>` +
+          (capPct !== null ? `<span class="si-stats" title="MaxStatValueProvider ${capName} cap ${capVal} for EStat ${capCls} (native tier caps, estat-tiers.txt)">CAP ${capName} ${capVal} · DMG ${capPct}%<span class="hpbar" style="margin-top:2px"><i style="width:${capPct}%;background:#7aa2f7"></i></span></span>` : "") +
           (su.def.hero && su.def.melee ? `<span class="si-stats">BLADES ${su.def.melee.damage.light}/${su.def.melee.damage.medium}/${su.def.melee.damage.heavy} · CRIT ${Math.round(su.def.melee.crit * 100)}%</span>` : "") +
           (su.def.hero && su.def.aircraft ? `<span class="si-stats">${su.grounded ? "GROUNDED · +25% DMG" : "AIRBORNE"}</span><button class="hbtn" data-act="land">${su.grounded ? "DEPART" : "LAND"}</button>` : "");
       } else
