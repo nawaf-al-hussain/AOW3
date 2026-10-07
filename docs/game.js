@@ -2915,7 +2915,8 @@
       this.liveSent = false;
       this.matchGen++;
       this.stallSince = {};
-      this.helloQueue = [];
+      // helloQueue is PRE-GAME room state (not per-match): launch() resets the
+      // session BEFORE beginMatch, which is what consumes the queue
       for (const cl of this.clients.values()) {
         cl.seen = -1;
         if (cl.raw)
@@ -38429,7 +38430,19 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
           mp.session.reset();
           mp.session.slot = (m.slot | 0) || 2;
           mp.session.seats = (m.seats | 0) || 2;
-          mp.begin(m.seed | 0, mp.session.slot, mp.session.seats);
+          Net.session = mp.session;
+          const ok = mp.begin(m.seed | 0, mp.session.slot, mp.session.seats);
+          if (!ok) {
+            // assets were still baking: re-hello so the host re-runs the live
+            // join path (fresh welcome / seat decision) once we are ready
+            mp.st("Still loading assets — will rejoin when ready…");
+            const hello = () => {
+              if (mp.session && !mp.session.dead)
+                mp.session.send({ a: "hello", proto: PROTO, role: "player" });
+            };
+            mp.helloTimer = setInterval(hello, 2500);
+            setTimeout(hello, 2500);
+          }
         },
         onPeerHello: (m) => {
           // mid-game strays (e.g. a spectator hello heard by the guest tab)
@@ -38557,9 +38570,11 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       if (this.session)
         this.session.reset();
       // seat the queued pre-game players (targeted starts), hand waiting
-      // spectators a fresh tick-0 welcome, then launch locally as P1
+      // spectators a fresh tick-0 welcome, then launch locally as P1 (the
+      // host sim MUST use the room's seat count — every peer's hashState
+      // covers its players array, so seat-count mismatch = instant desync)
       this.session.beginMatch(seed);
-      this.begin(seed, 1);
+      this.begin(seed, 1, this.session.seats);
     },
     // JIP/spectator entry: adopt the host's catch-up snapshot and re-simulate
     // from tick 0 (the loop fast-forwards until the live edge, then lockstep)
@@ -38610,6 +38625,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
           this.helloTimer = null;
         }
       }
+      return ok;
     }
   };
   $("mp-host").onclick = () => Mp.host();
