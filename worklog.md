@@ -1014,3 +1014,19 @@ Work Log:
 
 Stage Summary:
 - v=29 (a41cd9f): lockstep networking live — the Phase D plan is now fully closed (determinism, replay harness, lockstep multiplayer). Known limits (documented): 2 players only, no join-in-progress/spectator, no late-catchup save sync, BC = same-browser only, PeerJS depends on the public broker; background-tab rAF throttling stalls a peer's pump until refocused (correct freeze, not divergence).
+
+---
+Task ID: 26
+Agent: Super Z (main)
+Task: Verify the queued batch (1) CreateDamageForMediumArmor native analysis, (2) MinePrice/71 xref, (3) VFX taxonomy -> tribute FX naming — all landed at 0e4c4b2; post-refactor integrity re-check
+
+Work Log:
+- Re-verified every deliverable of the 0e4c4b2 batch on main @ 80e02d9 after the v=17..v=29 refactor wave:
+  (1) reverse/notes/damage-pipeline-native-analysis.md (audit item #2 CLOSED, CONFIRMED native; 6-factory table, ctor layout, Calculate/CalculateProgress, mine leg, sole-consumer xref) + reverse/evidence/damage-pipeline/damage-pipeline-native.txt + pipeline-xref-followup.txt — present;
+  (2) estat-stat-models.md §6.7 (MinePrice/71 = MaxStatValueProvider tier-cap key consumed solely by MineCostStat.CalculateProgress, mov w1,#0x47 @0x80e8f08) + evidence mineprice71-xref.txt (B2/B3 empty = zero competing sites) + mine-capkey-sweep.txt (six cap keys 61/62/63/64/67/71) — present; TSV MineCostStat row updated;
+  (3) vfx-asset-prefix-check.md (CONFIRMED HIGH; 41 bul_ / 18 fire_ / 0 literal expl_, boom_expl* taxonomy) + docs/game.js AOW3_VFX_TAXONOMY registry (line ~35421, window.__vfxTaxonomy) + emitter tags (muzzle fire_*, tracer bul_/bul_rocket_, explosion boom_expl{1|3|5}_s{0..6}_{ground|water}, impact_ pops) — all survived the v=17 data-model refactor and v=28/29 Phase-5/lockstep edits intact.
+- node --check on current game.js (v=29, 38,663 lines): clean.
+- No code or note changes were needed; this entry records the verification only.
+
+Stage Summary:
+- The three queued audit items are confirmed COMPLETE and pushed (commit 0e4c4b2 + later refactor-proof re-verification). FileUpload audit ranked list: items #1-#4 all CLOSED, #5 remains blocked on a 6.5.22 binary.
