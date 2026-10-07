@@ -1975,6 +1975,15 @@
       }
     }
     updateVision() {
+      // JIP/spectator: full-map observation — visible/explored flooded once per
+      // step so every existing consumer (renderer culling, minimap, fog,
+      // click-select filters) sees everything without per-site checks
+      if (this.spectate) {
+        this.visible[0].fill(1);
+        this.visible[1].fill(1);
+        this.explored.fill(1);
+        return;
+      }
       this.visible[0].fill(0);
       this.visible[1].fill(0);
       for (const o of [1, 2]) {
@@ -2193,17 +2202,28 @@
     }
   }
 
-  // ---- Lockstep networking (2 players) ----
+  // ---- Lockstep networking (2 players + N spectators / JIP) ----
   // Classic deterministic lockstep on top of the Phase 4 determinism stack:
-  // both peers exchange per-tick input packets through a Commands.outbound
-  // hook; the sim may only advance tick T once the peer's packet for T has
-  // arrived (network stall = sim freeze, never divergence). Commands are
-  // scheduled INPUT_DELAY ticks ahead to hide one round-trip. hashState()
-  // checksums are exchanged every CHECKPOINT ticks (1 Hz); a mismatch is a
-  // hard desync surfaced in the UI banner.
-  var PROTO = 1;
+  // players exchange per-tick input packets through a Commands.outbound
+  // hook; the sim may only advance tick T once every live player's packet
+  // for T has arrived (network stall = sim freeze, never divergence).
+  // Commands are scheduled INPUT_DELAY ticks ahead to hide one round-trip.
+  // hashState() checksums are exchanged every CHECKPOINT ticks (1 Hz); a
+  // mismatch is a hard desync surfaced in the UI banner.
+  //
+  // Multi-party (PROTO 2): the host is a hub. Joiners hellos with a role;
+  // if a match is live the host answers `welcome` (seed + sparse input-frame
+  // archive 0..W + checkpoint hashes) and from then on feeds the client a
+  // per-tick full input frame `cf` plus relayed checkpoint hashes `ch`. The
+  // joiner re-simulates from tick 0 (fast-forward catch-up), then settles
+  // into the live packet stream — a role:"player" joiner additionally
+  // announces `live` and its seat starts gating the host simulation. A lost
+  // peer seat is vacated after STALL_VACATE_MS of host-side stall so the
+  // match continues and the seat can be reclaimed via JIP.
+  var PROTO = 2;
   var INPUT_DELAY = 3;
   var CHECKPOINT = 20;
+  var STALL_VACATE_MS = 6000;
   var Net = {
     mode: "local",
     session: null,
@@ -2214,6 +2234,7 @@
   class LockstepSession {
     constructor(transport, slot, cmds, opts = {}) {
       this.tr = transport;
+      this.rid = transport.rid;
       this.slot = slot;
       this.cmds = cmds;
       this.delay = opts.delay ?? INPUT_DELAY;
@@ -2222,13 +2243,33 @@
       this.peerSeen = -1;
       this.myHash = new Map;
       this.peerHash = new Map;
+      this.peerHash2 = new Map;
       this.desynced = false;
       this.dead = false;
       this.onDesync = opts.onDesync || (() => {});
       this.onPeerLeave = opts.onPeerLeave || (() => {});
       this.onGuestStart = opts.onGuestStart || (() => {});
       this.onPeerHello = opts.onPeerHello || (() => {});
+      this.onWelcome = opts.onWelcome || (() => {});
+      this.onNack = opts.onNack || (() => {});
+      // ---- multi-party (JIP/spectator) ----
+      this.hub = slot === 1;            // host runs the hub
+      this.fed = false;                 // hub-fed client (spectator / JIP player)
+      this.role = opts.role || "player";// fed: "spec" | "player" (JIP reclaim)
+      this.clients = new Map;           // hub: rid -> {role, slot, seen, live, raw}
+      this.lastHello = null;            // hub: latest pre-game hello (seated as P2 at launch)
+      this.arch = new Map;              // hub: tick -> {1:[],2:[]} sparse input archive for JIP snapshots
+      this.hashArch = new Map;          // hub: tick -> {1:h,2:h}
+      this.own = new Map;               // fed player: tick -> [my commands] (published independently of cf-fed buf)
+      this.cfUpTo = -1;                 // fed: highest live cf tick seen
+      this.catchupUntil = -1;           // fed: replay archive through this tick, then live
+      this.liveSent = false;            // fed player: "live" announced (host gates from here on)
+      this.matchGen = 0;                // match generation (rematch invalidates stale fed buffers)
+      this.stallSince = undefined;      // hub: stalled-waiting-on-P2 timer start
+      this.opts = opts;                 // hub JIP providers (isLive/snapshot)
       transport.onMsg((m) => this.onMsg(m));
+      if (transport.onPeerDrop)
+        transport.onPeerDrop((rid) => this.onDrop(rid));
       transport.onClose(() => {
         if (!this.dead)
           this.onPeerLeave();
@@ -2238,31 +2279,178 @@
       if (!this.dead)
         this.tr.send(m);
     }
+    sendTo(rid, m) {
+      if (!this.dead && rid)
+        this.tr.sendTo(rid, m);
+    }
+    onDrop(rid) {
+      // per-connection drop (PeerJS): forget that client; a live P2 seat frees up
+      if (!this.hub || this.dead)
+        return;
+      const cl = this.clients.get(rid);
+      if (!cl)
+        return;
+      this.clients.delete(rid);
+      if (cl.slot === 2 && cl.live)
+        this.onPeerLeave();
+    }
+    activeP2() {
+      for (const cl of this.clients.values())
+        if (cl.slot === 2 && cl.live && cl.role === "player")
+          return cl;
+      return null;
+    }
     onMsg(m) {
       if (!m || this.dead)
         return;
+      if (m.to !== undefined && m.to !== this.rid)
+        return;
+      const from = m.f;
+      const t = m.t | 0;
       if (m.a === "c") {
-        const t = m.t | 0;
-        if (t > this.peerSeen)
-          this.peerSeen = t;
-        let per = this.buf.get(t);
-        if (!per) {
-          per = {};
-          this.buf.set(t, per);
+        if (this.hub) {
+          // only a live slot-2 player publishes input; spectators are silent
+          const cl = from && this.clients.get(from);
+          if (cl && cl.live && cl.slot === 2) {
+            if (t > cl.seen)
+              cl.seen = t;
+            if (t > this.peerSeen)
+              this.peerSeen = t;
+            let per = this.buf.get(t);
+            if (!per) {
+              per = {};
+              this.buf.set(t, per);
+            }
+            const arr = per[2] ?? (per[2] = []);
+            for (const c of m.c || [])
+              arr.push(c);
+          }
+        } else {
+          // fed clients consume ONLY cf frames — raw packets duplicate their
+          // content and would poison buf with single-slot shapes
+          if (this.fed)
+            return;
+          if (t > this.peerSeen)
+            this.peerSeen = t;
+          let per = this.buf.get(t);
+          if (!per) {
+            per = {};
+            this.buf.set(t, per);
+          }
+          const arr = per[m.s] ?? (per[m.s] = []);
+          for (const c of m.c || [])
+            arr.push(c);
         }
-        const arr = per[m.s] ?? (per[m.s] = []);
-        for (const c of m.c || [])
-          arr.push(c);
       } else if (m.a === "h") {
-        this.peerHash.set(m.t | 0, m.h);
-        this.checkHash(m.t | 0);
+        if (this.hub) {
+          // slot-2 player checkpoint: verify, archive, relay to fed clients
+          const cl = from && this.clients.get(from);
+          if (cl && cl.slot === 2) {
+            this.peerHash.set(t, m.h);
+            const ha = this.hashArch.get(t) || (this.hashArch.set(t, {}), this.hashArch.get(t));
+            ha[2] = m.h;
+            for (const [rid2, cl2] of this.clients)
+              if (!cl2.raw)
+                this.sendTo(rid2, { a: "ch", t, h: m.h, s: 2 });
+            this.checkHash(t);
+          }
+        } else {
+          this.peerHash.set(t, m.h);
+          this.checkHash(t);
+        }
+      } else if (m.a === "ch") {
+        // fed client: either slot's checkpoint hash (both hash the full state)
+        if (m.s === 2)
+          this.peerHash2.set(t, m.h);
+        else
+          this.peerHash.set(t, m.h);
+        this.checkHash(t);
+      } else if (m.a === "cf") {
+        // fed client: authoritative full input frame for tick t (both slots);
+        // the hub never sends cf to raw (pre-game-style) clients
+        if (!this.hub) {
+          this.buf.set(t, { 1: m.f1 || [], 2: m.f2 || [] });
+          if (t > this.cfUpTo)
+            this.cfUpTo = t;
+        }
       } else if (m.a === "hello") {
-        this.onPeerHello(m);
+        if (this.hub)
+          this.onHubHello(from, m);
+        else
+          this.onPeerHello(m);
+      } else if (m.a === "welcome") {
+        this.onWelcome(m);
+      } else if (m.a === "live") {
+        // hub-fed player finished catch-up: its seat starts gating the host
+        if (this.hub) {
+          const cl = from && this.clients.get(from);
+          if (cl && cl.slot === 2 && cl.role === "player") {
+            cl.live = true;
+            cl.seen = Math.max(cl.seen, t);
+            this.peerSeen = Math.max(this.peerSeen, cl.seen);
+          }
+        }
       } else if (m.a === "start") {
         this.onGuestStart(m);
+      } else if (m.a === "nack") {
+        this.onNack(m);
       } else if (m.a === "bye") {
-        this.dead = true;
-        this.onPeerLeave();
+        if (this.hub) {
+          const cl = from && this.clients.get(from);
+          if (cl) {
+            this.clients.delete(from);
+            if (cl.slot === 2 && cl.live)
+              this.onPeerLeave();
+          }
+        } else {
+          this.dead = true;
+          this.onPeerLeave();
+        }
+      }
+    }
+    onHubHello(from, m) {
+      // duplicate hello from a known rid = the pre-game guest's 2 s keepalive
+      if (from && (from === this.lastHello || this.clients.has(from))) {
+        this.onPeerHello(m);
+        return;
+      }
+      if (m.proto !== PROTO) {
+        this.sendTo(from, { a: "nack", why: "version" });
+        this.onPeerHello(m);
+        return;
+      }
+      if (this.opts && this.opts.isLive && this.opts.isLive()) {
+        // match in progress: spectator, or P2 seat reclaim if vacant
+        let role = m.role === "spectator" ? "spec" : "player";
+        if (role === "player" && this.activeP2())
+          role = "spec";
+        this.clients.set(from, { role, slot: role === "spec" ? 0 : 2, seen: -1, live: false, raw: false });
+        const snap = this.opts.snapshot ? this.opts.snapshot() : null;
+        this.sendTo(from, {
+          a: "welcome", proto: PROTO, role, slot: role === "spec" ? 0 : 2,
+          seed: snap.seed, tick: snap.tick, arch: snap.arch, hashes: snap.hashes, gen: this.matchGen
+        });
+        return;
+      }
+      if (this.lastHello || this.activeP2()) {
+        // pre-game room already has its P2: this joiner waits as a spectator
+        this.clients.set(from, { role: "spec", slot: 0, seen: -1, live: true, raw: false });
+        this.sendTo(from, { a: "nack", why: "spectator-wait" });
+        return;
+      }
+      this.lastHello = from;
+      this.onPeerHello(m);
+    }
+    // host, right before launching: seat the pre-game guest, hand waiting
+    // spectators a fresh tick-0 welcome, message everyone their part
+    beginMatch(seed) {
+      if (this.lastHello)
+        this.clients.set(this.lastHello, { role: "player", slot: 2, seen: -1, live: true, raw: true });
+      for (const [rid, cl] of this.clients) {
+        if (cl.slot === 2 && cl.role === "player")
+          this.sendTo(rid, { a: "start", proto: PROTO, seed, gen: this.matchGen });
+        else
+          this.sendTo(rid, { a: "welcome", proto: PROTO, role: "spec", slot: 0, seed, tick: 0, arch: [], hashes: [], gen: this.matchGen });
       }
     }
     checkHash(t) {
@@ -2270,9 +2458,10 @@
         return;
       const mine = this.myHash.get(t);
       const theirs = this.peerHash.get(t);
-      if (mine !== undefined && theirs !== undefined && mine !== theirs) {
+      const theirs2 = this.peerHash2.get(t);
+      if (mine !== undefined && ((theirs !== undefined && mine !== theirs) || (theirs2 !== undefined && mine !== theirs2))) {
         this.desynced = true;
-        this.onDesync(t, mine, theirs);
+        this.onDesync(t, mine, theirs !== undefined ? theirs : theirs2);
       }
       if (this.myHash.size > 240)
         for (const k of [...this.myHash.keys()])
@@ -2282,9 +2471,54 @@
         for (const k of [...this.peerHash.keys()])
           if (k < t - 200)
             this.peerHash.delete(k);
+      if (this.peerHash2.size > 240)
+        for (const k of [...this.peerHash2.keys()])
+          if (k < t - 200)
+            this.peerHash2.delete(k);
     }
     // publish my input packet for tick T once T is within the delay window
     pump(tick) {
+      if (this.hub) {
+        const horizon = tick + this.delay;
+        while (this.sentUpTo < horizon) {
+          this.sentUpTo++;
+          const per = this.buf.get(this.sentUpTo);
+          const mine = per && per[1] || [];
+          this.send({ a: "c", t: this.sentUpTo, s: 1, c: mine });
+        }
+        if (this.buf.size > 400)
+          for (const t of [...this.buf.keys()])
+            if (t < tick - 8)
+              this.buf.delete(t);
+        // lost-peer watchdog: if the live P2 stops publishing while the host
+        // is stalled on it, vacate the seat so the match continues (the peer's
+        // own hash checks will flag its stale timeline; it can JIP-rejoin)
+        const p2 = this.activeP2();
+        if (p2 && p2.seen < tick) {
+          if (this.stallSince === undefined)
+            this.stallSince = performance.now();
+          else if (performance.now() - this.stallSince > STALL_VACATE_MS) {
+            for (const [rid, cl] of this.clients)
+              if (cl === p2)
+                this.clients.delete(rid);
+            this.stallSince = undefined;
+            this.onPeerLeave();
+          }
+        } else
+          this.stallSince = undefined;
+        return;
+      }
+      if (this.fed) {
+        if (this.role !== "player" || !this.liveSent)
+          return;
+        const horizon = tick + this.delay;
+        while (this.sentUpTo < horizon) {
+          this.sentUpTo++;
+          const mine = this.own.get(this.sentUpTo) || [];
+          this.send({ a: "c", t: this.sentUpTo, s: 2, c: mine });
+        }
+        return;
+      }
       const horizon = tick + this.delay;
       while (this.sentUpTo < horizon) {
         this.sentUpTo++;
@@ -2297,9 +2531,11 @@
           if (t < tick - 8)
             this.buf.delete(t);
     }
-    // a command issued now must not land inside an already-published packet
+    // a command issued now must not land inside an already-published packet;
+    // fed players additionally never target a tick the hub already composed
     scheduleTick(tick) {
-      return Math.max(tick + this.delay, this.sentUpTo + 1);
+      const base = Math.max(tick + this.delay, this.sentUpTo + 1);
+      return this.fed ? Math.max(base, this.cfUpTo + 1) : base;
     }
     // Commands.outbound hook: schedule for a future tick (and broadcast).
     // The deterministic result is computed by every peer at the target tick.
@@ -2308,20 +2544,61 @@
       if (c2.type === "build" || c2.type === "produce")
         c2.owner = c2.owner ?? this.slot;
       const t = this.scheduleTick(tick);
-      let per = this.buf.get(t);
-      if (!per) {
-        per = {};
-        this.buf.set(t, per);
+      if (this.fed) {
+        if (!this.own.has(t))
+          this.own.set(t, []);
+        this.own.get(t).push(c2);
+      } else {
+        let per = this.buf.get(t);
+        if (!per) {
+          per = {};
+          this.buf.set(t, per);
+        }
+        (per[this.slot] ?? (per[this.slot] = [])).push(c2);
       }
-      (per[this.slot] ?? (per[this.slot] = [])).push(c2);
       if (t <= this.sentUpTo)
         this.send({ a: "c", t, s: this.slot, c: [c2] });
       return true;
     }
     ready(tick) {
+      if (this.hub) {
+        const p2 = this.activeP2();
+        return !(p2 && p2.seen < tick);
+      }
+      if (this.fed)
+        return tick <= this.catchupUntil || this.buf.has(tick) || this.cfUpTo >= tick;
       return this.peerSeen >= tick;
     }
     apply(tick) {
+      if (this.hub) {
+        const per = this.buf.get(tick);
+        const f1 = per && per[1] || [], f2 = per && per[2] || [];
+        if (this.clients.size) {
+          let cf = null;
+          for (const [rid, cl] of this.clients) {
+            if (cl.raw)
+              continue;
+            if (!cf)
+              cf = { a: "cf", t: tick, f1, f2 };
+            this.sendTo(rid, cf);
+          }
+          if (f1.length || f2.length)
+            this.arch.set(tick, { 1: f1.slice(), 2: f2.slice() });
+        }
+        for (const list of [f1, f2])
+          for (const c2 of list)
+            this.cmds.applyRemote(c2);
+        return;
+      }
+      if (this.fed) {
+        const f = this.buf.get(tick);
+        if (f)
+          for (const list of [f[1], f[2]])
+            if (Array.isArray(list))
+              for (const c2 of list)
+                this.cmds.applyRemote(c2);
+        return;
+      }
       const per = this.buf.get(tick);
       if (!per)
         return;
@@ -2337,20 +2614,81 @@
         return;
       const h = sim.hashState();
       this.myHash.set(tick, h);
-      this.send({ a: "h", t: tick, h });
+      if (this.hub) {
+        const ha = this.hashArch.get(tick) || (this.hashArch.set(tick, {}), this.hashArch.get(tick));
+        ha[1] = h;
+        for (const [rid, cl] of this.clients)
+          if (!cl.raw)
+            this.sendTo(rid, { a: "ch", t: tick, h, s: 1 });
+      } else if (!this.fed || this.liveSent)
+        this.send({ a: "h", t: tick, h });
       this.checkHash(tick);
       Net.lastHash = h;
       Net.lastHashTick = tick;
     }
+    // fed client: adopt a welcome snapshot (JIP/spectator/late-catchup).
+    // Live cf frames that raced ahead of the welcome are already in buf and
+    // stay — the archive covers 0..W, the frames W+1.. the live stream.
+    beginFed(m) {
+      this.role = m.role === "player" ? "player" : "spec";
+      this.slot = this.role === "player" ? 2 : 0;
+      this.fed = true;
+      // a new match generation invalidates every buffered frame from the old
+      // one (rematch / fresh welcome); same-generation raced-ahead frames stay
+      if (m.gen !== undefined && m.gen !== this.matchGen) {
+        this.buf.clear();
+        this.cfUpTo = -1;
+        this.matchGen = m.gen;
+      }
+      this.myHash.clear();
+      this.peerHash.clear();
+      this.peerHash2.clear();
+      this.own.clear();
+      this.catchupUntil = m.tick | 0;
+      this.sentUpTo = -1;
+      this.peerSeen = -1;
+      this.desynced = false;
+      this.dead = false;
+      this.liveSent = false;
+      this.stallSince = undefined;
+      for (const e of m.arch || [])
+        this.buf.set(e.t | 0, { 1: e.f1 || [], 2: e.f2 || [] });
+      for (const e of m.hashes || [])
+        (e.s === 2 ? this.peerHash2 : this.peerHash).set(e.t | 0, e.h);
+    }
+    // fed client reached the live edge: announce the seat (players only) and
+    // start publishing from beyond the hub's composed horizon
+    markLive() {
+      if (!this.fed || this.liveSent)
+        return;
+      this.liveSent = true;
+      this.sentUpTo = Math.max(this.cfUpTo, this.catchupUntil);
+      if (this.role === "player")
+        this.send({ a: "live", t: this.sentUpTo });
+    }
     // fresh match over an existing transport (rematch)
     reset() {
       this.buf.clear();
+      this.own.clear();
       this.sentUpTo = -1;
       this.peerSeen = -1;
       this.myHash.clear();
       this.peerHash.clear();
+      this.peerHash2.clear();
+      this.arch.clear();
+      this.hashArch.clear();
       this.desynced = false;
       this.dead = false;
+      this.cfUpTo = -1;
+      this.catchupUntil = -1;
+      this.liveSent = false;
+      this.matchGen++;
+      this.stallSince = undefined;
+      for (const cl of this.clients.values()) {
+        cl.seen = -1;
+        if (cl.raw)
+          cl.live = true;
+      }
     }
     close() {
       if (this.dead)
@@ -2362,10 +2700,13 @@
       } catch (e) {}
     }
   }
-  // Transport 1: BroadcastChannel — same browser, two tabs/windows on the same
-  // origin (zero infrastructure, instant local testing of the full protocol).
+  // Transport 1: BroadcastChannel — same browser, N tabs/windows on the same
+  // origin (zero infrastructure, instant local testing of the full protocol,
+  // including the 3rd-tab spectator/JIP paths). Messages are wrapped with the
+  // sender rid (f) and an optional recipient rid (to) for targeted delivery.
   class BroadcastTransport {
     constructor(name) {
+      this.rid = "r" + Math.random().toString(36).slice(2, 10);
       this.ch = new BroadcastChannel(name);
       this._msg = null;
       this._close = null;
@@ -2374,6 +2715,9 @@
           this._msg(e.data);
       };
     }
+    _wrap(m, to) {
+      return Object.assign({}, m, { f: this.rid, to });
+    }
     onMsg(fn) {
       this._msg = fn;
     }
@@ -2381,11 +2725,15 @@
       this._close = fn;
     }
     send(m) {
-      this.ch.postMessage(m);
+      this.ch.postMessage(this._wrap(m, undefined));
+    }
+    sendTo(rid, m) {
+      if (rid)
+        this.ch.postMessage(this._wrap(m, rid));
     }
     close() {
       try {
-        this.ch.postMessage({ a: "bye" });
+        this.ch.postMessage(this._wrap({ a: "bye" }, undefined));
         this.ch.close();
       } catch (e) {}
       if (this._close)
@@ -2394,13 +2742,18 @@
   }
   // Transport 2: PeerJS — cross-machine play. The public PeerServer brokers
   // signaling only; game traffic flows over a P2P WebRTC DataChannel
-  // (reliable + ordered, matching lockstep packet assumptions).
+  // (reliable + ordered, matching lockstep packet assumptions). The host
+  // accepts N connections (guest + spectators/JIP); each conn is addressed
+  // by its PeerJS peer id, which doubles as the rid.
   class PeerTransport {
     constructor() {
       this._msg = null;
       this._close = null;
+      this._drop = null;
       this.conns = [];
+      this.byPeer = new Map;
       this.peer = null;
+      this.rid = null;
     }
     onMsg(fn) {
       this._msg = fn;
@@ -2408,10 +2761,22 @@
     onClose(fn) {
       this._close = fn;
     }
+    onPeerDrop(fn) {
+      this._drop = fn;
+    }
+    _wrap(m, to) {
+      return Object.assign({}, m, { f: this.rid, to });
+    }
     send(m) {
+      const w = this._wrap(m, undefined);
       for (const c of this.conns)
         if (c.open)
-          c.send(m);
+          c.send(w);
+    }
+    sendTo(rid, m) {
+      const c = rid && this.byPeer.get(rid);
+      if (c && c.open)
+        c.send(this._wrap(m, rid));
     }
     close() {
       try {
@@ -2420,6 +2785,8 @@
         if (this.peer)
           this.peer.destroy();
       } catch (e) {}
+      this.conns = [];
+      this.byPeer.clear();
       if (this._close)
         this._close();
     }
@@ -2438,7 +2805,10 @@
       return PeerTransport.loadLib().then((Peer) => new Promise((res, rej) => {
         const p = new Peer("AOW3LS-" + code, { debug: 0 });
         this.peer = p;
-        p.on("open", () => res(code));
+        p.on("open", () => {
+          this.rid = p.id;
+          res(code);
+        });
         p.on("error", (e) => rej(e));
         p.on("connection", (c) => {
           c.on("data", (d) => {
@@ -2447,10 +2817,16 @@
           });
           c.on("close", () => {
             this.conns = this.conns.filter((x) => x !== c);
-            if (this._close)
+            this.byPeer.delete(c.peer);
+            if (this._drop)
+              this._drop(c.peer);
+            if (!this.conns.length && this._close)
               this._close();
           });
-          c.on("open", () => this.conns.push(c));
+          c.on("open", () => {
+            this.conns.push(c);
+            this.byPeer.set(c.peer, c);
+          });
         });
       }));
     }
@@ -2460,6 +2836,7 @@
         this.peer = p;
         p.on("error", (e) => rej(e));
         p.on("open", () => {
+          this.rid = p.id;
           const c = p.connect("AOW3LS-" + code, { reliable: true });
           const to = setTimeout(() => rej(new Error("peer-timeout")), 15000);
           c.on("error", (e) => {
@@ -2469,12 +2846,14 @@
           c.on("open", () => {
             clearTimeout(to);
             this.conns.push(c);
+            this.byPeer.set(c.peer, c);
             c.on("data", (d) => {
               if (this._msg)
                 this._msg(d);
             });
             c.on("close", () => {
               this.conns = this.conns.filter((x) => x !== c);
+              this.byPeer.delete(c.peer);
               if (this._close)
                 this._close();
             });
@@ -37774,7 +38153,10 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
         },
         onPeerLeave: () => {
           $("mp-dot").classList.remove("stall");
-          $("mp-info").textContent = "PEER LEFT";
+          if (Net.mode === "lockstep" && Net.session && Net.session.hub)
+            $("mp-info").textContent = "PEER LOST — seat open (JIP can reclaim)";
+          else
+            $("mp-info").textContent = "PEER LEFT";
         },
         onGuestStart: (m) => {
           if (m.proto !== PROTO) {
@@ -37785,9 +38167,16 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
             clearInterval(mp.helloTimer);
             mp.helloTimer = null;
           }
+          // (re)match start: drop all stale per-match session state so the
+          // guest publishes from tick 0 of the new seed, not the old horizon
+          mp.session.reset();
           mp.begin(m.seed | 0, 2);
         },
         onPeerHello: (m) => {
+          // mid-game strays (e.g. a spectator hello heard by the guest tab)
+          // must not re-arm the menu
+          if (Net.mode === "lockstep" && sim)
+            return;
           if (m && m.proto !== PROTO) {
             mp.st("Peer has a different game version — reload both pages.");
             return;
@@ -37795,7 +38184,28 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
           mp.armed = true;
           mp.st("PEER CONNECTED — press START SKIRMISH to launch.");
           $("start").textContent = "▶ START MULTIPLAYER";
-        }
+        },
+        onNack: (m) => {
+          if (m.why === "version")
+            mp.st("Host has a different game version — reload both pages.");
+          else if (m.why === "spectator-wait")
+            mp.st("Room full — you will join as a spectator when the match starts.");
+          else
+            mp.st("Join declined by host.");
+        },
+        onWelcome: (m) => mp.onWelcomeRemote(m),
+        // hub (host) JIP providers: isLive gates hello handling, snapshot
+        // builds the catch-up payload (seed + sparse input archive + hashes)
+        isLive: () => !!(sim && Net.mode === "lockstep" && Net.session === mp.session && mp.session.hub && sim.winner === null && sim.tick > 0),
+        snapshot: () => ({
+          seed: sim.seed,
+          tick: sim.tick,
+          arch: [...mp.session.arch].map(([t, f]) => ({ t, f1: f[1], f2: f[2] })),
+          hashes: [...mp.session.hashArch].flatMap(([t, h]) => [
+            ...(h[1] !== undefined ? [{ t, h: h[1], s: 1 }] : []),
+            ...(h[2] !== undefined ? [{ t, h: h[2], s: 2 }] : [])
+          ])
+        })
       });
     },
     host() {
@@ -37832,7 +38242,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       this.session = this.makeSession(2);
       const hello = () => {
         if (this.session && !this.session.dead)
-          this.session.send({ a: "hello", proto: PROTO });
+          this.session.send({ a: "hello", proto: PROTO, role: "player" });
       };
       if (xp === "p2p") {
         tr.join(code).then(() => {
@@ -37858,8 +38268,32 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       }
       if (this.session)
         this.session.reset();
-      this.session.send({ a: "start", proto: PROTO, seed });
+      // seat the pre-game guest (targeted start), hand waiting spectators a
+      // fresh tick-0 welcome, then launch locally as P1
+      this.session.beginMatch(seed);
       this.begin(seed, 1);
+    },
+    // JIP/spectator entry: adopt the host's catch-up snapshot and re-simulate
+    // from tick 0 (the loop fast-forwards until the live edge, then lockstep)
+    onWelcomeRemote(m) {
+      if (m.proto !== PROTO) {
+        this.st("Version mismatch with host — reload both pages.");
+        return;
+      }
+      if (this.helloTimer) {
+        clearInterval(this.helloTimer);
+        this.helloTimer = null;
+      }
+      const spec = m.role !== "player";
+      this.session.beginFed(m);
+      Net.session = this.session;
+      const ok = startGame({ seed: m.seed | 0, lockstep: true, slot: spec ? 1 : 2, spec });
+      if (ok) {
+        $("menu").classList.add("hidden");
+        this.armed = false;
+        this.pending = false;
+        this.st(spec ? "Spectating — catching up…" : "Rejoined — catching up…");
+      }
     },
     begin(seed, slot) {
       Net.session = this.session;
@@ -37881,20 +38315,25 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
     if (!ready)
       return false;
     const lockstep = !!opts.lockstep;
+    const spec = !!opts.spec;
     const mSeed = lockstep ? 0 : /[#&]seed=(\d+)/.exec(location.hash || "");
     sim = new Sim(opts.seed ?? (mSeed ? +mSeed[1] >>> 0 : Math.floor(Math.random() * 1e9)));
     try {
       window.__aow3sim = sim;
     } catch (e) {}
     ai = lockstep ? null : new AI(sim, 2);
+    sim.spectate = spec;
     sim.viewSlot = opts.slot || 1;
     Net.mode = lockstep ? "lockstep" : "local";
     Net.mySlot = sim.viewSlot;
+    Net.spectator = spec;
     cmd.attach(sim);
-    cmd.outbound = lockstep ? (c) => Net.session.local(c, sim.tick) : null;
+    // spectators must never mutate sim state: gameplay commands are rejected
+    // (issue() returns false), selection stays issuer-local and harmless
+    cmd.outbound = lockstep ? (spec ? () => false : (c) => Net.session.local(c, sim.tick)) : null;
     if (!lockstep)
       Net.session = null;
-    console.info("[AOW3] sim seed", sim.seed, lockstep ? "(lockstep slot " + sim.viewSlot + ")" : "");
+    console.info("[AOW3] sim seed", sim.seed, lockstep ? (spec ? "(lockstep spectator)" : "(lockstep slot " + sim.viewSlot + ")") : "");
     sel.clear();
     r3d.applyTerrainGrid(sim.grid);
     const hq = sim.hq(sim.viewSlot);
@@ -37906,8 +38345,9 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
     $("desync").classList.add("hidden");
     ["resbar", "clock", "minimap-wrap", "prodwrap"].forEach((id) => $(id).classList.remove("hidden"));
     if (lockstep) {
-      $("mp-info").textContent = "LOCKSTEP P" + sim.viewSlot + (sim.viewSlot === 1 ? " HOST" : " GUEST");
+      $("mp-info").textContent = spec ? "SPECTATOR" : "LOCKSTEP P" + sim.viewSlot + (sim.viewSlot === 1 ? " HOST" : " GUEST");
       $("mp-live").classList.remove("hidden");
+      $("mp-dot").classList.remove("desync");
     } else
       $("mp-live").classList.add("hidden");
     buildCards();
@@ -38629,16 +39069,22 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
     $("mp-dot").classList.toggle("stall", stalled && !Net.session.desynced);
     acc += dt2;
     const stepDt = 1 / TICK_RATE;
+    // JIP/spectator catch-up: fast-forward budget while replaying the archive
+    const catching = Net.session && Net.session.fed && !Net.session.liveSent && sim.tick < Net.session.catchupUntil;
+    const maxSteps = catching ? 90 : 8;
     let steps = 0;
-    while (acc >= stepDt && steps < 8) {
+    while (acc >= stepDt && steps < maxSteps) {
       if (Net.mode === "lockstep" && Net.session) {
-        // deterministic lockstep: tick T may only run once the peer's input
-        // packet for T arrived; scheduled commands apply on every peer identically
+        // deterministic lockstep: tick T may only run once every live player's
+        // input packet for T arrived; scheduled commands apply on every peer
+        // identically (spectators/JIP are fed the hub's full input frames)
         if (!Net.session.ready(sim.tick))
           break;
         Net.session.apply(sim.tick);
         sim.step(stepDt);
         Net.session.afterStep(sim.tick, sim);
+        if (catching && sim.tick >= Net.session.catchupUntil)
+          Net.session.markLive();
       } else {
         sim.step(stepDt);
         ai.step(stepDt);
@@ -38669,13 +39115,20 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       const mctx = mini.getContext("2d");
       r3d.drawMinimap(mctx, sim, cam, sel, mini.width, mini.height, w, h);
       refreshHud();
+      if (Net.session && Net.session.fed && !Net.session.liveSent)
+        $("mp-info").textContent = (Net.session.role === "spec" ? "SPEC CATCH-UP " : "JIP CATCH-UP ") + sim.tick + "/" + Net.session.catchupUntil;
+      else if (Net.session && Net.session.fed && Net.session.liveSent && Net.session.role === "player")
+        $("mp-info").textContent = "LOCKSTEP P2 (JIP)";
+      else if (Net.spectator && Net.session)
+        $("mp-info").textContent = "SPECTATOR (LIVE)";
     }
     if (sim.winner !== null) {
       const win = sim.winner === 1;
-      $("verdict").style.color = win ? "#34d399" : "#f87171";
-      $("verdict").textContent = win ? "VICTORY" : "DEFEAT";
-      window.__sfx && window.__sfx.play(win ? "ann_victory" : "ann_defeat", { vol: 0.9 });
-      $("verdict-sub").textContent = win ? "Enemy HQ destroyed. The region is yours." : "Your HQ has fallen. Regroup and try again.";
+      const specView = Net.mode === "lockstep" && Net.session && Net.session.fed && Net.session.role === "spec";
+      $("verdict").style.color = specView ? (sim.winner === 1 ? "#6ab8ff" : "#ff8a70") : win ? "#34d399" : "#f87171";
+      $("verdict").textContent = specView ? ("PLAYER " + sim.winner + " WINS") : win ? "VICTORY" : "DEFEAT";
+      window.__sfx && window.__sfx.play(specView ? "ann_victory" : win ? "ann_victory" : "ann_defeat", { vol: 0.9 });
+      $("verdict-sub").textContent = specView ? ("Player " + sim.winner + " destroyed the enemy HQ.") : win ? "Enemy HQ destroyed. The region is yours." : "Your HQ has fallen. Regroup and try again.";
       try {
         const st = sim.stats;
         const tt = Math.floor(sim.time);
