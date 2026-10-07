@@ -1047,7 +1047,7 @@ Stage Summary:
 - Commit 6d1ed03 (code, v=30) + this worklog commit; push + live verify pending at time of writing.
 
 ---
-Task ID: 27
+Task ID: 28
 Agent: Super Z (main)
 Task: Phase 5 adjacents natively anchored + reconstructed (siege/hide/reset-speed acts, bombard duration, defend anchor) + MaxStatValueProvider tier thresholds extracted (v=30/31)
 
