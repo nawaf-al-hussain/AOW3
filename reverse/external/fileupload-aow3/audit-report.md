@@ -139,9 +139,12 @@ restructured (facade → message classes); battle-stats and hero-ability command
 1. `ArmorStatHelper` (6.9.18, 1 dump hit) — native analysis would resolve the
    `AttackCoeffCalculating`/`ARMOR_COEFF` UNRESOLVED conflict and confirm whether the external
    "ArmorCoeff" shape has any reality in 6.9.18.
-2. `CreateDamageForMediumArmor` / `GetDamageForMediumArmor` / `GetSuperWeaponDamageForHeavyArmor` —
+2. ~~`CreateDamageForMediumArmor` / `GetDamageForMediumArmor` / `GetSuperWeaponDamageForHeavyArmor` —
    present in both versions; not yet analyzed natively by us; may reveal how the per-armor-type
-   damage ints map to `CalculateWeaponArmorDamage` inputs.
+   damage ints map to `CalculateWeaponArmorDamage` inputs.~~ **DONE 2026-10-07** — see
+   `reverse/notes/damage-pipeline-native-analysis.md`: the ints are captured into the
+   stat model's `Values` at construction, scaled by the modification collection, and
+   consumed by the shared curve via `MaxStatValueProvider.Get(value, EStat)`. No new math.
 3. `MineDamageFor{Light,Medium,Heavy}ArmorStat` IStatModel classes (6.9.18 dump, TypeDefIndex
    399–401) — the external lists confirm mines existed in 6.5.22 too; candidate for a
    hazards/damage-cause model in the tribute.
@@ -202,9 +205,11 @@ For the implementation team, later eligible items (pending their own verificatio
 2. The confirmed command vocabulary (`AIComm*` names + `GAI_COMMAND_*` constants) can inform
    **naming** of the planned `simulation/` command layer (Phase 4 of the dev plan) — cosmetic,
    zero behavioral authority.
-3. If Phase 5 (Combat Reconstruction) takes up lead #2 above
-   (`CreateDamageForMediumArmor` native analysis), that work was *motivated* but not *enabled*
-   by this collection.
+3. If Phase 5 (Combat Reconstruction) takes up ~~lead #2 above
+   (`CreateDamageForMediumArmor` native analysis)~~ ~~that work was *motivated* but not *enabled*
+   by this collection~~ **now complete** (`reverse/notes/damage-pipeline-native-analysis.md`,
+   2026-10-07) — the collection's role remains motivational only; all evidence is from the
+   6.9.18 binary.
 4. Hazards (mines) and the redeploy mechanic (lead #3/#4) are candidate features for later
    passes; the external material is only evidence that they existed in 6.5.22.
 
@@ -226,8 +231,13 @@ For the implementation team, later eligible items (pending their own verificatio
    conflict RESOLVED. See `reverse/notes/armor-stat-helper-native-analysis.md` and the §C Resolution
    in `reverse/evidence/conflicts/version-drift-6.5.22-vs-6.9.18.md`. No coefficient exists outside
    `CalculateWeaponArmorDamage`; the analysis also natively covered the item-2 wrappers below.
-2. **Native analysis of `CreateDamageForMediumArmor` / `GetDamageForMediumArmor`** (completes the
-   damage-pipeline reconstruction beyond `CalculateWeaponArmorDamage`).
+2. ~~**Native analysis of `CreateDamageForMediumArmor` / `GetDamageForMediumArmor`**~~ —
+   **DONE 2026-10-07**: pipeline closed end-to-end with native evidence — see
+   `reverse/notes/damage-pipeline-native-analysis.md` (Medium path + all six
+   `WeaponDamage.Create*` factories + mine leg + `SafeSetDamageStat`; sole consumer of
+   the 0.9/0.1 curve is `MaxStatValueProvider.Get`'s armor branch; no second damage
+   formula exists). Same pass resolved the MinePrice/71 consumer
+   (`estat-stat-models.md` §6.7).
 3. ~~**Check the asset catalog** for `fire_*`/`bul_*`/`expl_*` prefixes~~ — **DONE 2026-10-07,
    upgraded same day**: CONFIRMED (HIGH). Full XAPK pass: 7 APKs unpacked, 6.9.18 Addressables
    catalog parsed (832 asset addresses) — `fire_rifle1_s1.prefab` + `bul_rifle1_s2.prefab`

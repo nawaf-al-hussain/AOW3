@@ -1,0 +1,26 @@
+==============================================================================
+PART B — EStat.MinePrice/71 (0x47) xref
+==============================================================================
+
+----- B1: dump.cs methods taking EStat parameters -----
+  va 0x7c001e0  ArmyIconColors.GetColorBase(EStat stat)  EStat param idx [0]
+  va 0x7c00258  ArmyIconColors.GetColorSpecific(EStat stat)  EStat param idx [0]
+  va 0x7c695e0  PrototypeStatIconProvider.GetIconName(EStat stat)  EStat param idx [0]
+  va 0x7c69750  PrototypeStatIconProvider.GetIconColorBase(EStat stat)  EStat param idx [0]
+  va 0x7c69768  PrototypeStatIconProvider.GetIconColorSpecific(EStat stat)  EStat param idx [0]
+  va 0x7cbcee0  SpecialStat..ctor(int name, string hint, EStat stat, IMaxStatValueProvider max, Func<IStatModificationCollection, float> calc, IPrototypeModel owner, Func<IStatModificationCollection, bool> getState)  EStat param idx [2]
+  va 0x7cc176c  MaxStatValueProvider.Get(float value, EStat statName)  EStat param idx [1]
+  va 0x7cc1a94  MaxStatValueProvider.Calculate(float value, EStat statName)  EStat param idx [1]
+  va 0x7cc1c18  MaxStatValueProvider.CalculateWeaponArmorDamage(float value, EStat statName)  EStat param idx [1]
+  va 0x7cc660c  UnitArmorStat..ctor(UnitType unit, IMaxStatValueProvider max, EStat stat, string hint, bool hasSecond, IPrototypeModel owner)  EStat param idx [2]
+  va 0x80e84c4  StatProgressDirection.ThisStatIncreases(EStat stat)  EStat param idx [0]
+  va 0x80edba0  WeaponDamage..ctor(WeaponType weapon, IMaxStatValueProvider max, IPrototypeModel owner, EStat type, string statName, int name, int hint)  EStat param idx [3]
+  va 0x80ee5a8  WeaponDistanceStat..ctor(WeaponType weapon, IMaxStatValueProvider max, IPrototypeModel owner, EStat stat)  EStat param idx [3]
+  va 0x80eec60  WeaponExplosionRadiusStat..ctor(WeaponType weapon, IMaxStatValueProvider max, IPrototypeModel owner, EStat stat)  EStat param idx [3]
+
+----- B2: call sites passing literal 71 (0x47) into EStat-taking methods -----
+
+----- B3: cmp #0x47 (MinePrice) against get_Stat results -----
+
+----- B4: literal 0x47 (71) inside Mine*-class functions (whole-class sweep) -----
+  0x80e8f00 in MineCostStat.CalculateProgress: mov w1, #0x47

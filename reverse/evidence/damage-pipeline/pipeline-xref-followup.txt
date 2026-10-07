@@ -1,0 +1,35 @@
+--- call sites of WeaponDamage.Create* factories (dump name: VA) ---
+WeaponDamage.CreateLiteDamage (0x80eddac): 1 site(s)
+   bl 0x80f1050 in WeaponStatsFactory.<CreateStats>d__18.MoveNext
+WeaponDamage.CreateMediumDamage (0x80ede50): 1 site(s)
+   bl 0x80f0fe4 in WeaponStatsFactory.<CreateStats>d__18.MoveNext
+WeaponDamage.CreateHeavyDamage (0x80edef4): 1 site(s)
+   bl 0x80f0e5c in WeaponStatsFactory.<CreateStats>d__18.MoveNext
+WeaponDamage.CreateSuperWeaponLiteDamage (0x80edf98): 1 site(s)
+   bl 0x80f0f04 in WeaponStatsFactory.<CreateStats>d__18.MoveNext
+WeaponDamage.CreateSuperWeaponMediumDamage (0x80ee03c): 1 site(s)
+   bl 0x80f0f74 in WeaponStatsFactory.<CreateStats>d__18.MoveNext
+WeaponDamage.CreateSuperWeaponHeavyDamage (0x80ee0e0): 1 site(s)
+   bl 0x80f0db4 in WeaponStatsFactory.<CreateStats>d__18.MoveNext
+MineDamageForLightArmorStat..ctor (0x80e94c0): 1 site(s)
+   bl 0x7fe6848 in MineStatsFactory.CreateDamageForLightArmor
+MineDamageForMediumArmorStat..ctor (0x80e9948): 1 site(s)
+   bl 0x7fe68bc in MineStatsFactory.CreateDamageForMediumArmor
+MineDamageForHeavyArmorStat..ctor (0x80e9038): 1 site(s)
+   bl 0x7fe6930 in MineStatsFactory.CreateDamageForHeavyArmor
+MineCostStat..ctor (0x80e8bb0): 1 site(s)
+   bl 0x7fe69a8 in MineStatsFactory.CreateCost
+MineExplosionRadiusStat..ctor (0x80e9dd0): 1 site(s)
+   bl 0x7fe6a98 in MineStatsFactory.CreateRadius
+MineSetTimeStat..ctor (0x80ea268): 1 site(s)
+   bl 0x7fe6a20 in MineStatsFactory.CreateFireRate
+
+--- UI stat pipeline bodies: literal 0x47 (71) scan ---
+ArmyIconColors.GetColorBase (0x7c001e0, 0x78B): no 0x47
+ArmyIconColors.GetColorSpecific (0x7c00258, 0x16cB): no 0x47
+ArmyPrototypeListItemPresenter.GetIconName (0x7c13c30, 0x468B): no 0x47
+InfoFeedIconNamesExtensions.GetIconName (0x7a30740, 0x168B): no 0x47
+PrototypeStatIconProvider.GetIconColorBase (0x7c69750, 0x18B): no 0x47
+PrototypeStatIconProvider.GetIconColorSpecific (0x7c69768, 0x18B): no 0x47
+PrototypeStatIconProvider.GetIconName (0x7c695e0, 0x170B): no 0x47
+StatProgressDirection.ThisStatIncreases (0x80e84c4, 0x8cB): no 0x47

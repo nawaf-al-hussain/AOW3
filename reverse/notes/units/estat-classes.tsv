@@ -1,7 +1,7 @@
 class	TypeDefIndex	namespace	dump.cs lines	sealed	EStat binding (dump-derived)	confidence
 CoilTankMaxTargetsStat	396	Domains.Workshop.Impl.Models.Weapon	17770-17826	True	CoilTankMaxTargets	MATCH
 LaunchPreparationTimeStat	397	Domains.Workshop.Impl.Models.Weapon	17831-17887	True	LaunchPreparationTime	MATCH
-MineCostStat	398	Domains.Workshop.Impl.Models.Weapon	17892-17948	True	WeaponMineCost/66 (native constant: get_Stat = mov w0,#0x42; ret)	NATIVE_CONST
+MineCostStat	398	Domains.Workshop.Impl.Models.Weapon	17892-17948	True	WeaponMineCost/66 (native constant: get_Stat = mov w0,#0x42; ret); progress-cap key = MinePrice/71 (native: CalculateProgress tail-call m_max.Get(value,71), VA 0x80e8f08)	NATIVE_CONST
 MineDamageForHeavyArmorStat	399	Domains.Workshop.Impl.Models.Weapon	17953-18009	True	WeaponArmorHeavy/63 (native constant: get_Stat = mov w0,#0x3f; ret)	NATIVE_CONST
 MineDamageForLightArmorStat	400	Domains.Workshop.Impl.Models.Weapon	18014-18070	True	WeaponArmorLight/61 (native constant: get_Stat = mov w0,#0x3d; ret)	NATIVE_CONST
 MineDamageForMediumArmorStat	401	Domains.Workshop.Impl.Models.Weapon	18075-18131	True	WeaponArmorMedium/62 (native constant: get_Stat = mov w0,#0x3e; ret)	NATIVE_CONST

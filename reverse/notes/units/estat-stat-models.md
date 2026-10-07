@@ -3,7 +3,9 @@
 Created: 2026-10-07 (follow-up to the FileUpload/AOW3 audit — closes audit-report
 "Recommended Next Investigations" item #4 and the Economy_System.md row of
 "Unverified Findings"). **Follow-up the same day: all 9 previously ambiguous class→EStat
-bindings were pinned by native disassembly of `libil2cpp.so` (§6) — 0 ambiguities remain.**
+bindings were pinned by native disassembly of `libil2cpp.so` (§6) — 0 ambiguities remain;
+§6.7 (same day) additionally resolved the MinePrice/71 consumer** (max-tier cap key of
+`MineCostStat.CalculateProgress`).
 
 ## What
 
@@ -114,6 +116,9 @@ dump; no 6.5.22 material was used.
   (NATIVE_CONST) + 2 native armor-routing chains (NATIVE_ROUTED) + 1 native caller-
   enumerated wrapper (NATIVE_ENUM_WRAPPER, 42 call sites) + 1 dump-direct 6-factory proof
   (WeaponDamage). Pre-pin tally was 31 / 9 / 4 INFERRED / 1.
+- MinePrice/71 consumer: **CONFIRMED (native)** — interface tail-call in
+  `MineCostStat.CalculateProgress` (§6.7); whole-binary direct-literal scans returned
+  zero competing sites.
 - Damage-through-EStat flow: **CONFIRMED** (factories) + **HIGH** (native, from the
   ArmorStatHelper note).
 
@@ -139,8 +144,9 @@ Each has no `m_stat` field; `get_Stat()` is a two-instruction constant:
 | MineSetTimeStat | `mov w0, #0x43; ret` (0x80ea164) | **WeaponMineTime / 67** |
 
 Notable: `MineCostStat` is bound to **WeaponMineCost (66), NOT MinePrice (71)** — the
-dump-name guess `MinePrice` was wrong. EStat **MinePrice / 71** currently has no dedicated
-IStatModel class (see Unknowns).
+dump-name guess `MinePrice` was wrong as a *value-channel* key. EStat **MinePrice / 71**'s
+real role was pinned natively the same day (§6.7): it is the **max-tier cap key** consumed
+by `MineCostStat.CalculateProgress`.
 
 ### 6.2 Armor stats route through `ArmorStatHelper.GetArmorMeta` — both classes
 
@@ -183,6 +189,44 @@ grouping: every "special" EStat in the enum is materialized as a SpecialStat by 
 these factories. `BuildingArmorStat`'s single constructor call site is
 `BuildingBaseStatsFactory.<CreateStats>d__0.MoveNext` (VA 0x7cb6ff4).
 
+### 6.7 MinePrice/71 resolved — the max-tier cap key of the mine-cost stat (2026-10-07)
+
+The last Unknown from the pinning pass: EStat 71 appears in no `get_Stat` constant, no
+direct-BL call site, and no UI icon/name/color logic (whole-binary scans: 0 hits in
+every EStat-taking method's call sites, 0 `cmp #0x47` after any `get_Stat`, 0 literal
+71 inside the icon/color/parsing pipeline — `reverse/evidence/damage-pipeline/mineprice71-xref.txt`).
+The single literal-71 instruction in the entire mine surface is an **indirect interface
+tail-call** inside `MineCostStat.CalculateProgress` (VA 0x80e8e5c):
+
+```
+0x80e8e90: ldr  x19, [x19, #0x18]   ; m_max (IMaxStatValueProvider)
+...                          ; resolve IMaxStatValueProvider.Get vtable slot
+0x80e8f00: mov  w1, #0x47           ; EStat.MinePrice = 71
+0x80e8f08: br   x3                  ; tail: m_max.Get(value, 71)
+```
+
+A sweep of all six mine stat classes' `CalculateProgress` bodies
+(`reverse/tools/mine_getkey_sweep.py` → `reverse/evidence/damage-pipeline/mine-capkey-sweep.txt`)
+shows each normalizes progress against the max provider under a fixed key:
+
+| Class (get_Stat value channel) | CalculateProgress cap key |
+|---|---|
+| MineDamageForLightArmorStat (61) | 61 WeaponArmorLight (0x80e9818) |
+| MineDamageForMediumArmorStat (62) | 62 WeaponArmorMedium (0x80e9ca0) |
+| MineDamageForHeavyArmorStat (63) | 63 WeaponArmorHeavy (0x80e9390) |
+| MineExplosionRadiusStat (64) | 64 WeaponExplosionRadius (0x80ea138) |
+| MineSetTimeStat (67) | 67 WeaponMineTime (0x80ea5cc) |
+| **MineCostStat (66)** | **71 MinePrice (0x80e8f08)** — the only class whose cap key ≠ its value key |
+
+**Verdict: `EStat.MinePrice/71` is the `MaxStatValueProvider` tier-cap key under which
+mine-cost caps (BaseMax/FirstMax?/MegaMax) are registered; it is consumed exclusively by
+`MineCostStat.CalculateProgress` via interface dispatch, has no dedicated IStatModel
+class, no icon (`ico_stat_weapon_mine_cost` exists; no `ico_stat_*mine_price*` literal in
+stringliteral.json), and no direct call-site references.** The enum name is accurate —
+it is the mine's *price/cost cap* identity — but it is a cap-tier pseudo-key, not a
+displayable stat. 45/45 class bindings unchanged; the 78-value EStat taxonomy now has a
+native consumer account for all 78 values' usage surfaces.
+
 ## Implementation
 
 Tribute mapping guidance (Phase 5+ / Phase 26 consumers):
@@ -192,7 +236,8 @@ Tribute mapping guidance (Phase 5+ / Phase 26 consumers):
 2. Weapon damage must remain per-target-armor (61/62/63 keys), not a single damage scalar —
    matches the already-recovered 0.9/0.1 mitigation curve.
 3. Mines (if implemented) need three per-armor damage channels + cost + fire-rate (set
-   interval) + explosion radius, mirroring `MineStatsFactory`.
+   interval) + explosion radius, mirroring `MineStatsFactory`; the cost stat's progress
+   bar caps read from a separate `MinePrice/71` cap key, not from its value key 66.
 4. Stat caps should use the three-tier `StatInfo {BaseMax, FirstMax?, MegaMax?}` shape
    where upgrades/veterancy push stats beyond base.
 
@@ -203,6 +248,9 @@ Tribute mapping guidance (Phase 5+ / Phase 26 consumers):
 - `python3 reverse/tools/pin_estat_bindings.py` (point SO at the extracted
   `lib/arm64-v8a/libil2cpp.so`) must print the six `mov w0, #imm; ret` constants and
   42 SpecialStat call sites — matches `reverse/evidence/estat/estat-native-pinning.txt`.
+- `python3 reverse/tools/mine_getkey_sweep.py` must print the six CalculateProgress cap
+  keys (61/62/63/64/67 and 71 for MineCostStat) — matches
+  `reverse/evidence/damage-pipeline/mine-capkey-sweep.txt`.
 - Spot-check: `sed -n '168776,168860p' dump.cs` shows the enum; `estat-classes.tsv` row
   `WeaponDamage` must show the 6-factory DIRECT binding.
 
@@ -211,9 +259,11 @@ Tribute mapping guidance (Phase 5+ / Phase 26 consumers):
 - ~~Native bodies of the 45 `get_Stat()`/ctor implementations~~ **Resolved 2026-10-07** —
   see §6; `estat-classes.tsv` confidence column now carries NATIVE_* labels for the 9
   previously ambiguous classes.
-- **MinePrice/71 has no dedicated IStatModel class** (MineCostStat is WeaponMineCost/66);
+- ~~**MinePrice/71 has no dedicated IStatModel class** (MineCostStat is WeaponMineCost/66);
   it is likely consumed by a non-IStatModel code path (mine placement cost UI/logic).
-  Candidate for a targeted xref scan if ever needed.
+  Candidate for a targeted xref scan if ever needed.~~ **Resolved 2026-10-07** — §6.7:
+  MinePrice/71 is the max-tier cap key consumed by `MineCostStat.CalculateProgress`
+  (interface tail-call `m_max.Get(value, 71)`, VA 0x80e8f08); no other consumer exists.
 - The numeric balance values behind every stat (backend-delivered; out of APK scope, as
   established by the audit).
 - `MaxStatValueProvider` tier thresholds (BaseMax/FirstMax/MegaMax values) — native data.

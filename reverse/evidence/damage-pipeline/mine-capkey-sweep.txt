@@ -1,0 +1,12 @@
+MineCostStat.Calculate                               no interface Get tail-call
+MineCostStat.CalculateProgress                       0x80e8f08: Get(value, 71 = MinePrice)
+MineDamageForLightArmorStat.Calculate                no interface Get tail-call
+MineDamageForLightArmorStat.CalculateProgress        0x80e9818: Get(value, 61 = WeaponArmorLight)
+MineDamageForMediumArmorStat.Calculate               no interface Get tail-call
+MineDamageForMediumArmorStat.CalculateProgress       0x80e9ca0: Get(value, 62 = WeaponArmorMedium)
+MineDamageForHeavyArmorStat.Calculate                no interface Get tail-call
+MineDamageForHeavyArmorStat.CalculateProgress        0x80e9390: Get(value, 63 = WeaponArmorHeavy)
+MineExplosionRadiusStat.Calculate                    no interface Get tail-call
+MineExplosionRadiusStat.CalculateProgress            0x80ea138: Get(value, 64 = WeaponExplosionRadius)
+MineSetTimeStat.Calculate                            no interface Get tail-call
+MineSetTimeStat.CalculateProgress                    0x80ea5cc: Get(value, 67 = WeaponMineTime)

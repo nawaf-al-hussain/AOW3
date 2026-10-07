@@ -1,0 +1,1623 @@
+==============================================================================
+PART A — damage pipeline (audit item #2): Medium-armor path + consumers
+binary: libil2cpp.so sha256 8ace05bbaa2cdfda156e377cfbcb0c0a6fb223fa68188fa3df49f677f10e90c5
+source: Art-of-War-3_6.9.18_apkcombo.com.xapk sha256 1a41e033cce3f7e8595a0aa1dac07e90799d21a92793faaebbc13d3378b32c3e
+==============================================================================
+
+===== MineStatsFactory.CreateDamageForMediumArmor =====
+VA 0x7fe6860  file 0x7fe2860  body<=0x74 bytes
+  0x7fe6860: stp      x30, x23, [sp, #-0x30]!
+  0x7fe6864: stp      x22, x21, [sp, #0x10]
+  0x7fe6868: stp      x20, x19, [sp, #0x20]
+  0x7fe686c: adrp     x22, #0x9d22000
+  0x7fe6870: adrp     x23, #0x96e9000
+  0x7fe6874: mov      x19, x3
+  0x7fe6878: ldrb     w8, [x22, #0x98]
+  0x7fe687c: ldr      x23, [x23, #0x890]
+  0x7fe6880: mov      x20, x2
+  0x7fe6884: mov      x21, x1
+  0x7fe6888: tbnz     w8, #0, #0x7fe68a0
+  0x7fe688c: adrp     x0, #0x96e9000
+  0x7fe6890: ldr      x0, [x0, #0x890]
+  0x7fe6894: bl       #0x3cc7948   ; call 0x3cc7948
+  0x7fe6898: mov      w8, #1
+  0x7fe689c: strb     w8, [x22, #0x98]
+  0x7fe68a0: ldr      x0, [x23]
+  0x7fe68a4: bl       #0x3cc7be4   ; call 0x3cc7be4
+  0x7fe68a8: mov      x1, x21
+  0x7fe68ac: mov      x2, x20
+  0x7fe68b0: mov      x3, x19
+  0x7fe68b4: mov      x4, xzr
+  0x7fe68b8: mov      x22, x0
+  0x7fe68bc: bl       #0x80e9948   ; call 0x80e9948 <MineDamageForMediumArmorStat..ctor @0x80e9948>
+  0x7fe68c0: mov      x0, x22
+  0x7fe68c4: ldp      x20, x19, [sp, #0x20]
+  0x7fe68c8: ldp      x22, x21, [sp, #0x10]
+  0x7fe68cc: ldp      x30, x23, [sp], #0x30
+  0x7fe68d0: ret      
+
+===== WeaponStatsFactory.GetDamageForMediumArmor =====
+VA 0x80f0974  file 0x80ec974  body<=0x20 bytes
+  0x80f0974: ldr      x8, [x0, #0x20]
+  0x80f0978: mov      x0, x1
+  0x80f097c: mov      x1, x8
+  0x80f0980: b        #0x80ede50
+  0x80f0984: ldr      x8, [x0, #0x20]
+  0x80f0988: mov      x0, x1
+  0x80f098c: mov      x1, x8
+  0x80f0990: b        #0x80edef4
+
+===== WeaponDamage.CreateMediumDamage =====
+VA 0x80ede50  file 0x80e9e50  body<=0xa4 bytes
+  0x80ede50: sub      sp, sp, #0x50
+  0x80ede54: str      x30, [sp, #0x10]
+  0x80ede58: stp      x24, x23, [sp, #0x20]
+  0x80ede5c: stp      x22, x21, [sp, #0x30]
+  0x80ede60: stp      x20, x19, [sp, #0x40]
+  0x80ede64: adrp     x23, #0x9d22000
+  0x80ede68: adrp     x24, #0x96ef000
+  0x80ede6c: adrp     x22, #0x96e9000
+  0x80ede70: ldrb     w8, [x23, #0xa8d]
+  0x80ede74: ldr      x24, [x24, #0x888]
+  0x80ede78: ldr      x22, [x22, #0x7e8]
+  0x80ede7c: mov      x19, x2
+  0x80ede80: mov      x20, x1
+  0x80ede84: mov      x21, x0
+  0x80ede88: tbnz     w8, #0, #0x80edeac
+  0x80ede8c: adrp     x0, #0x96ef000
+  0x80ede90: ldr      x0, [x0, #0x888]
+  0x80ede94: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80ede98: adrp     x0, #0x96e9000
+  0x80ede9c: ldr      x0, [x0, #0x7e8]
+  0x80edea0: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80edea4: mov      w8, #1
+  0x80edea8: strb     w8, [x23, #0xa8d]
+  0x80edeac: ldr      x0, [x24]
+  0x80edeb0: bl       #0x3cc7be4   ; call 0x3cc7be4
+  0x80edeb4: ldr      x5, [x22]
+  0x80edeb8: mov      x1, x21
+  0x80edebc: mov      x2, x20
+  0x80edec0: mov      x3, x19
+  0x80edec4: mov      w4, #0x3e
+  0x80edec8: mov      w6, #0x276
+  0x80edecc: mov      w7, #0x2d0
+  0x80eded0: mov      x22, x0
+  0x80eded4: bl       #0x80edba0   ; call 0x80edba0 <WeaponDamage..ctor @0x80edba0>
+  0x80eded8: mov      x0, x22
+  0x80ededc: ldp      x20, x19, [sp, #0x40]
+  0x80edee0: ldp      x22, x21, [sp, #0x30]
+  0x80edee4: ldr      x30, [sp, #0x10]
+  0x80edee8: ldp      x24, x23, [sp, #0x20]
+  0x80edeec: add      sp, sp, #0x50
+  0x80edef0: ret      
+
+===== WeaponDamage.CreateLiteDamage =====
+VA 0x80eddac  file 0x80e9dac  body<=0xa4 bytes
+  0x80eddac: sub      sp, sp, #0x50
+  0x80eddb0: str      x30, [sp, #0x10]
+  0x80eddb4: stp      x24, x23, [sp, #0x20]
+  0x80eddb8: stp      x22, x21, [sp, #0x30]
+  0x80eddbc: stp      x20, x19, [sp, #0x40]
+  0x80eddc0: adrp     x23, #0x9d22000
+  0x80eddc4: adrp     x24, #0x96ef000
+  0x80eddc8: adrp     x22, #0x96e9000
+  0x80eddcc: ldrb     w8, [x23, #0xa8c]
+  0x80eddd0: ldr      x24, [x24, #0x888]
+  0x80eddd4: ldr      x22, [x22, #0x7f0]
+  0x80eddd8: mov      x19, x2
+  0x80edddc: mov      x20, x1
+  0x80edde0: mov      x21, x0
+  0x80edde4: tbnz     w8, #0, #0x80ede08
+  0x80edde8: adrp     x0, #0x96ef000
+  0x80eddec: ldr      x0, [x0, #0x888]
+  0x80eddf0: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80eddf4: adrp     x0, #0x96e9000
+  0x80eddf8: ldr      x0, [x0, #0x7f0]
+  0x80eddfc: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80ede00: mov      w8, #1
+  0x80ede04: strb     w8, [x23, #0xa8c]
+  0x80ede08: ldr      x0, [x24]
+  0x80ede0c: bl       #0x3cc7be4   ; call 0x3cc7be4
+  0x80ede10: ldr      x5, [x22]
+  0x80ede14: mov      x1, x21
+  0x80ede18: mov      x2, x20
+  0x80ede1c: mov      x3, x19
+  0x80ede20: mov      w4, #0x3d
+  0x80ede24: mov      w6, #0x275
+  0x80ede28: mov      w7, #0x2cf
+  0x80ede2c: mov      x22, x0
+  0x80ede30: bl       #0x80edba0   ; call 0x80edba0 <WeaponDamage..ctor @0x80edba0>
+  0x80ede34: mov      x0, x22
+  0x80ede38: ldp      x20, x19, [sp, #0x40]
+  0x80ede3c: ldp      x22, x21, [sp, #0x30]
+  0x80ede40: ldr      x30, [sp, #0x10]
+  0x80ede44: ldp      x24, x23, [sp, #0x20]
+  0x80ede48: add      sp, sp, #0x50
+  0x80ede4c: ret      
+
+===== WeaponDamage.CreateHeavyDamage =====
+VA 0x80edef4  file 0x80e9ef4  body<=0xa4 bytes
+  0x80edef4: sub      sp, sp, #0x50
+  0x80edef8: str      x30, [sp, #0x10]
+  0x80edefc: stp      x24, x23, [sp, #0x20]
+  0x80edf00: stp      x22, x21, [sp, #0x30]
+  0x80edf04: stp      x20, x19, [sp, #0x40]
+  0x80edf08: adrp     x23, #0x9d22000
+  0x80edf0c: adrp     x24, #0x96ef000
+  0x80edf10: adrp     x22, #0x96e9000
+  0x80edf14: ldrb     w8, [x23, #0xa8e]
+  0x80edf18: ldr      x24, [x24, #0x888]
+  0x80edf1c: ldr      x22, [x22, #0x818]
+  0x80edf20: mov      x19, x2
+  0x80edf24: mov      x20, x1
+  0x80edf28: mov      x21, x0
+  0x80edf2c: tbnz     w8, #0, #0x80edf50
+  0x80edf30: adrp     x0, #0x96ef000
+  0x80edf34: ldr      x0, [x0, #0x888]
+  0x80edf38: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80edf3c: adrp     x0, #0x96e9000
+  0x80edf40: ldr      x0, [x0, #0x818]
+  0x80edf44: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80edf48: mov      w8, #1
+  0x80edf4c: strb     w8, [x23, #0xa8e]
+  0x80edf50: ldr      x0, [x24]
+  0x80edf54: bl       #0x3cc7be4   ; call 0x3cc7be4
+  0x80edf58: ldr      x5, [x22]
+  0x80edf5c: mov      x1, x21
+  0x80edf60: mov      x2, x20
+  0x80edf64: mov      x3, x19
+  0x80edf68: mov      w4, #0x3f
+  0x80edf6c: mov      w6, #0x277
+  0x80edf70: mov      w7, #0x2d1
+  0x80edf74: mov      x22, x0
+  0x80edf78: bl       #0x80edba0   ; call 0x80edba0 <WeaponDamage..ctor @0x80edba0>
+  0x80edf7c: mov      x0, x22
+  0x80edf80: ldp      x20, x19, [sp, #0x40]
+  0x80edf84: ldp      x22, x21, [sp, #0x30]
+  0x80edf88: ldr      x30, [sp, #0x10]
+  0x80edf8c: ldp      x24, x23, [sp, #0x20]
+  0x80edf90: add      sp, sp, #0x50
+  0x80edf94: ret      
+
+===== WeaponDamage.CreateSuperWeaponLiteDamage =====
+VA 0x80edf98  file 0x80e9f98  body<=0xa4 bytes
+  0x80edf98: sub      sp, sp, #0x50
+  0x80edf9c: str      x30, [sp, #0x10]
+  0x80edfa0: stp      x24, x23, [sp, #0x20]
+  0x80edfa4: stp      x22, x21, [sp, #0x30]
+  0x80edfa8: stp      x20, x19, [sp, #0x40]
+  0x80edfac: adrp     x23, #0x9d22000
+  0x80edfb0: adrp     x24, #0x96ef000
+  0x80edfb4: adrp     x22, #0x96e9000
+  0x80edfb8: ldrb     w8, [x23, #0xa8f]
+  0x80edfbc: ldr      x24, [x24, #0x888]
+  0x80edfc0: ldr      x22, [x22, #0x7f0]
+  0x80edfc4: mov      x19, x2
+  0x80edfc8: mov      x20, x1
+  0x80edfcc: mov      x21, x0
+  0x80edfd0: tbnz     w8, #0, #0x80edff4
+  0x80edfd4: adrp     x0, #0x96ef000
+  0x80edfd8: ldr      x0, [x0, #0x888]
+  0x80edfdc: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80edfe0: adrp     x0, #0x96e9000
+  0x80edfe4: ldr      x0, [x0, #0x7f0]
+  0x80edfe8: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80edfec: mov      w8, #1
+  0x80edff0: strb     w8, [x23, #0xa8f]
+  0x80edff4: ldr      x0, [x24]
+  0x80edff8: bl       #0x3cc7be4   ; call 0x3cc7be4
+  0x80edffc: ldr      x5, [x22]
+  0x80ee000: mov      x1, x21
+  0x80ee004: mov      x2, x20
+  0x80ee008: mov      x3, x19
+  0x80ee00c: mov      w4, #0x48
+  0x80ee010: mov      w6, #0x275
+  0x80ee014: mov      w7, #0x2cf
+  0x80ee018: mov      x22, x0
+  0x80ee01c: bl       #0x80edba0   ; call 0x80edba0 <WeaponDamage..ctor @0x80edba0>
+  0x80ee020: mov      x0, x22
+  0x80ee024: ldp      x20, x19, [sp, #0x40]
+  0x80ee028: ldp      x22, x21, [sp, #0x30]
+  0x80ee02c: ldr      x30, [sp, #0x10]
+  0x80ee030: ldp      x24, x23, [sp, #0x20]
+  0x80ee034: add      sp, sp, #0x50
+  0x80ee038: ret      
+
+===== WeaponDamage.CreateSuperWeaponMediumDamage =====
+VA 0x80ee03c  file 0x80ea03c  body<=0xa4 bytes
+  0x80ee03c: sub      sp, sp, #0x50
+  0x80ee040: str      x30, [sp, #0x10]
+  0x80ee044: stp      x24, x23, [sp, #0x20]
+  0x80ee048: stp      x22, x21, [sp, #0x30]
+  0x80ee04c: stp      x20, x19, [sp, #0x40]
+  0x80ee050: adrp     x23, #0x9d22000
+  0x80ee054: adrp     x24, #0x96ef000
+  0x80ee058: adrp     x22, #0x96e9000
+  0x80ee05c: ldrb     w8, [x23, #0xa90]
+  0x80ee060: ldr      x24, [x24, #0x888]
+  0x80ee064: ldr      x22, [x22, #0x7e8]
+  0x80ee068: mov      x19, x2
+  0x80ee06c: mov      x20, x1
+  0x80ee070: mov      x21, x0
+  0x80ee074: tbnz     w8, #0, #0x80ee098
+  0x80ee078: adrp     x0, #0x96ef000
+  0x80ee07c: ldr      x0, [x0, #0x888]
+  0x80ee080: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80ee084: adrp     x0, #0x96e9000
+  0x80ee088: ldr      x0, [x0, #0x7e8]
+  0x80ee08c: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80ee090: mov      w8, #1
+  0x80ee094: strb     w8, [x23, #0xa90]
+  0x80ee098: ldr      x0, [x24]
+  0x80ee09c: bl       #0x3cc7be4   ; call 0x3cc7be4
+  0x80ee0a0: ldr      x5, [x22]
+  0x80ee0a4: mov      x1, x21
+  0x80ee0a8: mov      x2, x20
+  0x80ee0ac: mov      x3, x19
+  0x80ee0b0: mov      w4, #0x49
+  0x80ee0b4: mov      w6, #0x276
+  0x80ee0b8: mov      w7, #0x2d0
+  0x80ee0bc: mov      x22, x0
+  0x80ee0c0: bl       #0x80edba0   ; call 0x80edba0 <WeaponDamage..ctor @0x80edba0>
+  0x80ee0c4: mov      x0, x22
+  0x80ee0c8: ldp      x20, x19, [sp, #0x40]
+  0x80ee0cc: ldp      x22, x21, [sp, #0x30]
+  0x80ee0d0: ldr      x30, [sp, #0x10]
+  0x80ee0d4: ldp      x24, x23, [sp, #0x20]
+  0x80ee0d8: add      sp, sp, #0x50
+  0x80ee0dc: ret      
+
+===== WeaponDamage.CreateSuperWeaponHeavyDamage =====
+VA 0x80ee0e0  file 0x80ea0e0  body<=0xa4 bytes
+  0x80ee0e0: sub      sp, sp, #0x50
+  0x80ee0e4: str      x30, [sp, #0x10]
+  0x80ee0e8: stp      x24, x23, [sp, #0x20]
+  0x80ee0ec: stp      x22, x21, [sp, #0x30]
+  0x80ee0f0: stp      x20, x19, [sp, #0x40]
+  0x80ee0f4: adrp     x23, #0x9d22000
+  0x80ee0f8: adrp     x24, #0x96ef000
+  0x80ee0fc: adrp     x22, #0x96e9000
+  0x80ee100: ldrb     w8, [x23, #0xa91]
+  0x80ee104: ldr      x24, [x24, #0x888]
+  0x80ee108: ldr      x22, [x22, #0x818]
+  0x80ee10c: mov      x19, x2
+  0x80ee110: mov      x20, x1
+  0x80ee114: mov      x21, x0
+  0x80ee118: tbnz     w8, #0, #0x80ee13c
+  0x80ee11c: adrp     x0, #0x96ef000
+  0x80ee120: ldr      x0, [x0, #0x888]
+  0x80ee124: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80ee128: adrp     x0, #0x96e9000
+  0x80ee12c: ldr      x0, [x0, #0x818]
+  0x80ee130: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80ee134: mov      w8, #1
+  0x80ee138: strb     w8, [x23, #0xa91]
+  0x80ee13c: ldr      x0, [x24]
+  0x80ee140: bl       #0x3cc7be4   ; call 0x3cc7be4
+  0x80ee144: ldr      x5, [x22]
+  0x80ee148: mov      x1, x21
+  0x80ee14c: mov      x2, x20
+  0x80ee150: mov      x3, x19
+  0x80ee154: mov      w4, #0x4a
+  0x80ee158: mov      w6, #0x277
+  0x80ee15c: mov      w7, #0x2d1
+  0x80ee160: mov      x22, x0
+  0x80ee164: bl       #0x80edba0   ; call 0x80edba0 <WeaponDamage..ctor @0x80edba0>
+  0x80ee168: mov      x0, x22
+  0x80ee16c: ldp      x20, x19, [sp, #0x40]
+  0x80ee170: ldp      x22, x21, [sp, #0x30]
+  0x80ee174: ldr      x30, [sp, #0x10]
+  0x80ee178: ldp      x24, x23, [sp, #0x20]
+  0x80ee17c: add      sp, sp, #0x50
+  0x80ee180: ret      
+
+===== WeaponDamage..ctor =====
+VA 0x80edba0  file 0x80e9ba0  body<=0x20c bytes
+  0x80edba0: stp      x29, x30, [sp, #-0x60]!
+  0x80edba4: stp      x28, x27, [sp, #0x10]
+  0x80edba8: stp      x26, x25, [sp, #0x20]
+  0x80edbac: stp      x24, x23, [sp, #0x30]
+  0x80edbb0: stp      x22, x21, [sp, #0x40]
+  0x80edbb4: stp      x20, x19, [sp, #0x50]
+  0x80edbb8: adrp     x29, #0x96d9000
+  0x80edbbc: adrp     x28, #0x96d8000
+  0x80edbc0: adrp     x27, #0x9d22000
+  0x80edbc4: ldr      x29, [x29, #0x108]
+  0x80edbc8: ldr      x28, [x28, #0xee0]
+  0x80edbcc: ldrb     w8, [x27, #0xa8b]
+  0x80edbd0: mov      w20, w7
+  0x80edbd4: mov      w23, w6
+  0x80edbd8: mov      x22, x5
+  0x80edbdc: mov      w21, w4
+  0x80edbe0: mov      x24, x3
+  0x80edbe4: mov      x25, x2
+  0x80edbe8: mov      x26, x1
+  0x80edbec: mov      x19, x0
+  0x80edbf0: tbnz     w8, #0, #0x80edc44
+  0x80edbf4: adrp     x0, #0x969d000
+  0x80edbf8: ldr      x0, [x0, #0xdf8]
+  0x80edbfc: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80edc00: adrp     x0, #0x96d8000
+  0x80edc04: ldr      x0, [x0, #0xee0]
+  0x80edc08: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80edc0c: adrp     x0, #0x96d9000
+  0x80edc10: ldr      x0, [x0, #0x108]
+  0x80edc14: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80edc18: adrp     x0, #0x96d9000
+  0x80edc1c: ldr      x0, [x0, #0x120]
+  0x80edc20: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80edc24: adrp     x0, #0x96ef000
+  0x80edc28: ldr      x0, [x0, #0x878]
+  0x80edc2c: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80edc30: adrp     x0, #0x96ef000
+  0x80edc34: ldr      x0, [x0, #0x880]
+  0x80edc38: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80edc3c: mov      w8, #1
+  0x80edc40: strb     w8, [x27, #0xa8b]
+  0x80edc44: mov      x0, x19
+  0x80edc48: mov      x1, xzr
+  0x80edc4c: bl       #0x8f91cdc   ; call 0x8f91cdc <Object..ctor @0x8f91cdc>
+  0x80edc50: mov      x0, x19
+  0x80edc54: mov      x1, x26
+  0x80edc58: str      x26, [x0, #0x10]!
+  0x80edc5c: bl       #0x3cc78ec   ; call 0x3cc78ec
+  0x80edc60: mov      x0, x19
+  0x80edc64: mov      x1, x25
+  0x80edc68: str      x25, [x0, #0x18]!
+  0x80edc6c: bl       #0x3cc78ec   ; call 0x3cc78ec
+  0x80edc70: mov      x0, x19
+  0x80edc74: mov      x1, x24
+  0x80edc78: str      x24, [x0, #0x48]!
+  0x80edc7c: bl       #0x3cc78ec   ; call 0x3cc78ec
+  0x80edc80: mov      x0, x19
+  0x80edc84: mov      x1, x22
+  0x80edc88: str      w23, [x19, #0x28]
+  0x80edc8c: str      x22, [x0, #0x20]!
+  0x80edc90: bl       #0x3cc78ec   ; call 0x3cc78ec
+  0x80edc94: mov      w0, w20
+  0x80edc98: mov      x1, xzr
+  0x80edc9c: str      w21, [x19, #0x40]
+  0x80edca0: bl       #0x7a2855c   ; call 0x7a2855c <LocalizationRawStringBuilder.CreateRawString @0x7a2855c>
+  0x80edca4: mov      x1, x0
+  0x80edca8: mov      x0, x19
+  0x80edcac: str      x1, [x0, #0x38]!
+  0x80edcb0: bl       #0x3cc78ec   ; call 0x3cc78ec
+  0x80edcb4: ldr      x0, [x29]
+  0x80edcb8: mov      w1, #1
+  0x80edcbc: bl       #0x3cc7a38   ; call 0x3cc7a38
+  0x80edcc0: ldr      x8, [x28]
+  0x80edcc4: mov      x20, x0
+  0x80edcc8: mov      x0, x8
+  0x80edccc: bl       #0x3cc7be4   ; call 0x3cc7be4
+  0x80edcd0: adrp     x8, #0x96ef000
+  0x80edcd4: mov      x1, x19
+  0x80edcd8: mov      x3, xzr
+  0x80edcdc: ldr      x8, [x8, #0x880]
+  0x80edce0: mov      x22, x0
+  0x80edce4: ldr      x2, [x8]
+  0x80edce8: bl       #0x555b170   ; call 0x555b170 <CommandLine.ToString @0x555b170>
+  0x80edcec: adrp     x8, #0x969d000
+  0x80edcf0: ldr      x8, [x8, #0xdf8]
+  0x80edcf4: ldr      x0, [x8]
+  0x80edcf8: bl       #0x3cc7be4   ; call 0x3cc7be4
+  0x80edcfc: adrp     x8, #0x96ef000
+  0x80edd00: mov      x1, x19
+  0x80edd04: mov      x3, xzr
+  0x80edd08: ldr      x8, [x8, #0x878]
+  0x80edd0c: mov      x23, x0
+  0x80edd10: ldr      x2, [x8]
+  0x80edd14: bl       #0x555c894   ; call 0x555c894 <CommandLine.ToString @0x555c894>
+  0x80edd18: adrp     x8, #0x96d9000
+  0x80edd1c: ldr      x8, [x8, #0x120]
+  0x80edd20: ldr      x0, [x8]
+  0x80edd24: bl       #0x3cc7be4   ; call 0x3cc7be4
+  0x80edd28: mov      x1, x22
+  0x80edd2c: mov      x2, x23
+  0x80edd30: mov      x3, xzr
+  0x80edd34: mov      x21, x0
+  0x80edd38: bl       #0x80e87c4   ; call 0x80e87c4 <IStatModel.StatValue..ctor @0x80e87c4>
+  0x80edd3c: cbz      x20, #0x80edd98
+  0x80edd40: cbz      x21, #0x80edd58
+  0x80edd44: ldr      x8, [x20]
+  0x80edd48: mov      x0, x21
+  0x80edd4c: ldr      x1, [x8, #0x40]
+  0x80edd50: bl       #0x3cc7acc   ; call 0x3cc7acc
+  0x80edd54: cbz      x0, #0x80edda0
+  0x80edd58: ldr      w8, [x20, #0x18]
+  0x80edd5c: cbz      w8, #0x80edd9c
+  0x80edd60: mov      x0, x20
+  0x80edd64: mov      x1, x21
+  0x80edd68: str      x21, [x0, #0x20]!
+  0x80edd6c: bl       #0x3cc78ec   ; call 0x3cc78ec
+  0x80edd70: str      x20, [x19, #0x30]!
+  0x80edd74: mov      x0, x19
+  0x80edd78: mov      x1, x20
+  0x80edd7c: ldp      x20, x19, [sp, #0x50]
+  0x80edd80: ldp      x22, x21, [sp, #0x40]
+  0x80edd84: ldp      x24, x23, [sp, #0x30]
+  0x80edd88: ldp      x26, x25, [sp, #0x20]
+  0x80edd8c: ldp      x28, x27, [sp, #0x10]
+  0x80edd90: ldp      x29, x30, [sp], #0x60
+  0x80edd94: b        #0x3cc78ec
+  0x80edd98: bl       #0x3cc7bf4   ; call 0x3cc7bf4
+  0x80edd9c: bl       #0x3cc7bfc   ; call 0x3cc7bfc
+  0x80edda0: bl       #0x3cc7c18   ; call 0x3cc7c18
+  0x80edda4: mov      x1, xzr
+  0x80edda8: bl       #0x3cc7ab8   ; call 0x3cc7ab8
+
+===== WeaponDamage.get_Values =====
+VA 0x80eda7c  file 0x80e9a7c  body<=0x20 bytes
+  0x80eda7c: ldr      x0, [x0, #0x30]
+  0x80eda80: ret      
+  0x80eda84: ldr      x0, [x0, #0x38]
+  0x80eda88: ret      
+  0x80eda8c: mov      w0, #1
+  0x80eda90: ret      
+  0x80eda94: ldr      w0, [x0, #0x40]
+  0x80eda98: ret      
+
+===== WeaponDamage.get_Category =====
+VA 0x80eda8c  file 0x80e9a8c  body<=0x20 bytes
+  0x80eda8c: mov      w0, #1
+  0x80eda90: ret      
+  0x80eda94: ldr      w0, [x0, #0x40]
+  0x80eda98: ret      
+  0x80eda9c: stp      x30, x21, [sp, #-0x20]!
+  0x80edaa0: stp      x20, x19, [sp, #0x10]
+  0x80edaa4: adrp     x21, #0x9d22000
+  0x80edaa8: adrp     x20, #0x96d9000
+
+===== WeaponDamage.get_Stat =====
+VA 0x80eda94  file 0x80e9a94  body<=0x20 bytes
+  0x80eda94: ldr      w0, [x0, #0x40]
+  0x80eda98: ret      
+  0x80eda9c: stp      x30, x21, [sp, #-0x20]!
+  0x80edaa0: stp      x20, x19, [sp, #0x10]
+  0x80edaa4: adrp     x21, #0x9d22000
+  0x80edaa8: adrp     x20, #0x96d9000
+  0x80edaac: mov      x19, x0
+  0x80edab0: ldrb     w8, [x21, #0xa89]
+
+===== WeaponDamage.get_IsIncreasing =====
+VA 0x80eda9c  file 0x80e9a9c  body<=0x58 bytes
+  0x80eda9c: stp      x30, x21, [sp, #-0x20]!
+  0x80edaa0: stp      x20, x19, [sp, #0x10]
+  0x80edaa4: adrp     x21, #0x9d22000
+  0x80edaa8: adrp     x20, #0x96d9000
+  0x80edaac: mov      x19, x0
+  0x80edab0: ldrb     w8, [x21, #0xa89]
+  0x80edab4: ldr      x20, [x20, #0x388]
+  0x80edab8: tbnz     w8, #0, #0x80edad0
+  0x80edabc: adrp     x0, #0x96d9000
+  0x80edac0: ldr      x0, [x0, #0x388]
+  0x80edac4: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80edac8: mov      w8, #1
+  0x80edacc: strb     w8, [x21, #0xa89]
+  0x80edad0: ldr      x0, [x20]
+  0x80edad4: ldr      w19, [x19, #0x40]
+  0x80edad8: ldr      w8, [x0, #0xe4]
+  0x80edadc: cbnz     w8, #0x80edae4
+  0x80edae0: bl       #0x3cc7ac8   ; call 0x3cc7ac8
+  0x80edae4: mov      w0, w19
+  0x80edae8: ldp      x20, x19, [sp, #0x10]
+  0x80edaec: ldp      x30, x21, [sp], #0x20
+  0x80edaf0: b        #0x80e84c4
+
+===== WeaponDamage.Calculate =====
+VA 0x80ee184  file 0x80ea184  body<=0x23c bytes
+  0x80ee184: stp      d9, d8, [sp, #-0x60]!
+  0x80ee188: str      x30, [sp, #0x10]
+  0x80ee18c: stp      x26, x25, [sp, #0x20]
+  0x80ee190: stp      x24, x23, [sp, #0x30]
+  0x80ee194: stp      x22, x21, [sp, #0x40]
+  0x80ee198: stp      x20, x19, [sp, #0x50]
+  0x80ee19c: adrp     x21, #0x9d22000
+  0x80ee1a0: mov      x19, x1
+  0x80ee1a4: mov      x20, x0
+  0x80ee1a8: ldrb     w8, [x21, #0xa92]
+  0x80ee1ac: tbnz     w8, #0, #0x80ee1dc
+  0x80ee1b0: adrp     x0, #0x96ef000
+  0x80ee1b4: ldr      x0, [x0, #0x758]
+  0x80ee1b8: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80ee1bc: adrp     x0, #0x96e9000
+  0x80ee1c0: ldr      x0, [x0, #0x798]
+  0x80ee1c4: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80ee1c8: adrp     x0, #0x9699000
+  0x80ee1cc: ldr      x0, [x0, #0xb08]
+  0x80ee1d0: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80ee1d4: mov      w8, #1
+  0x80ee1d8: strb     w8, [x21, #0xa92]
+  0x80ee1dc: cbz      x19, #0x80ee3bc
+  0x80ee1e0: adrp     x24, #0x96ef000
+  0x80ee1e4: adrp     x26, #0x96e9000
+  0x80ee1e8: ldr      x24, [x24, #0x758]
+  0x80ee1ec: ldr      x8, [x19]
+  0x80ee1f0: ldr      x26, [x26, #0x798]
+  0x80ee1f4: ldr      x21, [x20, #0x20]
+  0x80ee1f8: ldr      x22, [x20, #0x10]
+  0x80ee1fc: ldr      x23, [x24]
+  0x80ee200: ldrh     w9, [x8, #0x12e]
+  0x80ee204: ldr      x1, [x23, #0x20]
+  0x80ee208: ldrh     w2, [x23, #0x50]
+  0x80ee20c: cbz      x9, #0x80ee230
+  0x80ee210: ldr      x10, [x8, #0xb0]
+  0x80ee214: add      x10, x10, #8
+  0x80ee218: ldur     x11, [x10, #-8]
+  0x80ee21c: cmp      x11, x1
+  0x80ee220: b.eq     #0x80ee23c
+  0x80ee224: subs     x9, x9, #1
+  0x80ee228: add      x10, x10, #0x10
+  0x80ee22c: b.ne     #0x80ee218
+  0x80ee230: mov      x0, x19
+  0x80ee234: bl       #0x3d00398   ; call 0x3d00398
+  0x80ee238: b        #0x80ee24c
+  0x80ee23c: ldr      w9, [x10]
+  0x80ee240: add      w9, w9, w2
+  0x80ee244: add      x8, x8, w9, sxtw #4
+  0x80ee248: add      x0, x8, #0x138
+  0x80ee24c: adrp     x25, #0x9699000
+  0x80ee250: mov      x1, x23
+  0x80ee254: ldr      x25, [x25, #0xb08]
+  0x80ee258: ldr      x0, [x0, #8]
+  0x80ee25c: bl       #0x3cc7ac4   ; call 0x3cc7ac4
+  0x80ee260: ldr      x8, [x0, #8]
+  0x80ee264: mov      x3, x0
+  0x80ee268: mov      x0, x19
+  0x80ee26c: mov      x1, x21
+  0x80ee270: mov      x2, x22
+  0x80ee274: blr      x8
+  0x80ee278: ldr      x8, [x19]
+  0x80ee27c: ldr      x23, [x24]
+  0x80ee280: fmov     s8, s0
+  0x80ee284: ldr      x21, [x20, #0x10]
+  0x80ee288: ldr      x22, [x26]
+  0x80ee28c: ldrh     w9, [x8, #0x12e]
+  0x80ee290: ldr      x1, [x23, #0x20]
+  0x80ee294: ldrh     w2, [x23, #0x50]
+  0x80ee298: cbz      x9, #0x80ee2bc
+  0x80ee29c: ldr      x10, [x8, #0xb0]
+  0x80ee2a0: add      x10, x10, #8
+  0x80ee2a4: ldur     x11, [x10, #-8]
+  0x80ee2a8: cmp      x11, x1
+  0x80ee2ac: b.eq     #0x80ee2c8
+  0x80ee2b0: subs     x9, x9, #1
+  0x80ee2b4: add      x10, x10, #0x10
+  0x80ee2b8: b.ne     #0x80ee2a4
+  0x80ee2bc: mov      x0, x19
+  0x80ee2c0: bl       #0x3d00398   ; call 0x3d00398
+  0x80ee2c4: b        #0x80ee2d8
+  0x80ee2c8: ldr      w9, [x10]
+  0x80ee2cc: add      w9, w9, w2
+  0x80ee2d0: add      x8, x8, w9, sxtw #4
+  0x80ee2d4: add      x0, x8, #0x138
+  0x80ee2d8: ldr      x0, [x0, #8]
+  0x80ee2dc: mov      x1, x23
+  0x80ee2e0: bl       #0x3cc7ac4   ; call 0x3cc7ac4
+  0x80ee2e4: ldr      x8, [x0, #8]
+  0x80ee2e8: mov      x3, x0
+  0x80ee2ec: mov      x0, x19
+  0x80ee2f0: mov      x1, x22
+  0x80ee2f4: mov      x2, x21
+  0x80ee2f8: blr      x8
+  0x80ee2fc: ldr      x8, [x19]
+  0x80ee300: ldr      x22, [x24]
+  0x80ee304: fmov     s9, s0
+  0x80ee308: ldr      x20, [x20, #0x10]
+  0x80ee30c: ldr      x21, [x25]
+  0x80ee310: ldrh     w9, [x8, #0x12e]
+  0x80ee314: ldr      x1, [x22, #0x20]
+  0x80ee318: ldrh     w2, [x22, #0x50]
+  0x80ee31c: cbz      x9, #0x80ee340
+  0x80ee320: ldr      x10, [x8, #0xb0]
+  0x80ee324: add      x10, x10, #8
+  0x80ee328: ldur     x11, [x10, #-8]
+  0x80ee32c: cmp      x11, x1
+  0x80ee330: b.eq     #0x80ee34c
+  0x80ee334: subs     x9, x9, #1
+  0x80ee338: add      x10, x10, #0x10
+  0x80ee33c: b.ne     #0x80ee328
+  0x80ee340: mov      x0, x19
+  0x80ee344: bl       #0x3d00398   ; call 0x3d00398
+  0x80ee348: b        #0x80ee35c
+  0x80ee34c: ldr      w9, [x10]
+  0x80ee350: add      w9, w9, w2
+  0x80ee354: add      x8, x8, w9, sxtw #4
+  0x80ee358: add      x0, x8, #0x138
+  0x80ee35c: ldr      x0, [x0, #8]
+  0x80ee360: mov      x1, x22
+  0x80ee364: bl       #0x3cc7ac4   ; call 0x3cc7ac4
+  0x80ee368: ldr      x8, [x0, #8]
+  0x80ee36c: mov      x3, x0
+  0x80ee370: mov      x0, x19
+  0x80ee374: mov      x1, x21
+  0x80ee378: mov      x2, x20
+  0x80ee37c: blr      x8
+  0x80ee380: fcvtzs   w9, s0
+  0x80ee384: mov      w8, #0x7f800000
+  0x80ee388: ldr      x30, [sp, #0x10]
+  0x80ee38c: fmov     s1, w8
+  0x80ee390: ldp      x20, x19, [sp, #0x50]
+  0x80ee394: ldp      x22, x21, [sp, #0x40]
+  0x80ee398: ldp      x24, x23, [sp, #0x30]
+  0x80ee39c: cmp      w9, #0x28
+  0x80ee3a0: ldp      x26, x25, [sp, #0x20]
+  0x80ee3a4: fccmp    s0, s1, #4, eq
+  0x80ee3a8: fmov     s0, #1.00000000
+  0x80ee3ac: fcsel    s0, s9, s0, ne
+  0x80ee3b0: fmul     s0, s8, s0
+  0x80ee3b4: ldp      d9, d8, [sp], #0x60
+  0x80ee3b8: ret      
+  0x80ee3bc: bl       #0x3cc7bf4   ; call 0x3cc7bf4
+
+===== WeaponDamage.CalculateProgress =====
+VA 0x80ee3c0  file 0x80ea3c0  body<=0xb8 bytes
+  0x80ee3c0: str      d8, [sp, #-0x20]!
+  0x80ee3c4: str      x30, [sp, #8]
+  0x80ee3c8: stp      x20, x19, [sp, #0x10]
+  0x80ee3cc: fmov     s8, s0
+  0x80ee3d0: adrp     x19, #0x9d22000
+  0x80ee3d4: mov      x20, x0
+  0x80ee3d8: ldrb     w8, [x19, #0xa93]
+  0x80ee3dc: tbnz     w8, #0, #0x80ee3f4
+  0x80ee3e0: adrp     x0, #0x96d9000
+  0x80ee3e4: ldr      x0, [x0, #0x3a0]
+  0x80ee3e8: bl       #0x3cc7948   ; call 0x3cc7948
+  0x80ee3ec: mov      w8, #1
+  0x80ee3f0: strb     w8, [x19, #0xa93]
+  0x80ee3f4: ldr      x19, [x20, #0x18]
+  0x80ee3f8: cbz      x19, #0x80ee474
+  0x80ee3fc: adrp     x10, #0x96d9000
+  0x80ee400: ldr      x8, [x19]
+  0x80ee404: ldr      x10, [x10, #0x3a0]
+  0x80ee408: ldr      w20, [x20, #0x40]
+  0x80ee40c: ldrh     w9, [x8, #0x12e]
+  0x80ee410: ldr      x1, [x10]
+  0x80ee414: cbz      x9, #0x80ee438
+  0x80ee418: ldr      x10, [x8, #0xb0]
+  0x80ee41c: add      x10, x10, #8   ; -> va 0x96d9008
+  0x80ee420: ldur     x11, [x10, #-8]
+  0x80ee424: cmp      x11, x1
+  0x80ee428: b.eq     #0x80ee448
+  0x80ee42c: subs     x9, x9, #1
+  0x80ee430: add      x10, x10, #0x10   ; -> va 0x96d9010
+  0x80ee434: b.ne     #0x80ee420
+  0x80ee438: mov      x0, x19
+  0x80ee43c: mov      w2, wzr
+  0x80ee440: bl       #0x3d00398   ; call 0x3d00398
+  0x80ee444: b        #0x80ee454
+  0x80ee448: ldrsw    x9, [x10]
+  0x80ee44c: add      x8, x8, x9, lsl #4
+  0x80ee450: add      x0, x8, #0x138
+  0x80ee454: ldp      x3, x2, [x0]
+  0x80ee458: mov      x0, x19
+  0x80ee45c: mov      w1, w20
+  0x80ee460: ldp      x20, x19, [sp, #0x10]
+  0x80ee464: ldr      x30, [sp, #8]
+  0x80ee468: fmov     s0, s8
+  0x80ee46c: ldr      d8, [sp], #0x20
+  0x80ee470: br       x3
+  0x80ee474: bl       #0x3cc7bf4   ; call 0x3cc7bf4
+
+===== ArmyWeaponItemInfoPresenter.SafeSetDamageStat =====
+VA 0x7c6c474  file 0x7c68474  body<=0x94c bytes
+  0x7c6c474: sub      sp, sp, #0x70
+  0x7c6c478: stp      x29, x30, [sp, #0x10]
+  0x7c6c47c: stp      x28, x27, [sp, #0x20]
+  0x7c6c480: stp      x26, x25, [sp, #0x30]
+  0x7c6c484: stp      x24, x23, [sp, #0x40]
+  0x7c6c488: stp      x22, x21, [sp, #0x50]
+  0x7c6c48c: stp      x20, x19, [sp, #0x60]
+  0x7c6c490: adrp     x20, #0x9d20000
+  0x7c6c494: adrp     x22, #0x96d6000
+  0x7c6c498: mov      x21, x1
+  0x7c6c49c: ldrb     w8, [x20, #0xa7]
+  0x7c6c4a0: ldr      x22, [x22, #0x308]
+  0x7c6c4a4: mov      x19, x0
+  0x7c6c4a8: tbnz     w8, #0, #0x7c6c5a4
+  0x7c6c4ac: adrp     x0, #0x9694000
+  0x7c6c4b0: ldr      x0, [x0, #0x170]
+  0x7c6c4b4: bl       #0x3cc7948   ; call 0x3cc7948
+  0x7c6c4b8: adrp     x0, #0x96d6000
+  0x7c6c4bc: ldr      x0, [x0, #0x310]
+  0x7c6c4c0: bl       #0x3cc7948   ; call 0x3cc7948
+  0x7c6c4c4: adrp     x0, #0x96d6000
+  0x7c6c4c8: ldr      x0, [x0, #0x238]
+  0x7c6c4cc: bl       #0x3cc7948   ; call 0x3cc7948
+  0x7c6c4d0: adrp     x0, #0x96d6000
+  0x7c6c4d4: ldr      x0, [x0, #0x260]
+  0x7c6c4d8: bl       #0x3cc7948   ; call 0x3cc7948
+  0x7c6c4dc: adrp     x0, #0x96d6000
+  0x7c6c4e0: ldr      x0, [x0, #0x318]
+  0x7c6c4e4: bl       #0x3cc7948   ; call 0x3cc7948
+  0x7c6c4e8: adrp     x0, #0x96d6000
+  0x7c6c4ec: ldr      x0, [x0, #0x320]
+  0x7c6c4f0: bl       #0x3cc7948   ; call 0x3cc7948
+  0x7c6c4f4: adrp     x0, #0x96d5000
+  0x7c6c4f8: ldr      x0, [x0, #0x528]
+  0x7c6c4fc: bl       #0x3cc7948   ; call 0x3cc7948
+  0x7c6c500: adrp     x0, #0x96d6000
+  0x7c6c504: ldr      x0, [x0, #0x328]
+  0x7c6c508: bl       #0x3cc7948   ; call 0x3cc7948
+  0x7c6c50c: adrp     x0, #0x96d5000
+  0x7c6c510: ldr      x0, [x0, #0x530]
+  0x7c6c514: bl       #0x3cc7948   ; call 0x3cc7948
+  0x7c6c518: adrp     x0, #0x96d6000
+  0x7c6c51c: ldr      x0, [x0, #0x250]
+  0x7c6c520: bl       #0x3cc7948   ; call 0x3cc7948
+  0x7c6c524: adrp     x0, #0x96d6000
+  0x7c6c528: ldr      x0, [x0, #0x280]
+  0x7c6c52c: bl       #0x3cc7948   ; call 0x3cc7948
+  0x7c6c530: adrp     x0, #0x969e000
+  0x7c6c534: ldr      x0, [x0, #0x250]
+  0x7c6c538: bl       #0x3cc7948   ; call 0x3cc7948
+  0x7c6c53c: adrp     x0, #0x96d6000
+  0x7c6c540: ldr      x0, [x0, #0x288]
+  0x7c6c544: bl       #0x3cc7948   ; call 0x3cc7948
+  0x7c6c548: adrp     x0, #0x969b000
+  0x7c6c54c: ldr      x0, [x0, #0x348]
+  0x7c6c550: bl       #0x3cc7948   ; call 0x3cc7948
+  0x7c6c554: adrp     x0, #0x96d6000
+  0x7c6c558: ldr      x0, [x0, #0x2a8]
+  0x7c6c55c: bl       #0x3cc7948   ; call 0x3cc7948
+  0x7c6c560: adrp     x0, #0x96d6000
+  0x7c6c564: ldr      x0, [x0, #0x330]
+  0x7c6c568: bl       #0x3cc7948   ; call 0x3cc7948
+  0x7c6c56c: adrp     x0, #0x96d6000
+  0x7c6c570: ldr      x0, [x0, #0x338]
+  0x7c6c574: bl       #0x3cc7948   ; call 0x3cc7948
+  0x7c6c578: adrp     x0, #0x96d6000
+  0x7c6c57c: ldr      x0, [x0, #0x308]
+  0x7c6c580: bl       #0x3cc7948   ; call 0x3cc7948
+  0x7c6c584: adrp     x0, #0x96d6000
+  0x7c6c588: ldr      x0, [x0, #0x2a0]
+  0x7c6c58c: bl       #0x3cc7948   ; call 0x3cc7948
+  0x7c6c590: adrp     x0, #0x969e000
+  0x7c6c594: ldr      x0, [x0, #0x258]
+  0x7c6c598: bl       #0x3cc7948   ; call 0x3cc7948
+  0x7c6c59c: mov      w8, #1
+  0x7c6c5a0: strb     w8, [x20, #0xa7]
+  0x7c6c5a4: ldr      x0, [x22]
+  0x7c6c5a8: bl       #0x3cc7be4   ; call 0x3cc7be4
+  0x7c6c5ac: mov      x1, xzr
+  0x7c6c5b0: mov      x22, x0
+  0x7c6c5b4: bl       #0x8f91cdc   ; call 0x8f91cdc <Object..ctor @0x8f91cdc>
+  0x7c6c5b8: cbz      x22, #0x7c6cdbc
+  0x7c6c5bc: adrp     x23, #0x96d6000
+  0x7c6c5c0: adrp     x29, #0x96d6000
+  0x7c6c5c4: mov      x20, x22
+  0x7c6c5c8: ldr      x23, [x23, #0x2a8]
+  0x7c6c5cc: ldr      x29, [x29, #0x260]
+  0x7c6c5d0: mov      x1, x21
+  0x7c6c5d4: str      x21, [x20, #0x10]!
+  0x7c6c5d8: mov      x0, x20
+  0x7c6c5dc: bl       #0x3cc78ec   ; call 0x3cc78ec
+  0x7c6c5e0: ldr      x0, [x19, #0x50]
+  0x7c6c5e4: mov      x1, xzr
+  0x7c6c5e8: bl       #0x50baca8   ; call 0x50baca8 <CommandLine.ToString @0x50baca8>
+  0x7c6c5ec: ldr      x0, [x19, #0x50]
+  0x7c6c5f0: ldr      x1, [x23]
+  0x7c6c5f4: bl       #0x4fec374   ; call 0x4fec374 <CommandLine.ToString @0x4fec374>
+  0x7c6c5f8: ldr      x1, [x29]
+  0x7c6c5fc: ldr      x21, [x19, #0x50]
+  0x7c6c600: mov      x0, x19
+  0x7c6c604: bl       #0x70597c8   ; call 0x70597c8 <CommandLine.ToString @0x70597c8>
+  0x7c6c608: cbz      x0, #0x7c6cdbc
+  0x7c6c60c: adrp     x26, #0x96d6000
+  0x7c6c610: ldr      x8, [x0]
+  0x7c6c614: adrp     x24, #0x96d6000
+  0x7c6c618: ldr      x26, [x26, #0x288]
+  0x7c6c61c: mov      x23, x0
+  0x7c6c620: ldrh     w9, [x8, #0x12e]
+  0x7c6c624: ldr      x24, [x24, #0x2a0]
+  0x7c6c628: ldr      x1, [x26]
+  0x7c6c62c: cbz      x9, #0x7c6c650
+  0x7c6c630: ldr      x10, [x8, #0xb0]
+  0x7c6c634: add      x10, x10, #8
+  0x7c6c638: ldur     x11, [x10, #-8]
+  0x7c6c63c: cmp      x11, x1
+  0x7c6c640: b.eq     #0x7c6c660
+  0x7c6c644: subs     x9, x9, #1
+  0x7c6c648: add      x10, x10, #0x10
+  0x7c6c64c: b.ne     #0x7c6c638
+  0x7c6c650: mov      x0, x23
+  0x7c6c654: mov      w2, #3
+  0x7c6c658: bl       #0x3d00398   ; call 0x3d00398
+  0x7c6c65c: b        #0x7c6c670
+  0x7c6c660: ldr      w9, [x10]
+  0x7c6c664: add      w9, w9, #3
+  0x7c6c668: add      x8, x8, w9, sxtw #4
+  0x7c6c66c: add      x0, x8, #0x138
+  0x7c6c670: ldp      x8, x1, [x0]
+  0x7c6c674: mov      x0, x23
+  0x7c6c678: blr      x8
+  0x7c6c67c: ldr      x8, [x24]
+  0x7c6c680: mov      x23, x0
+  0x7c6c684: stp      x19, x20, [sp]
+  0x7c6c688: ldr      w9, [x8, #0xe4]
+  0x7c6c68c: cbnz     w9, #0x7c6c69c
+  0x7c6c690: mov      x0, x8
+  0x7c6c694: bl       #0x3cc7ac8   ; call 0x3cc7ac8
+  0x7c6c698: ldr      x8, [x24]
+  0x7c6c69c: mov      x27, x24
+  0x7c6c6a0: adrp     x10, #0x96d5000
+  0x7c6c6a4: adrp     x20, #0x96d6000
+  0x7c6c6a8: adrp     x19, #0x96d6000
+  0x7c6c6ac: ldr      x10, [x10, #0x528]
+  0x7c6c6b0: ldr      x20, [x20, #0x328]
+  0x7c6c6b4: ldr      x9, [x8, #0xb8]
+  0x7c6c6b8: adrp     x28, #0x96d6000
+  0x7c6c6bc: adrp     x25, #0x96d6000
+  0x7c6c6c0: ldr      x19, [x19, #0x338]
+  0x7c6c6c4: ldr      x28, [x28, #0x320]
+  0x7c6c6c8: ldr      x24, [x9, #0x28]
+  0x7c6c6cc: ldr      x25, [x25, #0x318]
+  0x7c6c6d0: cbnz     x24, #0x7c6c760
+  0x7c6c6d4: ldr      w10, [x8, #0xe4]
+  0x7c6c6d8: cbnz     w10, #0x7c6c6ec
+  0x7c6c6dc: mov      x0, x8
+  0x7c6c6e0: bl       #0x3cc7ac8   ; call 0x3cc7ac8
+  0x7c6c6e4: ldr      x8, [x27]
+  0x7c6c6e8: ldr      x9, [x8, #0xb8]
+  0x7c6c6ec: adrp     x8, #0x96d5000
+  0x7c6c6f0: ldr      x8, [x8, #0x530]
+  0x7c6c6f4: ldr      x25, [x9]
+  0x7c6c6f8: ldr      x0, [x8]
+  0x7c6c6fc: bl       #0x3cc7be4   ; call 0x3cc7be4
+  0x7c6c700: adrp     x8, #0x96d6000
+  0x7c6c704: mov      x1, x25
+  0x7c6c708: mov      x3, xzr
+  0x7c6c70c: ldr      x8, [x8, #0x330]
+  0x7c6c710: mov      x24, x0
+  0x7c6c714: ldr      x2, [x8]
+  0x7c6c718: bl       #0x5559b40   ; call 0x5559b40 <CommandLine.ToString @0x5559b40>
+  0x7c6c71c: ldr      x8, [x27]
+  0x7c6c720: mov      x1, x24
+  0x7c6c724: ldr      x0, [x8, #0xb8]
+  0x7c6c728: str      x24, [x0, #0x28]!
+  0x7c6c72c: bl       #0x3cc78ec   ; call 0x3cc78ec
+  0x7c6c730: adrp     x29, #0x96d6000
+  0x7c6c734: adrp     x25, #0x96d6000
+  0x7c6c738: adrp     x28, #0x96d6000
+  0x7c6c73c: adrp     x20, #0x96d6000
+  0x7c6c740: adrp     x19, #0x96d6000
+  0x7c6c744: adrp     x10, #0x96d5000
+  0x7c6c748: ldr      x29, [x29, #0x260]
+  0x7c6c74c: ldr      x25, [x25, #0x318]
+  0x7c6c750: ldr      x28, [x28, #0x320]
+  0x7c6c754: ldr      x20, [x20, #0x328]
+  0x7c6c758: ldr      x19, [x19, #0x338]
+  0x7c6c75c: ldr      x10, [x10, #0x528]
+  0x7c6c760: ldr      x2, [x10]
+  0x7c6c764: mov      x0, x23
+  0x7c6c768: mov      x1, x24
+  0x7c6c76c: bl       #0x4eb0c1c   ; call 0x4eb0c1c <CommandLine.ToString @0x4eb0c1c>
+  0x7c6c770: ldr      x8, [x20]
+  0x7c6c774: mov      x23, x0
+  0x7c6c778: mov      x0, x8
+  0x7c6c77c: bl       #0x3cc7be4   ; call 0x3cc7be4
+  0x7c6c780: ldr      x2, [x19]
+  0x7c6c784: mov      x1, x22
+  0x7c6c788: mov      x3, xzr
+  0x7c6c78c: mov      x24, x0
+  0x7c6c790: bl       #0x555b170   ; call 0x555b170 <CommandLine.ToString @0x555b170>
+  0x7c6c794: ldr      x2, [x28]
+  0x7c6c798: mov      x0, x23
+  0x7c6c79c: mov      x1, x24
+  0x7c6c7a0: bl       #0x4e98318   ; call 0x4e98318 <CommandLine.ToString @0x4e98318>
+  0x7c6c7a4: ldr      x1, [x25]
+  0x7c6c7a8: bl       #0x4e8de94   ; call 0x4e8de94 <CommandLine.ToString @0x4e8de94>
+  0x7c6c7ac: cbz      x21, #0x7c6cdbc
+  0x7c6c7b0: adrp     x10, #0x96d6000
+  0x7c6c7b4: ldr      x8, [x21]
+  0x7c6c7b8: mov      x22, x0
+  0x7c6c7bc: ldr      x10, [x10, #0x280]
+  0x7c6c7c0: ldp      x19, x20, [sp]
+  0x7c6c7c4: ldrh     w9, [x8, #0x12e]
+  0x7c6c7c8: ldr      x1, [x10]
+  0x7c6c7cc: cbz      x9, #0x7c6c7f0
+  0x7c6c7d0: ldr      x10, [x8, #0xb0]
+  0x7c6c7d4: add      x10, x10, #8   ; -> va 0x96d6008
+  0x7c6c7d8: ldur     x11, [x10, #-8]
+  0x7c6c7dc: cmp      x11, x1
+  0x7c6c7e0: b.eq     #0x7c6c800
+  0x7c6c7e4: subs     x9, x9, #1
+  0x7c6c7e8: add      x10, x10, #0x10   ; -> va 0x96d6010
+  0x7c6c7ec: b.ne     #0x7c6c7d8
+  0x7c6c7f0: mov      x0, x21
+  0x7c6c7f4: mov      w2, wzr
+  0x7c6c7f8: bl       #0x3d00398   ; call 0x3d00398
+  0x7c6c7fc: b        #0x7c6c80c
+  0x7c6c800: ldrsw    x9, [x10]
+  0x7c6c804: add      x8, x8, x9, lsl #4
+  0x7c6c808: add      x0, x8, #0x138   ; -> va 0x96d6138
+  0x7c6c80c: ldp      x8, x2, [x0]
+  0x7c6c810: mov      x0, x21
+  0x7c6c814: mov      x1, x22
+  0x7c6c818: blr      x8
+  0x7c6c81c: ldr      x0, [x19, #0x50]
+  0x7c6c820: mov      x1, xzr
+  0x7c6c824: bl       #0x50bab90   ; call 0x50bab90 <CommandLine.ToString @0x50bab90>
+  0x7c6c828: ldr      x1, [x29]
+  0x7c6c82c: mov      x0, x19
+  0x7c6c830: bl       #0x70597c8   ; call 0x70597c8 <CommandLine.ToString @0x70597c8>
+  0x7c6c834: cbz      x0, #0x7c6cdbc
+  0x7c6c838: ldr      x8, [x0]
+  0x7c6c83c: ldr      x20, [x20]
+  0x7c6c840: mov      x21, x0
+  0x7c6c844: ldr      x1, [x26]
+  0x7c6c848: ldrh     w9, [x8, #0x12e]
+  0x7c6c84c: cbz      x9, #0x7c6c870
+  0x7c6c850: ldr      x10, [x8, #0xb0]
+  0x7c6c854: add      x10, x10, #8   ; -> va 0x96d6008
+  0x7c6c858: ldur     x11, [x10, #-8]
+  0x7c6c85c: cmp      x11, x1
+  0x7c6c860: b.eq     #0x7c6c880
+  0x7c6c864: subs     x9, x9, #1
+  0x7c6c868: add      x10, x10, #0x10   ; -> va 0x96d6010
+  0x7c6c86c: b.ne     #0x7c6c858
+  0x7c6c870: mov      x0, x21
+  0x7c6c874: mov      w2, #5
+  0x7c6c878: bl       #0x3d00398   ; call 0x3d00398
+  0x7c6c87c: b        #0x7c6c890
+  0x7c6c880: ldr      w9, [x10]
+  0x7c6c884: add      w9, w9, #5
+  0x7c6c888: add      x8, x8, w9, sxtw #4
+  0x7c6c88c: add      x0, x8, #0x138   ; -> va 0x96d6138
+  0x7c6c890: ldp      x8, x2, [x0]
+  0x7c6c894: mov      x0, x21
+  0x7c6c898: mov      x1, x20
+  0x7c6c89c: blr      x8
+  0x7c6c8a0: ldr      x1, [x29]
+  0x7c6c8a4: ldr      x20, [x19, #0x48]
+  0x7c6c8a8: and      w8, w0, #1
+  0x7c6c8ac: mov      x0, x19
+  0x7c6c8b0: strb     w8, [x19, #0x78]
+  0x7c6c8b4: bl       #0x70597c8   ; call 0x70597c8 <CommandLine.ToString @0x70597c8>
+  0x7c6c8b8: cbz      x0, #0x7c6cdbc
+  0x7c6c8bc: ldr      x8, [x0]
+  0x7c6c8c0: ldr      x1, [x26]
+  0x7c6c8c4: mov      x21, x0
+  0x7c6c8c8: ldrh     w9, [x8, #0x12e]
+  0x7c6c8cc: cbz      x9, #0x7c6c8f0
+  0x7c6c8d0: ldr      x10, [x8, #0xb0]
+  0x7c6c8d4: add      x10, x10, #8   ; -> va 0x96d6008
+  0x7c6c8d8: ldur     x11, [x10, #-8]
+  0x7c6c8dc: cmp      x11, x1
+  0x7c6c8e0: b.eq     #0x7c6c900
+  0x7c6c8e4: subs     x9, x9, #1
+  0x7c6c8e8: add      x10, x10, #0x10   ; -> va 0x96d6010
+  0x7c6c8ec: b.ne     #0x7c6c8d8
+  0x7c6c8f0: mov      x0, x21
+  0x7c6c8f4: mov      w2, wzr
+  0x7c6c8f8: bl       #0x3d00398   ; call 0x3d00398
+  0x7c6c8fc: b        #0x7c6c90c
+  0x7c6c900: ldrsw    x9, [x10]
+  0x7c6c904: add      x8, x8, x9, lsl #4
+  0x7c6c908: add      x0, x8, #0x138   ; -> va 0x96d6138
+  0x7c6c90c: ldp      x8, x1, [x0]
+  0x7c6c910: mov      x0, x21
+  0x7c6c914: blr      x8
+  0x7c6c918: cbz      x20, #0x7c6cdbc
+  0x7c6c91c: adrp     x23, #0x969e000
+  0x7c6c920: ldr      x8, [x20]
+  0x7c6c924: mov      x21, x0
+  0x7c6c928: ldr      x23, [x23, #0x250]
+  0x7c6c92c: ldrh     w9, [x8, #0x12e]
+  0x7c6c930: ldr      x1, [x23]
+  0x7c6c934: cbz      x9, #0x7c6c958
+  0x7c6c938: ldr      x10, [x8, #0xb0]
+  0x7c6c93c: add      x10, x10, #8   ; -> va 0x96d6008
+  0x7c6c940: ldur     x11, [x10, #-8]
+  0x7c6c944: cmp      x11, x1
+  0x7c6c948: b.eq     #0x7c6c968
+  0x7c6c94c: subs     x9, x9, #1
+  0x7c6c950: add      x10, x10, #0x10   ; -> va 0x96d6010
+  0x7c6c954: b.ne     #0x7c6c940
+  0x7c6c958: mov      x0, x20
+  0x7c6c95c: mov      w2, #1
+  0x7c6c960: bl       #0x3d00398   ; call 0x3d00398
+  0x7c6c964: b        #0x7c6c978
+  0x7c6c968: ldr      w9, [x10]
+  0x7c6c96c: add      w9, w9, #1
+  0x7c6c970: add      x8, x8, w9, sxtw #4
+  0x7c6c974: add      x0, x8, #0x138   ; -> va 0x96d6138
+  0x7c6c978: ldp      x8, x2, [x0]
+  0x7c6c97c: mov      x0, x20
+  0x7c6c980: mov      x1, x21
+  0x7c6c984: blr      x8
+  0x7c6c988: mov      x1, xzr
+  0x7c6c98c: bl       #0x79c0d20   ; call 0x79c0d20 <LocalizationExtensions.ToUpperIgnoreTurkish @0x79c0d20>
+  0x7c6c990: ldrb     w8, [x19, #0x78]
+  0x7c6c994: mov      x20, x0
+  0x7c6c998: cbz      w8, #0x7c6c9f0
+  0x7c6c99c: ldr      x1, [x29]
+  0x7c6c9a0: mov      x0, x19
+  0x7c6c9a4: bl       #0x70597c8   ; call 0x70597c8 <CommandLine.ToString @0x70597c8>
+  0x7c6c9a8: cbz      x0, #0x7c6cdbc
+  0x7c6c9ac: ldr      x8, [x0]
+  0x7c6c9b0: ldr      x1, [x26]
+  0x7c6c9b4: mov      x21, x0
+  0x7c6c9b8: ldrh     w9, [x8, #0x12e]
+  0x7c6c9bc: cbz      x9, #0x7c6c9e0
+  0x7c6c9c0: ldr      x10, [x8, #0xb0]
+  0x7c6c9c4: add      x10, x10, #8   ; -> va 0x96d6008
+  0x7c6c9c8: ldur     x11, [x10, #-8]
+  0x7c6c9cc: cmp      x11, x1
+  0x7c6c9d0: b.eq     #0x7c6ca48
+  0x7c6c9d4: subs     x9, x9, #1
+  0x7c6c9d8: add      x10, x10, #0x10   ; -> va 0x96d6010
+  0x7c6c9dc: b.ne     #0x7c6c9c8
+  0x7c6c9e0: mov      x0, x21
+  0x7c6c9e4: mov      w2, #1
+  0x7c6c9e8: bl       #0x3d00398   ; call 0x3d00398
+  0x7c6c9ec: b        #0x7c6ca58
+  0x7c6c9f0: ldr      x21, [x19, #0x48]
+  0x7c6c9f4: mov      w0, #0x2d5e
+  0x7c6c9f8: mov      x1, xzr
+  0x7c6c9fc: bl       #0x7a2855c   ; call 0x7a2855c <LocalizationRawStringBuilder.CreateRawString @0x7a2855c>
+  0x7c6ca00: cbz      x21, #0x7c6cdbc
+  0x7c6ca04: ldr      x8, [x21]
+  0x7c6ca08: ldr      x1, [x23]
+  0x7c6ca0c: mov      x22, x0
+  0x7c6ca10: ldrh     w9, [x8, #0x12e]
+  0x7c6ca14: cbz      x9, #0x7c6ca38
+  0x7c6ca18: ldr      x10, [x8, #0xb0]
+  0x7c6ca1c: add      x10, x10, #8   ; -> va 0x96d6008
+  0x7c6ca20: ldur     x11, [x10, #-8]
+  0x7c6ca24: cmp      x11, x1
+  0x7c6ca28: b.eq     #0x7c6cb60
+  0x7c6ca2c: subs     x9, x9, #1
+  0x7c6ca30: add      x10, x10, #0x10   ; -> va 0x96d6010
+  0x7c6ca34: b.ne     #0x7c6ca20
+  0x7c6ca38: mov      x0, x21
+  0x7c6ca3c: mov      w2, #1
+  0x7c6ca40: bl       #0x3d00398   ; call 0x3d00398
+  0x7c6ca44: b        #0x7c6cb70
+  0x7c6ca48: ldr      w9, [x10]
+  0x7c6ca4c: add      w9, w9, #1
+  0x7c6ca50: add      x8, x8, w9, sxtw #4
+  0x7c6ca54: add      x0, x8, #0x138   ; -> va 0x96d6138
+  0x7c6ca58: ldp      x8, x1, [x0]
+  0x7c6ca5c: mov      x0, x21
+  0x7c6ca60: blr      x8
+  0x7c6ca64: cbz      x0, #0x7c6cac0
+  0x7c6ca68: ldr      x1, [x29]
+  0x7c6ca6c: ldr      x21, [x19, #0x48]
+  0x7c6ca70: mov      x0, x19
+  0x7c6ca74: bl       #0x70597c8   ; call 0x70597c8 <CommandLine.ToString @0x70597c8>
+  0x7c6ca78: cbz      x0, #0x7c6cdbc
+  0x7c6ca7c: ldr      x8, [x0]
+  0x7c6ca80: ldr      x1, [x26]
+  0x7c6ca84: mov      x22, x0
+  0x7c6ca88: ldrh     w9, [x8, #0x12e]
+  0x7c6ca8c: cbz      x9, #0x7c6cab0
+  0x7c6ca90: ldr      x10, [x8, #0xb0]
+  0x7c6ca94: add      x10, x10, #8   ; -> va 0x96d6008
+  0x7c6ca98: ldur     x11, [x10, #-8]
+  0x7c6ca9c: cmp      x11, x1
+  0x7c6caa0: b.eq     #0x7c6cad8
+  0x7c6caa4: subs     x9, x9, #1
+  0x7c6caa8: add      x10, x10, #0x10   ; -> va 0x96d6010
+  0x7c6caac: b.ne     #0x7c6ca98
+  0x7c6cab0: mov      x0, x22
+  0x7c6cab4: mov      w2, #1
+  0x7c6cab8: bl       #0x3d00398   ; call 0x3d00398
+  0x7c6cabc: b        #0x7c6cae8
+  0x7c6cac0: adrp     x8, #0x9674000
+  0x7c6cac4: ldr      x8, [x8, #0x140]
+  0x7c6cac8: ldr      x8, [x8, #0x90]
+  0x7c6cacc: ldr      x8, [x8, #0xb8]
+  0x7c6cad0: ldr      x21, [x8]
+  0x7c6cad4: b        #0x7c6cb98
+  0x7c6cad8: ldr      w9, [x10]
+  0x7c6cadc: add      w9, w9, #1
+  0x7c6cae0: add      x8, x8, w9, sxtw #4
+  0x7c6cae4: add      x0, x8, #0x138   ; -> va 0x9674138
+  0x7c6cae8: ldp      x8, x1, [x0]
+  0x7c6caec: mov      x0, x22
+  0x7c6caf0: blr      x8
+  0x7c6caf4: cbz      x21, #0x7c6cdbc
+  0x7c6caf8: ldr      x8, [x21]
+  0x7c6cafc: ldr      x1, [x23]
+  0x7c6cb00: mov      x22, x0
+  0x7c6cb04: ldrh     w9, [x8, #0x12e]
+  0x7c6cb08: cbz      x9, #0x7c6cb2c
+  0x7c6cb0c: ldr      x10, [x8, #0xb0]
+  0x7c6cb10: add      x10, x10, #8   ; -> va 0x96d6008
+  0x7c6cb14: ldur     x11, [x10, #-8]
+  0x7c6cb18: cmp      x11, x1
+  0x7c6cb1c: b.eq     #0x7c6cb3c
+  0x7c6cb20: subs     x9, x9, #1
+  0x7c6cb24: add      x10, x10, #0x10   ; -> va 0x96d6010
+  0x7c6cb28: b.ne     #0x7c6cb14
+  0x7c6cb2c: mov      x0, x21
+  0x7c6cb30: mov      w2, #1
+  0x7c6cb34: bl       #0x3d00398   ; call 0x3d00398
+  0x7c6cb38: b        #0x7c6cb4c
+  0x7c6cb3c: ldr      w9, [x10]
+  0x7c6cb40: add      w9, w9, #1
+  0x7c6cb44: add      x8, x8, w9, sxtw #4
+  0x7c6cb48: add      x0, x8, #0x138   ; -> va 0x9674138
+  0x7c6cb4c: ldp      x8, x2, [x0]
+  0x7c6cb50: mov      x0, x21
+  0x7c6cb54: mov      x1, x22
+  0x7c6cb58: blr      x8
+  0x7c6cb5c: b        #0x7c6cb94
+  0x7c6cb60: ldr      w9, [x10]
+  0x7c6cb64: add      w9, w9, #1
+  0x7c6cb68: add      x8, x8, w9, sxtw #4
+  0x7c6cb6c: add      x0, x8, #0x138   ; -> va 0x9674138
+  0x7c6cb70: ldp      x8, x2, [x0]
+  0x7c6cb74: mov      x0, x21
+  0x7c6cb78: mov      x1, x22
+  0x7c6cb7c: blr      x8
+  0x7c6cb80: adrp     x8, #0x969e000
+  0x7c6cb84: mov      x2, xzr
+  0x7c6cb88: ldr      x8, [x8, #0x258]
+  0x7c6cb8c: ldr      x1, [x8]
+  0x7c6cb90: bl       #0x7b84050   ; call 0x7b84050 <ExtensionText.SetColor @0x7b84050>
+  0x7c6cb94: mov      x21, x0
+  0x7c6cb98: adrp     x8, #0x9694000
+  0x7c6cb9c: adrp     x23, #0x96d6000
+  0x7c6cba0: ldr      x8, [x8, #0x170]
+  0x7c6cba4: ldr      x23, [x23, #0x310]
+  0x7c6cba8: ldr      x22, [x19, #0x18]
+  0x7c6cbac: ldr      x0, [x8]
+  0x7c6cbb0: bl       #0x3cc7be4   ; call 0x3cc7be4
+  0x7c6cbb4: ldr      x2, [x23]
+  0x7c6cbb8: mov      x1, x19
+  0x7c6cbbc: mov      x3, xzr
+  0x7c6cbc0: mov      x23, x0
+  0x7c6cbc4: bl       #0x8ea5280   ; call 0x8ea5280 <Action..ctor @0x8ea5280>
+  0x7c6cbc8: cbz      x22, #0x7c6cdbc
+  0x7c6cbcc: adrp     x24, #0x96d6000
+  0x7c6cbd0: ldr      x8, [x22]
+  0x7c6cbd4: ldr      x24, [x24, #0x250]
+  0x7c6cbd8: ldrh     w9, [x8, #0x12e]
+  0x7c6cbdc: ldr      x1, [x24]
+  0x7c6cbe0: cbz      x9, #0x7c6cc04
+  0x7c6cbe4: ldr      x10, [x8, #0xb0]
+  0x7c6cbe8: add      x10, x10, #8   ; -> va 0x96d6008
+  0x7c6cbec: ldur     x11, [x10, #-8]
+  0x7c6cbf0: cmp      x11, x1
+  0x7c6cbf4: b.eq     #0x7c6cc14
+  0x7c6cbf8: subs     x9, x9, #1
+  0x7c6cbfc: add      x10, x10, #0x10   ; -> va 0x96d6010
+  0x7c6cc00: b.ne     #0x7c6cbec
+  0x7c6cc04: mov      x0, x22
+  0x7c6cc08: mov      w2, #2
+  0x7c6cc0c: bl       #0x3d00398   ; call 0x3d00398
+  0x7c6cc10: b        #0x7c6cc24
+  0x7c6cc14: ldr      w9, [x10]
+  0x7c6cc18: add      w9, w9, #2
+  0x7c6cc1c: add      x8, x8, w9, sxtw #4
+  0x7c6cc20: add      x0, x8, #0x138   ; -> va 0x9694138
+  0x7c6cc24: ldp      x8, x4, [x0]
+  0x7c6cc28: mov      x0, x22
+  0x7c6cc2c: mov      x1, x20
+  0x7c6cc30: mov      x2, x21
+  0x7c6cc34: mov      x3, x23
+  0x7c6cc38: blr      x8
+  0x7c6cc3c: ldrb     w8, [x19, #0x78]
+  0x7c6cc40: ldr      x20, [x19, #0x18]
+  0x7c6cc44: cbz      w8, #0x7c6cc94
+  0x7c6cc48: cbz      x20, #0x7c6cdbc
+  0x7c6cc4c: adrp     x10, #0x969b000
+  0x7c6cc50: ldr      x8, [x20]
+  0x7c6cc54: ldr      x10, [x10, #0x348]
+  0x7c6cc58: ldrh     w9, [x8, #0x12e]
+  0x7c6cc5c: ldr      x1, [x10]
+  0x7c6cc60: cbz      x9, #0x7c6cc84
+  0x7c6cc64: ldr      x10, [x8, #0xb0]
+  0x7c6cc68: add      x10, x10, #8   ; -> va 0x969b008
+  0x7c6cc6c: ldur     x11, [x10, #-8]
+  0x7c6cc70: cmp      x11, x1
+  0x7c6cc74: b.eq     #0x7c6ccd8
+  0x7c6cc78: subs     x9, x9, #1
+  0x7c6cc7c: add      x10, x10, #0x10   ; -> va 0x969b010
+  0x7c6cc80: b.ne     #0x7c6cc6c
+  0x7c6cc84: mov      x0, x20
+  0x7c6cc88: mov      w2, #3
+  0x7c6cc8c: bl       #0x3d00398   ; call 0x3d00398
+  0x7c6cc90: b        #0x7c6cce8
+  0x7c6cc94: cbz      x20, #0x7c6cdbc
+  0x7c6cc98: ldr      x8, [x20]
+  0x7c6cc9c: ldr      x1, [x24]
+  0x7c6cca0: ldrh     w9, [x8, #0x12e]
+  0x7c6cca4: cbz      x9, #0x7c6ccc8
+  0x7c6cca8: ldr      x10, [x8, #0xb0]
+  0x7c6ccac: add      x10, x10, #8   ; -> va 0x969b008
+  0x7c6ccb0: ldur     x11, [x10, #-8]
+  0x7c6ccb4: cmp      x11, x1
+  0x7c6ccb8: b.eq     #0x7c6cd80
+  0x7c6ccbc: subs     x9, x9, #1
+  0x7c6ccc0: add      x10, x10, #0x10   ; -> va 0x969b010
+  0x7c6ccc4: b.ne     #0x7c6ccb0
+  0x7c6ccc8: mov      x0, x20
+  0x7c6cccc: mov      w2, #4
+  0x7c6ccd0: bl       #0x3d00398   ; call 0x3d00398
+  0x7c6ccd4: b        #0x7c6cd90
+  0x7c6ccd8: ldr      w9, [x10]
+  0x7c6ccdc: add      w9, w9, #3
+  0x7c6cce0: add      x8, x8, w9, sxtw #4
+  0x7c6cce4: add      x0, x8, #0x138   ; -> va 0x9694138
+  0x7c6cce8: ldp      x8, x1, [x0]
+  0x7c6ccec: mov      x0, x20
+  0x7c6ccf0: blr      x8
+  0x7c6ccf4: ldr      x20, [x19, #0x18]
+  0x7c6ccf8: cbz      x20, #0x7c6cdbc
+  0x7c6ccfc: ldr      x8, [x20]
+  0x7c6cd00: ldr      w19, [x19, #0x7c]
+  0x7c6cd04: ldr      x1, [x24]
+  0x7c6cd08: ldrh     w9, [x8, #0x12e]
+  0x7c6cd0c: cbz      x9, #0x7c6cd30
+  0x7c6cd10: ldr      x10, [x8, #0xb0]
+  0x7c6cd14: add      x10, x10, #8   ; -> va 0x969b008
+  0x7c6cd18: ldur     x11, [x10, #-8]
+  0x7c6cd1c: cmp      x11, x1
+  0x7c6cd20: b.eq     #0x7c6cd40
+  0x7c6cd24: subs     x9, x9, #1
+  0x7c6cd28: add      x10, x10, #0x10   ; -> va 0x969b010
+  0x7c6cd2c: b.ne     #0x7c6cd18
+  0x7c6cd30: mov      x0, x20
+  0x7c6cd34: mov      w2, #3
+  0x7c6cd38: bl       #0x3d00398   ; call 0x3d00398
+  0x7c6cd3c: b        #0x7c6cd50
+  0x7c6cd40: ldr      w9, [x10]
+  0x7c6cd44: add      w9, w9, #3
+  0x7c6cd48: add      x8, x8, w9, sxtw #4
+  0x7c6cd4c: add      x0, x8, #0x138   ; -> va 0x9694138
+  0x7c6cd50: ldp      x4, x3, [x0]
+  0x7c6cd54: mov      x0, x20
+  0x7c6cd58: mov      w1, w19
+  0x7c6cd5c: ldp      x20, x19, [sp, #0x60]
+  0x7c6cd60: ldp      x22, x21, [sp, #0x50]
+  0x7c6cd64: mov      w2, #1
+  0x7c6cd68: ldp      x24, x23, [sp, #0x40]
+  0x7c6cd6c: ldp      x26, x25, [sp, #0x30]
+  0x7c6cd70: ldp      x28, x27, [sp, #0x20]
+  0x7c6cd74: ldp      x29, x30, [sp, #0x10]
+  0x7c6cd78: add      sp, sp, #0x70
+  0x7c6cd7c: br       x4
+  0x7c6cd80: ldr      w9, [x10]
+  0x7c6cd84: add      w9, w9, #4
+  0x7c6cd88: add      x8, x8, w9, sxtw #4
+  0x7c6cd8c: add      x0, x8, #0x138   ; -> va 0x9694138
+  0x7c6cd90: ldp      x3, x2, [x0]
+  0x7c6cd94: mov      x0, x20
+  0x7c6cd98: ldp      x20, x19, [sp, #0x60]
+  0x7c6cd9c: mov      w1, #1
+  0x7c6cda0: ldp      x22, x21, [sp, #0x50]
+  0x7c6cda4: ldp      x24, x23, [sp, #0x40]
+  0x7c6cda8: ldp      x26, x25, [sp, #0x30]
+  0x7c6cdac: ldp      x28, x27, [sp, #0x20]
+  0x7c6cdb0: ldp      x29, x30, [sp, #0x10]
+  0x7c6cdb4: add      sp, sp, #0x70
+  0x7c6cdb8: br       x3
+  0x7c6cdbc: bl       #0x3cc7bf4   ; call 0x3cc7bf4
+
+===== ArmyWeaponItemInfoPresenter.<SafeSetDamageStat>b__19_0 =====
+VA 0x7c6d3d4  file 0x7c693d4  body<=0x1fc bytes
+  0x7c6d3d4: str      x30, [sp, #-0x20]!
+  0x7c6d3d8: stp      x20, x19, [sp, #0x10]
+  0x7c6d3dc: adrp     x20, #0x9d20000
+  0x7c6d3e0: mov      x19, x1
+  0x7c6d3e4: ldrb     w8, [x20, #0xaf]
+  0x7c6d3e8: tbnz     w8, #0, #0x7c6d400
+  0x7c6d3ec: adrp     x0, #0x969e000
+  0x7c6d3f0: ldr      x0, [x0, #0x1f8]
+  0x7c6d3f4: bl       #0x3cc7948   ; call 0x3cc7948
+  0x7c6d3f8: mov      w8, #1
+  0x7c6d3fc: strb     w8, [x20, #0xaf]
+  0x7c6d400: cbz      x19, #0x7c6d4a0
+  0x7c6d404: adrp     x10, #0x969e000
+  0x7c6d408: ldr      x8, [x19]
+  0x7c6d40c: ldr      x10, [x10, #0x1f8]
+  0x7c6d410: ldrh     w9, [x8, #0x12e]
+  0x7c6d414: ldr      x1, [x10]
+  0x7c6d418: cbz      x9, #0x7c6d43c
+  0x7c6d41c: ldr      x10, [x8, #0xb0]
+  0x7c6d420: add      x10, x10, #8   ; -> va 0x969e008
+  0x7c6d424: ldur     x11, [x10, #-8]
+  0x7c6d428: cmp      x11, x1
+  0x7c6d42c: b.eq     #0x7c6d44c
+  0x7c6d430: subs     x9, x9, #1
+  0x7c6d434: add      x10, x10, #0x10   ; -> va 0x969e010
+  0x7c6d438: b.ne     #0x7c6d424
+  0x7c6d43c: mov      x0, x19
+  0x7c6d440: mov      w2, #4
+  0x7c6d444: bl       #0x3d00398   ; call 0x3d00398
+  0x7c6d448: b        #0x7c6d45c
+  0x7c6d44c: ldr      w9, [x10]
+  0x7c6d450: add      w9, w9, #4
+  0x7c6d454: add      x8, x8, w9, sxtw #4
+  0x7c6d458: add      x0, x8, #0x138
+  0x7c6d45c: ldp      x8, x1, [x0]
+  0x7c6d460: mov      x0, x19
+  0x7c6d464: blr      x8
+  0x7c6d468: sub      w8, w0, #0x3d
+  0x7c6d46c: cmp      w8, #0xc
+  0x7c6d470: b.hs     #0x7c6d480
+  0x7c6d474: mov      w9, #0x807
+  0x7c6d478: lsr      w8, w9, w8
+  0x7c6d47c: tbnz     w8, #0, #0x7c6d490
+  0x7c6d480: sub      w8, w0, #0x49
+  0x7c6d484: cmp      w8, #2
+  0x7c6d488: cset     w0, lo
+  0x7c6d48c: b        #0x7c6d494
+  0x7c6d490: mov      w0, #1
+  0x7c6d494: ldp      x20, x19, [sp, #0x10]
+  0x7c6d498: ldr      x30, [sp], #0x20
+  0x7c6d49c: ret      
+  0x7c6d4a0: bl       #0x3cc7bf4   ; call 0x3cc7bf4
+  0x7c6d4a4: stp      x30, x21, [sp, #-0x20]!
+  0x7c6d4a8: stp      x20, x19, [sp, #0x10]
+  0x7c6d4ac: adrp     x21, #0x9d20000
+  0x7c6d4b0: mov      x20, x1
+  0x7c6d4b4: mov      x19, x0
+  0x7c6d4b8: ldrb     w8, [x21, #0xb0]
+  0x7c6d4bc: tbnz     w8, #0, #0x7c6d4e0
+  0x7c6d4c0: adrp     x0, #0x969e000
+  0x7c6d4c4: ldr      x0, [x0, #0x240]
+  0x7c6d4c8: bl       #0x3cc7948   ; call 0x3cc7948
+  0x7c6d4cc: adrp     x0, #0x969e000
+  0x7c6d4d0: ldr      x0, [x0, #0x1f8]
+  0x7c6d4d4: bl       #0x3cc7948   ; call 0x3cc7948
+  0x7c6d4d8: mov      w8, #1
+  0x7c6d4dc: strb     w8, [x21, #0xb0]
+  0x7c6d4e0: cbz      x20, #0x7c6d5cc
+  0x7c6d4e4: adrp     x10, #0x969e000
+  0x7c6d4e8: ldr      x8, [x20]
+  0x7c6d4ec: ldr      x10, [x10, #0x1f8]
+  0x7c6d4f0: ldrh     w9, [x8, #0x12e]
+  0x7c6d4f4: ldr      x1, [x10]
+  0x7c6d4f8: cbz      x9, #0x7c6d51c
+  0x7c6d4fc: ldr      x10, [x8, #0xb0]
+  0x7c6d500: add      x10, x10, #8   ; -> va 0x969e008
+  0x7c6d504: ldur     x11, [x10, #-8]
+  0x7c6d508: cmp      x11, x1
+  0x7c6d50c: b.eq     #0x7c6d52c
+  0x7c6d510: subs     x9, x9, #1
+  0x7c6d514: add      x10, x10, #0x10   ; -> va 0x969e010
+  0x7c6d518: b.ne     #0x7c6d504
+  0x7c6d51c: mov      x0, x20
+  0x7c6d520: mov      w2, #1
+  0x7c6d524: bl       #0x3d00398   ; call 0x3d00398
+  0x7c6d528: b        #0x7c6d53c
+  0x7c6d52c: ldr      w9, [x10]
+  0x7c6d530: add      w9, w9, #1
+  0x7c6d534: add      x8, x8, w9, sxtw #4
+  0x7c6d538: add      x0, x8, #0x138
+  0x7c6d53c: ldp      x8, x1, [x0]
+  0x7c6d540: mov      x0, x20
+  0x7c6d544: blr      x8
+  0x7c6d548: cbz      x0, #0x7c6d5cc
+  0x7c6d54c: adrp     x10, #0x969e000
+  0x7c6d550: ldr      x8, [x0]
+  0x7c6d554: mov      x20, x0
+  0x7c6d558: ldr      x10, [x10, #0x240]
+  0x7c6d55c: ldrh     w9, [x8, #0x12e]
+  0x7c6d560: ldr      x1, [x10]
+  0x7c6d564: cbz      x9, #0x7c6d588
+  0x7c6d568: ldr      x10, [x8, #0xb0]
+  0x7c6d56c: add      x10, x10, #8   ; -> va 0x969e008
+  0x7c6d570: ldur     x11, [x10, #-8]
+  0x7c6d574: cmp      x11, x1
+  0x7c6d578: b.eq     #0x7c6d598
+  0x7c6d57c: subs     x9, x9, #1
+  0x7c6d580: add      x10, x10, #0x10   ; -> va 0x969e010
+  0x7c6d584: b.ne     #0x7c6d570
+  0x7c6d588: mov      x0, x20
+  0x7c6d58c: mov      w2, wzr
+  0x7c6d590: bl       #0x3d00398   ; call 0x3d00398
+  0x7c6d594: b        #0x7c6d5a4
+  0x7c6d598: ldrsw    x9, [x10]
+  0x7c6d59c: add      x8, x8, x9, lsl #4
+  0x7c6d5a0: add      x0, x8, #0x138
+  0x7c6d5a4: ldp      x8, x2, [x0]
+  0x7c6d5a8: mov      x0, x20
+  0x7c6d5ac: mov      w1, wzr
+  0x7c6d5b0: blr      x8
+  0x7c6d5b4: cbz      x0, #0x7c6d5cc
+  0x7c6d5b8: ldr      x1, [x19, #0x10]
+  0x7c6d5bc: ldp      x20, x19, [sp, #0x10]
+  0x7c6d5c0: mov      x2, xzr
+  0x7c6d5c4: ldp      x30, x21, [sp], #0x20
+  0x7c6d5c8: b        #0x80f4488
+  0x7c6d5cc: bl       #0x3cc7bf4   ; call 0x3cc7bf4
+
+===== ArmyWeaponItemInfoPresenter.<SafeSetDamageStat>b__1 =====
+VA 0x7c6d4a4  file 0x7c694a4  body<=0x12c bytes
+  0x7c6d4a4: stp      x30, x21, [sp, #-0x20]!
+  0x7c6d4a8: stp      x20, x19, [sp, #0x10]
+  0x7c6d4ac: adrp     x21, #0x9d20000
+  0x7c6d4b0: mov      x20, x1
+  0x7c6d4b4: mov      x19, x0
+  0x7c6d4b8: ldrb     w8, [x21, #0xb0]
+  0x7c6d4bc: tbnz     w8, #0, #0x7c6d4e0
+  0x7c6d4c0: adrp     x0, #0x969e000
+  0x7c6d4c4: ldr      x0, [x0, #0x240]
+  0x7c6d4c8: bl       #0x3cc7948   ; call 0x3cc7948
+  0x7c6d4cc: adrp     x0, #0x969e000
+  0x7c6d4d0: ldr      x0, [x0, #0x1f8]
+  0x7c6d4d4: bl       #0x3cc7948   ; call 0x3cc7948
+  0x7c6d4d8: mov      w8, #1
+  0x7c6d4dc: strb     w8, [x21, #0xb0]
+  0x7c6d4e0: cbz      x20, #0x7c6d5cc
+  0x7c6d4e4: adrp     x10, #0x969e000
+  0x7c6d4e8: ldr      x8, [x20]
+  0x7c6d4ec: ldr      x10, [x10, #0x1f8]
+  0x7c6d4f0: ldrh     w9, [x8, #0x12e]
+  0x7c6d4f4: ldr      x1, [x10]
+  0x7c6d4f8: cbz      x9, #0x7c6d51c
+  0x7c6d4fc: ldr      x10, [x8, #0xb0]
+  0x7c6d500: add      x10, x10, #8   ; -> va 0x969e008
+  0x7c6d504: ldur     x11, [x10, #-8]
+  0x7c6d508: cmp      x11, x1
+  0x7c6d50c: b.eq     #0x7c6d52c
+  0x7c6d510: subs     x9, x9, #1
+  0x7c6d514: add      x10, x10, #0x10   ; -> va 0x969e010
+  0x7c6d518: b.ne     #0x7c6d504
+  0x7c6d51c: mov      x0, x20
+  0x7c6d520: mov      w2, #1
+  0x7c6d524: bl       #0x3d00398   ; call 0x3d00398
+  0x7c6d528: b        #0x7c6d53c
+  0x7c6d52c: ldr      w9, [x10]
+  0x7c6d530: add      w9, w9, #1
+  0x7c6d534: add      x8, x8, w9, sxtw #4
+  0x7c6d538: add      x0, x8, #0x138
+  0x7c6d53c: ldp      x8, x1, [x0]
+  0x7c6d540: mov      x0, x20
+  0x7c6d544: blr      x8
+  0x7c6d548: cbz      x0, #0x7c6d5cc
+  0x7c6d54c: adrp     x10, #0x969e000
+  0x7c6d550: ldr      x8, [x0]
+  0x7c6d554: mov      x20, x0
+  0x7c6d558: ldr      x10, [x10, #0x240]
+  0x7c6d55c: ldrh     w9, [x8, #0x12e]
+  0x7c6d560: ldr      x1, [x10]
+  0x7c6d564: cbz      x9, #0x7c6d588
+  0x7c6d568: ldr      x10, [x8, #0xb0]
+  0x7c6d56c: add      x10, x10, #8   ; -> va 0x969e008
+  0x7c6d570: ldur     x11, [x10, #-8]
+  0x7c6d574: cmp      x11, x1
+  0x7c6d578: b.eq     #0x7c6d598
+  0x7c6d57c: subs     x9, x9, #1
+  0x7c6d580: add      x10, x10, #0x10   ; -> va 0x969e010
+  0x7c6d584: b.ne     #0x7c6d570
+  0x7c6d588: mov      x0, x20
+  0x7c6d58c: mov      w2, wzr
+  0x7c6d590: bl       #0x3d00398   ; call 0x3d00398
+  0x7c6d594: b        #0x7c6d5a4
+  0x7c6d598: ldrsw    x9, [x10]
+  0x7c6d59c: add      x8, x8, x9, lsl #4
+  0x7c6d5a0: add      x0, x8, #0x138
+  0x7c6d5a4: ldp      x8, x2, [x0]
+  0x7c6d5a8: mov      x0, x20
+  0x7c6d5ac: mov      w1, wzr
+  0x7c6d5b0: blr      x8
+  0x7c6d5b4: cbz      x0, #0x7c6d5cc
+  0x7c6d5b8: ldr      x1, [x19, #0x10]
+  0x7c6d5bc: ldp      x20, x19, [sp, #0x10]
+  0x7c6d5c0: mov      x2, xzr
+  0x7c6d5c4: ldp      x30, x21, [sp], #0x20
+  0x7c6d5c8: b        #0x80f4488
+  0x7c6d5cc: bl       #0x3cc7bf4   ; call 0x3cc7bf4
+
+----- resolved call targets (dump.cs attribution) -----
+  MineStatsFactory.CreateDamageForMediumArmor: bl 0x3cc7948 -> ?
+  MineStatsFactory.CreateDamageForMediumArmor: bl 0x3cc7be4 -> ?
+  MineStatsFactory.CreateDamageForMediumArmor: bl 0x80e9948 -> MineDamageForMediumArmorStat..ctor (fn VA 0x80e9948)
+  WeaponDamage.CreateMediumDamage: bl 0x3cc7948 -> ?
+  WeaponDamage.CreateMediumDamage: bl 0x3cc7948 -> ?
+  WeaponDamage.CreateMediumDamage: bl 0x3cc7be4 -> ?
+  WeaponDamage.CreateMediumDamage: bl 0x80edba0 -> WeaponDamage..ctor (fn VA 0x80edba0)
+  WeaponDamage..ctor: bl 0x3cc7948 -> ?
+  WeaponDamage..ctor: bl 0x3cc7948 -> ?
+  WeaponDamage..ctor: bl 0x3cc7948 -> ?
+  WeaponDamage..ctor: bl 0x3cc7948 -> ?
+  WeaponDamage..ctor: bl 0x3cc7948 -> ?
+  WeaponDamage..ctor: bl 0x3cc7948 -> ?
+  WeaponDamage..ctor: bl 0x8f91cdc -> Object..ctor (fn VA 0x8f91cdc)
+  WeaponDamage..ctor: bl 0x3cc78ec -> ?
+  WeaponDamage..ctor: bl 0x3cc78ec -> ?
+  WeaponDamage..ctor: bl 0x3cc78ec -> ?
+  WeaponDamage..ctor: bl 0x3cc78ec -> ?
+  WeaponDamage..ctor: bl 0x7a2855c -> LocalizationRawStringBuilder.CreateRawString (fn VA 0x7a2855c)
+  WeaponDamage..ctor: bl 0x3cc78ec -> ?
+  WeaponDamage..ctor: bl 0x3cc7a38 -> ?
+  WeaponDamage..ctor: bl 0x3cc7be4 -> ?
+  WeaponDamage..ctor: bl 0x555b170 -> CommandLine.ToString (fn VA 0x4a71728)
+  WeaponDamage..ctor: bl 0x3cc7be4 -> ?
+  WeaponDamage..ctor: bl 0x555c894 -> CommandLine.ToString (fn VA 0x4a71728)
+  WeaponDamage..ctor: bl 0x3cc7be4 -> ?
+  WeaponDamage..ctor: bl 0x80e87c4 -> IStatModel.StatValue..ctor (fn VA 0x80e87c4)
+  WeaponDamage..ctor: bl 0x3cc7acc -> ?
+  WeaponDamage..ctor: bl 0x3cc78ec -> ?
+  WeaponDamage..ctor: bl 0x3cc7bf4 -> ?
+  WeaponDamage..ctor: bl 0x3cc7bfc -> ?
+  WeaponDamage..ctor: bl 0x3cc7c18 -> ?
+  WeaponDamage..ctor: bl 0x3cc7ab8 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3cc7948 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3cc7948 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3cc7948 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3cc7948 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3cc7948 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3cc7948 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3cc7948 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3cc7948 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3cc7948 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3cc7948 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3cc7948 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3cc7948 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3cc7948 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3cc7948 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3cc7948 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3cc7948 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3cc7948 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3cc7948 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3cc7948 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3cc7948 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3cc7be4 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x8f91cdc -> Object..ctor (fn VA 0x8f91cdc)
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3cc78ec -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x50baca8 -> CommandLine.ToString (fn VA 0x4a71728)
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x4fec374 -> CommandLine.ToString (fn VA 0x4a71728)
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x70597c8 -> CommandLine.ToString (fn VA 0x4a71728)
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3d00398 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3cc7ac8 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3cc7ac8 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3cc7be4 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x5559b40 -> CommandLine.ToString (fn VA 0x4a71728)
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3cc78ec -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x4eb0c1c -> CommandLine.ToString (fn VA 0x4a71728)
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3cc7be4 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x555b170 -> CommandLine.ToString (fn VA 0x4a71728)
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x4e98318 -> CommandLine.ToString (fn VA 0x4a71728)
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x4e8de94 -> CommandLine.ToString (fn VA 0x4a71728)
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3d00398 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x50bab90 -> CommandLine.ToString (fn VA 0x4a71728)
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x70597c8 -> CommandLine.ToString (fn VA 0x4a71728)
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3d00398 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x70597c8 -> CommandLine.ToString (fn VA 0x4a71728)
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3d00398 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3d00398 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x79c0d20 -> LocalizationExtensions.ToUpperIgnoreTurkish (fn VA 0x79c0d20)
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x70597c8 -> CommandLine.ToString (fn VA 0x4a71728)
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3d00398 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x7a2855c -> LocalizationRawStringBuilder.CreateRawString (fn VA 0x7a2855c)
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3d00398 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x70597c8 -> CommandLine.ToString (fn VA 0x4a71728)
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3d00398 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3d00398 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x7b84050 -> ExtensionText.SetColor (fn VA 0x7b84050)
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3cc7be4 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x8ea5280 -> Action..ctor (fn VA 0x8ea5280)
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3d00398 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3d00398 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3d00398 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3d00398 -> ?
+  ArmyWeaponItemInfoPresenter.SafeSetDamageStat: bl 0x3cc7bf4 -> ?
+
+----- XREF: native callers of key pipeline functions -----
+
+--- MaxStatValueProvider.CalculateWeaponArmorDamage (0.9/0.1 curve): 1 call site(s)
+  bl from va 0x7cc1844 in MaxStatValueProvider.Get (fn va 0x7cc176c)
+
+--- MaxStatValueProvider.Get(float, EStat): 0 call site(s)
+
+--- WeaponDamage.get_Values: 0 call site(s)
+
+--- WeaponDamage.get_Stat: 0 call site(s)
+
+--- WeaponDamage.Calculate(IStatModificationCollection): 0 call site(s)
+
+--- WeaponDamage.CreateMediumDamage: 1 call site(s)
+  bl from va 0x80f0fe4 in WeaponStatsFactory.<CreateStats>d__18.MoveNext (fn va 0x80f0d60)
+
+--- WeaponStatsFactory.GetDamageForMediumArmor: 0 call site(s)
+
+--- MineStatsFactory.CreateDamageForMediumArmor: 1 call site(s)
+  bl from va 0x7fe65d4 in MineStatsFactory.CreateList (fn va 0x7fe64dc)
+
+--- ArmyWeaponItemInfoPresenter.SafeSetDamageStat: 0 call site(s)
