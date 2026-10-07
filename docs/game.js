@@ -2948,8 +2948,14 @@
           this._msg(e.data);
       };
     }
+    // `to` is OMITTED (not set to undefined) for broadcast messages: PeerJS's
+    // binarypack decodes absent-vs-undefined inconsistently (undefined becomes
+    // null on the wire), which would trip the session's targeted-delivery gate
     _wrap(m, to) {
-      return Object.assign({}, m, { f: this.rid, to });
+      const w = Object.assign({}, m, { f: this.rid });
+      if (to !== undefined && to !== null)
+        w.to = to;
+      return w;
     }
     onMsg(fn) {
       this._msg = fn;
@@ -3007,8 +3013,13 @@
     onPeerDrop(fn) {
       this._drop = fn;
     }
+    // `to` omitted for broadcast (PeerJS binarypack turns undefined into null
+    // on the wire, which would trip the targeted-delivery gate)
     _wrap(m, to) {
-      return Object.assign({}, m, { f: this.rid, to });
+      const w = Object.assign({}, m, { f: this.rid });
+      if (to !== undefined && to !== null)
+        w.to = to;
+      return w;
     }
     send(m) {
       const w = this._wrap(m, undefined);
