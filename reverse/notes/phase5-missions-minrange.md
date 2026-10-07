@@ -453,12 +453,25 @@ The act-7 (ACT_DONT_SHOOT) arm of `GAICommandSpecMode.execute`
   `$Gi(Battle, Unit, (short)X, (short)Y)` 0x4809330 (halt at the CURRENT
   position), and a short-field setter with 0xFFFF (indefinite marker;
   slot [0x4B8] not in the verified map — flagged, not guessed).
-- **Tribute fidelity note (explicit model choice)**: v=28 keeps fireHold
-  sticky (explicit attack does NOT bypass). Native enters via task
-  replacement, so a subsequent attack task would end discipline natively
-  unless the server re-asserts it (attack path not decoded this pass). The
-  F-toggle UX and vectors stand; a fidelity fix would clear fireHold on
-  task-carrying orders and update the fire-discipline vectors.
+- **v=37 attack-path decode (build E) — fireHold fidelity FIXED**: the
+  attack order is NOT a task (UnitTaskType/ClientUnitTaskType have no
+  Attack member, dump.cs:395395-395410/271207-271237). An explicit attack
+  order rides AICommUnitsMove with a target (SendUnitsAttack @0x82D4FF8
+  shares SendUnitsMove's message factory 0x4EF4548 — no AICommUnitsAttack
+  exists, dump.cs:431773-433991). The application (AICommUnitsMove.$CMA
+  0x4909950, per-unit $Pk 0x490E864) REPLACES the task surface (get_Task
+  idempotence gates 0x490AC5C/0x490CB04, set_Task 0x490C500/0x490C954,
+  $Hi 0x490DC48, set_FlagShoot 0x490C610, set_Forced x3), so the ordered
+  engagement FIRES through discipline; the DontShoot spec bit (bit 20 ->
+  task 8 via the GAICommandSpecMode tbz #20 arm) is spec-stream state the
+  move path never writes, and re-asserts task 8 once the ordered target
+  dies — discipline RESUMES. Tribute: `orderedEngagement(u)` bypass
+  (attackMove + x undefined + live preferredId) in all five fire gates;
+  fireHold stays sticky otherwise. Details:
+  `reverse/notes/attack-path-fire-discipline.md`. Residual: exact numeric
+  task values are Obfuz-encrypted pool constants (statics +4/+8/+0x14/
+  +0x64/+0x374 of `$Obfuz$ConstFieldHolder$0`) — statically unrecoverable
+  without emulating the Obfuz runtime delegate chain.
 
 ### Remaining unknowns (documented, after v=36)
 
@@ -468,13 +481,17 @@ The act-7 (ACT_DONT_SHOOT) arm of `GAICommandSpecMode.execute`
 - Siege stage-boundary SPLIT inside `tick_to_spec` (how the duration divides
   across SEIZE_FIRE/ROTATE_WEAPONS/TRANSFORM — the fields and ladder are
   CONFIRMED, the per-stage tick math inside `$ce` is MEDIUM).
-- DontShoot: whether a subsequent attack task RE-ASSERTS discipline
-  (attack-command path not decoded; entry semantics CONFIRMED as task
-  replacement). TakePositions 15-bit cell-class SEMANTICS (masks + rules
-  CONFIRMED, per-bit meaning inferential).
+- ~~DontShoot: whether a subsequent attack task RE-ASSERTS discipline~~
+  CLOSED (v=37): discipline is task 8 driven by persistent spec bit 20; the
+  attack-order path replaces the task but never writes the spec, so the
+  ordered engagement fires and discipline resumes after the kill
+  (`reverse/notes/attack-path-fire-discipline.md`). Obfuz pool VALUES
+  (numeric task literals) remain encrypted at rest. TakePositions 15-bit
+  cell-class SEMANTICS (masks + rules CONFIRMED, per-bit meaning
+  inferential).
 
 ## Coverage
-- `reverse/evidence/tests/phase5.test.js` — 208 vectors (min-range gates, patrol
+- `reverse/evidence/tests/phase5.test.js` — 213 vectors (min-range gates, patrol
   oscillation/engagement/resume/journal, garrison enter/protect/crew-fire/exit/
   capacity/death/rejections, hold stance entry/window-fire/no-pursuit/
   retaliation/minRange-aggro/building/melee/warn-join/interplay/release,
@@ -514,4 +531,13 @@ The act-7 (ACT_DONT_SHOOT) arm of `GAICommandSpecMode.execute`
   (act-7 arm 0x45F6700..0x45F6824 with resolved call targets:
   $Hi(…,8) task replacement, capability bit 20, idempotent entry,
   $he/$Gi teardown).
+- Attack-path native (v=37): `reverse/notes/attack-path-fire-discipline.md`
+  + evidence `attack-path-hi-xref.txt` ($Hi full disasm + 33-caller task-id
+  map), `attack-vt-setters.txt` (Unit setter vtable conventions, get_Task
+  0x1008/set_Task 0x1018/set_FlagShoot 0x268 call-site inventories),
+  `attack-unitsmove-decode.txt` ($CMA head + $Pk + set_Task/set_FlagShoot
+  windows), `attack-aicomm-map.txt` (AIComm x mutation map, fire-gate cmp
+  histogram), `attack-eg-se-spec.txt` ($eg fire predicate 0x482A4E0, $se,
+  AICommUnitsSpec); tools attack_path_scan.py / field_mutation_scan.py /
+  vt_call_scan.py / aicomm_map.py / eg_se_decode.py / pk_disasm.py.
 - Regressions: unit-fsm 29, accuracy 13, data-model 379, commands-determinism 50.
