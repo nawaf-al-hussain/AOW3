@@ -654,3 +654,27 @@ Stage Summary:
   Pages (v=15). Follow-ups: remaining 10 heroes (prefabs already built: wasp,
   codomash, gatling...), f2 hero building, hero active abilities, torrent/typhoon
   model-role cross-check vs icon art.
+
+---
+Task ID: 17
+Agent: Super Z (main)
+Task: Read owner-updated plan docs; align AGENTS.md with the two governing plans
+
+Work Log:
+- Read docs/AOW3_DEVELOPMENT_PLAN.md (updated: architecture dependency order,
+  companion-roadmap pointer, current priority restated) and the new
+  docs/AOW3_TECHNICAL_ARCHITECTURE_ROADMAP.md (396 lines: Rust/Wasm core,
+  authoritative multiplayer, accounts, persistence, replays; phases A-L).
+- Mapped plan phases to actual repo status: Phase 0 DONE; Phase 1 stepping DONE
+  (accumulator), interpolation/determinism NOT (Math.random in sim paths,
+  no seeded PRNG, no state hashes/replay fixtures); Phase 2 partial (roster
+  data native-verified, still inline in game.js); Phases 5/6 strong/partial
+  (native accuracy + accuracy.test.js); Phases 7-15 simplified implementations;
+  Phase 16 not started (single-file client); Phase 17 strong (assets 1:1).
+- AGENTS.md: added roadmap to the tree, marked both docs as governing plans in
+  §32 Current Phase Note, recorded precedence rules + honest phase status.
+
+Stage Summary:
+- Plans internalized; next highest-leverage work per both docs = determinism
+  (seeded sim PRNG + state hashes/replay fixtures) and data-model extraction,
+  NOT Wasm/multiplayer yet.

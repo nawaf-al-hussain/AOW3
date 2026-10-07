@@ -119,7 +119,8 @@ AOW3/
 ├── docs/                           # the browser client (GitHub Pages root)
 │   ├── index.html                  # entry point; cache-bust via game.js?v=N
 │   ├── game.js                     # the entire browser game (single file)
-│   ├── AOW3_DEVELOPMENT_PLAN.md
+│   ├── AOW3_DEVELOPMENT_PLAN.md    # gameplay-fidelity + RE plan (governing)
+│   ├── AOW3_TECHNICAL_ARCHITECTURE_ROADMAP.md  # Wasm/multiplayer/accounts target (companion)
 │   └── assets/                     # browser-facing assets actually served
 │       ├── models/                 # unit/building GLBs, atlases, heightmap, map.json
 │       │   └── decor/              # extracted map-decoration GLBs (hundreds)
@@ -1272,6 +1273,17 @@ Prioritize gameplay correctness over visual polish.
 ### Current Phase Note (October 2026)
 
 Work currently alternates between gameplay-fidelity passes and visual-fidelity passes at the project owner's direction, and the owner's live feedback (screenshots, look complaints) currently makes visual parity an active work item — recent examples: ocean-scheme revert (v10), faction asset-mapping correction (v11). This does not suspend §32: within a gameplay pass the ordering below governs. Visual passes must not deepen render-coupled gameplay state (§8), must preserve extracted map data (§17), and must be QA-verified on the live site per §35 before being called done.
+
+Governing plans (read before scoping any pass): `docs/AOW3_DEVELOPMENT_PLAN.md`
+(what AOW3 actually does — phases 0-28) and `docs/AOW3_TECHNICAL_ARCHITECTURE_ROADMAP.md`
+(how the verified simulation becomes Wasm/multiplayer/accounts — phases A-L).
+Precedence: confirmed AOW3 behavior wins over architecture convenience; architecture
+stages must not skip the evidence/boundary/determinism stages beneath them; neither
+plan justifies a wholesale rewrite of docs/game.js. Implementation status against
+these plans: Phase 0 (evidence pipeline) and Phase 1 fixed-timestep stepping are
+DONE; the known Phase 1/§31 gaps are seeded randomness (sim still uses
+Math.random()) and state-hash/replay fixtures (roadmap Phase D); renderer
+interpolation between sim states is approximated by per-frame smoothing.
 
 Recommended order:
 
