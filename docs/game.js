@@ -36708,7 +36708,9 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
     r3d.mark(t.x, t.y, attackMove ? "attack" : "move");
   }
   cv.addEventListener("pointerdown", (e) => {
-    cv.setPointerCapture(e.pointerId);
+    // stale/inactive pointer ids (synthetic events, released hardware pointers)
+    // must not kill the whole command input path
+    try { cv.setPointerCapture(e.pointerId); } catch (_) {}
     const p = rel(e);
     pointers.set(e.pointerId, p);
     if (pointers.size === 2) {
