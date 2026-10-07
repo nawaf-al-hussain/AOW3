@@ -913,5 +913,57 @@ section('samespeed: command surface + determinism');
   check('marching units engage targets of opportunity (move semantics)', engaged, true);
 }
 
+// ================= 10. multi-point patrol (PatrolRoute.points, 386963) =================
+section('multipoint patrol: route order shape + cyclic legs');
+{
+  const { sim } = loadKernel(8101);
+  clearInitial(sim);
+  const p1 = sim.spawn('fortress', 1, 20, 80);
+  const route = [{ x: 24, y: 80 }, { x: 24, y: 84 }, { x: 28, y: 84 }];
+  sim.commandPatrol([p1.id], route[0].x, route[0].y, route);
+  check('pts order carries the per-unit route', Array.isArray(p1.order.pts) && p1.order.pts.length === 3, true);
+  check('first leg target = pts[0] (ring-spread applied)', Math.hypot(p1.order.x - route[0].x, p1.order.y - route[0].y) < 1.5, true);
+  check('leg starts at 0', p1.order.leg, 0);
+  check('legacy back flag dormant in pts mode', p1.order.back, false);
+  const seen = new Set([p1.order.leg]);
+  let wrapped = false, last = p1.order.leg;
+  for (let i = 0; i < 1400; i++) {
+    sim.step(TICK);
+    if (p1.order.pts) {
+      seen.add(p1.order.leg);
+      if (seen.size === 3 && p1.order.leg === 0 && last !== 0)
+        wrapped = true;
+      last = p1.order.leg;
+    }
+  }
+  check('cyclic legs: all three waypoints visited (legs 0,1,2 observed)', [...seen].sort().join(','), '0,1,2');
+  check('route wraps past the last waypoint back to 0', wrapped, true);
+  check('still engaging en route (kind stays patrol)', p1.order.kind, 'patrol');
+  const h = sim.stateString();
+  check('route serialized in the U-line (rt token)', h.includes(',rt'), true);
+  check('leg index serialized (lg token)', /,lg\d+/.test(h), true);
+}
+
+section('multipoint patrol: legacy two-leg unchanged + command surface');
+{
+  const { sim, K } = loadKernel(8102);
+  clearInitial(sim);
+  const p1 = sim.spawn('fortress', 1, 20, 80);
+  sim.commandPatrol([p1.id], 24, 80);
+  check('legacy call keeps anchor<->B flip (no pts)', p1.order.pts === undefined && p1.order.ax === 20 && p1.order.ay === 80, true);
+  const ok = new K.Commands(sim, new Set([p1.id])).execute({ type: 'patrol', ids: [p1.id], x: 24, y: 80, pts: [{ x: 24, y: 84 }, { x: 28, y: 84 }] });
+  check('Commands.execute passes pts through', ok === true && Array.isArray(p1.order.pts) && p1.order.pts.length === 2, true);
+  const bad = new K.Commands(sim, new Set([p1.id])).execute({ type: 'patrol', ids: [p1.id], x: 24, y: 80, pts: [] });
+  check('empty pts route rejected at the command gate', bad, false);
+  const a = loadKernel(8103), b = loadKernel(8103);
+  clearInitial(a.sim); clearInitial(b.sim);
+  const ua = a.sim.spawn('fortress', 1, 20, 80), va = b.sim.spawn('fortress', 1, 20, 80);
+  const route2 = [{ x: 25, y: 80 }, { x: 25, y: 83 }, { x: 22, y: 83 }];
+  a.sim.commandPatrol([ua.id], route2[0].x, route2[0].y, route2);
+  b.sim.commandPatrol([va.id], route2[0].x, route2[0].y, route2);
+  run(a.sim, 400); run(b.sim, 400);
+  check('route patrol deterministic (hash equal)', a.sim.hashState(), b.sim.hashState());
+}
+
 console.log(`\nphase5: ${total - fail}/${total} PASS${fail ? ` — ${fail} FAILED` : ''}`);
 process.exit(fail ? 1 : 0);

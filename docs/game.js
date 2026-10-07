@@ -649,7 +649,7 @@
           s.push(`Q${qq.defId},${q(qq.t)}`);
       }
       for (const u of this.units)
-        s.push(`U${u.id},${u.def.id},${u.owner},${q(u.x)},${q(u.y)},${q(u.hp)},${q(u.facing)},${u.order.kind},${o(u.order.x)},${o(u.order.y)},${o(u.order.depotId)},${o(u.targetId)},${o(u.preferredId)},${u.path.length},${xy(u.dest)},${xy(u.guard)},${u.grounded ? 1 : 0},${u.burstLeft},${q(u.aimT)},${q(u.cd)},${u.state},${u.kills},${q(u.captureT ?? -1)},${o(u.lastHitBy)},${o(u.lastTargetId)},${o(u.garrison)},${o(u.order.ax)},${o(u.order.ay)},${u.order.back ? 1 : 0},${u.hiding ? 1 : 0},${u.fireHold ? 1 : 0},${u.sameSpeed !== undefined ? 'ss' + q(u.sameSpeed) : '-'}`);
+        s.push(`U${u.id},${u.def.id},${u.owner},${q(u.x)},${q(u.y)},${q(u.hp)},${q(u.facing)},${u.order.kind},${o(u.order.x)},${o(u.order.y)},${o(u.order.depotId)},${o(u.targetId)},${o(u.preferredId)},${u.path.length},${xy(u.dest)},${xy(u.guard)},${u.grounded ? 1 : 0},${u.burstLeft},${q(u.aimT)},${q(u.cd)},${u.state},${u.kills},${q(u.captureT ?? -1)},${o(u.lastHitBy)},${o(u.lastTargetId)},${o(u.garrison)},${o(u.order.ax)},${o(u.order.ay)},${u.order.back ? 1 : 0},${u.hiding ? 1 : 0},${u.fireHold ? 1 : 0},${u.sameSpeed !== undefined ? 'ss' + q(u.sameSpeed) : '-'}${u.order.pts ? ',rt' + u.order.pts.map((p) => q(p.x) + '.' + q(p.y)).join('_') + ',lg' + (u.order.leg ?? 0) : ''}`);
       for (const b of this.buildings)
         s.push(`B${b.id},${b.defId},${b.owner},${q(b.x)},${q(b.y)},${q(b.hp)},${b.built ? 1 : 0},${q(b.captureT)},${b.captureBy},${o(b.lastHitOwner)}`);
       for (const p of this.projectiles)
@@ -721,10 +721,17 @@
       if (members.length)
         this.floats.push({ x: members[0].x, y: members[0].y - 1.8, text: "MARCH", color: "#93c5fd", t: 0 });
     }
-    commandPatrol(ids, x, y) {
-      // native ClientUnitTaskType.Patrol = 1 (dump.cs:271215): repeat a route
-      // between the issue position (anchor A) and the target point (B); engages
-      // targets of opportunity en route (attackMove semantics while walking).
+    commandPatrol(ids, x, y, pts) {
+      // native ClientUnitTaskType.Patrol = 1 (dump.cs:271215): repeat a route;
+      // engages targets of opportunity en route (attackMove semantics while
+      // walking). NATIVE ROUTES ARE MULTI-POINT: PatrolRoute.points :
+      // List<Coordinate> (dump.cs:386963) + SendSelectedUnitsPatrolTargeting
+      // (List<Vector3>) 337727. Legacy two-leg call (no pts) keeps the v=23
+      // anchor<->B flip; a pts array = cyclic route through the waypoints
+      // (per-unit ring-spread applied to every leg at issue time).
+      const route = Array.isArray(pts) && pts.length
+        ? pts.map((p) => ({ x: Math.max(1, Math.min(MAP_W - 2, p.x)), y: Math.max(1, Math.min(MAP_H - 2, p.y)) }))
+        : null;
       let i = 0;
       for (const id of ids) {
         const u = this.units.find((v) => v.id === id);
@@ -732,8 +739,12 @@
           continue;
         const ring = Math.floor(i / 8), ang = i % 8 * (Math.PI / 4) + ring;
         const r = ring * 1.2;
-        const dx = x + Math.cos(ang) * r, dy = y + Math.sin(ang) * r;
-        u.order = { kind: "patrol", x: dx, y: dy, ax: u.x, ay: u.y, back: false };
+        const spread = (p) => ({ x: p.x + Math.cos(ang) * r, y: p.y + Math.sin(ang) * r });
+        const uRoute = route ? route.map(spread) : null;
+        const dx = uRoute ? uRoute[0].x : x + Math.cos(ang) * r, dy = uRoute ? uRoute[0].y : y + Math.sin(ang) * r;
+        u.order = uRoute
+          ? { kind: "patrol", x: dx, y: dy, pts: uRoute, leg: 0, back: false }
+          : { kind: "patrol", x: dx, y: dy, ax: u.x, ay: u.y, back: false };
         u.targetId = undefined;
         u.preferredId = undefined;
         u.guard = undefined;
@@ -1360,8 +1371,8 @@
           // patrol: re-sync dest to the CURRENT leg target — a chase (dest =
           // chase point) must not strand the route or fake an arrival
           if (u.order.kind === "patrol") {
-            const lx0 = u.order.back ? u.order.ax : u.order.x;
-            const ly0 = u.order.back ? u.order.ay : u.order.y;
+            const lx0 = u.order.pts ? u.order.pts[u.order.leg ?? 0].x : (u.order.back ? u.order.ax : u.order.x);
+            const ly0 = u.order.pts ? u.order.pts[u.order.leg ?? 0].y : (u.order.back ? u.order.ay : u.order.y);
             if (!u.dest || Math.hypot(u.dest.x - lx0, u.dest.y - ly0) > 1) {
               u.dest = { x: lx0, y: ly0 };
               u.path = this.pf.find(u.x, u.y, lx0, ly0, u.def.kind === "aircraft" && !u.grounded) ?? [];
@@ -1370,13 +1381,24 @@
           if (!u.path.length && u.dest) {
             if (Math.hypot(u.dest.x - u.x, u.dest.y - u.y) < 0.8) {
               if (u.order.kind === "patrol") {
-                // route leg complete: flip between the anchor and the far point
-                // (native ClientUnitTaskType.Patrol = 1)
-                u.order.back = !u.order.back;
-                const lx = u.order.back ? u.order.ax : u.order.x;
-                const ly = u.order.back ? u.order.ay : u.order.y;
-                u.dest = { x: lx, y: ly };
-                u.path = this.pf.find(u.x, u.y, lx, ly, u.def.kind === "aircraft" && !u.grounded) ?? [];
+                if (u.order.pts) {
+                  // route leg complete: native multi-point PatrolRoute.points
+                  // (386963) — cyclic advance through the waypoint list
+                  u.order.leg = ((u.order.leg ?? 0) + 1) % u.order.pts.length;
+                  const wp = u.order.pts[u.order.leg];
+                  u.order.x = wp.x;
+                  u.order.y = wp.y;
+                  u.dest = { x: wp.x, y: wp.y };
+                  u.path = this.pf.find(u.x, u.y, wp.x, wp.y, u.def.kind === "aircraft" && !u.grounded) ?? [];
+                } else {
+                  // route leg complete: flip between the anchor and the far point
+                  // (native ClientUnitTaskType.Patrol = 1)
+                  u.order.back = !u.order.back;
+                  const lx = u.order.back ? u.order.ax : u.order.x;
+                  const ly = u.order.back ? u.order.ay : u.order.y;
+                  u.dest = { x: lx, y: ly };
+                  u.path = this.pf.find(u.x, u.y, lx, ly, u.def.kind === "aircraft" && !u.grounded) ?? [];
+                }
               } else {
                 if (u.order.kind === "takepos") {
                   // native TakePositions: after placement the unit holds the
@@ -1390,8 +1412,8 @@
                 u.dest = undefined;
               }
             } else {
-              const lx = u.order.kind === "patrol" && u.order.back ? u.order.ax : u.order.x;
-              const ly = u.order.kind === "patrol" && u.order.back ? u.order.ay : u.order.y;
+              const lx = u.order.kind === "patrol" && !u.order.pts && u.order.back ? u.order.ax : u.order.x;
+              const ly = u.order.kind === "patrol" && !u.order.pts && u.order.back ? u.order.ay : u.order.y;
               u.path = this.pf.find(u.x, u.y, lx, ly, u.def.kind === "aircraft" && !u.grounded) ?? [];
               if (!u.path.length) {
                 u.order = { kind: "idle" };
@@ -2059,7 +2081,9 @@
         case "patrol":
           if (!sim || !cmd.ids || !cmd.ids.length || cmd.x === undefined || cmd.y === undefined)
             return false;
-          sim.commandPatrol(cmd.ids, cmd.x, cmd.y);
+          if (cmd.pts !== undefined && (!Array.isArray(cmd.pts) || !cmd.pts.length))
+            return false;
+          sim.commandPatrol(cmd.ids, cmd.x, cmd.y, cmd.pts);
           break;
         case "garrison":
           if (!sim || !cmd.ids || !cmd.ids.length || cmd.buildingId === undefined)
@@ -38005,6 +38029,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
   var disarmPatrol = () => {
     if (patrolArmed) {
       patrolArmed = false;
+      patrolRoute = [];
       if ($("prodhint"))
         $("prodhint").textContent = "";
     }
@@ -38066,6 +38091,11 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
         $("prodhint").textContent = "";
     }
   };
+  // Multi-point patrol staging (native SendSelectedUnitsPatrolTargeting takes a
+  // List<Vector3>, 337727; PatrolRoute.points List<Coordinate>, 386963):
+  // shift+right-click stages a waypoint and stays armed; the next unshifted
+  // right-click issues the WHOLE route as one cyclic patrol.
+  var patrolRoute = [];
   var rel = (e) => {
     const r = cv.getBoundingClientRect();
     return { x: e.clientX - r.left, y: e.clientY - r.top };
@@ -38156,11 +38186,21 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
     }
     if (e.button === 2) {
       if (patrolArmed) {
-        disarmPatrol();
         const t = r3d.screenToTile(p.x, p.y);
+        const pt = t ? { x: Math.max(1, Math.min(MAP_W - 2, t.x)), y: Math.max(1, Math.min(MAP_H - 2, t.y)) } : null;
+        if (e.shiftKey && pt) {
+          // stage a waypoint (multi-point patrol, PatrolRoute.points analog)
+          patrolRoute.push(pt);
+          r3d.mark(pt.x, pt.y, "move");
+          if ($("prodhint"))
+            $("prodhint").textContent = `PATROL +${patrolRoute.length} waypoint\u2014 right-click (no shift) to issue the route`;
+          return;
+        }
+        disarmPatrol();
         if (t && sel.size) {
-          cmd.issue({ type: "patrol", ids: [...sel], x: Math.max(1, Math.min(MAP_W - 2, t.x)), y: Math.max(1, Math.min(MAP_H - 2, t.y)) });
-          r3d.mark(t.x, t.y, "move");
+          cmd.issue({ type: "patrol", ids: [...sel], x: pt.x, y: pt.y,
+            pts: patrolRoute.length ? patrolRoute.concat([pt]) : undefined });
+          r3d.mark(pt.x, pt.y, "move");
         }
         return;
       }
@@ -38392,7 +38432,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       disarmOrders();
       patrolArmed = true;
       if ($("prodhint"))
-        $("prodhint").textContent = "PATROL armed \u2014 right-click the far waypoint";
+        $("prodhint").textContent = "PATROL armed \u2014 right-click a waypoint (shift+click stages more; unshifted issues the route)";
     }
     // SameSpeed march: M arms (native hotkey UnitSpecSameSpeed = 49) — the next
     // right-click marches the group at the slowest member's speed
