@@ -1,0 +1,167 @@
+Obfuz const-pool emulation — session evidence (Task 36 / Build G)
+Game: AOW3 6.9.18 (XAPK sha256 1a41e033… → libil2cpp.so sha256 8ace05bb…,
+dump.cs sha256 0050e67d…, metadata v31 / Il2CppDumper 6.7.46)
+global-metadata.dat (extracted from com.geargames.aow.apk this session):
+  sha256 d2e8dd0dfe1b82337d2399edeec967ba382593fedf0c46acc8d6a80e92697e9e
+  (25,743,080 B, magic 0xFAB11BAF, version 31)
+Tool: reverse/tools/obfuz_pool_emulator.py (unicorn 2.1.4, python3.13)
+
+====================================================================
+1. THE GAME'S OWN INTEGRITY CHECK VALIDATES THE EMULATION
+====================================================================
+Both pool builders (<Module> area, 0x497F474 / 0x497F82C) open with:
+
+  0x497f574: ldr  x3, [x19]            ; service object (usage slot)
+  0x497f578: mov  w0, #0xa23e
+  0x497f57c: mov  w1, #0xe170
+  0x497f580: mov  w2, #0x5298
+  0x497f584: movk w0, #0x720b, lsl #16 ; raw     = 0x720BA23E
+  0x497f588: movk w1, #0x545e, lsl #16 ; keyA    = 0x545EE170
+  0x497f58c: movk w2, #0x9870, lsl #16 ; salt    = 0x98705298
+  0x497f590: bl   #0x5265090           ; interface slot 4 -> VM.$GOA
+  0x497f598: mov  w0, #0x5678
+  0x497f59c: movk w0, #0x1234, lsl #16
+  0x497f5a4: bl   #0x77122dc           ; $qk(0x12345678, K)
+
+$qk @0x77122DC body: `cmp w0, w1; b.ne throw; ret` — the boot ABORTS unless
+$GOA(0x720BA23E, 0x545EE170, 0x98705298) == 0x12345678.
+
+Emulator run (native $GOA code in Unicorn + extracted secret key):
+
+  key entry : assets/bin/Data/0f159d0d59e64604b196175cc4fd2f85 1200 B
+              sha256 81f07f626a78d765cf4c645fcdb5b9cb6e95e5fc24e7e2a43c24f6da761683a4
+  key ints  : 256 (u32 LE), u32[0..3] = ['0x597871e2','0xdc7d5d91','0x171d80ac','0x743d49dd']
+  SELF-TEST : $GOA(0x720ba23e, 0x545ee170, 0x98705298) = 0x12345678
+              -> $qk expected 0x12345678 : PASS
+
+====================================================================
+2. SECRET KEY SOURCE (SetUpStaticSecretKey @0x3DCC5EC, ObfuzRuntimeBootstrap)
+====================================================================
+com.geargames.aow.client.obfuz.ObfuzRuntimeBootstrap.SetUpStaticSecretKey
+([RuntimeInitializeOnLoadMethod(2)]):
+  K-builder 0x5049494 = Resources.Load(path, Type):
+    arg1 = *slot(0x9674000+0xe08) = path string
+    arg2 = *slot(0x9674000+0xe10) -> GetTypeFromHandle -> Type
+    0x50494ec: bl 0x89dcbcc   ; UnityEngine.Resources.Load(string, Type)
+  null -> Debug.LogError(0x898b760) "…defaultStaticSecretKey.bytes not found."
+  else: TextAsset.get_bytes() @0x89EC01C -> VM .ctor @0x3DCC7A4
+        -> $JK(byte[]) @0x77125D0 = BlockCopy into int[len/4] (raw LE)
+Metadata literal (global-metadata):
+  "ObfuzRuntimeBootstrap: Resources/Obfuz/defaultStaticSecretKey"
+  "…defaultStaticSecretKey.bytes not found."
+APK TextAsset: entry assets/bin/Data/0f159d0d59e64604b196175cc4fd2f85
+  (serialized file: m_Name "defaultStaticSecretKey" @0x94, m_Script int32 len
+   1024 @0xAC, data @0xB0..0x4B0 = file end exactly; 1024 B = 256 ints)
+Per-case VM bounds checks confirm key length: max read [secretKey+0x410]
+  (int index 252) guarded by `cmp len, #0xFC; b.ls throw` -> len > 252 = 256.
+
+====================================================================
+3. INT DECRYPT PIPELINE ($gK -> $GOA)
+====================================================================
+Accessor family $d<T> (namespace $a, dump.cs ~1718250-1718447):
+  $gK(byte[],int,int,int)->int   inst @$C: 0x5265B74   (int)
+  $GK -> long 0x5265BD0 | $hK -> float 0x5265C2C | $HK -> double 0x5265C88
+  $iK(byte[],int x4)->string 0x5265CE4 -> $FK 0x5265A68
+  $fK(string,int,int)->byte[] 0x5265974 | $IK -> byte[] 0x5265D4C
+  $jK(Array,RuntimeFieldHandle,int x3) 0x5265DB4 / virtual $nOA ($D slot 35)
+Int thunk 0x5265B74: BitConverter.ToInt32(value=x0 blob, startIndex=w1);
+  class-init chain [x4+0x20]->klass->statics[0x10]->obj->[obj+0x20]->klass->
+  statics[8]->singleton; dispatch 0x5265090 = interface walk (slot idx 4),
+  impl(this=singleton, w1=raw, w2=keyA, w3=salt) — vtable slot math
+  [klass+0x298]/[+0x2A0] = (0x298-0x138)/16 = slot 22 = $GOA (CONFIRMED).
+GeneratedEncryptionVirtualMachine : $D (dump.cs:1693218, TypeDefIndex 29421):
+  kOpCodeBits=8, kOpCodeCount=256, kOpCodeMask=255; _secretKey int[] @0x10
+  $FOA OpCodeCount @0x3DCC7E0: `mov w0, #0x100; ret`
+  $gOA @0x3DCC7E8 (encrypt): key==0 -> identity; per byte LSB->MSB:
+    value = ExecuteEncrypt(value, op, salt)   (private @0x3DCC854, 12,080 B)
+  $GOA @0x3DCF784 (decrypt): same LSB-first over ExecuteDecrypt
+    (@0x3DCF7D0, 12,668 B); 256-case jump tables @0x1B09D64 / @0x1B09F64
+  ExecuteDecrypt case 0x3d @0x3DCFBA4 (used by the $ce anchor):
+    t = ror(value,15) - _secretKey[92]; t *= 0x831095E5; eor w0, t, salt^0xB2AAA2FF
+    (case bodies: pure ALU over value/salt/immediates/_secretKey[i])
+
+====================================================================
+4. .CCTOR TRIPLE GRAMMAR — 697 pool values
+====================================================================
+$Obfuz$ConstFieldHolder$0 .cctor @0x4975844 (39,984 B, 9,996 ins). Block:
+  ldr x4, [usage-slot]         ; service obj
+  mov w1, #start               ; blob byte offset (first ints @0x130, +4 step)
+  mov/movk w2, keyA            ; opcode pipeline (decrypt)
+  mov/movk w3, salt
+  ldr x0, [statics + 0x1008 | 0x1810]   ; segment byte[]
+  bl 0x5265B74                 ; $gK
+  str w0, [holder_statics, #target]     ; (store trails call by one block)
+Parsed: 697 values — int 629 / string 66 / float 2
+  int src slots: 0x1008 x334, 0x1810 x283
+First blocks (statics target <- start, keyA, salt):
+  +0x00 <- 0x130, 0x6E09FF7F, 0x31C54641
+  +0x04 <- 0x134, 0x07C302CF, 0xB16D8039
+  +0x08 <- 0x138, 0xBCE155A8, 0x7EFCB900
+  +0x14 <- 0x144, 0xE2F41A89, 0x7E852219   ($ce b.ge task threshold)
+  +0x64 <- 0x190, 0x1F8C6DA1, 0xAB917BE8   (Build E idempotence cmp)
+  +0x364 <- 0x46C, 0xFAEF4D11, 0xE84E1AC1  (Build F DEN factor 1)
+  +0x368 <- 0x470, 0x452260FF, 0xD0E2B9D8  (Build F DEN factor 2)
+  +0x374 <- 0x47C, 0x41023AB9, 0xAB1B00A5  (Build E set_FlagShoot value)
+Full table: obfuz_cctor_triples.json (697 entries).
+
+====================================================================
+5. SEGMENT CONSTRUCTION + BYTE CIPHER
+====================================================================
+Builder @0x497F474 (pool-manager klass *(0x968E000+0x4E0)) and @0x497F82C
+(klass *(0x968F000+0x2D8) — the holder's own provider; its 0x1008 slot is the
+.cctor's int blob):
+  per segment: newarr byte[0x800] (2048 B) -> InitializeArray(arr, handle)
+               -> $MOA-decrypt(arr, keyA, salt) -> str arr, [statics + slot]
+  captured (keyA, salt):
+    b2@0x800  0x98643925/0xD993A3D1   b2@0x1008 0x5B300BF1/0x8952D5F4
+    b2@0x1810 0xF91F0C58/0x9A457001   b1@0x800  0x6E5EF7E2/0xA4BA9CCE
+    b1@0x1008 0xC0FB1F9E/0xD649BD34   b1@0x1810 0x1C1B6537/0x5A586297
+    b1@0x2018 0x354680C3/0xFBA322BF   b1@0x2820 0xC1A1C8CC/0x44A79BB9
+    b1@0x3028 0x49CF984F/0xCA71695E   b1@0x3830 0x0C099C51/0x8DF68D1D
+Byte cipher $mOA @0x7712FE4 / $MOA @0x7712AFC ($D slots 33/34; both call
+[klass+0x298] = $GOA per u32):
+  n = len>>2; prev = 0
+  for i in 0..n-1: cur=ciph_u32[i]; plain_u32[i] = $GOA(cur ^ prev, keyA, salt); prev = cur
+  tail bytes (len%4): plain ^= salt & 0xFF
+($MOA 5-arg variant allocates a new array and BlockCopy(src, offset, dst,0,len)
+ first; the builder wrapper 0x5264EA8 dispatches to the interface impl with
+ (this, arr, keyA, salt).)
+
+====================================================================
+6. RESIDUAL — the 8x2048-B segment ciphertext blocks (UNRESOLVED, bounded)
+====================================================================
+The InitializeArray RuntimeFieldHandles are runtime-resolved usage slots
+(file image value 0; v31 fills them from per-module metadataUsages).
+Exhaustive negative sweeps this session (tools: obfuz_pool_emulator.py --sweep
++ obfuz_fdv_hunt.py / obfuz_blob_hunt.py):
+  - all 486 __StaticArrayInitTypeSize arrays in dump.cs (raw, >=0x800 B)
+  - all 77 fdv ranges >=2030 B x 7 key pairs x swapped-key variants (CBC head)
+  - all 28,749 fieldAndParameterDefaultValueData offsets x 8/24-step CBC heads
+    x b2@0x1008 keys
+  - 1,257 type-4 (FieldInfo) usage tokens -> 129 with fdv data -> CBC + anchors
+  anchor used: $GOA(u32(seg,0x1C), 0x3D, 0x27428CBF) in 0..15 (the triple the
+  sim itself uses at 0x463283C/0x4750FBC), plus V1*V2<=12 / V5/DEN bounds.
+  -> hits: 0. The segment bytes are therefore NOT in global-metadata fdv data;
+     they live behind the runtime-resolved handles (or another initializer).
+Finishing paths (next session):
+  a) resolve Il2CppCodeGenModule.metadataUsages for the game assembly
+     (module struct -> metadataUsages/token array -> slot index -> FieldInfo
+      -> fdv dataIndex) — needs the exact v31 module struct layout;
+  b) Frida one-shot: after boot, dump the pool-manager statics
+     ([klass+0xB8]+0x800/0x1008/0x1810/...) — with the validated crypto this
+     instantly yields every pool value;
+  c) full-system Unicorn with a stubbed il2cpp runtime (class-init no-ops,
+     fake vtables) running the builders directly.
+
+====================================================================
+7. ANCHOR CROSS-CHECKS (structure, independent of the values)
+====================================================================
+- 0x4632768 (a name-table builder) loads ldp w21,w26,[statics+4] and uses
+  mul w26,w21 as the index bound against a freshly built array — the SAME
+  +4/+8 pair Build E flagged as the $Hi task-id product: the product indexes
+  an array of names, bounding it to the task-id range.
+- $ce fire window 0x4750FA8: (start 0x714, keyA 0x3D, salt 0x27428CBF) —
+  a SINGLE-op decrypt (op 0x3D = case @0x3DCFBA4), result compared
+  `cmp w0, w21, sxtb` against the unit task — the pool constant IS a task id.
+- 0x4750F48: reads holder statics+0x14 (Value5) and `b.ge` vs sxtb(task) —
+  Value5 is a task threshold.
