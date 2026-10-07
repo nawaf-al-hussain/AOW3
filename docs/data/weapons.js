@@ -48,7 +48,20 @@ Balance VALUES are gameplay-tuned approximations (native values are backend-deli
     w_bld_bunker: {"damage": {"light": 26, "medium": 8, "heavy": 2}, "range": 7.5, "cooldown": 0.7, "accStatic": 80, "accWalk": 60, "splash": 0, "projectileSpeed": 0},
     // cerber melee mode: tribute stand-in for the Cerber blade weapon (HeroTypes.Cerber=1);
     // area splash + crit are gameplay-tuned (EStat CerberusWeaponSwitchTime/40 = switch gate)
-    m_cerber_blades: {"damage": {"light": 46, "medium": 58, "heavy": 42}, "range": 2.1, "cooldown": 1.05, "splash": 1.5, "crit": 0.22, "critMul": 2}
+    m_cerber_blades: {"damage": {"light": 46, "medium": 58, "heavy": 42}, "range": 2.1, "cooldown": 1.05, "splash": 1.5, "crit": 0.22, "critMul": 2},
+
+    // ---- hero weapons (10 remaining heroes, v=18). Values gameplay-tuned (server-side);
+    // native anchors per reverse/notes/hero-prefabs-10-remaining.md
+    w_wasp: {"damage": {"light": 36, "medium": 28, "heavy": 18}, "range": 9, "cooldown": 1.1, "accStatic": 80, "accWalk": 70, "splash": 0.5, "projectileSpeed": 30, "guided": 1},
+    w_gatling: {"damage": {"light": 30, "medium": 24, "heavy": 16}, "range": 9.5, "cooldown": 1, "accStatic": 78, "accWalk": 60, "splash": 0.2, "projectileSpeed": 34},
+    w_atlas: {"damage": {"light": 40, "medium": 34, "heavy": 26}, "range": 8, "cooldown": 1.7, "accStatic": 80, "accWalk": 62, "splash": 1.1, "projectileSpeed": 24},
+    w_mole: {"damage": {"light": 26, "medium": 30, "heavy": 20}, "range": 7, "cooldown": 1.4, "accStatic": 76, "accWalk": 58, "splash": 0.4, "projectileSpeed": 22},
+    w_leviaphan: {"damage": {"light": 38, "medium": 36, "heavy": 30}, "range": 10, "cooldown": 1.6, "accStatic": 78, "accWalk": 66, "splash": 1.4, "projectileSpeed": 26},
+    w_beholder: {"damage": {"light": 34, "medium": 30, "heavy": 22}, "range": 10.5, "cooldown": 1.3, "accStatic": 84, "accWalk": 70, "splash": 0, "projectileSpeed": 40},
+    w_psitank: {"damage": {"light": 28, "medium": 26, "heavy": 18}, "range": 9, "cooldown": 1.35, "accStatic": 80, "accWalk": 64, "splash": 0.3, "projectileSpeed": 30},
+    w_solaris: {"damage": {"light": 32, "medium": 30, "heavy": 20}, "range": 8.5, "cooldown": 1.45, "accStatic": 82, "accWalk": 64, "splash": 0.3, "projectileSpeed": 34},
+    w_salamander: {"damage": {"light": 34, "medium": 32, "heavy": 24}, "range": 9.5, "cooldown": 1.7, "accStatic": 78, "accWalk": 60, "splash": 1.2, "projectileSpeed": 22},
+    w_coiltank: {"damage": {"light": 38, "medium": 36, "heavy": 28}, "range": 8.5, "cooldown": 1.6, "accStatic": 80, "accWalk": 62, "splash": 0.4, "projectileSpeed": 36}
   };
   g.AOW3_DATA = g.AOW3_DATA || {};
   g.AOW3_DATA.weapons = weapons;

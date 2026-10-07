@@ -44,7 +44,7 @@ for (const f of ["stats.js", "weapons.js", "units.js", "buildings.js", "factions
   vm.runInContext(fs.readFileSync(path.join(DATA, f), "utf8"), ctx, { filename: f });
 }
 const D = ctx.AOW3_DATA;
-ok(D && D.version === 17, "AOW3_DATA.version === 17");
+ok(D && D.version === 19, "AOW3_DATA.version === 19");
 
 // ---- 1. fixture equivalence (behavior-neutrality guard) ----
 const FIX = JSON.parse(fs.readFileSync(path.join(__dirname, "data-model-fixture.json"), "utf8"));
@@ -88,7 +88,11 @@ const fieldMap = D.fieldEstat.units;                       // mapped native keys
 const mappedUnit = new Set(Object.keys(fieldMap).flatMap(k => k.split("."))); // incl. armor.*
 const localUnit = new Set(["id", "name", "kind", "captures", "radius", "antiAir", "aircraft",
   "hero", "faction", "aura", "meleeId", "melee", "weaponId", "weapon", "card", "tint", "desc",
-  "crit", "critMul"]); // crit/critMul: Cerber blades stand-in, gameplay-tuned
+  "crit", "critMul",
+  // hero ability hooks (v=18) — natively ANCHORED (EStat/HeroTypes) but tribute-tuned shape:
+  // see reverse/notes/hero-prefabs-10-remaining.md §4 for each anchor
+  "spinUp", "immortality", "frontal", "chain", "slowOnHit", "burnOnHit", "mineLayer",
+  "swapTint", "vfx"]); // crit/critMul: Cerber blades stand-in, gameplay-tuned
 const mappedWpn = new Set(Object.keys(D.weaponFieldMap).flatMap(k => k.split(".")));
 let covOk = true;
 for (const [id, u] of Object.entries(D.units)) {

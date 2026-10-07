@@ -13,14 +13,16 @@ Balance VALUES are gameplay-tuned approximations (native values are backend-deli
   var D = g.AOW3_DATA;
   if (!D || !D.units || !D.weapons)
     throw new Error("AOW3_DATA incomplete: load data/*.js in the documented order");
-  D.version = 17; // keep in sync with index.html ?v=
+  D.version = 19; // keep in sync with index.html ?v=
   D.nativeUnits = {
     ilight: { conf: 0, res: 100 }, iheavy: { conf: 1, res: 101 }, sniper: { res: 102 },
     hammer: { conf: 11 }, jaguar: { res: 115 }, coyote: { res: 110 }, torrent: { conf: 16 },
     porcupine: { res: 112 }, typhoon: { conf: 12 }, armadillo: { res: 111 }, zeus: { conf: 15 },
     mammoth: { res: 116 }, fortress: { conf: 10, unitType: 24 }, shield: { conf: 17 },
-    chameleon: { res: 117 }, helicopter: {}, cerber: { heroType: 1 },
-    seraphim: { unitId: 71, heroType: 3 }
+    chameleon: { res: 117 }, helicopter: {}, cerber: { heroType: 1 }, wasp: { heroType: 2 }, seraphim: { unitId: 71, heroType: 3 },
+    mole: { heroType: 4 }, leviaphan: { heroType: 5 }, solaris: { heroType: 6 }, beholder: { heroType: 7 },
+    gatling: { heroType: 8 }, psitank: { heroType: 9 }, salamander: { heroType: 10 }, atlas: { heroType: 11 },
+    coiltank: { heroType: 12 }
   };
   for (var id in D.units) {
     var u = D.units[id];

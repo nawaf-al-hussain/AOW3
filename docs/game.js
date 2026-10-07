@@ -312,6 +312,7 @@
     units = [];
     buildings = [];
     projectiles = [];
+    mines = [];
     floats = [];
     booms = [];
     pops = [];
@@ -636,6 +637,7 @@
       this.refreshEconomy();
       this.updateBuildings(dt);
       this.updateUnits(dt);
+      this.updateMines(dt);
       this.updateProjectiles(dt);
       this.updateDepots(dt);
       this.updateVision();
@@ -679,7 +681,30 @@
     }
     updateUnits(dt) {
       for (const u of this.units) {
-        u.cd = Math.max(0, u.cd - dt);
+        u.cd = Math.max(0, u.cd - dt * (u.slowT > 0 ? 0.72 : 1));
+        if (u.slowT)
+          u.slowT = Math.max(0, u.slowT - dt);
+        if (u.invulnT)
+          u.invulnT = Math.max(0, u.invulnT - dt);
+        if (u.heat)
+          u.heat = Math.max(0, u.heat - dt * 0.45);
+        if (u.abilCd)
+          u.abilCd = Math.max(0, u.abilCd - dt);
+        if (u.burnT > 0) {
+          u.burnT -= dt;
+          u.hp -= u.burnDps * dt;
+        }
+        if (u.def.immortality && (u.abilCd ?? 0) <= 0) {
+          u.invulnT = u.def.immortality.dur;
+          u.abilCd = u.def.immortality.cd;
+          this.floats.push({ x: u.x, y: u.y - 2, text: "IMMORTALITY", color: "#fcd34d", t: 0 });
+        }
+        if (u.def.mineLayer && (u.abilCd ?? 0) <= 0 && this.mines.filter((m) => m.owner === u.owner).length < 6) {
+          this.mines.push({ x: u.x, y: u.y, owner: u.owner, arm: 1.5 });
+          u.abilCd = u.def.mineLayer.cd;
+          this.pops.push({ x: u.x, y: u.y, t: 0, max: 0.35 });
+          this.floats.push({ x: u.x, y: u.y - 1.8, text: "MINE SET", color: "#a3e635", t: 0 });
+        }
         // native orient -> orient_dest at UnitStateType.rotate (hull rotation)
         this.updateRotation(u, dt);
         // native obj lifecycle: validation, objPreferred stickiness, acquisition
@@ -941,7 +966,9 @@
     shoot(u, tx, ty, tgt, d) {
       if (u.cd > 0)
         return;
-      u.cd = u.def.weapon.cooldown;
+      u.cd = u.def.weapon.cooldown * (u.def.spinUp ? Math.max(0.55, 1 - 0.45 * (u.heat ?? 0)) : 1);
+      if (u.def.spinUp)
+        u.heat = Math.min(1, (u.heat ?? 0) + 0.4);
       if (u.lastMode === "melee")
         u.cd = Math.max(u.cd, 1.5);
       u.lastMode = "gun";
@@ -979,6 +1006,27 @@
           trail: 0
         });
       }
+    }
+    updateMines(dt) {
+      for (const m of this.mines) {
+        if (m.arm > 0) {
+          m.arm -= dt;
+          continue;
+        }
+        const tgt = this.units.find((v) => v.owner !== m.owner && v.hp > 0 && !v.def.aircraft && Math.hypot(v.x - m.x, v.y - m.y) < 1.4);
+        if (tgt) {
+          m.dead = true;
+          this.booms.push({ x: m.x, y: m.y, r: 2.2, t: 0, max: 0.5 });
+          for (const o of this.units) {
+            if (o.owner === m.owner || o.hp <= 0 || o.def.aircraft)
+              continue;
+            const d = Math.hypot(o.x - m.x, o.y - m.y);
+            if (d <= 2.2)
+              this.applyHit({ id: -1, owner: m.owner }, o.x, o.y, o, Math.round(85 * (1 - d / 3.2)), 1);
+          }
+        }
+      }
+      this.mines = this.mines.filter((m) => !m.dead);
     }
     meleeStrike(u, tgt, d) {
       if (u.cd > 0)
@@ -1045,11 +1093,49 @@
     }
     applyHit(u, x, y, tgt, dmg, acc) {
       if (tgt) {
+        if (tgt.invulnT > 0) {
+          this.floats.push({ x: tgt.x, y: tgt.y - 0.8, text: "IMMORTAL", color: "#fcd34d", t: 0 });
+          return;
+        }
+        let dmg2 = dmg;
+        if (u && tgt.def && tgt.def.frontal) {
+          const toA = Math.atan2((u.y ?? y) - tgt.y, (u.x ?? x) - tgt.x);
+          let rel = Math.abs(toA - tgt.facing);
+          rel = Math.min(rel, Math.PI * 2 - rel);
+          if (rel < Math.PI / 2)
+            dmg2 = Math.round(dmg2 * (1 - tgt.def.frontal));
+        }
         if (Math.random() < acc) {
-          tgt.hp -= dmg;
-          tgt.lastHitBy = u.id;
-          this.floats.push({ x: tgt.x, y: tgt.y - 0.8, text: `${Math.round(dmg)}`, color: "#ffd28a", t: 0 });
+          tgt.hp -= dmg2;
+          if (u)
+            tgt.lastHitBy = u.id;
           this.aggro(u, tgt);
+          this.floats.push({ x: tgt.x, y: tgt.y - 0.8, text: `${Math.round(dmg2)}`, color: "#ffd28a", t: 0 });
+          if (u && u.def && u.def.slowOnHit && tgt.hp > 0 && tgt.def) {
+            tgt.slowT = u.def.slowOnHit.dur;
+            this.floats.push({ x: tgt.x, y: tgt.y - 1.5, text: "PSI-SLOW", color: "#c4b5fd", t: 0 });
+          }
+          if (u && u.def && u.def.burnOnHit && tgt.hp > 0) {
+            tgt.burnT = u.def.burnOnHit.dur;
+            tgt.burnDps = u.def.burnOnHit.dps;
+          }
+          if (u && u.def && u.def.chain && !u._chain) {
+            u._chain = true;
+            let n = u.def.chain.targets;
+            for (const o of this.units) {
+              if (n <= 0)
+                break;
+              if (o === tgt || o.owner === u.owner || o.hp <= 0 || o.def.aircraft)
+                continue;
+              const dd = Math.hypot(o.x - (tgt.x ?? x), o.y - (tgt.y ?? y));
+              if (dd <= u.def.chain.range) {
+                n--;
+                this.pops.push({ x: o.x, y: o.y, t: 0, max: 0.35 });
+                this.applyHit(u, o.x, o.y, o, Math.round(dmg2 * u.def.chain.mul), 1);
+              }
+            }
+            u._chain = false;
+          }
         } else {
           this.floats.push({ x: tgt.x, y: tgt.y - 0.8, text: "miss", color: "#999", t: 0 });
         }
@@ -1291,6 +1377,16 @@
           choice = "jaguar";
         if (counts[choice] >= 8)
           choice = "jaguar";
+        const hasHeroBld = sim.buildings.some((b) => b.owner === this.me && b.defId === "herobld" && b.hp > 0 && b.built);
+        const myHeroAlive = sim.units.some((u) => u.owner === this.me && u.def.hero);
+        const myHeroQueued = p.queue.some((q) => UNITS[q.defId].hero);
+        if (hasHeroBld && !myHeroAlive && !myHeroQueued) {
+          const f2Heroes = HERO_ORDER.filter((h) => UNITS[h].faction === 2);
+          const pick = f2Heroes[Math.floor(Math.random() * f2Heroes.length)];
+          const hdef = UNITS[pick];
+          if (p.funds >= hdef.price && p.cpUsed + hdef.cp <= p.cpCap)
+            sim.enqueue(pick, this.me);
+        }
         const def = UNITS[choice];
         if (p.funds >= def.price && p.cpUsed + def.cp <= p.cpCap)
           sim.enqueue(choice, this.me);
@@ -1372,6 +1468,8 @@
         want = "turret";
       else if (sim.time > 340 && mine.filter((b) => b.defId === "bunker").length < 1)
         want = "bunker";
+      else if (sim.time > 200 && !has("herobld"))
+        want = "herobld";
       if (!want)
         return;
       const def = BLD[want];
@@ -33555,7 +33653,17 @@ void main() {
     chameleon: ["f2_veh_chameleon", "f2_veh_chameleon"],
     helicopter: ["f1_avia_helicopter", "f2_avia_helicopter"],
     cerber: ["f1_hero_cerber", "f1_hero_cerber"],
-    seraphim: ["f1_hero_seraphim", "f1_hero_seraphim"]
+    seraphim: ["f1_hero_seraphim", "f1_hero_seraphim"],
+    wasp: ["f1_avia_helicopter", "f1_avia_helicopter"],
+    gatling: ["f2_veh_porcupine", "f2_veh_porcupine"],
+    atlas: ["f1_veh_fortress", "f1_veh_fortress"],
+    mole: ["f1_veh_shield", "f1_veh_shield"],
+    leviaphan: ["f2_veh_mammoth", "f2_veh_mammoth"],
+    beholder: ["f2_veh_jaguar", "f2_veh_jaguar"],
+    psitank: ["f2_veh_coyote", "f2_veh_coyote"],
+    solaris: ["f1_veh_zeus", "f1_veh_zeus"],
+    salamander: ["f2_veh_typhoon", "f2_veh_typhoon"],
+    coiltank: ["f2_veh_armadillo", "f2_veh_armadillo"]
   };
   var HQ_MODEL = "f1_bld_hq";
   var templates = new Map;
@@ -33697,6 +33805,8 @@ void main() {
       return null;
     const group = new Group;
     const inst = cloneScaled(t);
+    if (def.swapTint && owner === 2)
+      swapRedBlue(inst);
     const size = t.size;
     if (size.z > size.x) {
       inst.rotation.y = Math.PI / 2;
@@ -36292,6 +36402,9 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
     if (!ready)
       return;
     sim = new Sim(Math.floor(Math.random() * 1e9));
+    try {
+      window.__aow3sim = sim;
+    } catch (e) {}
     ai = new AI(sim, 2);
     sel.clear();
     r3d.applyTerrainGrid(sim.grid);
@@ -36333,6 +36446,8 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
     }
     for (const id of HERO_ORDER) {
       const d = UNITS[id];
+      if (d.faction !== 1)
+        continue;
       const b = document.createElement("button");
       b.className = "card hero";
       b.title = `${d.name} — ${d.desc}`;

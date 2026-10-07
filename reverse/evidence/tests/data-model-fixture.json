@@ -1,834 +1,1287 @@
 {
-  "UNITS": {
-    "ilight": {
-      "id": "ilight",
-      "name": "Ilight",
-      "kind": "infantry",
-      "armorClass": "light",
-      "armor": {
-        "light": 6,
-        "medium": 4,
-        "heavy": 2
-      },
-      "health": 120,
-      "price": 120,
-      "cp": 1,
-      "trainTime": 4,
-      "speed": 3.4,
-      "view": 9,
-      "regen": 0.6,
-      "captures": true,
-      "radius": 0.45,
-      "weapon": {
-        "damage": {
-          "light": 16,
-          "medium": 7,
-          "heavy": 3
-        },
-        "range": 6.5,
-        "cooldown": 1.1,
-        "accStatic": 72,
-        "accWalk": 48,
-        "splash": 0,
-        "projectileSpeed": 0,
-        "walkingShot": 1
-      },
-      "card": "assets/card-f1-rifle.png",
-      "tint": "#8fb573",
-      "desc": "Light infantry (UNIT_ID_ILIGHT_CONF=0 / ILIGHT_RES=100). Cheap capture unit."
+ "UNITS": {
+  "ilight": {
+   "id": "ilight",
+   "name": "Ilight",
+   "kind": "infantry",
+   "armorClass": "light",
+   "armor": {
+    "light": 6,
+    "medium": 4,
+    "heavy": 2
+   },
+   "health": 120,
+   "price": 120,
+   "cp": 1,
+   "trainTime": 4,
+   "speed": 3.4,
+   "view": 9,
+   "regen": 0.6,
+   "captures": true,
+   "radius": 0.45,
+   "card": "assets/card-f1-rifle.png",
+   "tint": "#8fb573",
+   "desc": "Light infantry (UNIT_ID_ILIGHT_CONF=0 / ILIGHT_RES=100). Cheap capture unit.",
+   "weapon": {
+    "damage": {
+     "light": 16,
+     "medium": 7,
+     "heavy": 3
     },
-    "iheavy": {
-      "id": "iheavy",
-      "name": "Iheavy",
-      "kind": "infantry",
-      "armorClass": "light",
-      "armor": {
-        "light": 5,
-        "medium": 3,
-        "heavy": 2
-      },
-      "health": 110,
-      "price": 220,
-      "cp": 1,
-      "trainTime": 6,
-      "speed": 3,
-      "view": 8,
-      "regen": 0.5,
-      "captures": true,
-      "radius": 0.45,
-      "weapon": {
-        "damage": {
-          "light": 10,
-          "medium": 34,
-          "heavy": 42
-        },
-        "range": 7.5,
-        "cooldown": 2.4,
-        "accStatic": 78,
-        "accWalk": 55,
-        "splash": 1.1,
-        "projectileSpeed": 14,
-        "walkingShot": 1
-      },
-      "card": "assets/card-f1-rpg.png",
-      "tint": "#c28f6d",
-      "desc": "Heavy rocket infantry (UNIT_ID_IHEAVY_CONF=1 / IHEAVY_RES=101). Punishes vehicles."
-    },
-    "sniper": {
-      "id": "sniper",
-      "name": "Sniper",
-      "kind": "infantry",
-      "armorClass": "light",
-      "armor": {
-        "light": 4,
-        "medium": 2,
-        "heavy": 1
-      },
-      "health": 90,
-      "price": 260,
-      "cp": 1,
-      "trainTime": 7,
-      "speed": 3.1,
-      "view": 12,
-      "regen": 0.4,
-      "captures": true,
-      "radius": 0.45,
-      "weapon": {
-        "damage": {
-          "light": 34,
-          "medium": 14,
-          "heavy": 4
-        },
-        "range": 11,
-        "cooldown": 2.2,
-        "accStatic": 84,
-        "accWalk": 62,
-        "splash": 0,
-        "projectileSpeed": 0
-      },
-      "card": "assets/card-infantry.png",
-      "tint": "#b59b73",
-      "desc": "Resistance marksman (UNIT_ID_SNIPER=102, f2 only). Long range, shreds infantry."
-    },
-    "hammer": {
-      "id": "hammer",
-      "name": "Hammer",
-      "kind": "vehicle",
-      "armorClass": "heavy",
-      "armor": {
-        "light": 26,
-        "medium": 20,
-        "heavy": 14
-      },
-      "health": 640,
-      "price": 520,
-      "cp": 2,
-      "trainTime": 11,
-      "speed": 3.2,
-      "view": 9,
-      "regen": 0,
-      "captures": false,
-      "radius": 0.7,
-      "weapon": {
-        "damage": {
-          "light": 42,
-          "medium": 30,
-          "heavy": 20
-        },
-        "range": 9,
-        "cooldown": 1.8,
-        "accStatic": 82,
-        "accWalk": 62,
-        "splash": 0.6,
-        "projectileSpeed": 26
-      },
-      "card": "assets/card-f1-hammer.png",
-      "tint": "#7d9c6a",
-      "desc": "Confederation MBT (UNIT_ID_HAMMER=11). Solid all-round gun."
-    },
-    "jaguar": {
-      "id": "jaguar",
-      "name": "Jaguar",
-      "kind": "vehicle",
-      "armorClass": "heavy",
-      "armor": {
-        "light": 28,
-        "medium": 22,
-        "heavy": 15
-      },
-      "health": 660,
-      "price": 540,
-      "cp": 2,
-      "trainTime": 11,
-      "speed": 3.2,
-      "view": 9,
-      "regen": 0,
-      "captures": false,
-      "radius": 0.7,
-      "weapon": {
-        "damage": {
-          "light": 44,
-          "medium": 32,
-          "heavy": 22
-        },
-        "range": 9,
-        "cooldown": 1.8,
-        "accStatic": 82,
-        "accWalk": 62,
-        "splash": 0.6,
-        "projectileSpeed": 26
-      },
-      "card": "assets/card-tank.png",
-      "tint": "#9c6a6a",
-      "desc": "Resistance MBT (UNIT_ID_JAGUAR=115). Heavy armor, solid gun."
-    },
-    "coyote": {
-      "id": "coyote",
-      "name": "Coyote",
-      "kind": "vehicle",
-      "armorClass": "light",
-      "armor": {
-        "light": 12,
-        "medium": 8,
-        "heavy": 4
-      },
-      "health": 300,
-      "price": 300,
-      "cp": 1,
-      "trainTime": 7,
-      "speed": 4.4,
-      "view": 10,
-      "regen": 0,
-      "captures": false,
-      "radius": 0.6,
-      "weapon": {
-        "damage": {
-          "light": 20,
-          "medium": 14,
-          "heavy": 6
-        },
-        "range": 8,
-        "cooldown": 1.2,
-        "accStatic": 76,
-        "accWalk": 60,
-        "splash": 0,
-        "projectileSpeed": 30
-      },
-      "card": "assets/card-tank.png",
-      "tint": "#a8a06e",
-      "desc": "Fast scout car (UNIT_ID_COYOTE=110). Harasses infantry, dies to cannons."
-    },
-    "torrent": {
-      "id": "torrent",
-      "name": "Torrent",
-      "kind": "vehicle",
-      "armorClass": "light",
-      "armor": {
-        "light": 14,
-        "medium": 10,
-        "heavy": 6
-      },
-      "health": 280,
-      "price": 340,
-      "cp": 2,
-      "trainTime": 8,
-      "speed": 4,
-      "view": 11,
-      "regen": 0,
-      "captures": false,
-      "radius": 0.62,
-      "antiAir": true,
-      "weapon": {
-        "damage": {
-          "light": 14,
-          "medium": 46,
-          "heavy": 4
-        },
-        "range": 10.5,
-        "cooldown": 0.55,
-        "accStatic": 84,
-        "accWalk": 70,
-        "splash": 0,
-        "projectileSpeed": 34
-      },
-      "card": "assets/card-f1-artillery.png",
-      "tint": "#a8a06e",
-      "desc": "Twin-gun AA vehicle (UNIT_ID_TORRENT=16). Shreds gunships; harmless to armor."
-    },
-    "porcupine": {
-      "id": "porcupine",
-      "name": "Porcupine",
-      "kind": "vehicle",
-      "armorClass": "light",
-      "armor": {
-        "light": 14,
-        "medium": 11,
-        "heavy": 6
-      },
-      "health": 300,
-      "price": 350,
-      "cp": 2,
-      "trainTime": 8,
-      "speed": 3.8,
-      "view": 11,
-      "regen": 0,
-      "captures": false,
-      "radius": 0.62,
-      "antiAir": true,
-      "weapon": {
-        "damage": {
-          "light": 15,
-          "medium": 48,
-          "heavy": 4
-        },
-        "range": 10.5,
-        "cooldown": 0.55,
-        "accStatic": 84,
-        "accWalk": 70,
-        "splash": 0,
-        "projectileSpeed": 34
-      },
-      "card": "assets/card-flak.png",
-      "tint": "#9c8a5e",
-      "desc": "Rotary-flak AA vehicle (UNIT_ID_PORCUPINE=112). Shreds gunships."
-    },
-    "typhoon": {
-      "id": "typhoon",
-      "name": "Typhoon",
-      "kind": "vehicle",
-      "armorClass": "light",
-      "armor": {
-        "light": 10,
-        "medium": 6,
-        "heavy": 3
-      },
-      "health": 280,
-      "price": 660,
-      "cp": 2,
-      "trainTime": 14,
-      "speed": 2.6,
-      "view": 11,
-      "regen": 0,
-      "captures": false,
-      "radius": 0.65,
-      "weapon": {
-        "damage": {
-          "light": 40,
-          "medium": 38,
-          "heavy": 46
-        },
-        "range": 15,
-        "cooldown": 4.2,
-        "accStatic": 62,
-        "accWalk": 44,
-        "splash": 2.6,
-        "projectileSpeed": 12,
-        "splashScatter": 1,
-        "explosionDecr": 30
-      },
-      "card": "assets/card-f1-tank.png",
-      "tint": "#9c8a5e",
-      "desc": "Rocket MLRS (UNIT_ID_TYPHOON=12, b_rocket1+radar nodes). Long-range splash."
-    },
-    "armadillo": {
-      "id": "armadillo",
-      "name": "Armadillo",
-      "kind": "vehicle",
-      "armorClass": "medium",
-      "armor": {
-        "light": 16,
-        "medium": 12,
-        "heavy": 8
-      },
-      "health": 400,
-      "price": 560,
-      "cp": 2,
-      "trainTime": 12,
-      "speed": 3,
-      "view": 10,
-      "regen": 0,
-      "captures": false,
-      "radius": 0.65,
-      "weapon": {
-        "damage": {
-          "light": 12,
-          "medium": 40,
-          "heavy": 30
-        },
-        "range": 10,
-        "cooldown": 2.6,
-        "accStatic": 74,
-        "accWalk": 54,
-        "splash": 0.8,
-        "projectileSpeed": 22
-      },
-      "card": "assets/card-mech.png",
-      "tint": "#8a7a5e",
-      "desc": "Rocket walker (UNIT_ID_ARMADILLO=111). Dual weapon rounds, medium punch."
-    },
-    "zeus": {
-      "id": "zeus",
-      "name": "Zeus",
-      "kind": "vehicle",
-      "armorClass": "medium",
-      "armor": {
-        "light": 18,
-        "medium": 14,
-        "heavy": 10
-      },
-      "health": 440,
-      "price": 640,
-      "cp": 2,
-      "trainTime": 13,
-      "speed": 3,
-      "view": 10,
-      "regen": 0,
-      "captures": false,
-      "radius": 0.65,
-      "weapon": {
-        "damage": {
-          "light": 30,
-          "medium": 34,
-          "heavy": 26
-        },
-        "range": 8.5,
-        "cooldown": 1.5,
-        "accStatic": 80,
-        "accWalk": 64,
-        "splash": 0.4,
-        "projectileSpeed": 30
-      },
-      "card": "assets/card-f1-flak.png",
-      "tint": "#739c93",
-      "desc": "Dual-weapon platform (UNIT_ID_ZEUS=15). Native chain-lightning shell NOT reproduced."
-    },
-    "mammoth": {
-      "id": "mammoth",
-      "name": "Mammoth",
-      "kind": "vehicle",
-      "armorClass": "heavy",
-      "armor": {
-        "light": 44,
-        "medium": 36,
-        "heavy": 26
-      },
-      "health": 1050,
-      "price": 880,
-      "cp": 3,
-      "trainTime": 16,
-      "speed": 2.3,
-      "view": 8.5,
-      "regen": 0,
-      "captures": false,
-      "radius": 0.85,
-      "weapon": {
-        "damage": {
-          "light": 64,
-          "medium": 52,
-          "heavy": 40
-        },
-        "range": 9.5,
-        "cooldown": 2.6,
-        "accStatic": 84,
-        "accWalk": 60,
-        "splash": 0.8,
-        "projectileSpeed": 24
-      },
-      "card": "assets/card-storm.png",
-      "tint": "#6d8a5e",
-      "desc": "Super-heavy tank (UNIT_ID_MAMMOTH=116). Slow, brutally expensive."
-    },
-    "fortress": {
-      "id": "fortress",
-      "name": "Fortress",
-      "kind": "vehicle",
-      "armorClass": "heavy",
-      "armor": {
-        "light": 34,
-        "medium": 30,
-        "heavy": 24
-      },
-      "health": 900,
-      "price": 950,
-      "cp": 3,
-      "trainTime": 18,
-      "speed": 2.1,
-      "view": 11,
-      "regen": 0,
-      "captures": false,
-      "radius": 0.85,
-      "weapon": {
-        "damage": {
-          "light": 50,
-          "medium": 55,
-          "heavy": 60
-        },
-        "range": 14,
-        "cooldown": 3.4,
-        "accStatic": 70,
-        "accWalk": 50,
-        "splash": 1.6,
-        "projectileSpeed": 16,
-        "splashScatter": 1,
-        "explosionDecr": 20
-      },
-      "card": "assets/card-f1-mammoth.png",
-      "tint": "#6d8a5e",
-      "desc": "Siege platform (UNIT_ID_FORTRESS=10, UNIT_TYPE_FORTRESS=24). Long-range bombard."
-    },
-    "shield": {
-      "id": "shield",
-      "name": "Shield",
-      "kind": "vehicle",
-      "armorClass": "light",
-      "armor": {
-        "light": 10,
-        "medium": 8,
-        "heavy": 6
-      },
-      "health": 300,
-      "price": 300,
-      "cp": 1,
-      "trainTime": 8,
-      "speed": 3.6,
-      "view": 10,
-      "regen": 0,
-      "captures": false,
-      "radius": 0.6,
-      "aura": {
-        "regen": 2,
-        "radius": 6
-      },
-      "card": "assets/card-f1-shield.png",
-      "tint": "#739c93",
-      "desc": "Support drone (UNIT_ID_SHIELD=17, model has no weapon clips). Heals nearby friendlies."
-    },
-    "chameleon": {
-      "id": "chameleon",
-      "name": "Chameleon",
-      "kind": "vehicle",
-      "armorClass": "light",
-      "armor": {
-        "light": 8,
-        "medium": 6,
-        "heavy": 4
-      },
-      "health": 240,
-      "price": 280,
-      "cp": 1,
-      "trainTime": 7,
-      "speed": 6,
-      "view": 14,
-      "regen": 0,
-      "captures": false,
-      "radius": 0.6,
-      "card": "assets/card-mech.png",
-      "tint": "#9c8a5e",
-      "desc": "Fast stealth scout (UNIT_ID_FOG=117). Unarmed; native stealth NOT reproduced."
-    },
-    "helicopter": {
-      "id": "helicopter",
-      "name": "Helicopter",
-      "kind": "aircraft",
-      "armorClass": "medium",
-      "armor": {
-        "light": 16,
-        "medium": 12,
-        "heavy": 8
-      },
-      "health": 340,
-      "price": 560,
-      "cp": 2,
-      "trainTime": 12,
-      "speed": 5.4,
-      "view": 12,
-      "regen": 0,
-      "captures": false,
-      "radius": 0.6,
-      "weapon": {
-        "damage": {
-          "light": 34,
-          "medium": 26,
-          "heavy": 16
-        },
-        "range": 8.5,
-        "cooldown": 1.2,
-        "accStatic": 76,
-        "accWalk": 68,
-        "splash": 0.4,
-        "projectileSpeed": 30,
-        "guided": 1
-      },
-      "card": "assets/card-f1-helicopter.png",
-      "tint": "#739c93",
-      "desc": "Gunship (ItemF1/F2AviaHelicopter). Ignores terrain — shredded by AA guns."
-    },
-    "cerber": {
-      "id": "cerber",
-      "name": "HERO \"Cerber\"",
-      "kind": "hero",
-      "faction": 1,
-      "hero": true,
-      "armorClass": "medium",
-      "armor": {
-        "light": 20,
-        "medium": 16,
-        "heavy": 12
-      },
-      "health": 920,
-      "price": 1500,
-      "cp": 4,
-      "trainTime": 24,
-      "speed": 3.4,
-      "view": 10,
-      "regen": 2,
-      "captures": false,
-      "radius": 0.7,
-      "weapon": {
-        "damage": {
-          "light": 22,
-          "medium": 26,
-          "heavy": 18
-        },
-        "range": 7.5,
-        "cooldown": 1.5,
-        "accStatic": 78,
-        "accWalk": 55,
-        "splash": 0,
-        "projectileSpeed": 28
-      },
-      "melee": {
-        "damage": {
-          "light": 46,
-          "medium": 58,
-          "heavy": 42
-        },
-        "range": 2.1,
-        "cooldown": 1.05,
-        "splash": 1.5,
-        "crit": 0.22,
-        "critMul": 2
-      },
-      "card": "assets/card-hero-cerber.png",
-      "tint": "#7d9cc0",
-      "desc": "F1 hero walker (HeroTypes.Cerber=1). Twin blades shred groups up close (area + crit); switch-gun chips from afar."
-    },
-    "seraphim": {
-      "id": "seraphim",
-      "name": "HERO \"Seraphim\"",
-      "kind": "hero",
-      "faction": 1,
-      "hero": true,
-      "aircraft": true,
-      "armorClass": "medium",
-      "armor": {
-        "light": 16,
-        "medium": 14,
-        "heavy": 10
-      },
-      "health": 780,
-      "price": 1650,
-      "cp": 4,
-      "trainTime": 26,
-      "speed": 6.2,
-      "view": 12.5,
-      "regen": 2,
-      "captures": false,
-      "radius": 0.65,
-      "weapon": {
-        "damage": {
-          "light": 34,
-          "medium": 26,
-          "heavy": 16
-        },
-        "range": 9,
-        "cooldown": 1.05,
-        "accStatic": 80,
-        "accWalk": 72,
-        "splash": 0.3,
-        "projectileSpeed": 32,
-        "guided": 1
-      },
-      "card": "assets/card-hero-seraphim.png",
-      "tint": "#739cc0",
-      "desc": "F1 flying hero (HeroTypes.Seraphim=3). Fast lazer strikes; LAND for stabilized +25% dmg and armor — departs back to the sky."
-    }
+    "range": 6.5,
+    "cooldown": 1.1,
+    "accStatic": 72,
+    "accWalk": 48,
+    "splash": 0,
+    "projectileSpeed": 0,
+    "walkingShot": 1
+   }
   },
-  "BUILD_ORDER_F1": [
-    "ilight",
-    "iheavy",
-    "hammer",
-    "torrent",
-    "zeus",
-    "typhoon",
-    "fortress",
-    "shield",
-    "helicopter"
-  ],
-  "BUILD_ORDER_F2": [
-    "ilight",
-    "iheavy",
-    "sniper",
-    "coyote",
-    "jaguar",
-    "armadillo",
-    "porcupine",
-    "mammoth",
-    "chameleon",
-    "helicopter"
-  ],
-  "HERO_ORDER": [
-    "cerber",
-    "seraphim"
-  ],
-  "HQ": {
-    "id": "hq",
-    "name": "Headquarters",
-    "health": 4200,
-    "radius": 2.2,
-    "view": 13
+  "iheavy": {
+   "id": "iheavy",
+   "name": "Iheavy",
+   "kind": "infantry",
+   "armorClass": "light",
+   "armor": {
+    "light": 5,
+    "medium": 3,
+    "heavy": 2
+   },
+   "health": 110,
+   "price": 220,
+   "cp": 1,
+   "trainTime": 6,
+   "speed": 3,
+   "view": 8,
+   "regen": 0.5,
+   "captures": true,
+   "radius": 0.45,
+   "card": "assets/card-f1-rpg.png",
+   "tint": "#c28f6d",
+   "desc": "Heavy rocket infantry (UNIT_ID_IHEAVY_CONF=1 / IHEAVY_RES=101). Punishes vehicles.",
+   "weapon": {
+    "damage": {
+     "light": 10,
+     "medium": 34,
+     "heavy": 42
+    },
+    "range": 7.5,
+    "cooldown": 2.4,
+    "accStatic": 78,
+    "accWalk": 55,
+    "splash": 1.1,
+    "projectileSpeed": 14,
+    "walkingShot": 1
+   }
   },
-  "DEPOT": {
-    "id": "depot",
-    "name": "Supply Depot",
-    "health": 600,
-    "radius": 1.6,
-    "view": 8
+  "sniper": {
+   "id": "sniper",
+   "name": "Sniper",
+   "kind": "infantry",
+   "armorClass": "light",
+   "armor": {
+    "light": 4,
+    "medium": 2,
+    "heavy": 1
+   },
+   "health": 90,
+   "price": 260,
+   "cp": 1,
+   "trainTime": 7,
+   "speed": 3.1,
+   "view": 12,
+   "regen": 0.4,
+   "captures": true,
+   "radius": 0.45,
+   "card": "assets/card-infantry.png",
+   "tint": "#b59b73",
+   "desc": "Resistance marksman (UNIT_ID_SNIPER=102, f2 only). Long range, shreds infantry.",
+   "weapon": {
+    "damage": {
+     "light": 34,
+     "medium": 14,
+     "heavy": 4
+    },
+    "range": 11,
+    "cooldown": 2.2,
+    "accStatic": 84,
+    "accWalk": 62,
+    "splash": 0,
+    "projectileSpeed": 0
+   }
   },
-  "BLD": {
-    "barracks": {
-      "id": "barracks",
-      "name": "Barracks",
-      "health": 900,
-      "radius": 1.9,
-      "view": 9,
-      "price": 400,
-      "buildTime": 14,
-      "model": "f1_bld_barracks"
+  "hammer": {
+   "id": "hammer",
+   "name": "Hammer",
+   "kind": "vehicle",
+   "armorClass": "heavy",
+   "armor": {
+    "light": 26,
+    "medium": 20,
+    "heavy": 14
+   },
+   "health": 640,
+   "price": 520,
+   "cp": 2,
+   "trainTime": 11,
+   "speed": 3.2,
+   "view": 9,
+   "regen": 0,
+   "captures": false,
+   "radius": 0.7,
+   "card": "assets/card-f1-hammer.png",
+   "tint": "#7d9c6a",
+   "desc": "Confederation MBT (UNIT_ID_HAMMER=11). Solid all-round gun.",
+   "weapon": {
+    "damage": {
+     "light": 42,
+     "medium": 30,
+     "heavy": 20
     },
-    "factory": {
-      "id": "factory",
-      "name": "Factory",
-      "health": 1100,
-      "radius": 2.1,
-      "view": 9,
-      "price": 550,
-      "buildTime": 18,
-      "model": "f1_bld_factory_light"
-    },
-    "heavyfactory": {
-      "id": "heavyfactory",
-      "name": "Heavy Factory",
-      "health": 1400,
-      "radius": 2.3,
-      "view": 9,
-      "price": 850,
-      "buildTime": 24,
-      "model": "f1_bld_factory_heavy"
-    },
-    "power": {
-      "id": "power",
-      "name": "Power Plant",
-      "health": 700,
-      "radius": 1.7,
-      "view": 8,
-      "price": 300,
-      "buildTime": 10,
-      "model": "f1_bld_power"
-    },
-    "turret": {
-      "id": "turret",
-      "name": "Turret",
-      "health": 800,
-      "radius": 1.2,
-      "view": 11,
-      "price": 450,
-      "buildTime": 12,
-      "model": "f1_bld_tower",
-      "antiAir": true,
-      "weapon": {
-        "damage": {
-          "light": 34,
-          "medium": 30,
-          "heavy": 20
-        },
-        "range": 10.5,
-        "cooldown": 1.35,
-        "accStatic": 88,
-        "accWalk": 66,
-        "splash": 0,
-        "projectileSpeed": 30
-      }
-    },
-    "bunker": {
-      "id": "bunker",
-      "name": "Bunker",
-      "health": 1000,
-      "radius": 1.4,
-      "view": 9,
-      "price": 350,
-      "buildTime": 10,
-      "model": "f1_bld_bunker",
-      "weapon": {
-        "damage": {
-          "light": 26,
-          "medium": 8,
-          "heavy": 2
-        },
-        "range": 7.5,
-        "cooldown": 0.7,
-        "accStatic": 80,
-        "accWalk": 60,
-        "splash": 0,
-        "projectileSpeed": 0
-      }
-    },
-    "herobld": {
-      "id": "herobld",
-      "name": "Hero Building",
-      "health": 1300,
-      "radius": 2.1,
-      "view": 9,
-      "price": 900,
-      "buildTime": 26,
-      "model": "f1_bld_hero"
-    }
+    "range": 9,
+    "cooldown": 1.8,
+    "accStatic": 82,
+    "accWalk": 62,
+    "splash": 0.6,
+    "projectileSpeed": 26
+   }
   },
-  "BUILDINGS_ORDER": [
-    "barracks",
-    "factory",
-    "heavyfactory",
-    "power",
-    "turret",
-    "bunker",
-    "herobld"
-  ],
-  "PRODUCER_OF": {
-    "ilight": "barracks",
-    "iheavy": "barracks",
-    "sniper": "barracks",
-    "hammer": "factory",
-    "torrent": "factory",
-    "zeus": "factory",
-    "shield": "factory",
-    "coyote": "factory",
-    "jaguar": "factory",
-    "armadillo": "factory",
-    "porcupine": "factory",
-    "fortress": "heavyfactory",
-    "typhoon": "heavyfactory",
-    "mammoth": "heavyfactory",
-    "chameleon": "heavyfactory",
-    "helicopter": "heavyfactory",
-    "cerber": "herobld",
-    "seraphim": "herobld"
+  "jaguar": {
+   "id": "jaguar",
+   "name": "Jaguar",
+   "kind": "vehicle",
+   "armorClass": "heavy",
+   "armor": {
+    "light": 28,
+    "medium": 22,
+    "heavy": 15
+   },
+   "health": 660,
+   "price": 540,
+   "cp": 2,
+   "trainTime": 11,
+   "speed": 3.2,
+   "view": 9,
+   "regen": 0,
+   "captures": false,
+   "radius": 0.7,
+   "card": "assets/card-tank.png",
+   "tint": "#9c6a6a",
+   "desc": "Resistance MBT (UNIT_ID_JAGUAR=115). Heavy armor, solid gun.",
+   "weapon": {
+    "damage": {
+     "light": 44,
+     "medium": 32,
+     "heavy": 22
+    },
+    "range": 9,
+    "cooldown": 1.8,
+    "accStatic": 82,
+    "accWalk": 62,
+    "splash": 0.6,
+    "projectileSpeed": 26
+   }
   },
-  "ECONOMY": {
-    "baseIncome": 14,
-    "depotIncome": 11,
-    "baseCP": 10,
-    "depotCP": 4,
-    "captureTimeNeutral": 5,
-    "captureTimeEnemy": 9
+  "coyote": {
+   "id": "coyote",
+   "name": "Coyote",
+   "kind": "vehicle",
+   "armorClass": "light",
+   "armor": {
+    "light": 12,
+    "medium": 8,
+    "heavy": 4
+   },
+   "health": 300,
+   "price": 300,
+   "cp": 1,
+   "trainTime": 7,
+   "speed": 4.4,
+   "view": 10,
+   "regen": 0,
+   "captures": false,
+   "radius": 0.6,
+   "card": "assets/card-tank.png",
+   "tint": "#a8a06e",
+   "desc": "Fast scout car (UNIT_ID_COYOTE=110). Harasses infantry, dies to cannons.",
+   "weapon": {
+    "damage": {
+     "light": 20,
+     "medium": 14,
+     "heavy": 6
+    },
+    "range": 8,
+    "cooldown": 1.2,
+    "accStatic": 76,
+    "accWalk": 60,
+    "splash": 0,
+    "projectileSpeed": 30
+   }
+  },
+  "torrent": {
+   "id": "torrent",
+   "name": "Torrent",
+   "kind": "vehicle",
+   "armorClass": "light",
+   "armor": {
+    "light": 14,
+    "medium": 10,
+    "heavy": 6
+   },
+   "health": 280,
+   "price": 340,
+   "cp": 2,
+   "trainTime": 8,
+   "speed": 4,
+   "view": 11,
+   "regen": 0,
+   "captures": false,
+   "radius": 0.62,
+   "antiAir": true,
+   "card": "assets/card-f1-artillery.png",
+   "tint": "#a8a06e",
+   "desc": "Twin-gun AA vehicle (UNIT_ID_TORRENT=16). Shreds gunships; harmless to armor.",
+   "weapon": {
+    "damage": {
+     "light": 14,
+     "medium": 46,
+     "heavy": 4
+    },
+    "range": 10.5,
+    "cooldown": 0.55,
+    "accStatic": 84,
+    "accWalk": 70,
+    "splash": 0,
+    "projectileSpeed": 34
+   }
+  },
+  "porcupine": {
+   "id": "porcupine",
+   "name": "Porcupine",
+   "kind": "vehicle",
+   "armorClass": "light",
+   "armor": {
+    "light": 14,
+    "medium": 11,
+    "heavy": 6
+   },
+   "health": 300,
+   "price": 350,
+   "cp": 2,
+   "trainTime": 8,
+   "speed": 3.8,
+   "view": 11,
+   "regen": 0,
+   "captures": false,
+   "radius": 0.62,
+   "antiAir": true,
+   "card": "assets/card-flak.png",
+   "tint": "#9c8a5e",
+   "desc": "Rotary-flak AA vehicle (UNIT_ID_PORCUPINE=112). Shreds gunships.",
+   "weapon": {
+    "damage": {
+     "light": 15,
+     "medium": 48,
+     "heavy": 4
+    },
+    "range": 10.5,
+    "cooldown": 0.55,
+    "accStatic": 84,
+    "accWalk": 70,
+    "splash": 0,
+    "projectileSpeed": 34
+   }
+  },
+  "typhoon": {
+   "id": "typhoon",
+   "name": "Typhoon",
+   "kind": "vehicle",
+   "armorClass": "light",
+   "armor": {
+    "light": 10,
+    "medium": 6,
+    "heavy": 3
+   },
+   "health": 280,
+   "price": 660,
+   "cp": 2,
+   "trainTime": 14,
+   "speed": 2.6,
+   "view": 11,
+   "regen": 0,
+   "captures": false,
+   "radius": 0.65,
+   "card": "assets/card-f1-tank.png",
+   "tint": "#9c8a5e",
+   "desc": "Rocket MLRS (UNIT_ID_TYPHOON=12, b_rocket1+radar nodes). Long-range splash.",
+   "weapon": {
+    "damage": {
+     "light": 40,
+     "medium": 38,
+     "heavy": 46
+    },
+    "range": 15,
+    "cooldown": 4.2,
+    "accStatic": 62,
+    "accWalk": 44,
+    "splash": 2.6,
+    "projectileSpeed": 12,
+    "splashScatter": 1,
+    "explosionDecr": 30
+   }
+  },
+  "armadillo": {
+   "id": "armadillo",
+   "name": "Armadillo",
+   "kind": "vehicle",
+   "armorClass": "medium",
+   "armor": {
+    "light": 16,
+    "medium": 12,
+    "heavy": 8
+   },
+   "health": 400,
+   "price": 560,
+   "cp": 2,
+   "trainTime": 12,
+   "speed": 3,
+   "view": 10,
+   "regen": 0,
+   "captures": false,
+   "radius": 0.65,
+   "card": "assets/card-mech.png",
+   "tint": "#8a7a5e",
+   "desc": "Rocket walker (UNIT_ID_ARMADILLO=111). Dual weapon rounds, medium punch.",
+   "weapon": {
+    "damage": {
+     "light": 12,
+     "medium": 40,
+     "heavy": 30
+    },
+    "range": 10,
+    "cooldown": 2.6,
+    "accStatic": 74,
+    "accWalk": 54,
+    "splash": 0.8,
+    "projectileSpeed": 22
+   }
+  },
+  "zeus": {
+   "id": "zeus",
+   "name": "Zeus",
+   "kind": "vehicle",
+   "armorClass": "medium",
+   "armor": {
+    "light": 18,
+    "medium": 14,
+    "heavy": 10
+   },
+   "health": 440,
+   "price": 640,
+   "cp": 2,
+   "trainTime": 13,
+   "speed": 3,
+   "view": 10,
+   "regen": 0,
+   "captures": false,
+   "radius": 0.65,
+   "card": "assets/card-f1-flak.png",
+   "tint": "#739c93",
+   "desc": "Dual-weapon platform (UNIT_ID_ZEUS=15). Native chain-lightning shell NOT reproduced.",
+   "weapon": {
+    "damage": {
+     "light": 30,
+     "medium": 34,
+     "heavy": 26
+    },
+    "range": 8.5,
+    "cooldown": 1.5,
+    "accStatic": 80,
+    "accWalk": 64,
+    "splash": 0.4,
+    "projectileSpeed": 30
+   }
+  },
+  "mammoth": {
+   "id": "mammoth",
+   "name": "Mammoth",
+   "kind": "vehicle",
+   "armorClass": "heavy",
+   "armor": {
+    "light": 44,
+    "medium": 36,
+    "heavy": 26
+   },
+   "health": 1050,
+   "price": 880,
+   "cp": 3,
+   "trainTime": 16,
+   "speed": 2.3,
+   "view": 8.5,
+   "regen": 0,
+   "captures": false,
+   "radius": 0.85,
+   "card": "assets/card-storm.png",
+   "tint": "#6d8a5e",
+   "desc": "Super-heavy tank (UNIT_ID_MAMMOTH=116). Slow, brutally expensive.",
+   "weapon": {
+    "damage": {
+     "light": 64,
+     "medium": 52,
+     "heavy": 40
+    },
+    "range": 9.5,
+    "cooldown": 2.6,
+    "accStatic": 84,
+    "accWalk": 60,
+    "splash": 0.8,
+    "projectileSpeed": 24
+   }
+  },
+  "fortress": {
+   "id": "fortress",
+   "name": "Fortress",
+   "kind": "vehicle",
+   "armorClass": "heavy",
+   "armor": {
+    "light": 34,
+    "medium": 30,
+    "heavy": 24
+   },
+   "health": 900,
+   "price": 950,
+   "cp": 3,
+   "trainTime": 18,
+   "speed": 2.1,
+   "view": 11,
+   "regen": 0,
+   "captures": false,
+   "radius": 0.85,
+   "card": "assets/card-f1-mammoth.png",
+   "tint": "#6d8a5e",
+   "desc": "Siege platform (UNIT_ID_FORTRESS=10, UNIT_TYPE_FORTRESS=24). Long-range bombard.",
+   "weapon": {
+    "damage": {
+     "light": 50,
+     "medium": 55,
+     "heavy": 60
+    },
+    "range": 14,
+    "cooldown": 3.4,
+    "accStatic": 70,
+    "accWalk": 50,
+    "splash": 1.6,
+    "projectileSpeed": 16,
+    "splashScatter": 1,
+    "explosionDecr": 20
+   }
+  },
+  "shield": {
+   "id": "shield",
+   "name": "Shield",
+   "kind": "vehicle",
+   "armorClass": "light",
+   "armor": {
+    "light": 10,
+    "medium": 8,
+    "heavy": 6
+   },
+   "health": 300,
+   "price": 300,
+   "cp": 1,
+   "trainTime": 8,
+   "speed": 3.6,
+   "view": 10,
+   "regen": 0,
+   "captures": false,
+   "radius": 0.6,
+   "aura": {
+    "regen": 2,
+    "radius": 6
+   },
+   "card": "assets/card-f1-shield.png",
+   "tint": "#739c93",
+   "desc": "Support drone (UNIT_ID_SHIELD=17, model has no weapon clips). Heals nearby friendlies."
+  },
+  "chameleon": {
+   "id": "chameleon",
+   "name": "Chameleon",
+   "kind": "vehicle",
+   "armorClass": "light",
+   "armor": {
+    "light": 8,
+    "medium": 6,
+    "heavy": 4
+   },
+   "health": 240,
+   "price": 280,
+   "cp": 1,
+   "trainTime": 7,
+   "speed": 6,
+   "view": 14,
+   "regen": 0,
+   "captures": false,
+   "radius": 0.6,
+   "card": "assets/card-mech.png",
+   "tint": "#9c8a5e",
+   "desc": "Fast stealth scout (UNIT_ID_FOG=117). Unarmed; native stealth NOT reproduced."
+  },
+  "helicopter": {
+   "id": "helicopter",
+   "name": "Helicopter",
+   "kind": "aircraft",
+   "armorClass": "medium",
+   "armor": {
+    "light": 16,
+    "medium": 12,
+    "heavy": 8
+   },
+   "health": 340,
+   "price": 560,
+   "cp": 2,
+   "trainTime": 12,
+   "speed": 5.4,
+   "view": 12,
+   "regen": 0,
+   "captures": false,
+   "radius": 0.6,
+   "card": "assets/card-f1-helicopter.png",
+   "tint": "#739c93",
+   "desc": "Gunship (ItemF1/F2AviaHelicopter). Ignores terrain — shredded by AA guns.",
+   "weapon": {
+    "damage": {
+     "light": 34,
+     "medium": 26,
+     "heavy": 16
+    },
+    "range": 8.5,
+    "cooldown": 1.2,
+    "accStatic": 76,
+    "accWalk": 68,
+    "splash": 0.4,
+    "projectileSpeed": 30,
+    "guided": 1
+   }
+  },
+  "cerber": {
+   "id": "cerber",
+   "name": "HERO \"Cerber\"",
+   "kind": "hero",
+   "faction": 1,
+   "hero": true,
+   "armorClass": "medium",
+   "armor": {
+    "light": 20,
+    "medium": 16,
+    "heavy": 12
+   },
+   "health": 920,
+   "price": 1500,
+   "cp": 4,
+   "trainTime": 24,
+   "speed": 3.4,
+   "view": 10,
+   "regen": 2,
+   "captures": false,
+   "radius": 0.7,
+   "card": "assets/card-hero-cerber.png",
+   "tint": "#7d9cc0",
+   "desc": "F1 hero walker (HeroTypes.Cerber=1). Twin blades shred groups up close (area + crit); switch-gun chips from afar.",
+   "weapon": {
+    "damage": {
+     "light": 22,
+     "medium": 26,
+     "heavy": 18
+    },
+    "range": 7.5,
+    "cooldown": 1.5,
+    "accStatic": 78,
+    "accWalk": 55,
+    "splash": 0,
+    "projectileSpeed": 28
+   },
+   "melee": {
+    "damage": {
+     "light": 46,
+     "medium": 58,
+     "heavy": 42
+    },
+    "range": 2.1,
+    "cooldown": 1.05,
+    "splash": 1.5,
+    "crit": 0.22,
+    "critMul": 2
+   }
+  },
+  "seraphim": {
+   "id": "seraphim",
+   "name": "HERO \"Seraphim\"",
+   "kind": "hero",
+   "faction": 1,
+   "hero": true,
+   "aircraft": true,
+   "armorClass": "medium",
+   "armor": {
+    "light": 16,
+    "medium": 14,
+    "heavy": 10
+   },
+   "health": 780,
+   "price": 1650,
+   "cp": 4,
+   "trainTime": 26,
+   "speed": 6.2,
+   "view": 12.5,
+   "regen": 2,
+   "captures": false,
+   "radius": 0.65,
+   "card": "assets/card-hero-seraphim.png",
+   "tint": "#739cc0",
+   "desc": "F1 flying hero (HeroTypes.Seraphim=3). Fast lazer strikes; LAND for stabilized +25% dmg and armor — departs back to the sky.",
+   "weapon": {
+    "damage": {
+     "light": 34,
+     "medium": 26,
+     "heavy": 16
+    },
+    "range": 9,
+    "cooldown": 1.05,
+    "accStatic": 80,
+    "accWalk": 72,
+    "splash": 0.3,
+    "projectileSpeed": 32,
+    "guided": 1
+   }
+  },
+  "wasp": {
+   "id": "wasp",
+   "name": "HERO \"Wasp\"",
+   "kind": "hero",
+   "faction": 1,
+   "hero": true,
+   "aircraft": true,
+   "armorClass": "light",
+   "armor": {
+    "light": 14,
+    "medium": 12,
+    "heavy": 8
+   },
+   "health": 700,
+   "price": 1600,
+   "cp": 4,
+   "trainTime": 25,
+   "speed": 6.6,
+   "view": 12,
+   "regen": 2,
+   "captures": false,
+   "radius": 0.65,
+   "vfx": {
+    "bul": "hero_bul_wasp_rocket",
+    "fire": "hero_fire_wasp_rocket"
+   },
+   "card": "assets/card-hero-wasp.png",
+   "tint": "#739cb0",
+   "desc": "F1 hero gunship (HeroTypes.Wasp=2; rotor fan VFX eff_fan_helicopter_wasp). Acid + rocket salvoes from standoff range.",
+   "weapon": {
+    "damage": {
+     "light": 36,
+     "medium": 28,
+     "heavy": 18
+    },
+    "range": 9,
+    "cooldown": 1.1,
+    "accStatic": 80,
+    "accWalk": 70,
+    "splash": 0.5,
+    "projectileSpeed": 30,
+    "guided": 1
+   }
+  },
+  "gatling": {
+   "id": "gatling",
+   "name": "HERO \"Gatling\"",
+   "kind": "hero",
+   "faction": 1,
+   "hero": true,
+   "armorClass": "medium",
+   "armor": {
+    "light": 26,
+    "medium": 22,
+    "heavy": 14
+   },
+   "health": 1050,
+   "price": 1700,
+   "cp": 4,
+   "trainTime": 26,
+   "speed": 3.1,
+   "view": 10.5,
+   "regen": 2,
+   "captures": false,
+   "radius": 0.75,
+   "antiAir": true,
+   "spinUp": true,
+   "vfx": {
+    "bul": "hero_bul_gatling_explosive"
+   },
+   "card": "assets/card-hero-gatling.png",
+   "tint": "#7d9cc0",
+   "desc": "F1 hero AA mech (HeroTypes.Gatling=8). Spin-up rotary cannons (WolverineMachineGunMaxAccelerationTime/54): fire rate ramps while firing.",
+   "weapon": {
+    "damage": {
+     "light": 30,
+     "medium": 24,
+     "heavy": 16
+    },
+    "range": 9.5,
+    "cooldown": 1,
+    "accStatic": 78,
+    "accWalk": 60,
+    "splash": 0.2,
+    "projectileSpeed": 34
+   }
+  },
+  "atlas": {
+   "id": "atlas",
+   "name": "HERO \"Atlas\"",
+   "kind": "hero",
+   "faction": 1,
+   "hero": true,
+   "armorClass": "heavy",
+   "armor": {
+    "light": 34,
+    "medium": 30,
+    "heavy": 24
+   },
+   "health": 1500,
+   "price": 1900,
+   "cp": 4,
+   "trainTime": 30,
+   "speed": 2.6,
+   "view": 10,
+   "regen": 3,
+   "captures": false,
+   "radius": 0.85,
+   "immortality": {
+    "dur": 3,
+    "cd": 22
+   },
+   "card": "assets/card-hero-mech-f1.png",
+   "tint": "#7d9cc0",
+   "desc": "F1 hero siege mech (HeroTypes.Atlas=11; game asset named f1_hero_atlant - name drift documented). Immortality field cycles (AtlasImmortalityTime/57): 3s invulnerable every 22s.",
+   "weapon": {
+    "damage": {
+     "light": 40,
+     "medium": 34,
+     "heavy": 26
+    },
+    "range": 8,
+    "cooldown": 1.7,
+    "accStatic": 80,
+    "accWalk": 62,
+    "splash": 1.1,
+    "projectileSpeed": 24
+   }
+  },
+  "mole": {
+   "id": "mole",
+   "name": "HERO \"Mole\"",
+   "kind": "hero",
+   "faction": 1,
+   "hero": true,
+   "armorClass": "medium",
+   "armor": {
+    "light": 22,
+    "medium": 20,
+    "heavy": 14
+   },
+   "health": 980,
+   "price": 1500,
+   "cp": 4,
+   "trainTime": 24,
+   "speed": 3,
+   "view": 9.5,
+   "regen": 2,
+   "captures": false,
+   "radius": 0.7,
+   "mineLayer": {
+    "cd": 9
+   },
+   "card": "assets/card-mech.png",
+   "tint": "#7d9cc0",
+   "desc": "F1 hero (HeroTypes.Mole=4). Minelayer: seeds proximity mines while advancing (mirrors the native MineStatsFactory channels). No hero card icon / model data ships in the package - lowest-evidence hero, documented stand-ins.",
+   "weapon": {
+    "damage": {
+     "light": 26,
+     "medium": 30,
+     "heavy": 20
+    },
+    "range": 7,
+    "cooldown": 1.4,
+    "accStatic": 76,
+    "accWalk": 58,
+    "splash": 0.4,
+    "projectileSpeed": 22
+   }
+  },
+  "leviaphan": {
+   "id": "leviaphan",
+   "name": "HERO \"Leviaphan\"",
+   "kind": "hero",
+   "faction": 2,
+   "hero": true,
+   "aircraft": true,
+   "armorClass": "heavy",
+   "armor": {
+    "light": 30,
+    "medium": 26,
+    "heavy": 20
+   },
+   "health": 1600,
+   "price": 2000,
+   "cp": 4,
+   "trainTime": 32,
+   "speed": 4.2,
+   "view": 13,
+   "regen": 3,
+   "captures": false,
+   "radius": 0.9,
+   "vfx": {
+    "bul": "hero_bul_leviaphan_gun_front"
+   },
+   "card": "assets/card-hero-leviaphan.png",
+   "tint": "#c07d7d",
+   "desc": "F2 flying hero battleship (HeroTypes.Leviaphan=5; gun_front/side/air VFX). Splash broadsides, AIRBORNE - only AA fire reaches it.",
+   "weapon": {
+    "damage": {
+     "light": 38,
+     "medium": 36,
+     "heavy": 30
+    },
+    "range": 10,
+    "cooldown": 1.6,
+    "accStatic": 78,
+    "accWalk": 66,
+    "splash": 1.4,
+    "projectileSpeed": 26
+   }
+  },
+  "beholder": {
+   "id": "beholder",
+   "name": "HERO \"Beholder\"",
+   "kind": "hero",
+   "faction": 2,
+   "hero": true,
+   "armorClass": "medium",
+   "armor": {
+    "light": 24,
+    "medium": 22,
+    "heavy": 16
+   },
+   "health": 950,
+   "price": 1750,
+   "cp": 4,
+   "trainTime": 27,
+   "speed": 3.6,
+   "view": 13.5,
+   "regen": 2,
+   "captures": false,
+   "radius": 0.7,
+   "antiAir": true,
+   "vfx": {
+    "bul": "hero_bul_beholder_lazergun"
+   },
+   "card": "assets/card-hero-beholder.png",
+   "tint": "#c07d9c",
+   "desc": "F2 hero laser hover-tank (HeroTypes.Beholder=7; turbine + lazergun VFX). Extended sight channel (MaxViewReachTime/51) - longest vision in the field.",
+   "weapon": {
+    "damage": {
+     "light": 34,
+     "medium": 30,
+     "heavy": 22
+    },
+    "range": 10.5,
+    "cooldown": 1.3,
+    "accStatic": 84,
+    "accWalk": 70,
+    "splash": 0,
+    "projectileSpeed": 40
+   }
+  },
+  "psitank": {
+   "id": "psitank",
+   "name": "HERO \"Psi Tank\"",
+   "kind": "hero",
+   "faction": 2,
+   "hero": true,
+   "armorClass": "medium",
+   "armor": {
+    "light": 22,
+    "medium": 20,
+    "heavy": 14
+   },
+   "health": 900,
+   "price": 1750,
+   "cp": 4,
+   "trainTime": 27,
+   "speed": 3.4,
+   "view": 11,
+   "regen": 2,
+   "captures": false,
+   "radius": 0.7,
+   "slowOnHit": {
+    "dur": 3
+   },
+   "vfx": {
+    "bul": "hero_bul_psitank_active"
+   },
+   "card": "assets/card-hero-psitank.png",
+   "tint": "#b07dc0",
+   "desc": "F2 hero psi-tank (HeroTypes.Psitank=9; psi wave VFX). Hits scramble fire controls (PsiAttackSpeedReduction/52 + PsiSlowdownDuration/53): targets fire 28% slower for 3s.",
+   "weapon": {
+    "damage": {
+     "light": 28,
+     "medium": 26,
+     "heavy": 18
+    },
+    "range": 9,
+    "cooldown": 1.35,
+    "accStatic": 80,
+    "accWalk": 64,
+    "splash": 0.3,
+    "projectileSpeed": 30
+   }
+  },
+  "solaris": {
+   "id": "solaris",
+   "name": "HERO \"Solaris\"",
+   "kind": "hero",
+   "faction": 2,
+   "hero": true,
+   "armorClass": "medium",
+   "armor": {
+    "light": 26,
+    "medium": 24,
+    "heavy": 16
+   },
+   "health": 1000,
+   "price": 1800,
+   "cp": 4,
+   "trainTime": 28,
+   "speed": 3.2,
+   "view": 10.5,
+   "regen": 2,
+   "captures": false,
+   "radius": 0.72,
+   "chain": {
+    "targets": 2,
+    "range": 3.5,
+    "mul": 0.45
+   },
+   "swapTint": true,
+   "vfx": {
+    "bul": "hero_bul_solaris_lightning"
+   },
+   "card": "assets/card-hero-solaris.png",
+   "tint": "#c0b07d",
+   "desc": "F2 hero tesla walker (HeroTypes.Solaris=6; gun/impulse/lightning VFX). Arcs lightning to 2 extra targets.",
+   "weapon": {
+    "damage": {
+     "light": 32,
+     "medium": 30,
+     "heavy": 20
+    },
+    "range": 8.5,
+    "cooldown": 1.45,
+    "accStatic": 82,
+    "accWalk": 64,
+    "splash": 0.3,
+    "projectileSpeed": 34
+   }
+  },
+  "salamander": {
+   "id": "salamander",
+   "name": "HERO \"Salamander\"",
+   "kind": "hero",
+   "faction": 2,
+   "hero": true,
+   "armorClass": "heavy",
+   "armor": {
+    "light": 30,
+    "medium": 28,
+    "heavy": 20
+   },
+   "health": 1250,
+   "price": 1850,
+   "cp": 4,
+   "trainTime": 29,
+   "speed": 2.9,
+   "view": 10,
+   "regen": 2,
+   "captures": false,
+   "radius": 0.8,
+   "burnOnHit": {
+    "dur": 3,
+    "dps": 9
+   },
+   "vfx": {
+    "bul": "hero_bul_salamander_rocket"
+   },
+   "card": "assets/card-hero-salamander.png",
+   "tint": "#c0937d",
+   "desc": "F2 hero flame MLRS (HeroTypes.Salamander=10; rocket VFX). Thermite salvoes ignite: burn damage over 3s (documented stand-in mechanic).",
+   "weapon": {
+    "damage": {
+     "light": 34,
+     "medium": 32,
+     "heavy": 24
+    },
+    "range": 9.5,
+    "cooldown": 1.7,
+    "accStatic": 78,
+    "accWalk": 60,
+    "splash": 1.2,
+    "projectileSpeed": 22
+   }
+  },
+  "coiltank": {
+   "id": "coiltank",
+   "name": "HERO \"Coil Tank\"",
+   "kind": "hero",
+   "faction": 2,
+   "hero": true,
+   "armorClass": "heavy",
+   "armor": {
+    "light": 32,
+    "medium": 30,
+    "heavy": 24
+   },
+   "health": 1400,
+   "price": 1950,
+   "cp": 4,
+   "trainTime": 30,
+   "speed": 2.8,
+   "view": 10.5,
+   "regen": 3,
+   "captures": false,
+   "radius": 0.82,
+   "frontal": 0.3,
+   "chain": {
+    "targets": 2,
+    "range": 3.2,
+    "mul": 0.4
+   },
+   "vfx": {
+    "bul": "hero_bul_coiltank_ball"
+   },
+   "card": "assets/card-hero-coiltank.png",
+   "tint": "#7dc0b0",
+   "desc": "F2 hero coil tank (HeroTypes.Coiltank=12; ball/lightning VFX). Frontal armor blunts head-on hits (CoilTankFrontalArmor/56); coil arcs to 2 targets (CoilTankMaxTargets/55).",
+   "weapon": {
+    "damage": {
+     "light": 38,
+     "medium": 36,
+     "heavy": 28
+    },
+    "range": 8.5,
+    "cooldown": 1.6,
+    "accStatic": 80,
+    "accWalk": 62,
+    "splash": 0.4,
+    "projectileSpeed": 36
+   }
   }
+ },
+ "BUILD_ORDER_F1": [
+  "ilight",
+  "iheavy",
+  "hammer",
+  "torrent",
+  "zeus",
+  "typhoon",
+  "fortress",
+  "shield",
+  "helicopter"
+ ],
+ "BUILD_ORDER_F2": [
+  "ilight",
+  "iheavy",
+  "sniper",
+  "coyote",
+  "jaguar",
+  "armadillo",
+  "porcupine",
+  "mammoth",
+  "chameleon",
+  "helicopter"
+ ],
+ "HERO_ORDER": [
+  "cerber",
+  "wasp",
+  "seraphim",
+  "gatling",
+  "atlas",
+  "mole"
+ ],
+ "HQ": {
+  "id": "hq",
+  "name": "Headquarters",
+  "health": 4200,
+  "radius": 2.2,
+  "view": 13
+ },
+ "DEPOT": {
+  "id": "depot",
+  "name": "Supply Depot",
+  "health": 600,
+  "radius": 1.6,
+  "view": 8
+ },
+ "BLD": {
+  "barracks": {
+   "id": "barracks",
+   "name": "Barracks",
+   "health": 900,
+   "radius": 1.9,
+   "view": 9,
+   "price": 400,
+   "buildTime": 14,
+   "model": "f1_bld_barracks"
+  },
+  "factory": {
+   "id": "factory",
+   "name": "Factory",
+   "health": 1100,
+   "radius": 2.1,
+   "view": 9,
+   "price": 550,
+   "buildTime": 18,
+   "model": "f1_bld_factory_light"
+  },
+  "heavyfactory": {
+   "id": "heavyfactory",
+   "name": "Heavy Factory",
+   "health": 1400,
+   "radius": 2.3,
+   "view": 9,
+   "price": 850,
+   "buildTime": 24,
+   "model": "f1_bld_factory_heavy"
+  },
+  "power": {
+   "id": "power",
+   "name": "Power Plant",
+   "health": 700,
+   "radius": 1.7,
+   "view": 8,
+   "price": 300,
+   "buildTime": 10,
+   "model": "f1_bld_power"
+  },
+  "turret": {
+   "id": "turret",
+   "name": "Turret",
+   "health": 800,
+   "radius": 1.2,
+   "view": 11,
+   "price": 450,
+   "buildTime": 12,
+   "model": "f1_bld_tower",
+   "antiAir": true,
+   "weapon": {
+    "damage": {
+     "light": 34,
+     "medium": 30,
+     "heavy": 20
+    },
+    "range": 10.5,
+    "cooldown": 1.35,
+    "accStatic": 88,
+    "accWalk": 66,
+    "splash": 0,
+    "projectileSpeed": 30
+   }
+  },
+  "bunker": {
+   "id": "bunker",
+   "name": "Bunker",
+   "health": 1000,
+   "radius": 1.4,
+   "view": 9,
+   "price": 350,
+   "buildTime": 10,
+   "model": "f1_bld_bunker",
+   "weapon": {
+    "damage": {
+     "light": 26,
+     "medium": 8,
+     "heavy": 2
+    },
+    "range": 7.5,
+    "cooldown": 0.7,
+    "accStatic": 80,
+    "accWalk": 60,
+    "splash": 0,
+    "projectileSpeed": 0
+   }
+  },
+  "herobld": {
+   "id": "herobld",
+   "name": "Hero Building",
+   "health": 1300,
+   "radius": 2.1,
+   "view": 9,
+   "price": 900,
+   "buildTime": 26,
+   "model": "f1_bld_hero"
+  }
+ },
+ "BUILDINGS_ORDER": [
+  "barracks",
+  "factory",
+  "heavyfactory",
+  "power",
+  "turret",
+  "bunker",
+  "herobld"
+ ],
+ "PRODUCER_OF": {
+  "ilight": "barracks",
+  "iheavy": "barracks",
+  "sniper": "barracks",
+  "hammer": "factory",
+  "torrent": "factory",
+  "zeus": "factory",
+  "shield": "factory",
+  "coyote": "factory",
+  "jaguar": "factory",
+  "armadillo": "factory",
+  "porcupine": "factory",
+  "fortress": "heavyfactory",
+  "typhoon": "heavyfactory",
+  "mammoth": "heavyfactory",
+  "chameleon": "heavyfactory",
+  "helicopter": "heavyfactory",
+  "cerber": "herobld",
+  "wasp": "herobld",
+  "seraphim": "herobld",
+  "gatling": "herobld",
+  "atlas": "herobld",
+  "mole": "herobld",
+  "leviaphan": "herobld",
+  "beholder": "herobld",
+  "psitank": "herobld",
+  "solaris": "herobld",
+  "salamander": "herobld",
+  "coiltank": "herobld"
+ },
+ "ECONOMY": {
+  "baseIncome": 14,
+  "depotIncome": 11,
+  "baseCP": 10,
+  "depotCP": 4,
+  "captureTimeNeutral": 5,
+  "captureTimeEnemy": 9,
+  "powerIncome": 2,
+  "powerCP": 2
+ }
 }

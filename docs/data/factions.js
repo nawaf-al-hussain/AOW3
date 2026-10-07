@@ -9,10 +9,10 @@ Balance VALUES are gameplay-tuned approximations (native values are backend-deli
   // Faction rosters + production + economy knobs. f1 = player (blue, CONF unit ids),
   // f2 = enemy AI (red, RES unit ids) - faction-swap evidence in worklog Task 13.
   var factions = {
-    1: { id: 1, name: "Confederation", buildOrder: ["ilight", "iheavy", "hammer", "torrent", "zeus", "typhoon", "fortress", "shield", "helicopter"], heroOrder: ["cerber", "seraphim"] },
-    2: { id: 2, name: "Resistance", buildOrder: ["ilight", "iheavy", "sniper", "coyote", "jaguar", "armadillo", "porcupine", "mammoth", "chameleon", "helicopter"], heroOrder: [] }
+    1: { id: 1, name: "Confederation", buildOrder: ["ilight", "iheavy", "hammer", "torrent", "zeus", "typhoon", "fortress", "shield", "helicopter"], heroOrder: ["cerber", "wasp", "seraphim", "gatling", "atlas", "mole"] },
+    2: { id: 2, name: "Resistance", buildOrder: ["ilight", "iheavy", "sniper", "coyote", "jaguar", "armadillo", "porcupine", "mammoth", "chameleon", "helicopter"], heroOrder: ["leviaphan", "beholder", "psitank", "solaris", "salamander", "coiltank"] }
   };
-  var producers = {"ilight": "barracks", "iheavy": "barracks", "sniper": "barracks", "hammer": "factory", "torrent": "factory", "zeus": "factory", "shield": "factory", "coyote": "factory", "jaguar": "factory", "armadillo": "factory", "porcupine": "factory", "fortress": "heavyfactory", "typhoon": "heavyfactory", "mammoth": "heavyfactory", "chameleon": "heavyfactory", "helicopter": "heavyfactory", "cerber": "herobld", "seraphim": "herobld"};
+  var producers = {"ilight": "barracks", "iheavy": "barracks", "sniper": "barracks", "hammer": "factory", "torrent": "factory", "zeus": "factory", "shield": "factory", "coyote": "factory", "jaguar": "factory", "armadillo": "factory", "porcupine": "factory", "fortress": "heavyfactory", "typhoon": "heavyfactory", "mammoth": "heavyfactory", "chameleon": "heavyfactory", "helicopter": "heavyfactory", "cerber": "herobld", "wasp": "herobld", "seraphim": "herobld", "gatling": "herobld", "atlas": "herobld", "mole": "herobld", "leviaphan": "herobld", "beholder": "herobld", "psitank": "herobld", "solaris": "herobld", "salamander": "herobld", "coiltank": "herobld"};
   var buildingsOrder = ["barracks", "factory", "heavyfactory", "power", "turret", "bunker", "herobld"];
   var economy = {"baseIncome": 14, "depotIncome": 11, "baseCP": 10, "depotCP": 4, "captureTimeNeutral": 5, "captureTimeEnemy": 9, "powerIncome": 2, "powerCP": 2};
   g.AOW3_DATA = g.AOW3_DATA || {};

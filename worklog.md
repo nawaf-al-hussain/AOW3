@@ -679,9 +679,6 @@ Stage Summary:
   (seeded sim PRNG + state hashes/replay fixtures) and data-model extraction,
   NOT Wasm/multiplayer yet.
 
----
-Task ID: 16b
-Agent: concurrent agent (remote push, normalized header on rebase)
 Task: audit item #2 (damage pipeline) + MinePrice/71 xref + VFX taxonomy fold-in
 
 Work Log:
@@ -780,3 +777,14 @@ Live QA (Pages v=18, agent-browser fresh session):
 - Corpse lifecycle: created on death with dieT 0.9 (infantry), purged after
   die_time; roster removal unchanged (6->5). Zero page errors (only the
   pre-existing GLTF skinning warning). 16:9 desktop + iPhone 14 layouts intact.
+Task: the 10 remaining hero prefabs (Wasp, Mole, Leviaphan, Solaris, Beholder, Gatling, Psitank, Salamander, Atlas, Coiltank)
+
+Work Log:
+- Roster ground truth: HeroTypes enum (dump.cs:247448) = 12 heroes; Task 16 shipped Cerber/Seraphim.
+- Blocking fact established: hero chassis prefabs are NOT in the package (full magic-scan of all 5,502 bin/Data files = null-pad + FSB5 only; scene-graph scan of all 10 bundles = hero VFX + 4 hero model UV textures only) — model content is server-delivered; documented per the standing roster-pass conclusion.
+- Authentic card art extracted from the curated zip: hero_card_ico_{wasp,gatling,leviaphan,beholder,psitank,solaris,salamander,coiltank} + ico_mech_heroes_f1 (Atlas) — 10 new docs/assets/card-hero-*.png. Naming drift recorded (enum Atlas=11 vs asset f1_hero_atlant); codomash (no enum slot) recorded for a future pass.
+- Wired 10 hero defs (native anchors in descs), HERO_ORDER=12, faction-filtered build bar, PRODUCER_OF→herobld, chassis-faithful stand-in UNIT_MODEL entries (solaris swapTint), ability hooks natively anchored: Atlas immortality (57), Coiltank frontal (56) + chain (55), Psitank slow (52/53), Gatling spin-up (54), Solaris chain, Salamander burn, Mole minelaying (MineStatsFactory mirror); AI builds Hero Building + f2 heroes.
+- QA (headless, 0 page errors): 12/12 heroes spawn+render; slot rule enforced; ability unit-tests exact (slow/burn/immortal/frontal 70-vs-100/chain 18=40x0.45/aircraft-skip correct); mines laid+armed; gatling heat live; 6 f1 hero cards with authentic art in bar. window.__aow3sim QA hook added. Rebased over the concurrent Phase 2 data-model extraction (5680dc2): hero defs/heroOrder/producers/natives ported into docs/data/{units,factions,index}.js, weapons w_* added, fixture regenerated via reverse/tools/gen_data_fixture.js (28 units), data-model test whitelisted the natively-anchored hero ability fields — 379/379 assertions pass. Cache-buster v=18 (v=17 taken by Phase 2).
+
+Stage Summary:
+- Full 12-hero roster live (v=18) in the Phase 2 data-module structure; only the chassis GLBs remain stand-ins (documented swap points in UNIT_MODEL). Note: reverse/notes/hero-prefabs-10-remaining.md.
