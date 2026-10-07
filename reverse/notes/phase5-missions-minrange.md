@@ -1,4 +1,4 @@
-# Phase 5 — missions & minimum range + Phase D replay harness (v=23)
+# Phase 5 — missions & minimum range + Phase D replay harness (v=23) + stances: defend/bombard/dontshoot/takepos (v=28)
 
 Native anchors (dump.cs 6.9.18, sha256 0050e67d…):
 
@@ -34,8 +34,13 @@ Native anchors (dump.cs 6.9.18, sha256 0050e67d…):
   attackMove semantics: acquisition allowed (`updateTargeting` + building-target
   branch), aggro warn-joins include patrollers. P arms the order (next right-click /
   minimap right-click issues it); Escape disarms.
-- Not reconstructed (documented): native Defend/Bombard task nuances (hold
-  reconstructed below, v=25).
+- Not reconstructed (documented): native Defend/Bombard task nuances —
+  resolved below (v=28).
+- Erratum (v=28): the v=25 note claimed `Stop = 2^30` is excluded from the
+  `All` mask `0x5FFFFFFF`. Bit arithmetic says otherwise: `0x5FFFFFFF` has bit
+  30 SET (bits 0–28 + bit 30; bits 29/31 unassigned are the excluded ones),
+  so Stop IS a member of `All`. The stop-is-one-shot / hold-is-a-stance
+  semantics stand unchanged on the button-structure evidence below.
 
 ## Garrison mission
 - `ClientBuildingTypeEditor.Bunker = 14` (dump.cs:266093); `BU_CATEGORY_BUNKER = 3`,
@@ -115,21 +120,153 @@ Native anchors (dump.cs 6.9.18, sha256 0050e67d…):
     fire from inside its dead zone cannot lock an unfireable obj and starve
     every valid target. Explicit commandAttack stays sticky (native
     objPreferred is a player order).
-- Not reconstructed (documented): native Defend/Bombard task nuances (Bombard
-  = targeted shelling order; Defend = default-stance variant), DontShoot/
-  TakePositions, and aircraft-hold orbit specifics (ItemAviaAttackHoldPosition
-  suggests attack-from-orbit; the tribute holds aircraft hovering in place).
+- Not reconstructed (documented): native Defend/Bombard task nuances
+  (Bombard = targeted shelling order; Defend = default-stance variant),
+  DontShoot/TakePositions, and aircraft-hold orbit specifics
+  (ItemAviaAttackHoldPosition suggests attack-from-orbit; the tribute holds
+  aircraft hovering in place) — ALL resolved below (v=28).
+
+## Defend / Bombard / DontShoot / TakePositions / aircraft-hold (v=28)
+
+The remaining documented Phase 5 unknowns, closed against dump.cs 6.9.18
+(sha256 0050e67d…) + native disassembly (`reverse/evidence/combat/
+specmode-native.txt`, tool `reverse/tools/specmode_native_analysis.py`).
+
+### The stance dispatch: one sim command, one act byte
+- `GAICommandSpecMode : GAICommand` (dump.cs:410916, namespace
+  `com.geargames.aow.entities.gai.gaicomm`) — the sim-side spec-mode command:
+  `ACT_STOP = 0, ACT_HOLD = 1, ACT_SIEGE_TO = 2, ACT_SIEGE_FROM = 3,
+  ACT_HIDE = 4, ACT_DEFEND = 5, ACT_RESET_SPEED = 6, ACT_DONT_SHOOT = 7`
+  (field `act // 0x30`, sbyte). Stop/hold/hide/defend/dont-shoot are ONE
+  command family dispatched by the act byte; `execute(Battle)` RVA 0x45F61E0,
+  `verifyVariables(Battle)` 0x45F6158.
+- Native shape of `execute()` (disassembly): null-checks the Battle, iterates
+  the command's unit list, loads `act` at [this+0x30], and switches; the
+  ACT_DEFEND (5) arm has a DEDICATED gate — a Battle virtual is called and
+  AND-ed with `act == 5` before the defend path (0x45F6358–0x45F6384), i.e.
+  defend executes through an extra battle-level check the other acts do not.
+- Server mirrors: `UnitTaskType` consts {NONE=0, PATROL=1, DEFEND=2,
+  HOLD_POSITION=3, HIDE=4, BOMBARD=5, MINE=6, DEMINE=7, DONT_SHOOT=8,
+  LOADING=9, UNLOADING=10, BERSERK=11} (dump.cs:395395) — identical to
+  `ClientUnitTaskType` (271209); `UnitStateSpecType` SPEC_* consts identical
+  to `ClientUnitStateSpecType` (394943 vs 271164). Stances are task AND spec.
+- Network surface: only Bombard / HoldPosition / LoadTransport / Move /
+  PatrolTargeting / Psionic / **Spec** / Stop / UnloadTransport have
+  AICommUnits*ST serializer pairs (dump.cs:341228–341432). There is NO
+  AICommUnitsDefend/DontShoot/TakePositions — those orders ride the generic
+  `AICommUnitsSpec` {int[] unitIds, int specValue} (433780).
+- Voices: `VoiceType` has NO Defend/DontShoot/TakePositions entries — stance
+  acks are the generic `ToSpecMode = 101` / `FromSpecMode = 102` (dump.cs:83222),
+  unlike Move(43)/Patrol(33)/HoldPosition(32) which have per-chassis voices.
+
+### Defend (task 2 / spec 1024 / ACT 5)
+- Instant, no target point: `SendUnitsDefend(IList<ClientUnit> units)` /
+  `SendSelectedUnitsDefend()` take no cell (dump.cs:337730/337733); hotkey
+  `HotkeyAction.UnitSpecDefend = 33` (255741); tutorial condition
+  `ClientGAITFCUnitStateSpecType.Defend = 1` (311597) — taught first.
+- Position anchor: sim `Unit` carries a SECOND patrol route
+  `patrol_defend // 0x158` beside `patrol // 0x150` (dump.cs:393336/393338) —
+  defend is anchored, not free-floating.
+- Reconstruction (`commandDefend`, v=28): order `{kind:"defend"}` + anchor at
+  the issue spot; acquisition + fire in the weapon window (idle-like);
+  pursuit TETHERED — chase only while unit and target stay within
+  `DEFEND_TETHER = 4` of the anchor, else break off and re-anchor (the anchor
+  persists). A target pulled beyond leash + 2-tile grace drops its lock
+  (same starvation class the v=25 dead-zone invariant removed). Tether value
+  gameplay-tuned (no native constant recoverable — server-delivered).
+
+### Bombard (task 5 / spec 4) — targeted point shelling
+- `SendUnitsBombard(IList<ClientUnit> units, Point2i point)` (dump.cs:337736)
+  → `AICommUnitsBombard` {int[] ids, short x, short y} (433431) — a POINT
+  order. Per-weapon predicate `WeaponType.canBombard()` (VA 0x45B6268;
+  shell-type semantics — `canBombard = type & 1`, weapon-type note §3.1);
+  client filters the selection (`GetBombardUnitsOnly`, 81118) and shows an
+  area-radius cursor (`UnitBombardRadius`, 283999; BombardTap/Line, 257350).
+  Sim-side denial log literal: "GetBombardWeaponType::Unit does not have
+  bombard weapon (unitId=…" (stringliteral).
+- Reconstruction (`commandBombard`, v=28): only artillery-family weapons
+  accept — mapped as `minRange > 0` (the native distance_min signature:
+  typhoon/fortress); shells land at the POINT blind (no target lock; the
+  splash projectile branch is already a point-impact model); the unit keeps
+  the [minRange, range] band around the point (no retreat below minRange —
+  documented choice); release by any other order. Point-denial DURATION
+  (native `task_until_tick` 0x104?) unresolved — tribute shells until
+  released.
+
+### DontShoot / CanShoot (task 8 / specs 1048576 | 2097152) — fire discipline
+- Paired state specs `DontShoot = 1048576` / `CanShoot = 2097152`
+  (dump.cs:271188/271189), task 8 (271222), `ACT_DONT_SHOOT = 7` (410916),
+  hotkeys `UnitSpecDontShoot = 26` / `UnitSpecCanShoot = 32` (255734/255740),
+  tutorial condition 12 (311609).
+- Reconstruction (`commandDontShoot`/`commandCanShoot`, v=28): `u.fireHold`
+  flag — units still acquire/track/aim but every fire path is gated
+  (`shoot`/`fireShell` incl. burst releases/`meleeStrike`/`shootBuilding`);
+  explicit commandAttack does NOT bypass it. Spec-pair toggle model (sticky
+  until CanShoot); whether the native TASK form is exclusive with later
+  orders remains unresolved (task 8 vs spec bit duality).
+
+### TakePositions (spec 4194304) — per-unit placement
+- Targeting layout `GUIBattleLayoutUnitTakePositions` (dump.cs:304597) whose
+  serialized tooltip reads (RU) "layout deactivation delay after ALL units
+  are placed"; `ShowString(int unitsCount)` (304640s) counts the remaining
+  units down; cursor markers `PointTakePosition`/`...Invalid` (257345/257346)
+  + `PointTakePositionAction` with a finish-delay coroutine (254946); sim
+  state `Unit.TakePosition : Coordinate` (393544); hotkey
+  `UnitSpecTakePosition = 25` (255733). NOT a instant stance — a placement
+  flow.
+- Reconstruction (`commandTakePositions(ids, spots)`, v=28): each unit walks
+  to ITS assigned spot (per-index; extra units ring around the last spot)
+  and on arrival converts to hold semantics at the taken position (window
+  fire, no chase). Client T-key arms a placement mode where each right-click
+  assigns the next spot and the command issues when all selected units are
+  placed (mirrors the native count-down layout).
+
+### Aircraft-hold orbit (was: "aircraft hover in place")
+- `AudioFile.BattleVoice.ItemAviaAttackHoldPosition = 152` (dump.cs:81645)
+  reads as attack-from-orbit; the air frame carries `flight_radius`
+  (`UnitStateType // 0x7C`) and occupations split AIR_HELICOPTER(1) /
+  AIR_FIGHTER(3) / AIR_BOMBER(4) (`Unit.OCCUPATION_*`, 393220 region);
+  `SPEC_FIGHTERS_GUARD = 16384` + `SendSelectedUnitFightersGuard()` (dump.cs:337766,
+  instant) are the fighter-side cousin.
+- Reconstruction (v=28, VISUAL ONLY): held/defending airborne units circle
+  their anchor in the renderer (slow orbit, per-unit phase). Sim state and
+  the replay hash are untouched — the sim holds aircraft stationary, which
+  remains an approximation (orbit kinematics + attack passes UNRESOLVED).
+
+### Remaining unknowns (documented)
+- Native defend leash value/duration and the Battle-level gate predicate in
+  `execute()` act 5 (needs vtable-slot mapping of the Battle virtual).
+- Bombard point-denial duration (`task_until_tick` semantics) and whether
+  bombard units keep self-defense acquisition while bombarding.
+- DontShoot task-vs-spec exclusivity nuance (sticky toggle vs task
+  replacement).
+- Native TakePositions formation algorithm (how the sim distributes
+  per-unit Coordinates when the player places a group).
+- ACT_SIEGE_TO/FROM, ACT_HIDE/UNHIDE, ACT_RESET_SPEED (SameSpeed
+  `SameSpeed // 0x18` object), `Hide/Unhide` specs: still open Phase 5
+  adjacents (stealth/siege-unit specifics), not part of the documented gap
+  list.
+- Native patrol is a MULTI-POINT route (`PatrolRoute.points : List<Coordinate>`
+  dump.cs:386963; `SendSelectedUnitsPatrolTargeting(List<Vector3>)` 337727) —
+  the tribute's anchor<->B two-leg flip is a simplification (documented v=23).
 
 ## Coverage
-- `reverse/evidence/tests/phase5.test.js` — 93 vectors (min-range gates, patrol
+- `reverse/evidence/tests/phase5.test.js` — 128 vectors (min-range gates, patrol
   oscillation/engagement/resume/journal, garrison enter/protect/crew-fire/exit/
   capacity/death/rejections, hold stance entry/window-fire/no-pursuit/
   retaliation/minRange-aggro/building/melee/warn-join/interplay/release,
-  cross-feature determinism).
-- `reverse/evidence/tests/replay.test.js` — 34 vectors (bit-exact reproduction,
+  defend anchor/engage/tether/break-off/lock-drop/re-anchor/release,
+  bombard filter/point-shells/area-damage/band/dead-zone/release,
+  fire-discipline track/no-fire/restore/melee+building gating,
+  takepos per-unit spots/arrival-hold/no-pursuit, cross-feature determinism
+  incl. fireHold in the hash).
+- `reverse/evidence/tests/replay.test.js` — 45 vectors (bit-exact reproduction,
   baseline, cross-issuer ordering, tamper detection seed/drop/alter/terrain,
   540-command journal vs 512 ring, live-shaped build+patrol+garrison run, JSON
-  round-trip).
-- Regressions: unit-fsm 29, accuracy 13, data-model 379 (fixture regenerated after
-  the minRange data change; `minRange` added to WEAPON_FIELD_MAP as
-  m_distanceMin/0x2C), commands-determinism 50.
+  round-trip; v=26 boundary flush).
+- Native: `reverse/evidence/combat/specmode-native.txt` (annotated ARM64
+  disassembly of GAICommandSpecMode.execute/verifyVariables/ToString,
+  AICommUnitsSpec/Bombard/HoldPosition executors, WeaponType.canBombard,
+  Unit stance accessors; sha256 8ace05bb…), tool
+  `reverse/tools/specmode_native_analysis.py`.
+- Regressions: unit-fsm 29, accuracy 13, data-model 379, commands-determinism 50.

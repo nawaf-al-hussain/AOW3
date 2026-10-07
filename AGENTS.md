@@ -1325,6 +1325,24 @@ cap 3, move/attack/capture auto-unload (UnloadFromTransport = 10 analog), V
 exits, bunker death scrambles the crew); stateString extended (garrison,
 patrol anchor/leg). Coverage: `reverse/evidence/tests/phase5.test.js`
 (47 vectors, shipped-kernel extraction).
+Phase 5 remaining documented unknowns (v=28): hold position
+(HotkeyAction.UnitSpecHoldPosition = 24, AICommUnitsHoldPosition — instant
+stance, window-fire, never pursues; v=25) and the stance family Defend /
+Bombard / DontShoot / TakePositions + aircraft-hold orbit (v=28, natively
+anchored via GAICommandSpecMode ACT_* dispatch dump.cs:410916 + native
+disassembly `reverse/evidence/combat/specmode-native.txt`): defend = anchored
+tethered-pursuit stance (commandDefend, SendSelectedUnitsDefend no-cell,
+patrol_defend second route 393338); bombard = targeted POINT shelling for
+artillery-family weapons only (commandBombard, AICommUnitsBombard ids+x/y,
+WeaponType.canBombard 0x45B6268, GetBombardUnitsOnly filter); dont-shoot/
+can-shoot = fire-discipline toggle pair (commandDontShoot/commandCanShoot,
+specs 1048576/2097152, hotkeys 26/32) gating every fire path; take-positions
+= per-unit placement then hold at the taken spot (commandTakePositions,
+spec 4194304, hotkey 25, Unit.TakePosition Coordinate); held/defending
+aircraft orbit their anchor (renderer-only). Hotkeys: H hold, D defend,
+X bombard, T positions, F hold-fire, P patrol, V garrison. Coverage:
+`reverse/evidence/tests/phase5.test.js` (128 vectors, shipped-kernel
+extraction).
 Phase D replay playback harness (v=23): `Replay` class in the kernel —
 capture() = seed + full command journals (player AND AI, tick/seq stamped via
 shared sim.cmdSeq) + terrain fingerprint (fresh-constructor probe, NOT the

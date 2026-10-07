@@ -102,6 +102,10 @@
   // native anchor: bunker garrison capacity (ClientBuildingTypeEditor.Bunker = 14,
   // ClientBunkerWeapon crew-served muzzles); value gameplay-tuned.
   const GARRISON_CAP = 3;
+  // native: Defend = task 2 + spec 1024 + ACT_DEFEND = 5 (dump.cs:271216/271170,
+  // GAICommandSpecMode 410916) — anchored stance; no native leash constant is
+  // recoverable from the APK (server-delivered), tether is gameplay-tuned.
+  const DEFEND_TETHER = 4;
   const FSM_DEFAULTS = {
     // hull turn rate rad/s (native UnitStateType.rotate)
     rotate: { infantry: 10, vehicle: 3.2, aircraft: 4.5 },
@@ -581,7 +585,7 @@
           s.push(`Q${qq.defId},${q(qq.t)}`);
       }
       for (const u of this.units)
-        s.push(`U${u.id},${u.def.id},${u.owner},${q(u.x)},${q(u.y)},${q(u.hp)},${q(u.facing)},${u.order.kind},${o(u.order.x)},${o(u.order.y)},${o(u.order.depotId)},${o(u.targetId)},${o(u.preferredId)},${u.path.length},${xy(u.dest)},${xy(u.guard)},${u.grounded ? 1 : 0},${u.burstLeft},${q(u.aimT)},${q(u.cd)},${u.state},${u.kills},${q(u.captureT ?? -1)},${o(u.lastHitBy)},${o(u.lastTargetId)},${o(u.garrison)},${o(u.order.ax)},${o(u.order.ay)},${u.order.back ? 1 : 0}`);
+        s.push(`U${u.id},${u.def.id},${u.owner},${q(u.x)},${q(u.y)},${q(u.hp)},${q(u.facing)},${u.order.kind},${o(u.order.x)},${o(u.order.y)},${o(u.order.depotId)},${o(u.targetId)},${o(u.preferredId)},${u.path.length},${xy(u.dest)},${xy(u.guard)},${u.grounded ? 1 : 0},${u.burstLeft},${q(u.aimT)},${q(u.cd)},${u.state},${u.kills},${q(u.captureT ?? -1)},${o(u.lastHitBy)},${o(u.lastTargetId)},${o(u.garrison)},${o(u.order.ax)},${o(u.order.ay)},${u.order.back ? 1 : 0},${u.fireHold ? 1 : 0}`);
       for (const b of this.buildings)
         s.push(`B${b.id},${b.defId},${b.owner},${q(b.x)},${q(b.y)},${q(b.hp)},${b.built ? 1 : 0},${q(b.captureT)},${b.captureBy},${o(b.lastHitOwner)}`);
       for (const p of this.projectiles)
@@ -671,6 +675,111 @@
         u.dest = undefined;
         u.guard = { x: u.x, y: u.y };
         this.floats.push({ x: u.x, y: u.y - 1.8, text: "HOLD", color: "#e2e8f0", t: 0 });
+      }
+    }
+    commandDefend(ids) {
+      // native: ClientUnitTaskType.Defend = 2 (dump.cs:271216) + spec 1024
+      // (271170) + GAICommandSpecMode.ACT_DEFEND = 5 (410916, dedicated gate
+      // in execute()) — instant, no target point: SendUnitsDefend(IList<Unit>) /
+      // SendSelectedUnitsDefend() take no cell (dump.cs:337757), hotkey 33,
+      // tutorial condition 1. Sim carries a SECOND route per unit
+      // (Unit.patrol_defend, dump.cs:393338) = position-anchored behavior.
+      // Reconstruction: acquire + fire in the weapon window; pursuit is
+      // TETHERED to the anchor (DEFEND_TETHER) — beyond it the unit breaks off
+      // and re-anchors (native leash value server-side, tuned here).
+      for (const id of ids) {
+        const u = this.units.find((v) => v.id === id);
+        if (!u || u.garrison !== undefined)
+          continue;
+        u.order = { kind: "defend" };
+        u.targetId = undefined;
+        u.preferredId = undefined;
+        u.path = [];
+        u.dest = undefined;
+        u.guard = { x: u.x, y: u.y };
+        this.floats.push({ x: u.x, y: u.y - 1.8, text: "DEFEND", color: '#e2e8f0', t: 0 });
+      }
+    }
+    commandBombard(ids, x, y) {
+      // native: ClientUnitTaskType.Bombard = 5 (dump.cs:271219) + spec 4
+      // (271171) — TARGETED point order: SendUnitsBombard(units, Point2i)
+      // (337757), AICommUnitsBombard carries int[] ids + two shorts x/y
+      // (433431); per-weapon predicate WeaponType.canBombard() (VA 0x45B6268,
+      // shell type & 1 — see weapon-type note §3.1); selection filtered by
+      // GetBombardUnitsOnly (81118) + sim denial log "Unit does not have
+      // bombard weapon"; area radius visual UnitBombardRadius (283999).
+      // Reconstruction: only artillery-family weapons (minRange > 0 = the
+      // native distance_min signature: typhoon/fortress) accept; shells land
+      // at the POINT (area splash, no target lock); band-kept in
+      // [minRange, range] of the point. Point-denial duration native
+      // task_until_tick semantics — here until released by another order.
+      let i = 0;
+      for (const id of ids) {
+        const u = this.units.find((v) => v.id === id);
+        if (!u || u.garrison !== undefined)
+          continue;
+        if (!u.def.weapon || !(u.def.weapon.minRange > 0))
+          continue; // native GetBombardUnitsOnly filter (no bombard weapon)
+        u.order = { kind: "bombard", x, y };
+        u.targetId = undefined;
+        u.preferredId = undefined;
+        u.path = this.pf.find(u.x, u.y, x, y, false) ?? [];
+        u.dest = { x, y };
+        this.floats.push({ x: u.x, y: u.y - 1.8, text: "BOMBARD", color: '#fcd34d', t: 0 });
+        i++;
+      }
+    }
+    commandDontShoot(ids) {
+      // native: ClientUnitTaskType.DontShoot = 8 (dump.cs:271222) + paired
+      // state specs DontShoot = 1048576 / CanShoot = 2097152 (271188-271189),
+      // GAICommandSpecMode.ACT_DONT_SHOOT = 7 (410916), hotkeys 26/32
+      // (255733/255739), tutorial condition 12 (311609). Fire discipline:
+      // units track + aim but hold fire until CanShoot (spec-pair toggle
+      // model; task-vs-spec exclusivity nuance = remaining unknown).
+      for (const id of ids) {
+        const u = this.units.find((v) => v.id === id);
+        if (!u)
+          continue;
+        u.fireHold = true;
+        this.floats.push({ x: u.x, y: u.y - 1.8, text: "HOLD FIRE", color: '#e2e8f0', t: 0 });
+      }
+    }
+    commandCanShoot(ids) {
+      // native: ClientUnitStateSpecType.CanShoot = 2097152 (dump.cs:271189),
+      // HotkeyAction.UnitSpecCanShoot = 32 (dump.cs:255739) — the complementary
+      // toggle of DontShoot.
+      for (const id of ids) {
+        const u = this.units.find((v) => v.id === id);
+        if (!u)
+          continue;
+        u.fireHold = false;
+        this.floats.push({ x: u.x, y: u.y - 1.8, text: "WEAPONS FREE", color: '#a3e635', t: 0 });
+      }
+    }
+    commandTakePositions(ids, spots) {
+      // native: ClientUnitStateSpecType.TakePositions = 4194304
+      // (dump.cs:271190), HotkeyAction.UnitSpecTakePosition = 25 (255733),
+      // targeting layout GUIBattleLayoutUnitTakePositions (304597) whose
+      // tooltip reads "...after all units are placed" — a per-unit placement
+      // flow (ShowString(unitsCount) counts down); PointTakePositionAction
+      // marker (254946); sim stores Unit.TakePosition : Coordinate (393244).
+      // Reconstruction: each unit walks to ITS assigned spot and then holds
+      // there (hold window semantics at the taken position).
+      let i = 0;
+      for (const id of ids) {
+        const u = this.units.find((v) => v.id === id);
+        if (!u || u.garrison !== undefined)
+          continue;
+        const ring = Math.floor(i / 8), ang = i % 8 * (Math.PI / 4) + ring;
+        const sp = spots && spots[i] ? spots[i] : { x: u.x, y: u.y };
+        const dx = sp.x + Math.cos(ang) * (ring ? 1.2 : 0), dy = sp.y + Math.sin(ang) * (ring ? 1.2 : 0);
+        u.order = { kind: "takepos", x: dx, y: dy };
+        u.targetId = undefined;
+        u.preferredId = undefined;
+        u.guard = undefined;
+        u.path = this.pf.find(u.x, u.y, dx, dy, u.def.kind === "aircraft" && !u.grounded) ?? [];
+        u.dest = { x: dx, y: dy };
+        i++;
       }
     }
     commandCapture(ids, depotId) {
@@ -900,7 +1009,7 @@
         // native obj lifecycle: validation, objPreferred stickiness, acquisition
         this.updateTargeting(u);
         let buildingTarget;
-        if (u.def.weapon && u.targetId === undefined && (u.order.kind === "attackMove" || u.order.kind === "idle" || u.order.kind === "patrol" || u.order.kind === "hold")) {
+        if (u.def.weapon && u.targetId === undefined && (u.order.kind === "attackMove" || u.order.kind === "idle" || u.order.kind === "patrol" || u.order.kind === "hold" || u.order.kind === "defend")) {
           buildingTarget = this.buildings.find((b) => {
             const bd2 = Math.hypot(b.x - u.x, b.y - u.y);
             return b.hp > 0 && b.owner !== u.owner && b.owner !== 0 && bd2 <= u.def.weapon.range + b.radius && bd2 >= (u.def.weapon.minRange || 0) + b.radius;
@@ -951,6 +1060,27 @@
             // stand ground, track the hull toward the out-of-window target
             u.path = [];
             u.orientDest = Math.atan2(tgt.y - u.y, tgt.x - u.x);
+          } else if (u.order.kind === "defend" && u.guard) {
+            // defend (native task 2 / ACT_DEFEND = 5) pursues on a tether:
+            // chase allowed only while both the unit and the target stay
+            // within DEFEND_TETHER of the anchor; beyond it the unit breaks
+            // off and re-anchors (patrol_defend semantics, tuned leash). A
+            // target pulled beyond the leash + a 2-tile grace band is a lock
+            // the unit can never fire at (same starvation class the v=25
+            // dead-zone invariant removed) — break-off DROPS it so
+            // acquisition can re-pick a fireable obj.
+            const ad = Math.hypot(u.guard.x - u.x, u.guard.y - u.y);
+            const td = Math.hypot(u.guard.x - tgt.x, u.guard.y - tgt.y);
+            if (td > DEFEND_TETHER + u.def.weapon.range + 2) {
+              u.targetId = undefined;
+              u.lastTargetId = undefined;
+              u.path = [];
+            } else if (ad < DEFEND_TETHER && td < DEFEND_TETHER + u.def.weapon.range)
+              this.moveToward(u, tgt.x, tgt.y, dt);
+            else {
+              u.path = [];
+              u.orientDest = Math.atan2(tgt.y - u.y, tgt.x - u.x);
+            }
           } else {
             this.moveToward(u, tgt.x, tgt.y, dt);
           }
@@ -968,6 +1098,8 @@
             u.path = []; // dead zone: hold (distance_min symmetric with the unit gate)
           else if (u.order.kind === "hold")
             u.path = []; // hold never pursues a building outside the window
+          else if (u.order.kind === "defend" && u.guard && Math.hypot(u.guard.x - buildingTarget.x, u.guard.y - buildingTarget.y) > DEFEND_TETHER + u.def.weapon.range)
+            u.path = []; // defend: building beyond the tether — break off
           else
             this.moveToward(u, buildingTarget.x, buildingTarget.y, dt);
         } else if (u.order.kind === "garrison" && u.order.depotId !== undefined) {
@@ -1027,6 +1159,40 @@
               }
             }
           }
+        } else if (u.order.kind === "defend" && u.guard && (u.guard.x !== u.x || u.guard.y !== u.y)) {
+          // defend re-anchors after a tethered pursuit (anchor persists —
+          // native Unit.patrol_defend is a persistent second route, 393338).
+          const gd = Math.hypot(u.guard.x - u.x, u.guard.y - u.y);
+          if (gd < 0.9)
+            u.path = [];
+          else
+            this.moveToward(u, u.guard.x, u.guard.y, dt);
+        } else if (u.order.kind === "bombard" && u.order.x !== undefined) {
+          // bombard (native task 5 / AICommUnitsBombard point order, 433431):
+          // keep the weapon band [minRange, range] around the POINT and shell
+          // it blind (no target lock — area splash at the point, the splash
+          // projectile branch is already a point-impact model). Dead-zone
+          // rule symmetric with units: no fire below minRange (hold).
+          const bx = u.order.x, by = u.order.y;
+          const d = Math.hypot(bx - u.x, by - u.y);
+          const minR = u.def.weapon.minRange || 0;
+          if (d > u.def.weapon.range) {
+            if (!u.dest || Math.hypot(u.dest.x - bx, u.dest.y - by) > 1 || (!u.path.length && d > 0.8)) {
+              u.dest = { x: bx, y: by };
+              u.path = this.pf.find(u.x, u.y, bx, by, false) ?? [];
+            }
+            this.followPath(u, dt);
+          } else {
+            u.path = [];
+            u.dest = { x: bx, y: by };
+            u.orientDest = Math.atan2(by - u.y, bx - u.x);
+            if (d >= minR) {
+              if (u.aimT > 0)
+                u.aimT = Math.max(0, u.aimT - dt);
+              else if (this.facingOk(u, bx, by, fsmStat(u, "fireArc")))
+                this.fireBombard(u, bx, by, d);
+            }
+          }
         } else if (u.order.x !== undefined && u.order.y !== undefined) {
           // patrol: re-sync dest to the CURRENT leg target — a chase (dest =
           // chase point) must not strand the route or fake an arrival
@@ -1049,7 +1215,13 @@
                 u.dest = { x: lx, y: ly };
                 u.path = this.pf.find(u.x, u.y, lx, ly, u.def.kind === "aircraft" && !u.grounded) ?? [];
               } else {
-                if (u.order.kind !== "attackMove")
+                if (u.order.kind === "takepos") {
+                  // native TakePositions: after placement the unit holds the
+                  // taken spot (Unit.TakePosition Coordinate, 393244) — hold
+                  // window semantics at the taken position (no chase).
+                  u.order = { kind: "hold" };
+                  u.guard = { x: u.dest.x, y: u.dest.y };
+                } else if (u.order.kind !== "attackMove")
                   u.order = { kind: "idle" };
                 u.dest = undefined;
               }
@@ -1128,11 +1300,11 @@
       }
       if (u.targetId === undefined || !this.units.some((t) => t.id === u.targetId && t.hp > 0 && t.garrison === undefined)) {
         u.targetId = undefined;
-        if (u.order.kind === "idle" || u.order.kind === "attackMove" || u.order.kind === "patrol" || u.order.kind === "hold") {
+        if (u.order.kind === "idle" || u.order.kind === "attackMove" || u.order.kind === "patrol" || u.order.kind === "hold" || u.order.kind === "defend") {
           const t = this.findTarget(u);
           if (t) {
             u.targetId = t.id;
-            if (u.order.kind === "idle" && !u.guard)
+            if ((u.order.kind === "idle" || u.order.kind === "defend") && !u.guard)
               u.guard = { x: u.x, y: u.y };
           }
         }
@@ -1218,7 +1390,7 @@
       u.y = ny;
     }
     shoot(u, tx, ty, tgt, d) {
-      if (u.cd > 0)
+      if (u.cd > 0 || u.fireHold)
         return;
       u.cd = u.def.weapon.cooldown * (u.def.spinUp ? Math.max(0.55, 1 - 0.45 * (u.heat ?? 0)) : 1);
       if (u.def.spinUp)
@@ -1237,6 +1409,8 @@
       }
     }
     fireShell(u, tx, ty, tgt, d) {
+      if (u.fireHold)
+        return;
       const acc = hitChance(u.def.weapon, u.path.length > 0, d);
       const dmg = Math.round(effectiveDamage(u.def.weapon.damage, tgt.def.armor, tgt.def.armorClass) * (1 + 0.08 * rankTier(u)) * (1 - 0.05 * rankTier(tgt)) * (u.grounded ? 1.25 : 1));
       if (u.def.weapon.projectileSpeed === 0) {
@@ -1261,6 +1435,31 @@
         });
       }
     }
+    fireBombard(u, px, py, d) {
+      // bombard shell: POINT-impact splash round (no target lock — the splash
+      // projectile branch applies area damage at (tx,ty) and needs no targetId).
+      // Accuracy uses the static curve at the point distance (native accuracy
+      // dispatch: SHELL_TYPE percent branches, weapon-type note §3.1).
+      if (u.cd > 0 || u.fireHold)
+        return;
+      u.cd = u.def.weapon.cooldown;
+      const acc = hitChance(u.def.weapon, false, d);
+      this.projectiles.push({
+        x: u.x,
+        y: u.y,
+        tx: px,
+        ty: py,
+        speed: u.def.weapon.projectileSpeed,
+        dmg: Math.round(effectiveDamage(u.def.weapon.damage, { light: 30, medium: 24, heavy: 18 }, "heavy") * (1 + 0.08 * rankTier(u))),
+        armorClassOfTarget: "heavy",
+        targetArmor: 24,
+        splash: u.def.weapon.splash || 1,
+        acc,
+        owner: u.owner,
+        srcId: u.id,
+        trail: 0
+      });
+    }
     updateMines(dt) {
       for (const m of this.mines) {
         if (m.arm > 0) {
@@ -1283,7 +1482,7 @@
       this.mines = this.mines.filter((m) => !m.dead);
     }
     meleeStrike(u, tgt, d) {
-      if (u.cd > 0)
+      if (u.cd > 0 || u.fireHold)
         return;
       const mw = u.def.melee;
       u.cd = mw.cooldown;
@@ -1316,7 +1515,7 @@
       }
     }
     shootBuilding(u, b, d) {
-      if (u.cd > 0)
+      if (u.cd > 0 || u.fireHold)
         return;
       u.cd = u.def.weapon.cooldown;
       u.facing = Math.atan2(b.y - u.y, b.x - u.x);
@@ -1402,7 +1601,7 @@
       if (!attacker || !victim || attacker.owner === victim.owner || attacker.hp <= 0)
         return;
       const joins = (w) => {
-        if (w.def.weapon && (w.order.kind === "idle" || w.order.kind === "attackMove" || w.order.kind === "patrol" || w.order.kind === "hold") && w.targetId === undefined && w.garrison === undefined) {
+        if (w.def.weapon && (w.order.kind === "idle" || w.order.kind === "attackMove" || w.order.kind === "patrol" || w.order.kind === "hold" || w.order.kind === "defend") && w.targetId === undefined && w.garrison === undefined) {
           // native distance_min: a dead-zone attacker is not acquirable — the
           // findTarget rule ("no dead-zone lock") must hold through aggro too,
           // or a minRange unit under fire would lock an unfireable obj and
@@ -1683,6 +1882,38 @@
           if (!sim || !cmd.ids)
             return false;
           sim.commandHold(cmd.ids);
+          break;
+        case "defend":
+          // Phase 5 gaps: native ClientUnitTaskType.Defend = 2 — instant
+          // stance (SendSelectedUnitsDefend, no cell), anchored + tethered
+          if (!sim || !cmd.ids)
+            return false;
+          sim.commandDefend(cmd.ids);
+          break;
+        case "bombard":
+          // native ClientUnitTaskType.Bombard = 5 — targeted point order
+          // (SendUnitsBombard units+Point2i; AICommUnitsBombard ids+x/y)
+          if (!sim || !cmd.ids || !cmd.ids.length || cmd.x === undefined || cmd.y === undefined)
+            return false;
+          sim.commandBombard(cmd.ids, cmd.x, cmd.y);
+          break;
+        case "dontshoot":
+          // native task 8 / spec 1048576 (ACT_DONT_SHOOT = 7) — fire discipline
+          if (!sim || !cmd.ids)
+            return false;
+          sim.commandDontShoot(cmd.ids);
+          break;
+        case "canshoot":
+          // native spec 2097152 — the complementary toggle
+          if (!sim || !cmd.ids)
+            return false;
+          sim.commandCanShoot(cmd.ids);
+          break;
+        case "takepos":
+          // native spec 4194304 — per-unit placement (layout counts units down)
+          if (!sim || !cmd.ids || !cmd.ids.length || !Array.isArray(cmd.spots) || !cmd.spots.length)
+            return false;
+          sim.commandTakePositions(cmd.ids, cmd.spots);
           break;
         case "capture":
           if (!sim || !cmd.ids || !cmd.ids.length)
@@ -35732,7 +35963,19 @@ void main() {
         const air = (u.def.kind === "aircraft" || u.def.aircraft) && !u.grounded;
         const wantY = air ? 2.1 + Math.sin(this.time * 2.1 + u.id) * 0.09 : heightAtWorld(v.pos.x, v.pos.z);
         v.airY = v.airY === undefined ? wantY : v.airY + (wantY - v.airY) * Math.min(1, dt() * 2.4);
-        g.position.set(v.pos.x, v.airY, v.pos.z);
+        // native aircraft-hold orbit: AudioFile.BattleVoice
+        // ItemAviaAttackHoldPosition = 152 (dump.cs:81645) reads as
+        // attack-from-orbit, and the air frame carries flight_radius
+        // (UnitStateType 0x7C) — a held/defending aircraft circles its anchor.
+        // VISUAL ONLY (renderer offset; sim state and the replay hash are
+        // untouched).
+        let orbitX = v.pos.x, orbitZ = v.pos.z;
+        if (air && (u.order.kind === "hold" || u.order.kind === "defend")) {
+          const ph = this.time * 0.9 + u.id * 1.3;
+          orbitX += Math.cos(ph) * 0.55;
+          orbitZ += Math.sin(ph) * 0.55;
+        }
+        g.position.set(orbitX, v.airY, orbitZ);
         g.rotation.y = v.yaw;
         const moving = Math.hypot(u.vx, u.vy) > 0.008;
         if (v.model.anim) {
@@ -36948,7 +37191,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
     }
   }
   var BLD_ICON = { herobld: '<img class="bimg" src="assets/ui/bld-hero.png" draggable="false">', barracks: '<img class="bimg" src="assets/ui/bld-barracks.png" draggable="false">', factory: '<img class="bimg" src="assets/ui/bld-factory.png" draggable="false">', heavyfactory: '<img class="bimg" src="assets/ui/bld-heavyfactory.png" draggable="false">', power: '<img class="bimg" src="assets/ui/bld-power.png" draggable="false">', turret: '<img class="bimg" src="assets/ui/bld-turret.png" draggable="false">', bunker: '<img class="bimg" src="assets/ui/bld-bunker.png" draggable="false">' };
-  var HINT_DEFAULT = "drag = select \u00B7 right-click / long-press = move \u00B7 ctrl+right-click = attack-move \u00B7 attack \u00B7 capture \u00B7 minimap right-click = move \u00B7 wheel / pinch = zoom \u00B7 WASD = pan";
+  var HINT_DEFAULT = "drag = select \u00B7 right-click / long-press = move \u00B7 ctrl+right-click = attack-move \u00B7 attack \u00B7 capture \u00B7 H hold \u00B7 D defend \u00B7 X bombard \u00B7 T positions \u00B7 F hold fire \u00B7 P patrol \u00B7 minimap right-click = move \u00B7 wheel / pinch = zoom \u00B7 WASD = pan";
   var placing = null;
   function startPlacing(defId) {
     placing = defId;
@@ -37009,6 +37252,36 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       if ($("prodhint"))
         $("prodhint").textContent = "";
     }
+  };
+  // Phase 5 gaps: bombard arm (native task 5, hotkey UnitSpecBombardMode = 30)
+  // — X arms, the next right-click shells that POINT (GetBombardUnitsOnly
+  // filter: only artillery-family weapons accept, minRange > 0).
+  var bombardArmed = false;
+  var disarmBombard = () => {
+    if (bombardArmed) {
+      bombardArmed = false;
+      if ($("prodhint"))
+        $("prodhint").textContent = "";
+    }
+  };
+  // Phase 5 gaps: take-positions placement (native spec 4194304, hotkey 25,
+  // layout counts remaining units down and deactivates when all are placed)
+  // — T arms, each right-click assigns the next spot; issuing when all
+  // selected units have a spot mirrors the native per-unit placement flow.
+  var takeposArmed = false;
+  var takeposSpots = [];
+  var disarmTakepos = () => {
+    if (takeposArmed) {
+      takeposArmed = false;
+      takeposSpots = [];
+      if ($("prodhint"))
+        $("prodhint").textContent = "";
+    }
+  };
+  var disarmOrders = () => {
+    disarmPatrol();
+    disarmBombard();
+    disarmTakepos();
   };
   var rel = (e) => {
     const r = cv.getBoundingClientRect();
@@ -37105,6 +37378,31 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
         if (t && sel.size) {
           cmd.issue({ type: "patrol", ids: [...sel], x: Math.max(1, Math.min(MAP_W - 2, t.x)), y: Math.max(1, Math.min(MAP_H - 2, t.y)) });
           r3d.mark(t.x, t.y, "move");
+        }
+        return;
+      }
+      if (bombardArmed) {
+        disarmBombard();
+        const t = r3d.screenToTile(p.x, p.y);
+        if (t && sel.size) {
+          cmd.issue({ type: "bombard", ids: [...sel], x: Math.max(1, Math.min(MAP_W - 2, t.x)), y: Math.max(1, Math.min(MAP_H - 2, t.y)) });
+          r3d.mark(t.x, t.y, "move");
+        }
+        return;
+      }
+      if (takeposArmed) {
+        const t = r3d.screenToTile(p.x, p.y);
+        if (t && sel.size) {
+          takeposSpots.push({ x: Math.max(1, Math.min(MAP_W - 2, t.x)), y: Math.max(1, Math.min(MAP_H - 2, t.y)) });
+          r3d.mark(t.x, t.y, "move");
+          const remaining = sel.size - takeposSpots.length;
+          if ($("prodhint"))
+            $("prodhint").textContent = remaining > 0 ? `POSITIONS: ${remaining} unit(s) left — right-click to place` : "";
+          if (remaining <= 0) {
+            const spots = takeposSpots.slice();
+            disarmTakepos();
+            cmd.issue({ type: "takepos", ids: [...sel], spots });
+          }
         }
         return;
       }
@@ -37272,7 +37570,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
   window.addEventListener("keydown", (e) => {
     keys.add(e.key.toLowerCase());
     if (e.key === "Escape") {
-      disarmPatrol();
+      disarmOrders();
       if (placing)
         stopPlacing();
       cmd.issue({ type: "cancel" });
@@ -37290,9 +37588,40 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       cmd.issue({ type: "hold", ids: [...sel] });
     // Phase 5: P arms patrol (next right-click = patrol route point)
     if (e.key.toLowerCase() === "p" && sim && sel.size && !placing && cmdTarget) {
+      disarmOrders();
       patrolArmed = true;
       if ($("prodhint"))
         $("prodhint").textContent = "PATROL armed \u2014 right-click the far waypoint";
+    }
+    // Phase 5 gaps: D = defend (native HotkeyAction.UnitSpecDefend = 33,
+    // dump.cs:255741) — instant anchored stance, tethered pursuit
+    if (e.key.toLowerCase() === "d" && sim && sel.size && !placing && cmdTarget)
+      cmd.issue({ type: "defend", ids: [...sel] });
+    // Phase 5 gaps: X arms bombard (native HotkeyAction.UnitSpecBombardMode =
+    // 30, dump.cs:255738) — next right-click shells that point; only
+    // artillery-family weapons accept (native GetBombardUnitsOnly filter)
+    if (e.key.toLowerCase() === "x" && sim && sel.size && !placing && cmdTarget) {
+      disarmOrders();
+      bombardArmed = true;
+      if ($("prodhint"))
+        $("prodhint").textContent = "BOMBARD armed \u2014 right-click the target point";
+    }
+    // Phase 5 gaps: T arms take-positions placement (native
+    // HotkeyAction.UnitSpecTakePosition = 25, dump.cs:255733) — each
+    // right-click places one selected unit; issues when all are placed
+    if (e.key.toLowerCase() === "t" && sim && sel.size && !placing && cmdTarget) {
+      disarmOrders();
+      takeposArmed = true;
+      takeposSpots = [];
+      if ($("prodhint"))
+        $("prodhint").textContent = `POSITIONS: ${sel.size} unit(s) left \u2014 right-click to place`;
+    }
+    // Phase 5 gaps: F toggles fire discipline (native DontShoot = 8 / spec
+    // 1048576 vs CanShoot = 2097152, hotkeys 26/32) — HOLD FIRE / WEAPONS FREE
+    if (e.key.toLowerCase() === "f" && sim && sel.size && cmdTarget) {
+      const ids = [...sel];
+      const anyHold = ids.some((id) => sim.units.find((u) => u.id === id && u.fireHold));
+      cmd.issue({ type: anyHold ? "canshoot" : "dontshoot", ids });
     }
     // Phase 5: V exits garrison when any selected unit is inside a bunker,
     // otherwise it is the hero land/depart ability (native UnloadFromTransport)

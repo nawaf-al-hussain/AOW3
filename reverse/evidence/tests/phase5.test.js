@@ -502,5 +502,225 @@ section('hold: determinism — stance inside the state hash');
   check('hold kind serialized in stateString', a.sim.stateString().includes(',hold,'), true);
 }
 
+// ================= 5b. Phase 5 unknowns: defend (task 2 / spec 1024 / ACT 5) =================
+section('defend: instant anchored stance (SendSelectedUnitsDefend takes no cell)');
+{
+  const { sim } = loadKernel(31);
+  clearInitial(sim);
+  const u = sim.spawn('ilight', 1, 20, 80);
+  sim.commandDefend([u.id]);
+  check('order.kind = defend', u.order.kind, 'defend');
+  check('anchor at the defend spot', Math.hypot(u.guard.x - 20, u.guard.y - 80) < 0.01, true);
+  check('garrisoned unit rejects defend', (() => {
+    const { sim: s2 } = loadKernel(32);
+    clearInitial(s2);
+    s2.addBuilding('bunker', 1, 24, 80);
+    const inf = s2.spawn('ilight', 1, 22, 80);
+    s2.commandGarrison([inf.id], s2.buildings.find((b) => b.defId === 'bunker').id);
+    run(s2, 200);
+    if (inf.garrison === undefined) return 'not-garrisoned';
+    s2.commandDefend([inf.id]);
+    return inf.order.kind;
+  })(), 'garrison');
+}
+
+section('defend: engages + fires inside the window');
+{
+  const { sim } = loadKernel(33);
+  clearInitial(sim);
+  const u = sim.spawn('ilight', 1, 20, 80);
+  const foe = sim.spawn('ilight', 2, 24, 80);
+  sim.commandDefend([u.id]);
+  const hp0 = foe.hp;
+  run(sim, 120);
+  check('defender fires', foe.hp < hp0, true);
+}
+
+section('defend: tethered pursuit — pinned foe out of reach is never chased');
+{
+  const { sim } = loadKernel(34);
+  clearInitial(sim);
+  const u = sim.spawn('ilight', 1, 20, 80); // range 6.5
+  const far = sim.spawn('ilight', 2, 34, 80); // 14 from anchor: beyond leash 4+6.5
+  sim.commandDefend([u.id]);
+  sim.commandHold([far.id]); // PIN the foe (idle foes otherwise walk back in)
+  run(sim, 200);
+  check('no pursuit beyond DEFEND_TETHER (never even locked)', u.targetId === undefined, true);
+  check('defender stayed anchored', Math.hypot(u.x - 20, u.y - 80) < 1.2, true);
+}
+
+section('defend: pursues a target inside the leash, re-anchors after the kill');
+{
+  const { sim } = loadKernel(35);
+  clearInitial(sim);
+  const u = sim.spawn('mammoth', 1, 20, 80); // range 9.5, heavy — wins the slug
+  const mid = sim.spawn('ilight', 2, 32, 80); // 12 from anchor: inside 4+9.5 leash, outside the 9.5 window
+  sim.commandDefend([u.id]);
+  sim.commandHold([mid.id]); // pinned so the geometry stays controlled
+  const pursued = stepUntil(sim, () => u.x > 21.5, 600);
+  check('tethered pursuit closes toward the out-of-window target', pursued > 0, true);
+  const killed = stepUntil(sim, () => mid.hp <= 0, 900);
+  check('kills the pinned target inside the leash', killed > 0, true);
+  const reanchor = stepUntil(sim, () => Math.hypot(u.x - 20, u.y - 80) < 1.2, 900);
+  check('re-anchors at the defend spot afterwards', reanchor > 0, true);
+}
+
+section('defend: lock dropped for a target pulled beyond leash + grace');
+{
+  const { sim } = loadKernel(36);
+  clearInitial(sim);
+  const u = sim.spawn('ilight', 1, 20, 80);
+  const foe = sim.spawn('ilight', 2, 24, 80); // in window: locked
+  sim.commandDefend([u.id]);
+  run(sim, 30);
+  check('in-window foe locked', u.targetId === foe.id, true);
+  foe.x = 40; foe.y = 80; // pulled beyond 4+6.5+2 grace
+  sim.commandHold([foe.id]);
+  const dropped = stepUntil(sim, () => u.targetId === undefined, 100);
+  check('unfireable lock dropped (no starvation)', dropped > 0, true);
+}
+
+section('defend: release by other orders');
+{
+  const { sim } = loadKernel(35);
+  clearInitial(sim);
+  const u = sim.spawn('ilight', 1, 20, 80);
+  sim.commandDefend([u.id]);
+  sim.commandMove([u.id], 25, 80);
+  check('move overrides defend', u.order.kind, 'move');
+}
+
+// ================= 5c. Phase 5 unknowns: bombard (task 5 / spec 4) =================
+section('bombard: GetBombardUnitsOnly filter — artillery family only');
+{
+  const { sim } = loadKernel(36);
+  clearInitial(sim);
+  const ty = sim.spawn('typhoon', 1, 20, 80);  // w_typhoon minRange 5
+  const inf = sim.spawn('ilight', 1, 20, 82);  // no bombard weapon
+  sim.commandBombard([ty.id, inf.id], 30, 80);
+  check('artillery accepts bombard', ty.order.kind, 'bombard');
+  check('non-artillery rejected (no bombard weapon)', inf.order.kind, 'idle');
+}
+
+section('bombard: shells land at the POINT — no target lock needed');
+{
+  const { sim } = loadKernel(37);
+  clearInitial(sim);
+  const ty = sim.spawn('typhoon', 1, 20, 80);
+  sim.commandBombard([ty.id], 32, 80); // d = 12 inside [5, 15]
+  let seen = false;
+  for (let i = 0; i < 400 && !seen; i++) { sim.step(TICK); seen = sim.projectiles.some((p) => p.srcId === ty.id); }
+  check('point shells fired without any enemy present', seen, true);
+  check('artillery stayed in the band (never walked onto the point)', Math.hypot(ty.x - 32, ty.y - 80) > 5, true);
+}
+
+section('bombard: area splash damages units near the point');
+{
+  const { sim } = loadKernel(38);
+  clearInitial(sim);
+  const ty = sim.spawn('typhoon', 1, 20, 80);
+  const victim = sim.spawn('ilight', 2, 31.5, 80); // inside splash of point 32,80
+  victim.x = 31.5;
+  sim.commandBombard([ty.id], 32, 80);
+  const hp0 = victim.hp;
+  run(sim, 400);
+  check('blind bombardment damages units near the point', victim.hp < hp0, true);
+}
+
+section('bombard: dead-zone + release');
+{
+  const { sim } = loadKernel(39);
+  clearInitial(sim);
+  const ty = sim.spawn('typhoon', 1, 20, 80);
+  sim.commandBombard([ty.id], 16, 80); // d = 4 < minRange 5: walk closer first
+  run(sim, 300);
+  const d = Math.hypot(ty.order.x - ty.x, ty.order.y - ty.y);
+  check('moved into the band toward the point', d <= ty.def.weapon.range + 0.5, true);
+  sim.commandStop([ty.id]);
+  check('stop releases bombard', ty.order.kind, 'idle');
+}
+
+// ================= 5d. Phase 5 unknowns: DontShoot/CanShoot (task 8 / specs 1048576|2097152) =================
+section('fire discipline: hold fire — tracks but never fires');
+{
+  const { sim } = loadKernel(40);
+  clearInitial(sim);
+  const u = sim.spawn('ilight', 1, 20, 80);
+  const foe = sim.spawn('ilight', 2, 24, 80);
+  sim.commandDontShoot([u.id]);
+  check('fireHold set', u.fireHold, true);
+  const hp0 = foe.hp;
+  run(sim, 200);
+  check('no damage while holding fire', foe.hp, hp0);
+  check('target still acquired (tracks)', u.targetId !== undefined, true);
+  sim.commandCanShoot([u.id]);
+  check('weapons free clears the flag', u.fireHold, false);
+  const again = stepUntil(sim, () => foe.hp < hp0, 400);
+  check('fires again after CanShoot', again > 0, true);
+}
+
+section('fire discipline: melee + building fire also gated');
+{
+  const { sim } = loadKernel(41);
+  clearInitial(sim);
+  const u = sim.spawn('ilight', 1, 20, 80);
+  const foe = sim.spawn('ilight', 2, 24, 80);
+  sim.commandDontShoot([u.id]);
+  sim.commandAttack([u.id], foe.id); // explicit attack order + fireHold
+  const hp0 = foe.hp;
+  run(sim, 150);
+  check('explicit attack does not bypass fire discipline', foe.hp, hp0);
+}
+
+// ================= 5e. Phase 5 unknowns: take positions (spec 4194304) =================
+section('takepos: per-unit placement then hold at the taken spot');
+{
+  const { sim } = loadKernel(42);
+  clearInitial(sim);
+  const a = sim.spawn('ilight', 1, 18, 80);
+  const b = sim.spawn('ilight', 1, 22, 80);
+  sim.commandTakePositions([a.id, b.id], [{ x: 26, y: 78 }, { x: 26, y: 82 }]);
+  check('order kind takepos with per-unit spot', a.order.kind, 'takepos');
+  check('spot A assigned', Math.hypot(a.order.x - 26, a.order.y - 78) < 0.01, true);
+  check('spot B assigned (different unit, different spot)', Math.hypot(b.order.x - 26, b.order.y - 82) < 0.01, true);
+  const done = stepUntil(sim, () => a.order.kind === 'hold' && b.order.kind === 'hold', 900);
+  check('both units hold at their taken positions', done > 0, true);
+  check('unit A near its spot', Math.hypot(a.x - 26, a.y - 78) < 1.2, true);
+  // hold semantics at the spot: no chase
+  const foe = sim.spawn('ilight', 2, 34, 78);
+  const px = a.x;
+  run(sim, 150);
+  check('no pursuit from a taken position', Math.abs(a.x - px) < 0.6, true);
+}
+
+// ================= 5f. determinism across the new stances =================
+section('same-seed determinism through defend + bombard + fire discipline + takepos');
+{
+  const a = loadKernel(5150), b = loadKernel(5150);
+  const script = (sim) => {
+    clearInitial(sim);
+    const ty = sim.spawn('typhoon', 1, 20, 80);
+    const inf = sim.spawn('ilight', 1, 20, 82);
+    const inf2 = sim.spawn('ilight', 1, 22, 80);
+    const foe = sim.spawn('ilight', 2, 30, 80);
+    sim.commandDefend([inf.id]);
+    sim.commandBombard([ty.id], 32, 80);
+    sim.commandTakePositions([inf2.id], [{ x: 24, y: 78 }]);
+    sim.commandDontShoot([foe.id]);
+  };
+  script(a.sim); script(b.sim);
+  check('fireHold survives into the hash (foe holds fire)', a.sim.units[3].fireHold, true);
+  check('fireHold serialized in stateString (U-line tail bit)',
+    a.sim.stateString().split('|').some((l) => l.startsWith('U') && l.endsWith(',1')), true);
+  run(a.sim, 400); run(b.sim, 400);
+  check('hash equal across the new stances', a.sim.hashState() === b.sim.hashState(), true);
+  const { sim: s2 } = loadKernel(5151);
+  clearInitial(s2);
+  const f2 = s2.spawn('ilight', 2, 24, 80);
+  s2.commandDontShoot([f2.id]);
+  s2.commandCanShoot([f2.id]);
+  check('CanShoot clears the discipline', f2.fireHold, false);
+}
+
 console.log(`\nphase5: ${total - fail}/${total} PASS${fail ? ` — ${fail} FAILED` : ''}`);
 process.exit(fail ? 1 : 0);
