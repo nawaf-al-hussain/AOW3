@@ -38137,15 +38137,23 @@ void main() {
         <div class="mp-title">MULTIPLAYER · LOCKSTEP (EXPERIMENTAL)</div>
         <div class="mp-row">
           <select id="mp-xp">
-            <option value="bc">Same browser (2 tabs)</option>
+            <option value="bc">Same browser (N tabs)</option>
             <option value="p2p">Internet (P2P)</option>
+          </select>
+          <select id="mp-seats" title="Player seats">
+            <option value="2">2 players</option>
+            <option value="3">3 players</option>
+            <option value="4">4 players</option>
           </select>
           <button id="mp-host" class="mp-btn">HOST</button>
           <span class="mp-sep">or</span>
           <input id="mp-code" maxlength="4" placeholder="CODE" autocomplete="off" spellcheck="false" />
           <button id="mp-join" class="mp-btn">JOIN</button>
         </div>
-        <div id="mp-status">Same browser: host here, then open the site in a second tab and join with the code. Internet: share the code with a friend.</div>
+        <div class="mp-row">
+          <input id="mp-broker" placeholder="own signaling broker: host:port (optional)" autocomplete="off" spellcheck="false" style="flex:1" />
+        </div>
+        <div id="mp-status">Same browser: host here, then open the site in more tabs and join with the code. Internet: share the code — or self-host signaling (npx peer --port 9000, enter localhost:9000) to leave the public broker.</div>
       </div>
       <div id="baking">… LOADING THE REAL MAP</div>
     </div>
