@@ -26,16 +26,18 @@ Balance VALUES are gameplay-tuned approximations (native values are backend-deli
     w_torrent: {"damage": {"light": 14, "medium": 46, "heavy": 4}, "range": 10.5, "cooldown": 0.55, "accStatic": 84, "accWalk": 70, "splash": 0, "projectileSpeed": 34},
     // porcupine: range->m_distance/0x28, accStatic->m_accuracyStatic/0x4E, accWalk->m_accuracyWalk/0x52, splash->m_explosionRadius/0x30, projectileSpeed->m_velocity/0x38
     w_porcupine: {"damage": {"light": 15, "medium": 48, "heavy": 4}, "range": 10.5, "cooldown": 0.55, "accStatic": 84, "accWalk": 70, "splash": 0, "projectileSpeed": 34},
-    // typhoon: range->m_distance/0x28, accStatic->m_accuracyStatic/0x4E, accWalk->m_accuracyWalk/0x52, splash->m_explosionRadius/0x30, projectileSpeed->m_velocity/0x38, explosionDecr->m_explosionDecr/0x34
-    w_typhoon: {"damage": {"light": 40, "medium": 38, "heavy": 46}, "range": 15, "cooldown": 4.2, "accStatic": 62, "accWalk": 44, "splash": 2.6, "projectileSpeed": 12, "splashScatter": 1, "explosionDecr": 30},
+    // typhoon: range->m_distance/0x28, minRange->m_distanceMin/0x2C (stat key WEAPON_DISTANCE_MIN="distance_min", dump.cs:17303; WeaponTypeMapEditorConfig m_distance/0x28 + m_distanceMin/0x2C), accStatic->m_accuracyStatic/0x4E, accWalk->m_accuracyWalk/0x52, splash->m_explosionRadius/0x30, projectileSpeed->m_velocity/0x38, explosionDecr->m_explosionDecr/0x34
+    // minRange value gameplay-tuned (native balance is backend-delivered): MLRS dead zone ~1/3 of max range
+    w_typhoon: {"damage": {"light": 40, "medium": 38, "heavy": 46}, "range": 15, "minRange": 5, "cooldown": 4.2, "accStatic": 62, "accWalk": 44, "splash": 2.6, "projectileSpeed": 12, "splashScatter": 1, "explosionDecr": 30},
     // armadillo: range->m_distance/0x28, accStatic->m_accuracyStatic/0x4E, accWalk->m_accuracyWalk/0x52, splash->m_explosionRadius/0x30, projectileSpeed->m_velocity/0x38
     w_armadillo: {"damage": {"light": 12, "medium": 40, "heavy": 30}, "range": 10, "cooldown": 2.6, "accStatic": 74, "accWalk": 54, "splash": 0.8, "projectileSpeed": 22},
     // zeus: range->m_distance/0x28, accStatic->m_accuracyStatic/0x4E, accWalk->m_accuracyWalk/0x52, splash->m_explosionRadius/0x30, projectileSpeed->m_velocity/0x38
     w_zeus: {"damage": {"light": 30, "medium": 34, "heavy": 26}, "range": 8.5, "cooldown": 1.5, "accStatic": 80, "accWalk": 64, "splash": 0.4, "projectileSpeed": 30},
     // mammoth: range->m_distance/0x28, accStatic->m_accuracyStatic/0x4E, accWalk->m_accuracyWalk/0x52, splash->m_explosionRadius/0x30, projectileSpeed->m_velocity/0x38
     w_mammoth: {"damage": {"light": 64, "medium": 52, "heavy": 40}, "range": 9.5, "cooldown": 2.6, "accStatic": 84, "accWalk": 60, "splash": 0.8, "projectileSpeed": 24},
-    // fortress: range->m_distance/0x28, accStatic->m_accuracyStatic/0x4E, accWalk->m_accuracyWalk/0x52, splash->m_explosionRadius/0x30, projectileSpeed->m_velocity/0x38, explosionDecr->m_explosionDecr/0x34
-    w_fortress: {"damage": {"light": 50, "medium": 55, "heavy": 60}, "range": 14, "cooldown": 3.4, "accStatic": 70, "accWalk": 50, "splash": 1.6, "projectileSpeed": 16, "splashScatter": 1, "explosionDecr": 20},
+    // fortress: range->m_distance/0x28, minRange->m_distanceMin/0x2C (see w_typhoon anchor), accStatic->m_accuracyStatic/0x4E, accWalk->m_accuracyWalk/0x52, splash->m_explosionRadius/0x30, projectileSpeed->m_velocity/0x38, explosionDecr->m_explosionDecr/0x34
+    // minRange value gameplay-tuned: siege walker dead zone ~2/7 of max range
+    w_fortress: {"damage": {"light": 50, "medium": 55, "heavy": 60}, "range": 14, "minRange": 4, "cooldown": 3.4, "accStatic": 70, "accWalk": 50, "splash": 1.6, "projectileSpeed": 16, "splashScatter": 1, "explosionDecr": 20},
     // helicopter: range->m_distance/0x28, accStatic->m_accuracyStatic/0x4E, accWalk->m_accuracyWalk/0x52, splash->m_explosionRadius/0x30, projectileSpeed->m_velocity/0x38
     w_helicopter: {"damage": {"light": 34, "medium": 26, "heavy": 16}, "range": 8.5, "cooldown": 1.2, "accStatic": 76, "accWalk": 68, "splash": 0.4, "projectileSpeed": 30, "guided": 1},
     // cerber: range->m_distance/0x28, accStatic->m_accuracyStatic/0x4E, accWalk->m_accuracyWalk/0x52, splash->m_explosionRadius/0x30, projectileSpeed->m_velocity/0x38

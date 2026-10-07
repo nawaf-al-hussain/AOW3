@@ -112,6 +112,7 @@ Balance VALUES are gameplay-tuned approximations (native values are backend-deli
   var WEAPON_FIELD_MAP = {
     "damage.light": "m_damageLight/0x18", "damage.medium": "m_damageMedium/0x1C",
     "damage.heavy": "m_damageHeavy/0x20", range: "m_distance/0x28",
+    minRange: "m_distanceMin/0x2C (stat key WEAPON_DISTANCE_MIN=\"distance_min\", dump.cs:17303)",
     accStatic: "m_accuracyStatic/0x4E", accWalk: "m_accuracyWalk/0x52",
     splash: "m_explosionRadius/0x30", explosionDecr: "m_explosionDecr/0x34",
     projectileSpeed: "m_velocity/0x38", hitBonus: "m_hitBonus/0x24",

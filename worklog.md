@@ -859,3 +859,65 @@ Work Log:
 
 Stage Summary:
 - reverse/AGENTS.md §13 combat checklist is now fully closed (all 6 rows recovered or closed with native evidence). The combat knowledge base: damage triad + 0.9/0.1 curve (armor note), accuracy curves (accuracy note), pipeline end-to-end (damage-pipeline note), target-class masks + AA + shell-type semantics (this pass). Balance values remain server-side (standing). No game.js change required — doc-only findings; implementation guidance recorded in the note §5.
+---
+Task ID: 22
+Agent: Super Z (main)
+Task: Phase 5 gaps (patrol/garrison missions, weapon minimum range) + Phase D replay playback harness (consumes seed + log), v=23
+
+Work Log:
+- RE (dump.cs 6.9.18): WEAPON_DISTANCE_MIN="distance_min" (dump.cs:17303);
+  WeaponTypeMapEditorConfig m_distance/0x28 + m_distanceMin/0x2C;
+  ClientUnitTaskType enum (dump.cs:271209: Patrol=1, Defend=2, HoldPosition=3,
+  LoadOnTransport=9, UnloadFromTransport=10); ClientBuildingTypeEditor.Bunker=14
+  (dump.cs:266093); ClientBunkerWeapon crew-served muzzles (dump.cs:275667);
+  patrol voice taxonomy (ItemInfPatrol=10 ... per-hero). Note written:
+  reverse/notes/phase5-missions-minrange.md.
+- minRange (data): w_typhoon minRange 5 (range 15), w_fortress minRange 4
+  (range 14), values gameplay-tuned (native balance server-delivered); anchor
+  comments on each weapon; minRange added to WEAPON_FIELD_MAP in stats.js as
+  m_distanceMin/0x2C; fixture regenerated (28 units).
+- minRange (kernel): findTarget skips dead-zone targets; engaged branch holds
+  ground (path cleared, no release) when d < minRange; burst shells re-check
+  the window; building acquisition/fire gates use d ± b.radius symmetric with
+  the unit gate; both walkingShot call sites re-check. Non-artillery weapons
+  unaffected (minRange undefined -> 0).
+- Patrol (kernel): commandPatrol(ids,x,y) — anchor A at issue position, far
+  point B; order {kind:"patrol",x,y,ax,ay,back}; legs flip at arrival; mid-leg
+  repath uses the CURRENT leg target; attackMove semantics (acquisition in
+  updateTargeting + building-target branch, aggro warn-joins include patrollers).
+- Garrison (kernel): commandGarrison (infantry only, friendly+built bunker,
+  GARRISON_CAP=3), order {kind:"garrison",depotId}; entering sets u.garrison ->
+  inert (updateUnits skip), untargetable (findTarget + target/preferred
+  validation), no vision, renderer-hidden (syncUnits gate), unselectable
+  (box+click); crew-served bunker weapon fires only while crewed; exits:
+  commandUngarrison, auto-unload on move/attack/capture, bunker death scrambles
+  crew via freeTileNear; non-infantry/enemy/unbuilt bunkers rejected.
+- Phase D replay harness (kernel): Commands gains uncapped `full` journal +
+  tick/seq stamping (shared sim.cmdSeq); Replay class — capture() = seed + full
+  journals (player+AI) + terrain fingerprint (FRESH-constructor probe grid, not
+  capture-time) + 1 Hz hash journal + finalHash/finalTick; play() rebuilds from
+  seed, re-feeds commands at recorded tick boundaries sorted by (tick, seq),
+  verifies hashes per journal mark + final -> divergences localized to a tick.
+  Live probe __aow3Replay.{capture,save,run} (save downloads JSON);
+  Replay exposed on __aow3().
+- Input wiring: P arms patrol (hint text; right-click/minimap right-click issue
+  patrol; Escape disarms); right-click own bunker with infantry = garrison;
+  V = ungarrison when garrisoned units selected, else hero land/depart.
+- stateString U-line extended (garrison, patrol ax/ay/back) — hash format
+  changed; all tests compare relative hashes (no literal vectors) — safe.
+- Tests: NEW phase5.test.js 47/47 (min-range gates/acquisition/hold, patrol
+  oscillation+engagement+resume+journal, garrison enter/protect/crew-fire/
+  silence-when-empty/exits/capacity/death/rejections, cross-feature
+  determinism); NEW replay.test.js 34/34 (bit-exact reproduction, baseline,
+  cross-issuer ordering, tamper detection seed/drop/alter/terrain, 540-command
+  journal vs 512 ring, live-shaped build+patrol+garrison run, JSON round-trip).
+  Regressions: unit-fsm 29, accuracy 13, data-model 379, commands-determinism
+  50 — ALL PASS. node --check clean; index.html bumped v=23.
+- Harness bug found by tests and fixed: terrain fingerprint must come from a
+  fresh constructor probe sim (capture-time grid embeds player-built structures).
+
+Stage Summary:
+- v=23: Phase 5 combat-reconstruction gaps closed (minRange/patrol/garrison,
+  all natively anchored, tuned values documented) + Phase D replay playback
+  harness live (seed + full command journal = replay, hash-verified, tamper-
+  detected). Remaining Phase D: lockstep networking only.

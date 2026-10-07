@@ -321,6 +321,7 @@
      "heavy": 46
     },
     "range": 15,
+    "minRange": 5,
     "cooldown": 4.2,
     "accStatic": 62,
     "accWalk": 44,
@@ -467,6 +468,7 @@
      "heavy": 60
     },
     "range": 14,
+    "minRange": 4,
     "cooldown": 3.4,
     "accStatic": 70,
     "accWalk": 50,

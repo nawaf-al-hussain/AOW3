@@ -1309,8 +1309,33 @@ AI stream derived from sim.seed ⊕ owner), `#seed=N` URL override for
 reproducible maps, `sim.stateString()`/`hashState()` (FNV-1a over quantized
 behavior-affecting state, 1 Hz ring journal `sim.hashes`) — coverage in
 `reverse/evidence/tests/commands-determinism.test.js` (50 vectors, same-shipped
-kernel extraction method as Phase 3). Remaining roadmap Phase D items: replay
-PLAYBACK harness and lockstep networking. Renderer interpolation between sim
+kernel extraction method as Phase 3). Remaining roadmap Phase D items:
+lockstep networking — the replay playback harness is DONE (v=23, see below).
+Phase 5 combat-reconstruction gaps (v=23): weapon minimum range
+(`minRange` -> native m_distanceMin/0x2C, stat key WEAPON_DISTANCE_MIN=
+"distance_min" dump.cs:17303; values gameplay-tuned on w_typhoon 5 / w_fortress 4)
+gates fire, burst and acquisition (dead-zone targets are skipped, units hold
+inside the dead zone); patrol mission (native ClientUnitTaskType.Patrol = 1,
+dump.cs:271215 — commandPatrol routes anchor<->far point, engages targets of
+opportunity en route, P hotkey arms it, minimap supported); garrison mission
+(native ClientBuildingTypeEditor.Bunker = 14 dump.cs:266093 + ClientBunkerWeapon
+dump.cs:275667 — infantry enter friendly bunkers via right-click, protected/
+untargetable/inert inside, crew-served bunker weapon fires only while crewed,
+cap 3, move/attack/capture auto-unload (UnloadFromTransport = 10 analog), V
+exits, bunker death scrambles the crew); stateString extended (garrison,
+patrol anchor/leg). Coverage: `reverse/evidence/tests/phase5.test.js`
+(47 vectors, shipped-kernel extraction).
+Phase D replay playback harness (v=23): `Replay` class in the kernel —
+capture() = seed + full command journals (player AND AI, tick/seq stamped via
+shared sim.cmdSeq) + terrain fingerprint (fresh-constructor probe, NOT the
+capture-time grid) + 1 Hz hash journal; play() rebuilds the sim from the seed,
+re-feeds commands at their recorded tick boundaries (sort key (tick, seq)),
+compares state hashes at the journal marks and the final hash — divergences
+localize desyncs to a tick (native analog: AICommandLogWriter/Reader +
+CRCRequest/Verify). Commands now keep an uncapped `full` journal beside the
+512-entry debug ring. Live probe: `window.__aow3Replay.{capture,save,run}`.
+Coverage: `reverse/evidence/tests/replay.test.js` (34 vectors incl. tamper
+detection seed/command/terrain). Renderer interpolation between sim
 states is approximated by per-frame smoothing.
 
 Recommended order:

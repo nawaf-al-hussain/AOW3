@@ -99,6 +99,9 @@
   // UnitStateType (rotate/aiming/sight/die_time/damage_priority), WeaponType fire
   // cycle (aiming/shot_count/shot_int/round_len), WARNED_BY_NEARBY_FRIENDS=1.
   // Native numbers are server-delivered; per-kind values below are gameplay-tuned.
+  // native anchor: bunker garrison capacity (ClientBuildingTypeEditor.Bunker = 14,
+  // ClientBunkerWeapon crew-served muzzles); value gameplay-tuned.
+  const GARRISON_CAP = 3;
   const FSM_DEFAULTS = {
     // hull turn rate rad/s (native UnitStateType.rotate)
     rotate: { infantry: 10, vehicle: 3.2, aircraft: 4.5 },
@@ -348,6 +351,9 @@
     explored;
     visible;
     pf;
+    // Phase D: global issue counter shared by every Commands issuer on this sim;
+    // replay journals sort by (tick, seq) to reproduce cross-issuer order.
+    cmdSeq = 0;
     constructor(seed = 12345) {
       // Phase 4 determinism: every sim random draw flows through this.rng()
       // (mulberry32 seeded from `seed`); seed/rngState/hashes are inspectable.
@@ -575,7 +581,7 @@
           s.push(`Q${qq.defId},${q(qq.t)}`);
       }
       for (const u of this.units)
-        s.push(`U${u.id},${u.def.id},${u.owner},${q(u.x)},${q(u.y)},${q(u.hp)},${q(u.facing)},${u.order.kind},${o(u.order.x)},${o(u.order.y)},${o(u.order.depotId)},${o(u.targetId)},${o(u.preferredId)},${u.path.length},${xy(u.dest)},${xy(u.guard)},${u.grounded ? 1 : 0},${u.burstLeft},${q(u.aimT)},${q(u.cd)},${u.state},${u.kills},${q(u.captureT ?? -1)},${o(u.lastHitBy)},${o(u.lastTargetId)}`);
+        s.push(`U${u.id},${u.def.id},${u.owner},${q(u.x)},${q(u.y)},${q(u.hp)},${q(u.facing)},${u.order.kind},${o(u.order.x)},${o(u.order.y)},${o(u.order.depotId)},${o(u.targetId)},${o(u.preferredId)},${u.path.length},${xy(u.dest)},${xy(u.guard)},${u.grounded ? 1 : 0},${u.burstLeft},${q(u.aimT)},${q(u.cd)},${u.state},${u.kills},${q(u.captureT ?? -1)},${o(u.lastHitBy)},${o(u.lastTargetId)},${o(u.garrison)},${o(u.order.ax)},${o(u.order.ay)},${u.order.back ? 1 : 0}`);
       for (const b of this.buildings)
         s.push(`B${b.id},${b.defId},${b.owner},${q(b.x)},${q(b.y)},${q(b.hp)},${b.built ? 1 : 0},${q(b.captureT)},${b.captureBy},${o(b.lastHitOwner)}`);
       for (const p of this.projectiles)
@@ -596,7 +602,30 @@
         const ring = Math.floor(i / 8), ang = i % 8 * (Math.PI / 4) + ring;
         const r = ring * 1.2;
         const dx = x + Math.cos(ang) * r, dy = y + Math.sin(ang) * r;
+        if (u.garrison !== undefined)
+          this.exitGarrison(u); // ordering a garrisoned unit out = native UnloadFromTransport
         u.order = { kind: attackMove ? "attackMove" : "move", x: dx, y: dy };
+        u.targetId = undefined;
+        u.preferredId = undefined;
+        u.guard = undefined;
+        u.path = this.pf.find(u.x, u.y, dx, dy, u.def.kind === "aircraft" && !u.grounded) ?? [];
+        u.dest = { x: dx, y: dy };
+        i++;
+      }
+    }
+    commandPatrol(ids, x, y) {
+      // native ClientUnitTaskType.Patrol = 1 (dump.cs:271215): repeat a route
+      // between the issue position (anchor A) and the target point (B); engages
+      // targets of opportunity en route (attackMove semantics while walking).
+      let i = 0;
+      for (const id of ids) {
+        const u = this.units.find((v) => v.id === id);
+        if (!u)
+          continue;
+        const ring = Math.floor(i / 8), ang = i % 8 * (Math.PI / 4) + ring;
+        const r = ring * 1.2;
+        const dx = x + Math.cos(ang) * r, dy = y + Math.sin(ang) * r;
+        u.order = { kind: "patrol", x: dx, y: dy, ax: u.x, ay: u.y, back: false };
         u.targetId = undefined;
         u.preferredId = undefined;
         u.guard = undefined;
@@ -627,6 +656,8 @@
         const d = this.buildings.find((b) => b.id === depotId);
         if (!d)
           continue;
+        if (u.garrison !== undefined)
+          this.exitGarrison(u);
         u.order = { kind: "capture", depotId };
         u.targetId = undefined;
         u.preferredId = undefined;
@@ -634,6 +665,62 @@
         u.path = this.pf.find(u.x, u.y, d.x, d.y, false) ?? [];
         u.dest = { x: d.x, y: d.y };
       }
+    }
+    commandGarrison(ids, buildingId) {
+      // native: ClientBuildingTypeEditor.Bunker = 14 (dump.cs:266093) +
+      // ClientBunkerWeapon (crew-served muzzles, dump.cs:275667). Infantry walk
+      // to a friendly bunker and man it: protected (untargetable) inside while
+      // the bunker's own weapon fires only while crewed.
+      const b = this.buildings.find((v) => v.id === buildingId);
+      if (!b || b.defId !== "bunker" || b.owner <= 0 || b.hp <= 0 || !b.built)
+        return;
+      for (const id of ids) {
+        const u = this.units.find((v) => v.id === id);
+        if (!u || u.def.kind !== "infantry" || u.garrison !== undefined || b.owner !== u.owner)
+          continue;
+        if (this.units.filter((v) => v.garrison === b.id).length >= GARRISON_CAP)
+          break;
+        u.order = { kind: "garrison", depotId: buildingId };
+        u.targetId = undefined;
+        u.preferredId = undefined;
+        u.guard = undefined;
+        u.path = this.pf.find(u.x, u.y, b.x, b.y, false) ?? [];
+        u.dest = { x: b.x, y: b.y };
+      }
+    }
+    commandUngarrison(ids) {
+      // native ClientUnitTaskType.UnloadFromTransport = 10 analog: exit the
+      // bunker to a free adjacent tile.
+      for (const id of ids) {
+        const u = this.units.find((v) => v.id === id);
+        if (u && u.garrison !== undefined)
+          this.exitGarrison(u);
+      }
+    }
+    exitGarrison(u) {
+      const b = this.buildings.find((v) => v.id === u.garrison);
+      u.garrison = undefined;
+      u.order = { kind: "idle" };
+      u.path = [];
+      u.dest = undefined;
+      u.cd = Math.max(u.cd, 0.8);
+      if (b) {
+        const spot = this.freeTileNear(b, u);
+        u.x = spot.x;
+        u.y = spot.y;
+        u.guard = { x: u.x, y: u.y };
+      }
+    }
+    freeTileNear(b, u) {
+      for (let ring = 1; ring <= 3; ring++)
+        for (let a = 0; a < 8; a++) {
+          const ang = a * Math.PI / 4;
+          const x = b.x + Math.cos(ang) * ((b.radius ?? 1.6) + 0.6 * ring);
+          const y = b.y + Math.sin(ang) * ((b.radius ?? 1.6) + 0.6 * ring);
+          if (this.passable(u, x, y))
+            return { x, y };
+        }
+      return { x: b.x + (b.radius ?? 1.6) + 1, y: b.y };
     }
     commandAttack(ids, targetId) {
       const t = this.units.find((v) => v.id === targetId);
@@ -643,6 +730,8 @@
           continue;
         if (t && (t.def.kind === "aircraft" || t.def.aircraft) && !t.grounded && !u.def.antiAir)
           continue;
+        if (u.garrison !== undefined)
+          this.exitGarrison(u);
         u.order = { kind: "attackMove", x: undefined, y: undefined };
         u.targetId = targetId;
         u.preferredId = targetId; // native objPreferred: sticky until the target dies
@@ -750,6 +839,13 @@
     }
     updateUnits(dt) {
       for (const u of this.units) {
+        // garrisoned infantry are inert: hidden inside the bunker, untargetable,
+        // timers frozen (native ClientBunkerWeapon crew semantics)
+        if (u.garrison !== undefined && u.garrison !== null) {
+          u.vx = 0;
+          u.vy = 0;
+          continue;
+        }
         u.cd = Math.max(0, u.cd - dt * (u.slowT > 0 ? 0.72 : 1));
         if (u.slowT)
           u.slowT = Math.max(0, u.slowT - dt);
@@ -779,9 +875,12 @@
         // native obj lifecycle: validation, objPreferred stickiness, acquisition
         this.updateTargeting(u);
         let buildingTarget;
-        if (u.def.weapon && u.targetId === undefined && (u.order.kind === "attackMove" || u.order.kind === "idle")) {
-          buildingTarget = this.buildings.find((b) => b.hp > 0 && b.owner !== u.owner && b.owner !== 0 && Math.hypot(b.x - u.x, b.y - u.y) <= u.def.weapon.range + b.radius);
-          if (!buildingTarget && u.order.kind === "attackMove" && u.order.x !== undefined) {
+        if (u.def.weapon && u.targetId === undefined && (u.order.kind === "attackMove" || u.order.kind === "idle" || u.order.kind === "patrol")) {
+          buildingTarget = this.buildings.find((b) => {
+            const bd2 = Math.hypot(b.x - u.x, b.y - u.y);
+            return b.hp > 0 && b.owner !== u.owner && b.owner !== 0 && bd2 <= u.def.weapon.range + b.radius && bd2 >= (u.def.weapon.minRange || 0) + b.radius;
+          });
+          if (!buildingTarget && (u.order.kind === "attackMove" || u.order.kind === "patrol") && u.order.x !== undefined) {
             const b2 = this.buildings.find((b) => b.hp > 0 && b.owner !== u.owner && b.owner !== 0 && u.dest && Math.hypot(b.x - u.dest.x, b.y - u.dest.y) < 6);
             if (b2)
               buildingTarget = b2;
@@ -791,6 +890,7 @@
         if (tgt) {
           const d = Math.hypot(tgt.x - u.x, tgt.y - u.y);
           const mw = u.def.melee;
+          const minR = u.def.weapon ? u.def.weapon.minRange || 0 : 0;
           // pending burst shells fire at their shotInt offsets inside the round
           // (native shot_count / shot_tick[]; single-shot weapons never enter here)
           if (u.burstLeft > 0) {
@@ -798,7 +898,7 @@
             if (u.burstT <= 0) {
               u.burstLeft--;
               u.burstT = u.def.weapon.shotInt ?? 0.2;
-              if (d <= u.def.weapon.range)
+              if (d >= minR && d <= u.def.weapon.range)
                 this.fireShell(u, tgt.x, tgt.y, tgt, d);
             }
           }
@@ -808,6 +908,12 @@
             // native flag_shoot: strike releases only once the unit is on target
             if (this.facingOk(u, tgt.x, tgt.y, 0.9))
               this.meleeStrike(u, tgt, d);
+          } else if (minR > 0 && d < minR) {
+            // native distance_min dead zone (WEAPON_DISTANCE_MIN, m_distanceMin/0x2C):
+            // the weapon may not release below minimum range; the unit holds its
+            // ground (artillery vulnerability — screen it with escorts)
+            u.path = [];
+            u.orientDest = Math.atan2(tgt.y - u.y, tgt.x - u.x);
           } else if (d <= u.def.weapon.range) {
             u.path = [];
             u.orientDest = Math.atan2(tgt.y - u.y, tgt.x - u.x);
@@ -820,15 +926,35 @@
           }
         } else if (buildingTarget) {
           const d = Math.hypot(buildingTarget.x - u.x, buildingTarget.y - u.y);
+          const minR2 = u.def.weapon.minRange || 0;
           u.orientDest = Math.atan2(buildingTarget.y - u.y, buildingTarget.x - u.x);
-          if (d <= u.def.weapon.range + buildingTarget.radius) {
+          if (d >= minR2 + buildingTarget.radius && d <= u.def.weapon.range + buildingTarget.radius) {
             u.path = [];
             if (u.aimT > 0)
               u.aimT = Math.max(0, u.aimT - dt);
             else if (this.facingOk(u, buildingTarget.x, buildingTarget.y, fsmStat(u, "fireArc")))
               this.shootBuilding(u, buildingTarget, d);
-          } else
+          } else if (d < minR2 + buildingTarget.radius)
+            u.path = []; // dead zone: hold (distance_min symmetric with the unit gate)
+          else
             this.moveToward(u, buildingTarget.x, buildingTarget.y, dt);
+        } else if (u.order.kind === "garrison" && u.order.depotId !== undefined) {
+          const b = this.buildings.find((v) => v.id === u.order.depotId);
+          if (!b || b.defId !== "bunker" || b.owner !== u.owner || b.hp <= 0 || !b.built) {
+            u.order = { kind: "idle" };
+            u.dest = undefined;
+          } else {
+            const dist = Math.hypot(b.x - u.x, b.y - u.y);
+            if (dist <= b.radius + 1.1) {
+              u.garrison = b.id;
+              u.path = [];
+              u.dest = undefined;
+              u.vx = 0;
+              u.vy = 0;
+              this.floats.push({ x: b.x, y: b.y - 2, text: "GARRISONED", color: "#7dd3fc", t: 0 });
+            } else
+              this.moveToward(u, b.x, b.y, dt);
+          }
         } else if (u.order.kind === "capture" && u.order.depotId !== undefined) {
           const d = this.buildings.find((b) => b.id === u.order.depotId);
           if (!d || d.owner === u.owner) {
@@ -864,7 +990,7 @@
               const t = this.findTarget(u);
               if (t) {
                 const d = Math.hypot(t.x - u.x, t.y - u.y);
-                if (d <= u.def.weapon.range)
+                if (d >= (u.def.weapon.minRange || 0) && d <= u.def.weapon.range)
                   this.shoot(u, t.x, t.y, t, d);
               }
             }
@@ -872,11 +998,23 @@
         } else if (u.order.x !== undefined && u.order.y !== undefined) {
           if (!u.path.length && u.dest) {
             if (Math.hypot(u.dest.x - u.x, u.dest.y - u.y) < 0.8) {
-              if (u.order.kind !== "attackMove")
-                u.order = { kind: "idle" };
-              u.dest = undefined;
+              if (u.order.kind === "patrol") {
+                // route leg complete: flip between the anchor and the far point
+                // (native ClientUnitTaskType.Patrol = 1)
+                u.order.back = !u.order.back;
+                const lx = u.order.back ? u.order.ax : u.order.x;
+                const ly = u.order.back ? u.order.ay : u.order.y;
+                u.dest = { x: lx, y: ly };
+                u.path = this.pf.find(u.x, u.y, lx, ly, u.def.kind === "aircraft" && !u.grounded) ?? [];
+              } else {
+                if (u.order.kind !== "attackMove")
+                  u.order = { kind: "idle" };
+                u.dest = undefined;
+              }
             } else {
-              u.path = this.pf.find(u.x, u.y, u.order.x, u.order.y, u.def.kind === "aircraft" && !u.grounded) ?? [];
+              const lx = u.order.kind === "patrol" && u.order.back ? u.order.ax : u.order.x;
+              const ly = u.order.kind === "patrol" && u.order.back ? u.order.ay : u.order.y;
+              u.path = this.pf.find(u.x, u.y, lx, ly, u.def.kind === "aircraft" && !u.grounded) ?? [];
               if (!u.path.length) {
                 u.order = { kind: "idle" };
                 u.dest = undefined;
@@ -892,7 +1030,7 @@
             const t = this.findTarget(u);
             if (t) {
               const d = Math.hypot(t.x - u.x, t.y - u.y);
-              if (d <= u.def.weapon.range)
+              if (d >= (u.def.weapon.minRange || 0) && d <= u.def.weapon.range)
                 this.shoot(u, t.x, t.y, t, d);
             }
           }
@@ -940,15 +1078,15 @@
       // native objPreferred: a command-attack target is sticky until it dies.
       if (u.preferredId !== undefined) {
         const pref = this.units.find((t) => t.id === u.preferredId);
-        if (!pref || pref.hp <= 0) {
+        if (!pref || pref.hp <= 0 || pref.garrison !== undefined) {
           u.preferredId = undefined;
           u.targetId = undefined;
         } else
           u.targetId = u.preferredId;
       }
-      if (u.targetId === undefined || !this.units.some((t) => t.id === u.targetId && t.hp > 0)) {
+      if (u.targetId === undefined || !this.units.some((t) => t.id === u.targetId && t.hp > 0 && t.garrison === undefined)) {
         u.targetId = undefined;
-        if (u.order.kind === "idle" || u.order.kind === "attackMove") {
+        if (u.order.kind === "idle" || u.order.kind === "attackMove" || u.order.kind === "patrol") {
           const t = this.findTarget(u);
           if (t) {
             u.targetId = t.id;
@@ -974,6 +1112,8 @@
       for (const t of this.units) {
         if (t.owner === u.owner || t.hp <= 0)
           continue;
+        if (t.garrison !== undefined)
+          continue; // garrisoned infantry are inside the structure: untargetable
         const tAir = (t.def.kind === "aircraft" || t.def.aircraft) && !t.grounded;
         if (tAir && (!u.def.antiAir || shooterAir))
           continue;
@@ -984,6 +1124,9 @@
         let eff = d - 2.5 * (dmgVs / Math.max(1, t.def.health)) - (t.def.kind === "infantry" ? 0 : 0.5);
         if (tAir && u.def.antiAir)
           eff -= 3;
+        // native distance_min: targets inside the dead zone are not acquirable
+        if (u.def.weapon.minRange && d < u.def.weapon.minRange)
+          continue;
         if (eff < bd) {
           bd = eff;
           best = t;
@@ -1217,7 +1360,7 @@
       if (!attacker || !victim || attacker.owner === victim.owner || attacker.hp <= 0)
         return;
       const joins = (w) => {
-        if (w.def.weapon && (w.order.kind === "idle" || w.order.kind === "attackMove") && w.targetId === undefined) {
+        if (w.def.weapon && (w.order.kind === "idle" || w.order.kind === "attackMove" || w.order.kind === "patrol") && w.targetId === undefined && w.garrison === undefined) {
           w.targetId = attacker.id;
           if (w.order.kind === "idle" && !w.guard)
             w.guard = { x: w.x, y: w.y };
@@ -1305,7 +1448,10 @@
             b.built = true;
         }
         const wdef = BLD[b.defId] && BLD[b.defId].weapon;
-        if (wdef && b.built && b.hp > 0 && b.owner > 0) {
+        // native ClientBunkerWeapon: the bunker's weapon is crew-served — it
+        // fires only while garrisoned infantry man it (empty bunker = silent)
+        const crew = b.defId === "bunker" ? this.units.filter((v) => v.garrison === b.id).length : 1;
+        if (wdef && crew > 0 && b.built && b.hp > 0 && b.owner > 0) {
           b.cd = Math.max(0, (b.cd ?? 0) - dt);
           if (b.cd <= 0) {
             let best;
@@ -1345,6 +1491,12 @@
             if (who > 0)
               this.stats[who].bldKills++;
           }
+        // garrison crew scrambles when the bunker falls
+        const deadBunkers = new Set(this.buildings.filter((b) => b.hp <= 0 && b.defId === "bunker").map((b) => b.id));
+        if (deadBunkers.size)
+          for (const u of this.units)
+            if (u.garrison !== undefined && deadBunkers.has(u.garrison))
+              this.exitGarrison(u);
         this.buildings = this.buildings.filter((b) => b.hp > 0 || b.defId === "hq");
         this.refreshEconomy();
       }
@@ -1385,7 +1537,7 @@
             }
         };
         for (const u of this.units)
-          if (u.owner === o)
+          if (u.owner === o && u.garrison === undefined)
             reveal(u.x, u.y, u.def.view);
         for (const b of this.buildings)
           if (b.owner === o)
@@ -1411,6 +1563,9 @@
       this.sel = sel;
       this.placing = null;
       this.log = [];
+      // Phase D: full (uncapped) replay journal — `log` stays a 512-entry ring
+      // for live debugging; `full` retains every accepted command for replay.
+      this.full = [];
     }
     attach(sim) {
       this.sim = sim;
@@ -1447,6 +1602,21 @@
             return false;
           sim.commandMove(cmd.ids, cmd.x, cmd.y, !!cmd.attackMove);
           break;
+        case "patrol":
+          if (!sim || !cmd.ids || !cmd.ids.length || cmd.x === undefined || cmd.y === undefined)
+            return false;
+          sim.commandPatrol(cmd.ids, cmd.x, cmd.y);
+          break;
+        case "garrison":
+          if (!sim || !cmd.ids || !cmd.ids.length || cmd.buildingId === undefined)
+            return false;
+          sim.commandGarrison(cmd.ids, cmd.buildingId);
+          break;
+        case "ungarrison":
+          if (!sim || !cmd.ids || !cmd.ids.length)
+            return false;
+          sim.commandUngarrison(cmd.ids);
+          break;
         case "attack":
           if (!sim || !cmd.ids || !cmd.ids.length)
             return false;
@@ -1482,10 +1652,80 @@
         default:
           return false;
       }
-      this.log.push({ tick: sim ? sim.tick : -1, cmd });
+      // tick-stamped + seq-stamped: replay sorts by (tick, seq) so the exact
+      // cross-issuer issue order is reproduced (sim.cmdSeq is shared).
+      const entry = { tick: sim ? sim.tick : -1, seq: sim ? sim.cmdSeq++ : -1, cmd };
+      this.log.push(entry);
       if (this.log.length > 512)
         this.log.shift();
+      this.full.push(entry);
       return true;
+    }
+  }
+
+  // ---- Phase D: replay playback harness ----
+  // A replay record = seed + full command journal (player + AI, tick/seq
+  // stamped) + terrain fingerprint + 1 Hz state-hash journal. Playback rebuilds
+  // the sim from the seed, re-feeds the journaled commands at their recorded
+  // ticks (applied at the tick boundary, before the next step — exactly how
+  // issue() behaves live), and compares state hashes at the journal marks.
+  // Divergences localize desyncs to a tick (native analog: CRCRequest/Verify).
+  class Replay {
+    static terrainFingerprint(sim) {
+      // position-mixed sampling of the occupancy grid — enough to catch a
+      // different map build, cheap to compute
+      let s = "";
+      for (let i = 0; i < sim.grid.length; i += 7)
+        s += String.fromCharCode(48 + sim.grid[i] * 3 + (i % 7));
+      return fnv1a(s);
+    }
+    static capture(sim, issuers) {
+      const commands = [];
+      for (const j of issuers || [])
+        for (const e of j.full || [])
+          commands.push({ tick: e.tick, seq: e.seq, issuer: j.ownerTag ?? 1, cmd: e.cmd });
+      commands.sort((a, b) => a.tick - b.tick || a.seq - b.seq);
+      // terrain baseline = a FRESH constructor sim of the same seed (NOT the
+      // capture-time grid, which already contains player-built structures)
+      const probe = new Sim(sim.seed);
+      return {
+        v: 1,
+        seed: sim.seed,
+        tickRate: TICK_RATE,
+        terrain: Replay.terrainFingerprint(probe),
+        commands,
+        hashes: sim.hashes.map((e) => ({ tick: e.tick, h: e.h })),
+        finalHash: sim.hashState(),
+        finalTick: sim.tick
+      };
+    }
+    static play(rec, opts = {}) {
+      const out = { sim: null, divergences: [], applied: 0, steps: 0, terrainOk: true };
+      const sim = out.sim = new Sim(rec.seed >>> 0);
+      if (rec.terrain !== undefined && Replay.terrainFingerprint(sim) !== rec.terrain)
+        out.divergences.push({ tick: 0, why: "terrain fingerprint mismatch (different map build)" });
+      const rep = new Commands(sim);
+      const cmds = (rec.commands || []).slice().sort((a, b) => a.tick - b.tick || a.seq - b.seq);
+      const journal = new Map((rec.hashes || []).map((e) => [e.tick, e.h]));
+      const until = opts.untilTick === undefined ? rec.finalTick : opts.untilTick;
+      let ci = 0;
+      while (sim.tick < until && sim.winner === null) {
+        while (ci < cmds.length && cmds[ci].tick <= sim.tick) {
+          rep.issue(cmds[ci].cmd);
+          ci++;
+        }
+        sim.step(1 / rec.tickRate);
+        out.steps++;
+        if (sim.tick % 20 === 0) {
+          const want = journal.get(sim.tick);
+          if (want !== undefined && sim.hashState() !== want)
+            out.divergences.push({ tick: sim.tick, why: "state hash divergence", got: sim.hashState(), want });
+        }
+      }
+      out.applied = ci;
+      if (!out.divergences.length && rec.finalHash !== undefined && sim.tick === rec.finalTick && sim.winner === null && sim.hashState() !== rec.finalHash)
+        out.divergences.push({ tick: sim.tick, why: "final hash mismatch", got: sim.hashState(), want: rec.finalHash });
+      return out;
     }
   }
 
@@ -35399,7 +35639,7 @@ void main() {
       const seen = new Set;
       for (const u of sim.units) {
         seen.add(u.id);
-        const visibleToPlayer = u.owner === 1 || !!vis[Math.round(u.y) * MAP_W + Math.round(u.x)];
+        const visibleToPlayer = (u.owner === 1 || !!vis[Math.round(u.y) * MAP_W + Math.round(u.x)]) && u.garrison === undefined;
         let v = this.unitViews.get(u.id);
         if (!v) {
           if (!visibleToPlayer)
@@ -36552,7 +36792,31 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       return sim;
     }, r3d, cam, sel, get ai() {
       return ai;
-    }, cmd });
+    }, cmd, Replay });
+    // Phase D replay harness: capture (seed + full command journals + hashes),
+    // save to a JSON file, play a record back headlessly and report divergences.
+    window.__aow3Replay = {
+      capture() {
+        return sim ? Replay.capture(sim, [{ ownerTag: 1, full: cmd.full }, ...(ai ? [{ ownerTag: 2, full: ai.cmd.full }] : [])]) : null;
+      },
+      save() {
+        const rec = this.capture();
+        if (!rec)
+          return null;
+        const blob = new Blob([JSON.stringify(rec)], { type: "application/json" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = `aow3-replay-${rec.seed}-${rec.finalTick}.json`;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+        return a.download;
+      },
+      run(rec) {
+        const out = Replay.play(typeof rec === "string" ? JSON.parse(rec) : rec);
+        console.info(`[AOW3 replay] ${out.applied} commands, ${out.steps} steps, terrain ${out.terrainOk ? "ok" : "MISMATCH"}, divergences:`, out.divergences.length ? out.divergences : "none");
+        return out;
+      }
+    };
   }
   function start() {
     if (!ready)
@@ -36669,6 +36933,16 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
   var lastTap = { t: 0, id: -2 };
   var drag = { active: false, sx: 0, sy: 0, cx: 0, cy: 0, box: false };
   var pan = { active: false, wx: 0, wy: 0, camX: 0, camY: 0 };
+  // Phase 5: patrol arm toggle (native ClientUnitTaskType.Patrol = 1) — P arms,
+  // the next right-click issues a patrol command to that point.
+  var patrolArmed = false;
+  var disarmPatrol = () => {
+    if (patrolArmed) {
+      patrolArmed = false;
+      if ($("prodhint"))
+        $("prodhint").textContent = "";
+    }
+  };
   var rel = (e) => {
     const r = cv.getBoundingClientRect();
     return { x: e.clientX - r.left, y: e.clientY - r.top };
@@ -36703,6 +36977,17 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       cmd.issue({ type: "capture", ids: ids.filter((id) => sim.units.find((u) => u.id === id && u.def.captures)), buildingId: depot.id });
       r3d.mark(depot.x, depot.y, "capture");
       return;
+    }
+    // Phase 5 garrison: right-click a friendly bunker with infantry selected
+    // (native ClientBuildingTypeEditor.Bunker = 14 + ClientBunkerWeapon)
+    const bunker = sim.buildings.find((b) => b.defId === "bunker" && b.owner === 1 && b.built && b.hp > 0 && Math.hypot(b.x - t.x, b.y - t.y) < (b.radius || 1.6) + 1.2);
+    if (bunker) {
+      const inf = ids.filter((id) => sim.units.find((u) => u.id === id && u.def.kind === "infantry" && u.garrison === undefined));
+      if (inf.length) {
+        cmd.issue({ type: "garrison", ids: inf, buildingId: bunker.id });
+        r3d.mark(bunker.x, bunker.y, "capture");
+        return;
+      }
     }
     cmd.issue({ type: "move", ids, x: Math.max(1, Math.min(MAP_W - 2, t.x)), y: Math.max(1, Math.min(MAP_H - 2, t.y)), attackMove });
     r3d.mark(t.x, t.y, attackMove ? "attack" : "move");
@@ -36747,6 +37032,15 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       return;
     }
     if (e.button === 2) {
+      if (patrolArmed) {
+        disarmPatrol();
+        const t = r3d.screenToTile(p.x, p.y);
+        if (t && sel.size) {
+          cmd.issue({ type: "patrol", ids: [...sel], x: Math.max(1, Math.min(MAP_W - 2, t.x)), y: Math.max(1, Math.min(MAP_H - 2, t.y)) });
+          r3d.mark(t.x, t.y, "move");
+        }
+        return;
+      }
       orderAt(p.x, p.y, e.ctrlKey);
       return;
     }
@@ -36847,7 +37141,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       const y0 = Math.min(drag.sy, drag.cy), y1 = Math.max(drag.sy, drag.cy);
       const boxIds = [];
       for (const u of sim.units) {
-        if (u.owner !== 1)
+        if (u.owner !== 1 || u.garrison !== undefined)
           continue;
         const s = r3d.tileToScreen(u.x, u.y);
         if (s.sx >= x0 - 4 && s.sx <= x1 + 4 && s.sy >= y0 - 8 && s.sy <= y1 + 4)
@@ -36858,7 +37152,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       let hit;
       let bd = 30;
       for (const u of sim.units) {
-        if (u.owner !== 1)
+        if (u.owner !== 1 || u.garrison !== undefined)
           continue;
         const s = r3d.tileToScreen(u.x, u.y);
         const dist = Math.hypot(s.sx - p.x, s.sy - p.y - 10);
@@ -36911,6 +37205,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
   window.addEventListener("keydown", (e) => {
     keys.add(e.key.toLowerCase());
     if (e.key === "Escape") {
+      disarmPatrol();
       if (placing)
         stopPlacing();
       cmd.issue({ type: "cancel" });
@@ -36919,8 +37214,24 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
     // Accept body OR focused UI buttons (after clicking a card, focus leaves
     // body); only real text-entry targets are excluded.
     const tg = e.target && e.target.tagName;
-    if (e.key.toLowerCase() === "s" && sim && sel.size && !placing && (e.target === document.body || tg === "BUTTON") && !/^(INPUT|TEXTAREA)$/.test(tg || ""))
+    const cmdTarget = (e.target === document.body || tg === "BUTTON") && !/^(INPUT|TEXTAREA)$/.test(tg || "");
+    if (e.key.toLowerCase() === "s" && sim && sel.size && !placing && cmdTarget)
       cmd.issue({ type: "stop", ids: [...sel] });
+    // Phase 5: P arms patrol (next right-click = patrol route point)
+    if (e.key.toLowerCase() === "p" && sim && sel.size && !placing && cmdTarget) {
+      patrolArmed = true;
+      if ($("prodhint"))
+        $("prodhint").textContent = "PATROL armed \u2014 right-click the far waypoint";
+    }
+    // Phase 5: V exits garrison when any selected unit is inside a bunker,
+    // otherwise it is the hero land/depart ability (native UnloadFromTransport)
+    if (e.key.toLowerCase() === "v" && sim && sel.size && !placing && cmdTarget) {
+      const ids = [...sel];
+      if (ids.some((id) => sim.units.find((u) => u.id === id && u.garrison !== undefined)))
+        cmd.issue({ type: "ungarrison", ids });
+      else
+        cmd.issue({ type: "special", ids });
+    }
   });
   window.addEventListener("keyup", (e) => keys.delete(e.key.toLowerCase()));
   mini.addEventListener("pointerdown", (e) => {
@@ -36930,6 +37241,11 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
     // Phase 4: minimap as a command source — right-click moves the selection
     // there (same move command as the game view); left-click pans.
     if (e.button === 2) {
+      if (patrolArmed && sim && sel.size) {
+        disarmPatrol();
+        cmd.issue({ type: "patrol", ids: [...sel], x: Math.max(1, Math.min(MAP_W - 2, mx)), y: Math.max(1, Math.min(MAP_H - 2, my)) });
+        return;
+      }
       if (sim && sel.size)
         cmd.issue({ type: "move", ids: [...sel], x: Math.max(1, Math.min(MAP_W - 2, mx)), y: Math.max(1, Math.min(MAP_H - 2, my)) });
       return;
