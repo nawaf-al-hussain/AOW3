@@ -2430,7 +2430,11 @@
   class LockstepSession {
     constructor(transport, slot, cmds, opts = {}) {
       this.tr = transport;
-      this.rid = transport.rid;
+      // LIVE rid: PeerJS assigns its peer id asynchronously (on open), and the
+      // joiner's session is constructed BEFORE tr.join() resolves — a snapshot
+      // here would stay null and the targeted-delivery gate would drop every
+      // welcome/start addressed to this peer
+      Object.defineProperty(this, "rid", { get: () => transport.rid });
       this.slot = slot;
       this.cmds = cmds;
       this.delay = opts.delay ?? INPUT_DELAY;
