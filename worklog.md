@@ -995,3 +995,22 @@ Work Log:
 
 Stage Summary:
 - v=28: all remaining documented Phase 5 unknowns closed — Defend (tethered anchored stance), Bombard (targeted point shelling, artillery only), DontShoot/CanShoot (fire discipline toggle), TakePositions (per-unit placement -> hold), aircraft-hold orbit (visual). Remaining Phase 5 adjacents (siege/hide/same-speed acts, bombard duration, defend leash value) documented as unknowns in the note. Remaining Phase D: lockstep networking only.
+
+---
+Task ID: 25
+Agent: Super Z (main)
+Task: Lockstep networking (2P) — per-tick command exchange over the Phase 4 determinism stack (the last open Phase D item)
+
+Work Log:
+- Divergence recovery: this line of work was built on a stale base (v=13). Remote had meanwhile landed Phases 2-5 + determinism + replay harness through v=28 (8ab83ed..e15f301), including its own mulberry32 PRNG, hashState/stateString, Commands.issue() journals and the Replay class — the same scope this session had prototype-built (preserved on local branch backup/lockstep-v14, not merged; its BroadcastChannel/PeerJS/session design carried over). Reset to origin/main and rebuilt lockstep on the remote architecture.
+- Commands gained an outbound hook: issue() forwards LOCKSTEP_NET_TYPES (move/patrol/garrison/ungarrison/attack/stop/hold/defend/bombard/dontshoot/canshoot/takepos/capture/build/produce/special) to the session scheduler instead of applying locally; select/cancel stay issuer-local; execute() + applyRemote() preserve the (tick, seq) journal semantics so MP command journals remain replay-faithful.
+- LockstepSession: input delay 3 ticks; scheduleTick = max(tick+delay, sentUpTo+1) so a command never lands in an already-published packet; per-tick input packets from both slots; ready-gated accumulation (network stall = freeze, never divergence); checkpoint-20 hashState() checksum exchange with desync callback; buffer/hash-map pruning; reset() for rematch over a live transport; close() sends bye.
+- Transports: BroadcastTransport (BroadcastChannel, same-browser two tabs, zero infra) and PeerTransport (PeerJS 1.5.4 CDN lazy-load, public PeerServer signaling only, P2P reliable+ordered DataChannel, 4-char room codes "AOW3LS-<CODE>").
+- startGame(opts {seed, lockstep, slot}) replaces start(): #seed= override applies to solo only; ai=null and cmd.outbound wired in lockstep; sim.viewSlot + Net.mySlot drive slot-aware selection (owner filters), orderAt targeting, produce/build owners, HUD players/cp/queue, hero card gating, fog (updateFog), minimap (vis + unit colors), syncUnits visibility/rank/HP, selRing colors, HQ camera + home button; faction-color sites (b.owner === 1 tinting) intentionally untouched (global, not view-dependent).
+- MP menu UI (multiplayer panel: transport select, HOST, code input, JOIN, status), START SKIRMISH -> START MULTIPLAYER when a peer hellos, guest auto-launch on start packet (menu hides, P2 GUEST badge), mp-live badge (green/yellow stall/red desync + DESYNC banner), rematch re-uses the session (host relaunches with a fresh seed, guest waits), protocol version gate on hello/start.
+- Loop: lockstep branch pumps the session, applies scheduled commands for tick T, steps, then afterStep checkpoint; guard accepts ai==null in lockstep; stall dot reflects ready() state.
+- Tests: replay.test.js 45/45 and phase5.test.js 128/128 PASS on the refactored Commands (outbound defaults null -> issue()==execute()).
+- QA (localhost + live): solo 600-tick in-page run -> __aow3Replay.capture/run zero divergences; 2-tab BroadcastChannel match — host/join/start handshake, guest auto-launch slot 2, guest cmd.issue move replicated on host sim (attackMove@60), both peers drove to checkpoint 20 with IDENTICAL hash b6e850a3, zero desync flags; live site v=29 smoke: MP panel renders, solo starts, no page errors.
+
+Stage Summary:
+- v=29 (a41cd9f): lockstep networking live — the Phase D plan is now fully closed (determinism, replay harness, lockstep multiplayer). Known limits (documented): 2 players only, no join-in-progress/spectator, no late-catchup save sync, BC = same-browser only, PeerJS depends on the public broker; background-tab rAF throttling stalls a peer's pump until refocused (correct freeze, not divergence).
