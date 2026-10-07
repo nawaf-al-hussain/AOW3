@@ -1030,3 +1030,18 @@ Work Log:
 
 Stage Summary:
 - The three queued audit items are confirmed COMPLETE and pushed (commit 0e4c4b2 + later refactor-proof re-verification). FileUpload audit ranked list: items #1-#4 all CLOSED, #5 remains blocked on a 6.5.22 binary.
+
+---
+Task ID: 27
+Agent: Super Z (main)
+Task: User report "models are rotated perpendicular to the ground. trees and stuff" — diagnose and fix real-map decor orientation
+
+Work Log:
+- Reproduced on live (v=29): screenshots showed trees/palms lying flat as foliage carpets; probe of scatter instance quats returned raw map.json values incl. pure (0.71,0,0,0.71) = +90degX.
+- Root cause: map.json placement quats are authored-space (Unity, Z-up source art) — every quat carries the +90degX Z-up->Y-up correction (verified: post-multiplying by inv(+90X) reduces all samples to pure yaw). The decor GLB conversion baked that same correction into root nodes for a SUBSET of files (stats over 391 unique files: tree 34/34, palm 41/41, bush 66/69, prop 67/71, rock 23/35, grass 20/26, ground 0/115). The template bake step (geo.applyMatrix4(mesh.matrixWorld)) already absorbed the root rotation into geometry, so applyRealMap() applying the raw placement quat double-rotated every baked template by 90deg — trees perpendicular to the ground. Un-baked templates (all ground decals) NEED the quat's +90X to lie flat; a blanket strip would have stood ground decals vertically.
+- Fix (docs/game.js, +13/-2): capture first mesh's matrixWorld rotation during template bake -> template.qfix = inverse quaternion; in applyRealMap() post-multiply it out of each placement quat (q_final = q_map * qfix). Per-template correction handles the mixed bake population; positions/scales untouched. Fallback DecorScatter (no map.json) unaffected.
+- QA (local smoke, then live): 6024 instances / 359 meshes — 264 upright (Y-up geom), 93 flat ground decals (Z-up geom, normal up), 0 hard-90 tip-overs, 2 borderline ~33deg (legitimate leaning props/bent trees); before/after screenshots of the same dense cluster show standing canopies with volume + shadows vs flat carpets; unchanged orange/blue slab props (un-baked, raw quat kept) match previous renders — correct by construction. Suites: replay 45/45, phase5 128/128, commands-determinism 50/50, unit-fsm all, data-model 379/379. node --check OK. Console: only pre-existing GLTFLoader skinning warnings. v=29 -> v=30.
+
+Stage Summary:
+- Decor orientation restored to native: baked-template quats stripped of the double Z-up correction, un-baked (ground decals) untouched — one unified per-template mechanism (t.qfix), zero data regeneration needed for 813 decor GLBs / 6371 placements.
+- Commit 6d1ed03 (code, v=30) + this worklog commit; push + live verify pending at time of writing.
