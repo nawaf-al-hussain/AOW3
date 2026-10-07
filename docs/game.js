@@ -1806,6 +1806,10 @@
   // issuer state (plain ids, DOM-free); every order routes to a sim command
   // method. Failed commands are rejected BEFORE journalling, so the log is a
   // faithful replay record: seed + journal = replay (roadmap Phase D).
+  // Gameplay command types that must be replicated in lockstep multiplayer.
+  // select/cancel are issuer-local UI state (per-player selection) and never
+  // travel on the wire.
+  var LOCKSTEP_NET_TYPES = new Set(["move", "patrol", "garrison", "ungarrison", "attack", "stop", "hold", "defend", "bombard", "dontshoot", "canshoot", "takepos", "capture", "build", "produce", "special"]);
   class Commands {
     constructor(sim = null, sel = new Set()) {
       this.sim = sim;
@@ -1815,11 +1819,28 @@
       // Phase D: full (uncapped) replay journal — `log` stays a 512-entry ring
       // for live debugging; `full` retains every accepted command for replay.
       this.full = [];
+      // Lockstep: when set, gameplay commands are forwarded to the session
+      // scheduler (schedule at tick+delay, broadcast, execute on every peer at
+      // the identical tick via applyRemote) instead of applying immediately.
+      this.outbound = null;
     }
     attach(sim) {
       this.sim = sim;
     }
     issue(cmd) {
+      if (!cmd || !cmd.type)
+        return false;
+      if (this.outbound && LOCKSTEP_NET_TYPES.has(cmd.type))
+        return this.outbound(cmd);
+      return this.execute(cmd);
+    }
+    // lockstep entry: execute a scheduled command at its target tick and
+    // journal it exactly like a local issue (tick = sim.tick = scheduled tick,
+    // so MP replays stay (tick,seq)-faithful)
+    applyRemote(cmd) {
+      return this.execute(cmd);
+    }
+    execute(cmd) {
       if (!cmd || !cmd.type)
         return false;
       const sim = this.sim;
@@ -1948,6 +1969,298 @@
         this.log.shift();
       this.full.push(entry);
       return true;
+    }
+  }
+
+  // ---- Lockstep networking (2 players) ----
+  // Classic deterministic lockstep on top of the Phase 4 determinism stack:
+  // both peers exchange per-tick input packets through a Commands.outbound
+  // hook; the sim may only advance tick T once the peer's packet for T has
+  // arrived (network stall = sim freeze, never divergence). Commands are
+  // scheduled INPUT_DELAY ticks ahead to hide one round-trip. hashState()
+  // checksums are exchanged every CHECKPOINT ticks (1 Hz); a mismatch is a
+  // hard desync surfaced in the UI banner.
+  var PROTO = 1;
+  var INPUT_DELAY = 3;
+  var CHECKPOINT = 20;
+  var Net = {
+    mode: "local",
+    session: null,
+    mySlot: 1,
+    lastHash: null,
+    lastHashTick: -1
+  };
+  class LockstepSession {
+    constructor(transport, slot, cmds, opts = {}) {
+      this.tr = transport;
+      this.slot = slot;
+      this.cmds = cmds;
+      this.delay = opts.delay ?? INPUT_DELAY;
+      this.buf = new Map;
+      this.sentUpTo = -1;
+      this.peerSeen = -1;
+      this.myHash = new Map;
+      this.peerHash = new Map;
+      this.desynced = false;
+      this.dead = false;
+      this.onDesync = opts.onDesync || (() => {});
+      this.onPeerLeave = opts.onPeerLeave || (() => {});
+      this.onGuestStart = opts.onGuestStart || (() => {});
+      this.onPeerHello = opts.onPeerHello || (() => {});
+      transport.onMsg((m) => this.onMsg(m));
+      transport.onClose(() => {
+        if (!this.dead)
+          this.onPeerLeave();
+      });
+    }
+    send(m) {
+      if (!this.dead)
+        this.tr.send(m);
+    }
+    onMsg(m) {
+      if (!m || this.dead)
+        return;
+      if (m.a === "c") {
+        const t = m.t | 0;
+        if (t > this.peerSeen)
+          this.peerSeen = t;
+        let per = this.buf.get(t);
+        if (!per) {
+          per = {};
+          this.buf.set(t, per);
+        }
+        const arr = per[m.s] ?? (per[m.s] = []);
+        for (const c of m.c || [])
+          arr.push(c);
+      } else if (m.a === "h") {
+        this.peerHash.set(m.t | 0, m.h);
+        this.checkHash(m.t | 0);
+      } else if (m.a === "hello") {
+        this.onPeerHello(m);
+      } else if (m.a === "start") {
+        this.onGuestStart(m);
+      } else if (m.a === "bye") {
+        this.dead = true;
+        this.onPeerLeave();
+      }
+    }
+    checkHash(t) {
+      if (this.desynced)
+        return;
+      const mine = this.myHash.get(t);
+      const theirs = this.peerHash.get(t);
+      if (mine !== undefined && theirs !== undefined && mine !== theirs) {
+        this.desynced = true;
+        this.onDesync(t, mine, theirs);
+      }
+      if (this.myHash.size > 240)
+        for (const k of [...this.myHash.keys()])
+          if (k < t - 200)
+            this.myHash.delete(k);
+      if (this.peerHash.size > 240)
+        for (const k of [...this.peerHash.keys()])
+          if (k < t - 200)
+            this.peerHash.delete(k);
+    }
+    // publish my input packet for tick T once T is within the delay window
+    pump(tick) {
+      const horizon = tick + this.delay;
+      while (this.sentUpTo < horizon) {
+        this.sentUpTo++;
+        const per = this.buf.get(this.sentUpTo);
+        const mine = per && per[this.slot] || [];
+        this.send({ a: "c", t: this.sentUpTo, s: this.slot, c: mine });
+      }
+      if (this.buf.size > 400)
+        for (const t of [...this.buf.keys()])
+          if (t < tick - 8)
+            this.buf.delete(t);
+    }
+    // a command issued now must not land inside an already-published packet
+    scheduleTick(tick) {
+      return Math.max(tick + this.delay, this.sentUpTo + 1);
+    }
+    // Commands.outbound hook: schedule for a future tick (and broadcast).
+    // The deterministic result is computed by every peer at the target tick.
+    local(cmd, tick) {
+      const c2 = { ...cmd, _slot: this.slot };
+      if (c2.type === "build" || c2.type === "produce")
+        c2.owner = c2.owner ?? this.slot;
+      const t = this.scheduleTick(tick);
+      let per = this.buf.get(t);
+      if (!per) {
+        per = {};
+        this.buf.set(t, per);
+      }
+      (per[this.slot] ?? (per[this.slot] = [])).push(c2);
+      if (t <= this.sentUpTo)
+        this.send({ a: "c", t, s: this.slot, c: [c2] });
+      return true;
+    }
+    ready(tick) {
+      return this.peerSeen >= tick;
+    }
+    apply(tick) {
+      const per = this.buf.get(tick);
+      if (!per)
+        return;
+      for (const p of [1, 2]) {
+        const list = per[p];
+        if (list)
+          for (const c2 of list)
+            this.cmds.applyRemote(c2);
+      }
+    }
+    afterStep(tick, sim) {
+      if (tick % CHECKPOINT !== 0)
+        return;
+      const h = sim.hashState();
+      this.myHash.set(tick, h);
+      this.send({ a: "h", t: tick, h });
+      this.checkHash(tick);
+      Net.lastHash = h;
+      Net.lastHashTick = tick;
+    }
+    // fresh match over an existing transport (rematch)
+    reset() {
+      this.buf.clear();
+      this.sentUpTo = -1;
+      this.peerSeen = -1;
+      this.myHash.clear();
+      this.peerHash.clear();
+      this.desynced = false;
+      this.dead = false;
+    }
+    close() {
+      if (this.dead)
+        return;
+      this.dead = true;
+      try {
+        this.tr.send({ a: "bye" });
+        this.tr.close();
+      } catch (e) {}
+    }
+  }
+  // Transport 1: BroadcastChannel — same browser, two tabs/windows on the same
+  // origin (zero infrastructure, instant local testing of the full protocol).
+  class BroadcastTransport {
+    constructor(name) {
+      this.ch = new BroadcastChannel(name);
+      this._msg = null;
+      this._close = null;
+      this.ch.onmessage = (e) => {
+        if (this._msg)
+          this._msg(e.data);
+      };
+    }
+    onMsg(fn) {
+      this._msg = fn;
+    }
+    onClose(fn) {
+      this._close = fn;
+    }
+    send(m) {
+      this.ch.postMessage(m);
+    }
+    close() {
+      try {
+        this.ch.postMessage({ a: "bye" });
+        this.ch.close();
+      } catch (e) {}
+      if (this._close)
+        this._close();
+    }
+  }
+  // Transport 2: PeerJS — cross-machine play. The public PeerServer brokers
+  // signaling only; game traffic flows over a P2P WebRTC DataChannel
+  // (reliable + ordered, matching lockstep packet assumptions).
+  class PeerTransport {
+    constructor() {
+      this._msg = null;
+      this._close = null;
+      this.conns = [];
+      this.peer = null;
+    }
+    onMsg(fn) {
+      this._msg = fn;
+    }
+    onClose(fn) {
+      this._close = fn;
+    }
+    send(m) {
+      for (const c of this.conns)
+        if (c.open)
+          c.send(m);
+    }
+    close() {
+      try {
+        this.send({ a: "bye" });
+        this.conns.forEach((c) => c.close());
+        if (this.peer)
+          this.peer.destroy();
+      } catch (e) {}
+      if (this._close)
+        this._close();
+    }
+    static loadLib() {
+      if (window.Peer)
+        return Promise.resolve(window.Peer);
+      return new Promise((res, rej) => {
+        const s2 = document.createElement("script");
+        s2.src = "https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js";
+        s2.onload = () => window.Peer ? res(window.Peer) : rej(new Error("peerjs-missing"));
+        s2.onerror = () => rej(new Error("peerjs-cdn-unreachable"));
+        document.head.appendChild(s2);
+      });
+    }
+    host(code) {
+      return PeerTransport.loadLib().then((Peer) => new Promise((res, rej) => {
+        const p = new Peer("AOW3LS-" + code, { debug: 0 });
+        this.peer = p;
+        p.on("open", () => res(code));
+        p.on("error", (e) => rej(e));
+        p.on("connection", (c) => {
+          c.on("data", (d) => {
+            if (this._msg)
+              this._msg(d);
+          });
+          c.on("close", () => {
+            this.conns = this.conns.filter((x) => x !== c);
+            if (this._close)
+              this._close();
+          });
+          c.on("open", () => this.conns.push(c));
+        });
+      }));
+    }
+    join(code) {
+      return PeerTransport.loadLib().then((Peer) => new Promise((res, rej) => {
+        const p = new Peer({ debug: 0 });
+        this.peer = p;
+        p.on("error", (e) => rej(e));
+        p.on("open", () => {
+          const c = p.connect("AOW3LS-" + code, { reliable: true });
+          const to = setTimeout(() => rej(new Error("peer-timeout")), 15000);
+          c.on("error", (e) => {
+            clearTimeout(to);
+            rej(e);
+          });
+          c.on("open", () => {
+            clearTimeout(to);
+            this.conns.push(c);
+            c.on("data", (d) => {
+              if (this._msg)
+                this._msg(d);
+            });
+            c.on("close", () => {
+              this.conns = this.conns.filter((x) => x !== c);
+              if (this._close)
+                this._close();
+            });
+            res(code);
+          });
+        });
+      }));
     }
   }
 
@@ -35933,11 +36246,11 @@ void main() {
       return view;
     }
     syncUnits(sim, sel) {
-      const vis = sim.visible[0];
+      const vis = sim.visible[(sim.viewSlot || 1) - 1];
       const seen = new Set;
       for (const u of sim.units) {
         seen.add(u.id);
-        const visibleToPlayer = (u.owner === 1 || !!vis[Math.round(u.y) * MAP_W + Math.round(u.x)]) && u.garrison === undefined;
+        const visibleToPlayer = (u.owner === (sim.viewSlot || 1) || !!vis[Math.round(u.y) * MAP_W + Math.round(u.x)]) && u.garrison === undefined;
         let v = this.unitViews.get(u.id);
         if (!v) {
           if (!visibleToPlayer)
@@ -36063,12 +36376,12 @@ void main() {
           this.paintRank(v.rankCanvas, rt);
           v.rankTex.needsUpdate = true;
         }
-        v.rankSprite.visible = rt > 0 && (u.owner === 1 || frac < 0.999 || isSel);
-        if (u.owner === 1 || frac < 0.999 || isSel) {
+        v.rankSprite.visible = rt > 0 && (u.owner === (sim.viewSlot || 1) || frac < 0.999 || isSel);
+        if (u.owner === (sim.viewSlot || 1) || frac < 0.999 || isSel) {
           v.hpSprite.visible = true;
           if (Math.abs(frac - v.lastHp) > 0.01) {
             v.lastHp = frac;
-            this.paintHp(v.hpCanvas, frac, u.owner !== 1);
+            this.paintHp(v.hpCanvas, frac, u.owner !== (sim.viewSlot || 1));
             v.hpTex.needsUpdate = true;
           }
           v.hpSprite.position.y = v.model.height + 0.55;
@@ -36289,7 +36602,7 @@ void main() {
       rankSprite.visible = false;
       rankSprite.renderOrder = 41;
       model.group.add(rankSprite);
-      const selRing = this.texSelRing ? new Mesh(new PlaneGeometry(2, 2), new MeshBasicMaterial({ color: u.owner === 1 ? 5363281 : 16728128, map: this.texSelRing, transparent: true, opacity: 0.95, depthWrite: false, side: DoubleSide })) : new Mesh(new RingGeometry(0.82, 1, 26), new MeshBasicMaterial({ color: 9109354, transparent: true, opacity: 0.95, depthWrite: false, side: DoubleSide }));
+      const selRing = this.texSelRing ? new Mesh(new PlaneGeometry(2, 2), new MeshBasicMaterial({ color: u.owner === (sim.viewSlot || 1) ? 5363281 : 16728128, map: this.texSelRing, transparent: true, opacity: 0.95, depthWrite: false, side: DoubleSide })) : new Mesh(new RingGeometry(0.82, 1, 26), new MeshBasicMaterial({ color: 9109354, transparent: true, opacity: 0.95, depthWrite: false, side: DoubleSide }));
       selRing.rotation.x = -Math.PI / 2;
       selRing.position.y = 0.07;
       selRing.visible = false;
@@ -36785,7 +37098,7 @@ void main() {
       if (this.fogAcc < 0.2)
         return;
       this.fogAcc = 0;
-      const vis = sim.visible[0], exp = sim.explored;
+      const vis = sim.visible[(sim.viewSlot || 1) - 1], exp = sim.explored;
       const d = this.fogData.data;
       for (let i = 0;i < MAP_W * MAP_H; i++) {
         const o = i * 4;
@@ -36851,7 +37164,7 @@ void main() {
           ctx.drawImage(this.miniBg, 0, 0);
       }
       const sx = mmW / MAP_W, sy = mmH / MAP_H;
-      const vis = sim.visible[0], exp = sim.explored;
+      const vis = sim.visible[(sim.viewSlot || 1) - 1], exp = sim.explored;
       ctx.fillStyle = "rgba(20,26,18,0.5)";
       for (let y = 0;y < MAP_H; y += 2)
         for (let x = 0;x < MAP_W; x += 2) {
@@ -36897,9 +37210,9 @@ void main() {
         ctx.fillRect(b.x * sx - s / 2, b.y * sy - s / 2, s, s);
       }
       for (const u of sim.units) {
-        if (u.owner !== 1 && !vis[Math.round(u.y) * MAP_W + Math.round(u.x)])
+        if (u.owner !== (sim.viewSlot || 1) && !vis[Math.round(u.y) * MAP_W + Math.round(u.x)])
           continue;
-        ctx.fillStyle = u.owner === 1 ? sel.has(u.id) ? "#ffffff" : "#6ab8ff" : "#ff8a70";
+        ctx.fillStyle = u.owner === (sim.viewSlot || 1) ? sel.has(u.id) ? "#ffffff" : "#6ab8ff" : "#ff8a70";
         ctx.fillRect(u.x * sx - 1.5, u.y * sy - 1.5, 3, 3);
       }
       const corners = [[0, 0], [viewW, 0], [viewW, viewH], [0, viewH]];
@@ -36962,6 +37275,20 @@ void main() {
         <div>\uD83C\uDFF0 Build barracks &amp; factories \u00B7 destroy the enemy HQ · WASD / wheel / pinch</div>
       </div>
       <button id="start">▶ START SKIRMISH</button>
+      <div id="mp">
+        <div class="mp-title">MULTIPLAYER · LOCKSTEP (EXPERIMENTAL)</div>
+        <div class="mp-row">
+          <select id="mp-xp">
+            <option value="bc">Same browser (2 tabs)</option>
+            <option value="p2p">Internet (P2P)</option>
+          </select>
+          <button id="mp-host" class="mp-btn">HOST</button>
+          <span class="mp-sep">or</span>
+          <input id="mp-code" maxlength="4" placeholder="CODE" autocomplete="off" spellcheck="false" />
+          <button id="mp-join" class="mp-btn">JOIN</button>
+        </div>
+        <div id="mp-status">Same browser: host here, then open the site in a second tab and join with the code. Internet: share the code with a friend.</div>
+      </div>
       <div id="baking">… LOADING THE REAL MAP</div>
     </div>
   </div>
@@ -36982,6 +37309,8 @@ void main() {
     <button id="home">⌂ HQ</button>
   </div>
   <div id="clock" class="panel hidden">⏱ 0:00</div>
+  <div id="mp-live" class="panel hidden"><span id="mp-dot"></span><span id="mp-info">LOCKSTEP</span></div>
+  <div id="desync" class="hidden">⚠ SIMULATION DESYNC — peer state diverged. Check your game versions.</div>
 
   <div id="minimap-wrap" class="panel hidden"><div id="mm-frame"><div class="mm-corner c1"></div><div class="mm-corner c2"></div><div class="mm-corner c3"></div><div class="mm-corner c4"></div><div class="mm-rivet r1"></div><div class="mm-rivet r2"></div><div class="mm-rivet r3"></div><div class="mm-rivet r4"></div><div class="mm-plate">TACTICAL RADAR</div><div class="mm-plate right">SECTOR 7</div><canvas id="mini" width="172" height="172"></canvas></div></div>
   <div id="selinfo" class="panel hidden"></div>
@@ -37022,6 +37351,21 @@ button{cursor:pointer;border:0;border-radius:8px}
  box-shadow:inset 0 1px 0 rgba(160,210,230,.28),inset 0 -1px 0 rgba(0,0,0,.65),0 2px 12px rgba(0,0,0,.6);border-radius:4px}
 #resbar{left:8px;top:8px;font-size:14px}
 #clock{right:8px;top:8px;font-weight:700}
+#mp-live{right:8px;top:48px;font-size:11px;font-weight:700;letter-spacing:1px;color:#a7f3d0}
+#mp-dot{width:8px;height:8px;border-radius:50%;background:#34d399;box-shadow:0 0 8px #34d399;display:inline-block}
+#mp-dot.stall{background:#fbbf24;box-shadow:0 0 8px #fbbf24}
+#mp-dot.desync{background:#ef4444;box-shadow:0 0 8px #ef4444}
+#desync{position:absolute;left:50%;top:18%;transform:translateX(-50%);z-index:40;background:rgba(127,29,29,.92);border:1px solid #fca5a5;color:#fff;font-weight:800;font-size:14px;padding:10px 22px;border-radius:8px;box-shadow:0 8px 30px rgba(0,0,0,.6)}
+#desync.hidden{display:none}
+#mp{margin-top:14px;border:1px solid rgba(110,160,180,.35);border-radius:10px;padding:12px 14px;background:rgba(8,14,20,.55)}
+#mp .mp-title{font-size:11px;font-weight:800;letter-spacing:2px;color:#93c5fd;margin-bottom:8px}
+#mp .mp-row{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
+#mp .mp-sep{color:rgba(255,255,255,.4);font-size:12px}
+#mp .mp-btn{background:linear-gradient(180deg,#3b82f6,#1d4ed8);color:#fff;font-weight:800;font-size:13px;padding:8px 18px;border-radius:6px;box-shadow:0 3px 10px rgba(0,0,0,.4)}
+#mp .mp-btn:disabled{opacity:.45;cursor:default}
+#mp-code{width:76px;text-align:center;letter-spacing:3px;font-weight:800;font-size:14px;padding:7px 4px;border-radius:6px;border:1px solid rgba(255,255,255,.35);background:rgba(0,0,0,.4);color:#fcd34d;text-transform:uppercase}
+#mp-xp{background:#0f1a24;color:#e5e7eb;border:1px solid rgba(255,255,255,.3);border-radius:6px;font-size:12px;padding:7px 6px}
+#mp-status{margin-top:8px;font-size:11px;color:rgba(255,255,255,.55);min-height:14px}
 #minimap-wrap{left:8px;bottom:8px;padding:6px}
 #mini{display:block;border-radius:3px;cursor:pointer}
 #selinfo{left:8px;bottom:196px;flex-direction:column;align-items:stretch;gap:5px;min-width:180px;font-size:12px}
@@ -37102,7 +37446,24 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       return sim;
     }, r3d, cam, sel, get ai() {
       return ai;
-    }, cmd, Replay });
+    }, cmd, Replay,
+      net: {
+        get mode() {
+          return Net.mode;
+        },
+        get slot() {
+          return Net.mySlot;
+        },
+        get session() {
+          return Net.session;
+        },
+        get lastHash() {
+          return Net.lastHash;
+        }
+      },
+      mp: Mp,
+      classes: { Sim, AI, Commands, LockstepSession, BroadcastTransport, PeerTransport },
+      consts: { TICK_RATE, PROTO, INPUT_DELAY } });
     // Phase D replay harness: capture (seed + full command journals + hashes),
     // save to a JSON file, play a record back headlessly and report divergences.
     window.__aow3Replay = {
@@ -37128,43 +37489,230 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       }
     };
   }
-  function start() {
+  function mySlot() {
+    return Net.mode === "lockstep" ? Net.mySlot : 1;
+  }
+  // src/game/net/mp.ts — menu-level multiplayer controller (host/join/launch)
+  var Mp = {
+    armed: false,
+    pending: false,
+    session: null,
+    transport: null,
+    code: "",
+    helloTimer: null,
+    st(s) {
+      $("mp-status").textContent = s;
+    },
+    reset(reason) {
+      if (this.helloTimer) {
+        clearInterval(this.helloTimer);
+        this.helloTimer = null;
+      }
+      try {
+        if (this.session)
+          this.session.close();
+        else if (this.transport)
+          this.transport.close();
+      } catch (e) {}
+      this.armed = false;
+      this.pending = false;
+      this.session = null;
+      this.transport = null;
+      if (Net.mode !== "lockstep")
+        Net.session = null;
+      $("start").textContent = "▶ START SKIRMISH";
+      if (reason !== undefined)
+        this.st(reason);
+    },
+    genCode() {
+      const A = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+      let s = "";
+      for (let i = 0;i < 4; i++)
+        s += A[Math.floor(Math.random() * A.length)];
+      return s;
+    },
+    makeSession(slot) {
+      const mp = this;
+      return new LockstepSession(this.transport, slot, cmd, {
+        onDesync: (t, mine, theirs) => {
+          $("desync").classList.remove("hidden");
+          $("mp-dot").classList.add("desync");
+          $("mp-info").textContent = "DESYNC @" + t;
+          console.error("[lockstep] desync at tick", t, "mine", mine, "peer", theirs);
+        },
+        onPeerLeave: () => {
+          $("mp-dot").classList.remove("stall");
+          $("mp-info").textContent = "PEER LEFT";
+        },
+        onGuestStart: (m) => {
+          if (m.proto !== PROTO) {
+            mp.st("Version mismatch with host — reload both pages.");
+            return;
+          }
+          if (mp.helloTimer) {
+            clearInterval(mp.helloTimer);
+            mp.helloTimer = null;
+          }
+          mp.begin(m.seed | 0, 2);
+        },
+        onPeerHello: (m) => {
+          if (m && m.proto !== PROTO) {
+            mp.st("Peer has a different game version — reload both pages.");
+            return;
+          }
+          mp.armed = true;
+          mp.st("PEER CONNECTED — press START SKIRMISH to launch.");
+          $("start").textContent = "▶ START MULTIPLAYER";
+        }
+      });
+    },
+    host() {
+      const xp = $("mp-xp").value;
+      const code = this.genCode();
+      this.st("Opening room " + code + "…");
+      const tr = xp === "p2p" ? new PeerTransport() : new BroadcastTransport("aow3-ls-" + code);
+      this.transport = tr;
+      this.code = code;
+      const boot = xp === "p2p" ? tr.host(code) : Promise.resolve(code);
+      boot.then(() => {
+        if (this.transport !== tr)
+          return;
+        this.session = this.makeSession(1);
+        if (xp === "p2p")
+          this.st("ROOM " + code + " — waiting for a challenger…");
+        else
+          this.st("CODE " + code + " — open the site in a second tab and join with this code.");
+      }).catch((e) => {
+        this.reset("Host failed: " + (e && e.message || e) + " — try 'Same browser' mode.");
+      });
+    },
+    join() {
+      const xp = $("mp-xp").value;
+      const code = $("mp-code").value.trim().toUpperCase();
+      if (code.length < 3) {
+        this.st("Enter the host's code first.");
+        return;
+      }
+      this.st("Joining " + code + "…");
+      const tr = xp === "p2p" ? new PeerTransport() : new BroadcastTransport("aow3-ls-" + code);
+      this.transport = tr;
+      this.code = code;
+      this.session = this.makeSession(2);
+      const hello = () => {
+        if (this.session && !this.session.dead)
+          this.session.send({ a: "hello", proto: PROTO });
+      };
+      if (xp === "p2p") {
+        tr.join(code).then(() => {
+          if (this.transport !== tr)
+            return;
+          hello();
+          this.helloTimer = setInterval(hello, 2000);
+          this.st("Connected — waiting for host to launch…");
+        }).catch((e) => {
+          this.reset("Join failed: " + (e && e.message || e));
+        });
+      } else {
+        hello();
+        this.helloTimer = setInterval(hello, 2000);
+        this.st("Looking for host in room " + code + "… (host presses START)");
+      }
+    },
+    launch() {
+      const seed = Math.floor(Math.random() * 1e9);
+      if (this.helloTimer) {
+        clearInterval(this.helloTimer);
+        this.helloTimer = null;
+      }
+      if (this.session)
+        this.session.reset();
+      this.session.send({ a: "start", proto: PROTO, seed });
+      this.begin(seed, 1);
+    },
+    begin(seed, slot) {
+      Net.session = this.session;
+      const ok = startGame({ seed, lockstep: true, slot });
+      if (ok) {
+        $("menu").classList.add("hidden");
+        this.armed = false;
+        this.pending = false;
+        if (this.helloTimer) {
+          clearInterval(this.helloTimer);
+          this.helloTimer = null;
+        }
+      }
+    }
+  };
+  $("mp-host").onclick = () => Mp.host();
+  $("mp-join").onclick = () => Mp.join();
+  function startGame(opts = {}) {
     if (!ready)
-      return;
-    const mSeed = /[#&]seed=(\d+)/.exec(location.hash || "");
-    sim = new Sim(mSeed ? +mSeed[1] >>> 0 : Math.floor(Math.random() * 1e9));
+      return false;
+    const lockstep = !!opts.lockstep;
+    const mSeed = lockstep ? 0 : /[#&]seed=(\d+)/.exec(location.hash || "");
+    sim = new Sim(opts.seed ?? (mSeed ? +mSeed[1] >>> 0 : Math.floor(Math.random() * 1e9)));
     try {
       window.__aow3sim = sim;
     } catch (e) {}
-    ai = new AI(sim, 2);
+    ai = lockstep ? null : new AI(sim, 2);
+    sim.viewSlot = opts.slot || 1;
+    Net.mode = lockstep ? "lockstep" : "local";
+    Net.mySlot = sim.viewSlot;
     cmd.attach(sim);
-    console.info("[AOW3] sim seed", sim.seed);
+    cmd.outbound = lockstep ? (c) => Net.session.local(c, sim.tick) : null;
+    if (!lockstep)
+      Net.session = null;
+    console.info("[AOW3] sim seed", sim.seed, lockstep ? "(lockstep slot " + sim.viewSlot + ")" : "");
     sel.clear();
     r3d.applyTerrainGrid(sim.grid);
-    const hq = sim.hq(1);
+    const hq = sim.hq(sim.viewSlot);
     cam.x = hq ? hq.x + 6 : 12;
     cam.y = hq ? hq.y : MAP_H / 2;
     cam.dist = 20;
     $("menu").classList.add("hidden");
     $("over").classList.add("hidden");
+    $("desync").classList.add("hidden");
     ["resbar", "clock", "minimap-wrap", "prodwrap"].forEach((id) => $(id).classList.remove("hidden"));
+    if (lockstep) {
+      $("mp-info").textContent = "LOCKSTEP P" + sim.viewSlot + (sim.viewSlot === 1 ? " HOST" : " GUEST");
+      $("mp-live").classList.remove("hidden");
+    } else
+      $("mp-live").classList.add("hidden");
     buildCards();
     buildBCards();
     stopPlacing();
     last = performance.now();
+    return true;
+  }
+  function start() {
+    if (Mp.armed && Mp.session) {
+      Mp.launch();
+      return;
+    }
+    startGame({});
   }
   $("start").onclick = start;
-  $("rematch").onclick = start;
+  $("rematch").onclick = () => {
+    if (Net.mode === "lockstep" && Mp.session && !Mp.session.dead) {
+      if (mySlot() === 1)
+        Mp.launch();
+      else
+        Mp.st("Rematch: waiting for host to launch…");
+      $("over").classList.add("hidden");
+      return;
+    }
+    start();
+  };
   $("start").disabled = true;
   $("home").onclick = () => {
-    const hq = sim?.hq(1);
+    const hq = sim?.hq(mySlot());
     if (hq) {
       cam.x = hq.x + 5;
       cam.y = hq.y;
     }
   };
   function buildCards() {
-    const p = sim.players[0];
+    const p = sim.players[mySlot() - 1];
     const cards = $("cards");
     cards.innerHTML = "";
     for (const id of BUILD_ORDER) {
@@ -37174,7 +37722,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       b.title = `${d.name} — ${d.desc}`;
       b.innerHTML = `<img src="${d.card}${d.card.startsWith("data:") ? "" : "?v=2"}" alt="${d.name}"/><div class="nm">${d.name.split('"')[0]}</div>
       <div class="pr">${d.price}¤<span class="cp">CP${d.cp}</span></div>`;
-      b.onclick = () => cmd.issue({ type: "produce", defId: id, owner: 1 });
+      b.onclick = () => cmd.issue({ type: "produce", defId: id, owner: mySlot() });
       cards.appendChild(b);
     }
     for (const id of HERO_ORDER) {
@@ -37186,7 +37734,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       b.title = `${d.name} — ${d.desc}`;
       b.innerHTML = `<img src="${d.card}"/><div class="nm">${d.name.split('"')[1] || d.name}</div>
       <div class="pr">${d.price}¤<span class="cp">CP${d.cp}</span></div>`;
-      b.onclick = () => cmd.issue({ type: "produce", defId: id, owner: 1 });
+      b.onclick = () => cmd.issue({ type: "produce", defId: id, owner: mySlot() });
       cards.appendChild(b);
     }
   }
@@ -37296,9 +37844,9 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
     let enemy;
     let bd = 1.6;
     for (const u of sim.units) {
-      if (u.owner === 1)
+      if (u.owner === mySlot())
         continue;
-      if (!sim.visible[0][Math.round(u.y) * MAP_W + Math.round(u.x)])
+      if (!sim.visible[mySlot() - 1][Math.round(u.y) * MAP_W + Math.round(u.x)])
         continue;
       const dist = Math.hypot(u.x - t.x, u.y - t.y);
       if (dist < bd + u.def.radius) {
@@ -37312,7 +37860,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       r3d.mark(enemy.x, enemy.y, "attack");
       return;
     }
-    const depot = sim.buildings.find((b) => b.defId === "depot" && b.owner !== 1 && Math.hypot(b.x - t.x, b.y - t.y) < DEPOT.radius + 1);
+    const depot = sim.buildings.find((b) => b.defId === "depot" && b.owner !== mySlot() && Math.hypot(b.x - t.x, b.y - t.y) < DEPOT.radius + 1);
     if (depot && ids.some((id) => sim.units.find((u) => u.id === id && u.def.captures))) {
       cmd.issue({ type: "capture", ids: ids.filter((id) => sim.units.find((u) => u.id === id && u.def.captures)), buildingId: depot.id });
       r3d.mark(depot.x, depot.y, "capture");
@@ -37320,7 +37868,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
     }
     // Phase 5 garrison: right-click a friendly bunker with infantry selected
     // (native ClientBuildingTypeEditor.Bunker = 14 + ClientBunkerWeapon)
-    const bunker = sim.buildings.find((b) => b.defId === "bunker" && b.owner === 1 && b.built && b.hp > 0 && Math.hypot(b.x - t.x, b.y - t.y) < (b.radius || 1.6) + 1.2);
+    const bunker = sim.buildings.find((b) => b.defId === "bunker" && b.owner === mySlot() && b.built && b.hp > 0 && Math.hypot(b.x - t.x, b.y - t.y) < (b.radius || 1.6) + 1.2);
     if (bunker) {
       const inf = ids.filter((id) => sim.units.find((u) => u.id === id && u.def.kind === "infantry" && u.garrison === undefined));
       if (inf.length) {
@@ -37359,7 +37907,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
         if (t) {
           const cx = Math.max(4, Math.min(MAP_W - 5, t.x));
           const cy = Math.max(4, Math.min(MAP_H - 5, t.y));
-          if (cmd.issue({ type: "build", defId: placing, owner: 1, x: cx, y: cy })) {
+          if (cmd.issue({ type: "build", defId: placing, owner: mySlot(), x: cx, y: cy })) {
             window.__sfx?.play("bld_start", { vol: 0.8 });
             r3d.mark(t.x, t.y, "capture");
             if (!e.shiftKey)
@@ -37460,7 +38008,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       if (t && sim) {
         const cx = Math.max(4, Math.min(MAP_W - 5, t.x));
         const cy = Math.max(4, Math.min(MAP_H - 5, t.y));
-        r3d.updateGhost(cx, cy, sim.canPlace(1, placing, cx, cy) && sim.players[0].funds >= BLD[placing].price);
+        r3d.updateGhost(cx, cy, sim.canPlace(mySlot(), placing, cx, cy) && sim.players[mySlot() - 1].funds >= BLD[placing].price);
       }
       return;
     }
@@ -37506,7 +38054,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       const y0 = Math.min(drag.sy, drag.cy), y1 = Math.max(drag.sy, drag.cy);
       const boxIds = [];
       for (const u of sim.units) {
-        if (u.owner !== 1 || u.garrison !== undefined)
+        if (u.owner !== mySlot() || u.garrison !== undefined)
           continue;
         const s = r3d.tileToScreen(u.x, u.y);
         if (s.sx >= x0 - 4 && s.sx <= x1 + 4 && s.sy >= y0 - 8 && s.sy <= y1 + 4)
@@ -37517,7 +38065,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       let hit;
       let bd = 30;
       for (const u of sim.units) {
-        if (u.owner !== 1 || u.garrison !== undefined)
+        if (u.owner !== mySlot() || u.garrison !== undefined)
           continue;
         const s = r3d.tileToScreen(u.x, u.y);
         const dist = Math.hypot(s.sx - p.x, s.sy - p.y - 10);
@@ -37538,9 +38086,9 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
         let foe;
         let fd = 34;
         for (const u of sim.units) {
-          if (u.owner === 1)
+          if (u.owner === mySlot())
             continue;
-          if (!sim.visible[0][Math.round(u.y) * MAP_W + Math.round(u.x)])
+          if (!sim.visible[mySlot() - 1][Math.round(u.y) * MAP_W + Math.round(u.x)])
             continue;
           const s = r3d.tileToScreen(u.x, u.y);
           const dist = Math.hypot(s.sx - p.x, s.sy - p.y - 10);
@@ -37657,7 +38205,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
   function refreshHud() {
     if (!sim)
       return;
-    const p = sim.players[0];
+    const p = sim.players[mySlot() - 1];
     $("funds").textContent = Math.floor(p.funds).toLocaleString();
     $("income").textContent = `+${p.income}/s`;
     $("cp").textContent = `CP ${p.cpUsed}/${p.cpCap}`;
@@ -37689,7 +38237,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       if (!btn)
         return;
       const producer = PRODUCER_OF[id];
-      const hasP = sim.buildings.some((b) => b.defId === producer && b.owner === 1 && b.hp > 0 && b.built);
+      const hasP = sim.buildings.some((b) => b.defId === producer && b.owner === mySlot() && b.hp > 0 && b.built);
       const afford = p.funds >= d.price && p.cpUsed + d.cp <= p.cpCap;
       btn.disabled = !afford || !hasP;
       btn.title = hasP ? d.name + " \u2014 " + d.desc : d.name + " \u2014 requires " + BLD[producer].name;
@@ -37711,8 +38259,8 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       if (!btn)
         return;
       const producer = PRODUCER_OF[id];
-      const hasP = sim.buildings.some((b) => b.defId === producer && b.owner === 1 && b.hp > 0 && b.built);
-      const heroAlive = sim.units.some((u) => u.owner === 1 && u.def.hero);
+      const hasP = sim.buildings.some((b) => b.defId === producer && b.owner === mySlot() && b.hp > 0 && b.built);
+      const heroAlive = sim.units.some((u) => u.owner === mySlot() && u.def.hero);
       const afford = p.funds >= d.price && p.cpUsed + d.cp <= p.cpCap;
       btn.disabled = !afford || !hasP || heroAlive;
       btn.title = !hasP ? d.name + " — requires " + BLD[producer].name : heroAlive ? d.name + " — hero already deployed" : d.name + " — " + d.desc;
@@ -37741,7 +38289,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
   var miniAcc = 0;
   function loop(now) {
     requestAnimationFrame(loop);
-    if (!sim || !ai || !r3d || !$("resbar") || $("resbar").classList.contains("hidden")) {
+    if (!sim || (Net.mode !== "lockstep" && !ai) || !r3d || !$("resbar") || $("resbar").classList.contains("hidden")) {
       last = now;
       return;
     }
@@ -37749,12 +38297,28 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
     last = now;
     if (dt2 > 0.25)
       dt2 = 0.25;
+    let stalled = false;
+    if (Net.mode === "lockstep" && Net.session) {
+      Net.session.pump(sim.tick);
+      stalled = !Net.session.ready(sim.tick);
+    }
+    $("mp-dot").classList.toggle("stall", stalled && !Net.session.desynced);
     acc += dt2;
     const stepDt = 1 / TICK_RATE;
     let steps = 0;
     while (acc >= stepDt && steps < 8) {
-      sim.step(stepDt);
-      ai.step(stepDt);
+      if (Net.mode === "lockstep" && Net.session) {
+        // deterministic lockstep: tick T may only run once the peer's input
+        // packet for T arrived; scheduled commands apply on every peer identically
+        if (!Net.session.ready(sim.tick))
+          break;
+        Net.session.apply(sim.tick);
+        sim.step(stepDt);
+        Net.session.afterStep(sim.tick, sim);
+      } else {
+        sim.step(stepDt);
+        ai.step(stepDt);
+      }
       acc -= stepDt;
       steps++;
     }
