@@ -35284,11 +35284,14 @@ void main() {
             if (!g)
               return;
             const parts = [];
+            let qBake = null;
             g.scene.updateMatrixWorld(true);
             g.scene.traverse((o) => {
               const mesh = o;
               if (!mesh.isMesh)
                 return;
+              if (!qBake)
+                qBake = new Quaternion().setFromRotationMatrix(new Matrix4().extractRotation(mesh.matrixWorld));
               const geo = mesh.geometry.clone();
               geo.applyMatrix4(mesh.matrixWorld);
               const m = mesh.material.clone();
@@ -35336,7 +35339,8 @@ void main() {
               parts,
               baseH: bakedH,
               maxDim,
-              ground: isGround
+              ground: isGround,
+              qfix: qBake ? qBake.clone().invert() : null
             });
           } catch {}
         }));
@@ -35806,7 +35810,14 @@ void main() {
             const wx2 = e.p[0] + RMAP.shx, wz2 = e.p[2] + RMAP.shz;
             const gy2 = heightAtWorld(wx2, wz2);
             dummy.position.set(wx2, t.cat === "ground" ? gy2 : Math.max(e.p[1] - 0.05, gy2), wz2);
+            // map.json quats are authored-space (Unity): they include the Z-up->Y-up
+            // +90degX correction for source art. GLBs that already baked that same
+            // correction into their root node must NOT get it twice — strip exactly
+            // the rotation the template bake absorbed (qfix = inverse of baked root
+            // rotation). Un-baked templates (ground decals) keep the raw quat.
             dummy.quaternion.set(e.q[0], e.q[1], e.q[2], e.q[3]);
+            if (t.qfix)
+              dummy.quaternion.multiply(t.qfix);
             dummy.scale.set(e.s[0], e.s[1], e.s[2]);
             dummy.updateMatrix();
             im.setMatrixAt(i, dummy.matrix);
