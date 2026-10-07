@@ -960,3 +960,21 @@ Stage Summary:
   all natively anchored, tuned values documented) + Phase D replay playback
   harness live (seed + full command journal = replay, hash-verified, tamper-
   detected). Remaining Phase D: lockstep networking only.
+
+---
+
+Task ID: 23
+Agent: Super Z (main)
+Task: Phase 5 combat gaps — hold position (ClientUnitTaskType.HoldPosition = 3): natively anchored reconstruction, tests, note update
+
+Work Log:
+- Read updated docs at 504a48d: v=23 closed minRange/patrol/garrison + Phase D replay harness; v=24 patrol QA fix. phase5-missions-minrange.md explicitly deferred "Defend/HoldPosition/Bombard task nuances" — hold was the open half of the Phase 5 gap.
+- Native evidence (dump.cs 6.9.18, sha256 0050e67d…): HoldPosition = task 3 (271217) AND state spec 65536 (271185) — a member of the All mask 0x5FFFFFFF while one-shot Stop = 2^30 is excluded; instant non-targeting entry (GUIBattleActionUnitSpecHoldPosition is a plain IKeyboardHotkeyButton 309542, SendSelectedUnitsHoldPosition() takes no cell 337757); sim command AICommUnitsHoldPosition : AIComm carries int[] ids against Battle (433481); hotkey UnitSpecHoldPosition = 24 (255733); VoiceType.HoldPosition = 32 between StopAction = 31 and Patrol = 33 (83230); per-chassis + 12-hero voices (81502–82094); isSelectAllHoldPosition (254040); task HUD sprite (322939); UIBattleStatistics.HoldPositionCount (252817/253119); tutorial condition HoldPosition = 9 (311609).
+- Kernel: commandHold(ids) — order {kind:"hold"} with NO x/y (movement branch keys on order.x/y and must stay dormant), guard anchored, path/dest cleared, HOLD float ack; garrisoned units reject. FSM: hold-aware stand branches for unit targets (fire in [minRange, range], otherwise clear path + hull-track, never moveToward) and the building branch; acquisition gate (updateTargeting), building gate and aggro warn-join all accept "hold".
+- Invariant fix found by tests: a held minRange unit shot from inside its dead zone locked the unfireable attacker through aggro and starved every valid target. joins() now refuses dead-zone attackers (findTarget's "no dead-zone lock" rule extended to warn-join; explicit commandAttack stays sticky = objPreferred player order).
+- Tests: phase5.test.js 53 -> 93 vectors (hold entry/no-x-y, window fire without movement, acquired-out-of-window stand+hull-track, window re-entry, stop release, window-only retaliation, dead-zone aggro refusal + ranged engagement, building gate, melee hero contact/no-chase, warn-join without movement, patrol/move interplay, hold-in-hash determinism). Test-geometry lessons: idle foes walk into the window (pin with commandHold), acquire band is eff-boosted (d=9 acquires at range 6.5), projectile weapons set lastHitBy WITHOUT aggro (warn-join needs an instant weapon like w_ilight, projectileSpeed 0), addBuilding returns void.
+- Regressions: unit-fsm 29, accuracy 13, data-model 379, commands-determinism 50, replay 34 — ALL PASS. node --check clean; index.html bumped v=25.
+- Note updated: reverse/notes/phase5-missions-minrange.md gains a "Hold position" section (native surface + reconstruction + remaining unknowns); coverage counts refreshed.
+
+Stage Summary:
+- v=25: Phase 5 combat gap "hold" closed — held units acquire + fire strictly inside [minRange, range] and never pursue; melee/garrison/minRange/aggro interplay all natively anchored and hash-covered. Remaining Phase 5 documented unknowns: Defend/Bombard task variants, DontShoot/TakePositions, aircraft-hold orbit. Remaining Phase D: lockstep networking only.

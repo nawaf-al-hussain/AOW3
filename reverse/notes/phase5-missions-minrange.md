@@ -34,7 +34,8 @@ Native anchors (dump.cs 6.9.18, sha256 0050e67d…):
   attackMove semantics: acquisition allowed (`updateTargeting` + building-target
   branch), aggro warn-joins include patrollers. P arms the order (next right-click /
   minimap right-click issues it); Escape disarms.
-- Not reconstructed (documented): native Defend/HoldPosition/Bombard task nuances.
+- Not reconstructed (documented): native Defend/Bombard task nuances (hold
+  reconstructed below, v=25).
 
 ## Garrison mission
 - `ClientBuildingTypeEditor.Bunker = 14` (dump.cs:266093); `BU_CATEGORY_BUNKER = 3`,
@@ -73,10 +74,58 @@ Native anchors (dump.cs 6.9.18, sha256 0050e67d…):
 - Live probe: `window.__aow3Replay.capture()/save()/run(rec)`; `Replay` also exposed
   on `window.__aow3()`.
 
+## Hold position
+- `ClientUnitTaskType.HoldPosition = 3` (dump.cs:271217) — and, more telling,
+  `ClientUnitStateSpecType.HoldPosition = 65536` (dump.cs:271185): hold is a
+  persistent STATE spec (a member of the `All` mask `0x5FFFFFFF`), unlike
+  `Stop = 1073741824` (2^30) which is excluded from `All` — stop is a one-shot
+  command, hold is a stance you stay in.
+- Instant, non-targeting entry: `GUIBattleActionUnitSpecHoldPosition :
+  MonoBehaviour, IKeyboardHotkeyButton` (dump.cs:309542) is a plain button, NOT
+  an `AbstractGUIBattleActionUnitSpecTargeting` subclass (compare
+  `...UnitSpecLoadOnTransport`); `SendSelectedUnitsHoldPosition()` takes no cell
+  (dump.cs:337757) while every targeting order (patrol/bombard/mine) does.
+- Sim entry: `AICommUnitsHoldPosition : AIComm` (dump.cs:433481) carries `int[]`
+  unit ids and executes against `Battle` — first-class deterministic command,
+  parallel to patrol. AI can issue it; the player hotkey bar has
+  `HotkeyAction.UnitSpecHoldPosition = 24` (dump.cs:255733) between ForceAttack
+  = 23 and TakePosition = 25.
+- Full command surface around it: `VoiceType.HoldPosition = 32` sits between
+  StopAction = 31 and Patrol = 33 (dump.cs:83230); per-chassis ack voices
+  ItemInf = 9 / Veh = 67 / Nav = 114 / AviaAttackHoldPosition = 152 + all 12
+  heroes (dump.cs:81502–82094); selection aggregate
+  `EntitySelectionHelper.isSelectAllHoldPosition` (dump.cs:254040); task HUD icon
+  `m_taskHoldPositionSpriteName` in `GUIBattleUnitContextMenuUpdater`
+  (dump.cs:322939); usage counter `UIBattleStatistics.HoldPositionCount /
+  IncrementHoldPositionCount` (dump.cs:252817/253119); tutorial condition
+  `ClientGAITFCUnitStateSpecType.HoldPosition = 9` (dump.cs:311609).
+- Reconstruction (v=25): `commandHold(ids)` — order `{kind:"hold"}` with NO
+  x/y (the movement branch keys on order.x/y and must stay dormant); guard
+  anchored at the hold spot; path/dest cleared; instant float ack.
+  - Engage in place: acquisition gate (`updateTargeting`), building gate and
+    warn-join all accept hold; the FSM stand branches fire only inside the
+    weapon window [minRange, range] and otherwise clear path + track the hull
+    toward the target — never `moveToward`. Melee strikes still land in
+    contact; burst shells re-check the window via the existing shot gates.
+  - Release: any move/attackMove/patrol/attack/capture/garrison command, or
+    stop (which reverts to the idle default that chases again).
+  - garrisoned units reject hold (already inert inside the bunker).
+  - Invariant extended: findTarget refuses dead-zone targets; aggro now
+    refuses them too (`minRange` check in `joins()`), so a minRange unit under
+    fire from inside its dead zone cannot lock an unfireable obj and starve
+    every valid target. Explicit commandAttack stays sticky (native
+    objPreferred is a player order).
+- Not reconstructed (documented): native Defend/Bombard task nuances (Bombard
+  = targeted shelling order; Defend = default-stance variant), DontShoot/
+  TakePositions, and aircraft-hold orbit specifics (ItemAviaAttackHoldPosition
+  suggests attack-from-orbit; the tribute holds aircraft hovering in place).
+
 ## Coverage
-- `reverse/evidence/tests/phase5.test.js` — 47 vectors (min-range gates, patrol
+- `reverse/evidence/tests/phase5.test.js` — 93 vectors (min-range gates, patrol
   oscillation/engagement/resume/journal, garrison enter/protect/crew-fire/exit/
-  capacity/death/rejections, cross-feature determinism).
+  capacity/death/rejections, hold stance entry/window-fire/no-pursuit/
+  retaliation/minRange-aggro/building/melee/warn-join/interplay/release,
+  cross-feature determinism).
 - `reverse/evidence/tests/replay.test.js` — 34 vectors (bit-exact reproduction,
   baseline, cross-issuer ordering, tamper detection seed/drop/alter/terrain,
   540-command journal vs 512 ring, live-shaped build+patrol+garrison run, JSON

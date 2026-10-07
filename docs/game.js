@@ -648,6 +648,31 @@
         u.guard = { x: u.x, y: u.y };
       }
     }
+    commandHold(ids) {
+      // native: ClientUnitTaskType.HoldPosition = 3 (dump.cs:271217) +
+      // ClientUnitStateSpecType.HoldPosition = 65536 (dump.cs:271185) — a
+      // persistent stance (member of the All mask, unlike one-shot Stop = 2^30)
+      // entered instantly with no target point: GUIBattleActionUnitSpecHoldPosition
+      // is a plain IKeyboardHotkeyButton, NOT a Targeting subclass
+      // (dump.cs:309542); SendSelectedUnitsHoldPosition() takes no cell
+      // (dump.cs:337757); sim entry AICommUnitsHoldPosition : AIComm carries
+      // unit ids against Battle (dump.cs:433481). Held units acquire + fire
+      // normally but never pursue: engagement window = weapon [minRange, range]
+      // only. order carries NO x/y on purpose — the movement branch keys on
+      // order.x/order.y and must stay dormant while holding.
+      for (const id of ids) {
+        const u = this.units.find((v) => v.id === id);
+        if (!u || u.garrison !== undefined)
+          continue;
+        u.order = { kind: "hold" };
+        u.targetId = undefined;
+        u.preferredId = undefined;
+        u.path = [];
+        u.dest = undefined;
+        u.guard = { x: u.x, y: u.y };
+        this.floats.push({ x: u.x, y: u.y - 1.8, text: "HOLD", color: "#e2e8f0", t: 0 });
+      }
+    }
     commandCapture(ids, depotId) {
       for (const id of ids) {
         const u = this.units.find((v) => v.id === id);
@@ -875,7 +900,7 @@
         // native obj lifecycle: validation, objPreferred stickiness, acquisition
         this.updateTargeting(u);
         let buildingTarget;
-        if (u.def.weapon && u.targetId === undefined && (u.order.kind === "attackMove" || u.order.kind === "idle" || u.order.kind === "patrol")) {
+        if (u.def.weapon && u.targetId === undefined && (u.order.kind === "attackMove" || u.order.kind === "idle" || u.order.kind === "patrol" || u.order.kind === "hold")) {
           buildingTarget = this.buildings.find((b) => {
             const bd2 = Math.hypot(b.x - u.x, b.y - u.y);
             return b.hp > 0 && b.owner !== u.owner && b.owner !== 0 && bd2 <= u.def.weapon.range + b.radius && bd2 >= (u.def.weapon.minRange || 0) + b.radius;
@@ -921,6 +946,11 @@
               u.aimT = Math.max(0, u.aimT - dt);
             else if (this.facingOk(u, tgt.x, tgt.y, fsmStat(u, "fireArc")))
               this.shoot(u, tgt.x, tgt.y, tgt, d);
+          } else if (u.order.kind === "hold") {
+            // hold never pursues (native ClientUnitTaskType.HoldPosition = 3):
+            // stand ground, track the hull toward the out-of-window target
+            u.path = [];
+            u.orientDest = Math.atan2(tgt.y - u.y, tgt.x - u.x);
           } else {
             this.moveToward(u, tgt.x, tgt.y, dt);
           }
@@ -936,6 +966,8 @@
               this.shootBuilding(u, buildingTarget, d);
           } else if (d < minR2 + buildingTarget.radius)
             u.path = []; // dead zone: hold (distance_min symmetric with the unit gate)
+          else if (u.order.kind === "hold")
+            u.path = []; // hold never pursues a building outside the window
           else
             this.moveToward(u, buildingTarget.x, buildingTarget.y, dt);
         } else if (u.order.kind === "garrison" && u.order.depotId !== undefined) {
@@ -1096,7 +1128,7 @@
       }
       if (u.targetId === undefined || !this.units.some((t) => t.id === u.targetId && t.hp > 0 && t.garrison === undefined)) {
         u.targetId = undefined;
-        if (u.order.kind === "idle" || u.order.kind === "attackMove" || u.order.kind === "patrol") {
+        if (u.order.kind === "idle" || u.order.kind === "attackMove" || u.order.kind === "patrol" || u.order.kind === "hold") {
           const t = this.findTarget(u);
           if (t) {
             u.targetId = t.id;
@@ -1370,7 +1402,15 @@
       if (!attacker || !victim || attacker.owner === victim.owner || attacker.hp <= 0)
         return;
       const joins = (w) => {
-        if (w.def.weapon && (w.order.kind === "idle" || w.order.kind === "attackMove" || w.order.kind === "patrol") && w.targetId === undefined && w.garrison === undefined) {
+        if (w.def.weapon && (w.order.kind === "idle" || w.order.kind === "attackMove" || w.order.kind === "patrol" || w.order.kind === "hold") && w.targetId === undefined && w.garrison === undefined) {
+          // native distance_min: a dead-zone attacker is not acquirable — the
+          // findTarget rule ("no dead-zone lock") must hold through aggro too,
+          // or a minRange unit under fire would lock an unfireable obj and
+          // starve every valid target (explicit commandAttack stays sticky:
+          // native objPreferred is a player order).
+          const ad = Math.hypot(attacker.x - w.x, attacker.y - w.y);
+          if (w.def.weapon.minRange && ad < w.def.weapon.minRange)
+            return;
           w.targetId = attacker.id;
           if (w.order.kind === "idle" && !w.guard)
             w.guard = { x: w.x, y: w.y };
@@ -1636,6 +1676,13 @@
           if (!sim || !cmd.ids)
             return false;
           sim.commandStop(cmd.ids);
+          break;
+        case "hold":
+          // Phase 5: native ClientUnitTaskType.HoldPosition = 3 — instant
+          // stance, no targeting phase (SendSelectedUnitsHoldPosition)
+          if (!sim || !cmd.ids)
+            return false;
+          sim.commandHold(cmd.ids);
           break;
         case "capture":
           if (!sim || !cmd.ids || !cmd.ids.length)
@@ -37237,6 +37284,10 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
     const cmdTarget = (e.target === document.body || tg === "BUTTON") && !/^(INPUT|TEXTAREA)$/.test(tg || "");
     if (e.key.toLowerCase() === "s" && sim && sel.size && !placing && cmdTarget)
       cmd.issue({ type: "stop", ids: [...sel] });
+    // Phase 5: H = hold position (native HotkeyAction.UnitSpecHoldPosition = 24,
+    // dump.cs:255733) — instant stance: acquire + fire in window, never pursue
+    if (e.key.toLowerCase() === "h" && sim && sel.size && !placing && cmdTarget)
+      cmd.issue({ type: "hold", ids: [...sel] });
     // Phase 5: P arms patrol (next right-click = patrol route point)
     if (e.key.toLowerCase() === "p" && sim && sel.size && !placing && cmdTarget) {
       patrolArmed = true;
