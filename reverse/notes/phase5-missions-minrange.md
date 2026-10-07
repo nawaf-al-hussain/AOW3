@@ -478,9 +478,12 @@ The act-7 (ACT_DONT_SHOOT) arm of `GAICommandSpecMode.execute`
 - Defend `$Pg` per-branch micro-logic enumeration (44 KB; the anchor, task
   flow, helper inventory and the leash DATA SOURCE are all pinned, the
   branch-by-branch semantics are not).
-- Siege stage-boundary SPLIT inside `tick_to_spec` (how the duration divides
-  across SEIZE_FIRE/ROTATE_WEAPONS/TRANSFORM — the fields and ladder are
-  CONFIRMED, the per-stage tick math inside `$ce` is MEDIUM).
+- Siege stage-boundary SPLIT — REDUCED to the Obfuz pool VALUES (v=38 notes):
+  the mechanism is CONFIRMED (`reverse/notes/siege-stage-boundary-split.md`) —
+  siege_stage is a fixed-point fractional-tick accumulator (mode-8 carry in
+  $xh 0x488B9FC: `siegeTick += stage/DEN; stage %= DEN`, DEN = pool[0x364]×
+  pool[0x368]), NOT the 0/1/2 enum; $ce's ten get_TickFromSpec gates evaluate
+  the bands. The numeric fractions remain Obfuz-encrypted (Unicorn follow-up).
 - ~~DontShoot: whether a subsequent attack task RE-ASSERTS discipline~~
   CLOSED (v=37): discipline is task 8 driven by persistent spec bit 20; the
   attack-order path replaces the task but never writes the spec, so the
@@ -491,6 +494,9 @@ The act-7 (ACT_DONT_SHOOT) arm of `GAICommandSpecMode.execute`
   inferential).
 
 ## Coverage
+- Siege stage-boundary native (v=38 notes): `reverse/notes/siege-stage-boundary-split.md`
+  + evidence `siege-ce-full-trace.txt` ($ce full 5,240-ins trace), `siege-xh-mg-decode.txt`
+  ($xh mode-8 carry + $mG head), tools ce_full_trace.py / xh_mg_decode.py. No code change.
 - `reverse/evidence/tests/phase5.test.js` — 213 vectors (min-range gates, patrol
   oscillation/engagement/resume/journal, garrison enter/protect/crew-fire/exit/
   capacity/death/rejections, hold stance entry/window-fire/no-pursuit/
