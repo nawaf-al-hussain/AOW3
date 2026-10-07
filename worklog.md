@@ -731,3 +731,42 @@ Stage Summary:
   bumped per §35): gameplay data is machine-readable and separated from engine
   code; schema evidence reproducible; behavior fixture-verified neutral. Next per
   plan: Phase 3 unit state machines, or determinism gaps (seeded PRNG, state hashes).
+
+---
+Task ID: 18
+Agent: Super Z (main)
+Task: Phase 3 — unit state machines (idle/move/attack/acquire/rotate/shoot/reload/stop/die), v=18
+
+Work Log:
+- RE: dump.cs Unit fields (task/think/orient/orient_dest/flag_shoot/obj/objPreferred/
+  obj_close/idled/last_action_tick/die_tick/walk_state), UnitStateType stat-state
+  (rotate/aiming/sight/approach/die_time/damage_priority), WeaponType fire cycle
+  (aiming/shot_start/shot_count/shot_int/shot_tick[]/round_len/distance_min/
+  rotate_speed/priority), runtime Weapon mini-FSM (turret orient/ready_to_shoot/
+  index/tick), WARNED_BY_NEARBY_FRIENDS=1, StopOnEnemyNearby -> note
+  reverse/notes/unit-state-machines-native-analysis.md. Sim is server-side in the
+  native game: structure-level reconstruction, values remain tuned.
+- Sim (docs/game.js): explicit FSM — updateRotation (hull turns at rotate rad/s,
+  orient_dest from target/waypoint), updateTargeting (objPreferred stickiness,
+  acquisition, aim reset on engagement switch), fire gate (facingOk fireArc +
+  aimT), burst structure (shotCount/shotInt; single-shot neutral), damage_priority
+  acquisition weighting (dmgVs/health), retaliate + warn propagation in applyHit
+  (aggro()), idle guard-return, commandStop (TASK_WAIT, hotkey S), die state
+  (sim.corpses with die_time, render dying pipeline untouched), followPath vx/vy
+  zero. FSM_DEFAULTS per kind (infantry/vehicle/aircraft; hero->aircraft if
+  def.aircraft); per-def overrides reserved.
+- Kernel markers: SIM KERNEL BEGIN/END around the DOM-free sim region (data consts
+  through Sim class); unit-fsm.test.js extracts the SHIPPED kernel verbatim into a
+  vm sandbox (data modules loaded, seeded LCG Math.random) and drives it — 29
+  vectors PASS (rotation gate, aim reset, retaliation+warn, preferred stickiness,
+  damage_priority both ways, chase+guard-return, corpse die_time purge, burst 3
+  shells, stop freeze, walking-shot-on-move, building attack through gate).
+- accuracy.test.js (13 vectors) + data-model.test.js (265) regression PASS;
+  node --check clean; index.html bumped to v=18.
+
+Stage Summary:
+- Phase 3 live as v=18: unit behavior is an explicit native-shaped state machine,
+  deterministically covered against the shipped code. Known gaps: server-side path
+  micro-management (wait_for_moving/forced) and min-range data not reconstructed
+  (documented); seeded PRNG + state hashes remain backlog. Next per plan: Phase 4
+  command system, or determinism gaps.

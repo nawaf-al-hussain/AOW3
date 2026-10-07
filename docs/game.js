@@ -17,6 +17,9 @@
   // factions/index). Schema evidence: reverse/notes/data-model-extraction.md,
   // reverse/evidence/data-model/*.json. Values fixture-verified byte-identical to
   // the pre-refactor tables (reverse/evidence/tests/data-model.test.js).
+  // ---- SIM KERNEL BEGIN (Phase 3): DOM-free simulation kernel. Extracted verbatim
+  // by reverse/evidence/tests/unit-fsm.test.js — keep this region free of DOM/render
+  // references (guarded window.__realMap probe is the one allowed external). ----
   if (typeof globalThis.AOW3_DATA !== "object" || !globalThis.AOW3_DATA)
     throw new Error("AOW3_DATA missing - docs/data/*.js must load before game.js");
   var D0 = globalThis.AOW3_DATA;
@@ -89,6 +92,35 @@
       acc = weaponStaticAccuracy(w, distance);
     return Math.min(0.98, Math.max(0.15, acc));
   }
+
+  // ---- Phase 3: unit state machine (native-shaped) ----
+  // Evidence: reverse/notes/unit-state-machines-native-analysis.md — Unit fields
+  // (task/think/orient/orient_dest/flag_shoot/obj/objPreferred/idled/die_tick),
+  // UnitStateType (rotate/aiming/sight/die_time/damage_priority), WeaponType fire
+  // cycle (aiming/shot_count/shot_int/round_len), WARNED_BY_NEARBY_FRIENDS=1.
+  // Native numbers are server-delivered; per-kind values below are gameplay-tuned.
+  const FSM_DEFAULTS = {
+    // hull turn rate rad/s (native UnitStateType.rotate)
+    rotate: { infantry: 10, vehicle: 3.2, aircraft: 4.5 },
+    // fire-solution time on a NEW target s (native weaponType.aiming)
+    aimTime: { infantry: 0.25, vehicle: 0.4, aircraft: 0.3 },
+    // release-to-fire arc rad around orient_dest (native flag_shoot gating)
+    fireArc: { infantry: 0.35, vehicle: 0.6, aircraft: 0.6 },
+    // death-state duration s (native UnitStateType.die_time)
+    dieTime: { infantry: 0.9, vehicle: 1.1, aircraft: 1.3 }
+  };
+  const fsmStat = (u, name) => {
+    const air = u.def.kind === "aircraft" || u.def.aircraft;
+    const k = u.def.kind === "infantry" && !air ? "infantry" : air ? "aircraft" : "vehicle";
+    return u.def[name] !== undefined ? u.def[name] : FSM_DEFAULTS[name][k];
+  };
+  const angleWrap = (a) => {
+    while (a > Math.PI)
+      a -= Math.PI * 2;
+    while (a < -Math.PI)
+      a += Math.PI * 2;
+    return a;
+  };
 
   // src/game/engine/path.ts
   class Pathfinder {
@@ -283,6 +315,7 @@
     floats = [];
     booms = [];
     pops = [];
+    corpses = [];
     players;
     tick = 0;
     time = 0;
@@ -445,8 +478,20 @@
         vx: 0,
         vy: 0,
         kills: 0,
-        lastHitBy: 0
+        lastHitBy: 0,
+        // Phase 3 FSM state (native field names in comments):
+        state: "alive",
+        orientDest: owner === 1 ? 0 : Math.PI,
+        rotate: 0,
+        aimT: 0,
+        burstLeft: 0,
+        burstT: 0,
+        lastTargetId: undefined,
+        preferredId: undefined,
+        guard: { x, y },
+        dieT: 0
       };
+      u.rotate = fsmStat(u, "rotate");
       this.stats[owner].produced++;
       this.units.push(u);
       return u;
@@ -490,9 +535,25 @@
         const dx = x + Math.cos(ang) * r, dy = y + Math.sin(ang) * r;
         u.order = { kind: attackMove ? "attackMove" : "move", x: dx, y: dy };
         u.targetId = undefined;
+        u.preferredId = undefined;
+        u.guard = undefined;
         u.path = this.pf.find(u.x, u.y, dx, dy, u.def.kind === "aircraft" && !u.grounded) ?? [];
         u.dest = { x: dx, y: dy };
         i++;
+      }
+    }
+    commandStop(ids) {
+      // native: task -> TASK_WAIT; drops obj/objPreferred and halts in place.
+      for (const id of ids) {
+        const u = this.units.find((v) => v.id === id);
+        if (!u)
+          continue;
+        u.order = { kind: "idle" };
+        u.targetId = undefined;
+        u.preferredId = undefined;
+        u.path = [];
+        u.dest = undefined;
+        u.guard = { x: u.x, y: u.y };
       }
     }
     commandCapture(ids, depotId) {
@@ -505,6 +566,8 @@
           continue;
         u.order = { kind: "capture", depotId };
         u.targetId = undefined;
+        u.preferredId = undefined;
+        u.guard = undefined;
         u.path = this.pf.find(u.x, u.y, d.x, d.y, false) ?? [];
         u.dest = { x: d.x, y: d.y };
       }
@@ -519,6 +582,8 @@
           continue;
         u.order = { kind: "attackMove", x: undefined, y: undefined };
         u.targetId = targetId;
+        u.preferredId = targetId; // native objPreferred: sticky until the target dies
+        u.guard = undefined;
         u.path = [];
       }
     }
@@ -583,6 +648,9 @@
       for (const p of this.pops)
         p.t += dt;
       this.pops = this.pops.filter((p) => p.t < p.max);
+      for (const c of this.corpses)
+        c.t += dt;
+      this.corpses = this.corpses.filter((c) => c.t < c.dieT);
       for (const u of this.units) {
         if (u.def.regen > 0 && u.hp < u.def.health)
           u.hp = Math.min(u.def.health, u.hp + u.def.regen * dt);
@@ -612,14 +680,10 @@
     updateUnits(dt) {
       for (const u of this.units) {
         u.cd = Math.max(0, u.cd - dt);
-        if (u.targetId === undefined || !this.units.some((t) => t.id === u.targetId && t.hp > 0)) {
-          u.targetId = undefined;
-          if (u.order.kind === "idle" || u.order.kind === "attackMove") {
-            const t = this.findTarget(u);
-            if (t)
-              u.targetId = t.id;
-          }
-        }
+        // native orient -> orient_dest at UnitStateType.rotate (hull rotation)
+        this.updateRotation(u, dt);
+        // native obj lifecycle: validation, objPreferred stickiness, acquisition
+        this.updateTargeting(u);
         let buildingTarget;
         if (u.def.weapon && u.targetId === undefined && (u.order.kind === "attackMove" || u.order.kind === "idle")) {
           buildingTarget = this.buildings.find((b) => b.hp > 0 && b.owner !== u.owner && b.owner !== 0 && Math.hypot(b.x - u.x, b.y - u.y) <= u.def.weapon.range + b.radius);
@@ -633,20 +697,42 @@
         if (tgt) {
           const d = Math.hypot(tgt.x - u.x, tgt.y - u.y);
           const mw = u.def.melee;
+          // pending burst shells fire at their shotInt offsets inside the round
+          // (native shot_count / shot_tick[]; single-shot weapons never enter here)
+          if (u.burstLeft > 0) {
+            u.burstT -= dt;
+            if (u.burstT <= 0) {
+              u.burstLeft--;
+              u.burstT = u.def.weapon.shotInt ?? 0.2;
+              if (d <= u.def.weapon.range)
+                this.fireShell(u, tgt.x, tgt.y, tgt, d);
+            }
+          }
           if (mw && d <= mw.range) {
             u.path = [];
-            this.meleeStrike(u, tgt, d);
+            u.orientDest = Math.atan2(tgt.y - u.y, tgt.x - u.x);
+            // native flag_shoot: strike releases only once the unit is on target
+            if (this.facingOk(u, tgt.x, tgt.y, 0.9))
+              this.meleeStrike(u, tgt, d);
           } else if (d <= u.def.weapon.range) {
             u.path = [];
-            this.shoot(u, tgt.x, tgt.y, tgt, d);
+            u.orientDest = Math.atan2(tgt.y - u.y, tgt.x - u.x);
+            if (u.aimT > 0)
+              u.aimT = Math.max(0, u.aimT - dt);
+            else if (this.facingOk(u, tgt.x, tgt.y, fsmStat(u, "fireArc")))
+              this.shoot(u, tgt.x, tgt.y, tgt, d);
           } else {
             this.moveToward(u, tgt.x, tgt.y, dt);
           }
         } else if (buildingTarget) {
           const d = Math.hypot(buildingTarget.x - u.x, buildingTarget.y - u.y);
+          u.orientDest = Math.atan2(buildingTarget.y - u.y, buildingTarget.x - u.x);
           if (d <= u.def.weapon.range + buildingTarget.radius) {
             u.path = [];
-            this.shootBuilding(u, buildingTarget, d);
+            if (u.aimT > 0)
+              u.aimT = Math.max(0, u.aimT - dt);
+            else if (this.facingOk(u, buildingTarget.x, buildingTarget.y, fsmStat(u, "fireArc")))
+              this.shootBuilding(u, buildingTarget, d);
           } else
             this.moveToward(u, buildingTarget.x, buildingTarget.y, dt);
         } else if (u.order.kind === "capture" && u.order.depotId !== undefined) {
@@ -669,6 +755,25 @@
               }
             } else
               this.moveToward(u, d.x, d.y, dt);
+          }
+        } else if (u.order.kind === "idle" && u.guard && (u.guard.x !== u.x || u.guard.y !== u.y)) {
+          // native idled / last_action_tick: after a chase the unit walks back to
+          // the position it was holding.
+          const gd = Math.hypot(u.guard.x - u.x, u.guard.y - u.y);
+          if (gd < 0.9) {
+            u.guard = undefined;
+            u.path = [];
+          } else {
+            this.moveToward(u, u.guard.x, u.guard.y, dt);
+            // walking_shot semantics apply to any walk (see move-branch note below)
+            if (u.def.weapon && u.def.weapon.walkingShot && u.cd <= 0) {
+              const t = this.findTarget(u);
+              if (t) {
+                const d = Math.hypot(t.x - u.x, t.y - u.y);
+                if (d <= u.def.weapon.range)
+                  this.shoot(u, t.x, t.y, t, d);
+              }
+            }
           }
         } else if (u.order.x !== undefined && u.order.y !== undefined) {
           if (!u.path.length && u.dest) {
@@ -702,6 +807,11 @@
       if (this.units.some((u) => u.hp <= 0)) {
         for (const u of this.units)
           if (u.hp <= 0) {
+            // native die state (UnitStateType.die_time): corpse record = sim-side
+            // death-state bookkeeping; render dying pipeline unchanged.
+            u.state = "dying";
+            u.dieT = fsmStat(u, "dieTime");
+            this.corpses.push({ id: u.id, defId: u.def.id, owner: u.owner, kind: u.def.kind, x: u.x, y: u.y, dieT: u.dieT, t: 0 });
             this.booms.push({ x: u.x, y: u.y, r: u.def.radius + 0.8, t: 0, max: 0.55 });
             this.stats[u.owner].losses++;
             const killer = this.units.find((v) => v.id === u.lastHitBy);
@@ -712,6 +822,53 @@
           }
         this.units = this.units.filter((u) => u.hp > 0);
         this.refreshEconomy();
+      }
+    }
+    updateRotation(u, dt) {
+      // native: orient turns toward orient_dest at UnitStateType.rotate; moving
+      // units steer toward the next waypoint, engaged units toward their target.
+      if (u.path.length) {
+        const wp = u.path[0];
+        u.orientDest = Math.atan2(wp.y - u.y, wp.x - u.x);
+      }
+      const diff = angleWrap(u.orientDest - u.facing);
+      const step = u.rotate * dt;
+      if (Math.abs(diff) <= step) {
+        u.facing = u.orientDest;
+        return;
+      }
+      u.facing = angleWrap(u.facing + Math.sign(diff) * step);
+    }
+    facingOk(u, x, y, arc) {
+      return Math.abs(angleWrap(Math.atan2(y - u.y, x - u.x) - u.facing)) <= arc;
+    }
+    updateTargeting(u) {
+      // native objPreferred: a command-attack target is sticky until it dies.
+      if (u.preferredId !== undefined) {
+        const pref = this.units.find((t) => t.id === u.preferredId);
+        if (!pref || pref.hp <= 0) {
+          u.preferredId = undefined;
+          u.targetId = undefined;
+        } else
+          u.targetId = u.preferredId;
+      }
+      if (u.targetId === undefined || !this.units.some((t) => t.id === u.targetId && t.hp > 0)) {
+        u.targetId = undefined;
+        if (u.order.kind === "idle" || u.order.kind === "attackMove") {
+          const t = this.findTarget(u);
+          if (t) {
+            u.targetId = t.id;
+            if (u.order.kind === "idle" && !u.guard)
+              u.guard = { x: u.x, y: u.y };
+          }
+        }
+      }
+      // native weaponType.aiming: a NEW engagement restarts the fire solution.
+      if (u.targetId !== u.lastTargetId) {
+        u.lastTargetId = u.targetId;
+        if (u.def.weapon)
+          u.aimT = fsmStat(u, "aimTime");
+        u.burstLeft = 0;
       }
     }
     findTarget(u) {
@@ -727,7 +884,10 @@
         if (tAir && (!u.def.antiAir || shooterAir))
           continue;
         const d = Math.hypot(t.x - u.x, t.y - u.y);
-        let eff = d - (t.def.kind === "infantry" ? 0 : 0.5);
+        // native weaponType.damage_priority: prefer targets the weapon is strong
+        // against — weighted by damage-vs-armorClass as a fraction of target health.
+        const dmgVs = effectiveDamage(u.def.weapon.damage, t.def.armor, t.def.armorClass);
+        let eff = d - 2.5 * (dmgVs / Math.max(1, t.def.health)) - (t.def.kind === "infantry" ? 0 : 0.5);
         if (tAir && u.def.antiAir)
           eff -= 3;
         if (eff < bd) {
@@ -747,8 +907,11 @@
       this.followPath(u, dt);
     }
     followPath(u, dt) {
-      if (!u.path.length)
+      if (!u.path.length) {
+        u.vx = 0;
+        u.vy = 0;
         return;
+      }
       const wp = u.path[0];
       const dx = wp.x - u.x, dy = wp.y - u.y;
       const d = Math.hypot(dx, dy);
@@ -768,7 +931,8 @@
           return;
         }
       }
-      u.facing = Math.atan2(dy, dx);
+      // native orient/orient_dest: hull steers toward the waypoint (updateRotation
+      // already derived orient_dest from path[0]); movement itself is not gated.
       u.vx = nx - u.x;
       u.vy = ny - u.y;
       u.x = nx;
@@ -781,7 +945,17 @@
       if (u.lastMode === "melee")
         u.cd = Math.max(u.cd, 1.5);
       u.lastMode = "gun";
-      u.facing = Math.atan2(ty - u.y, tx - u.x);
+      // native round: first shell leaves now (rotation+aim gate handled by the
+      // caller); remaining burst shells ride shotInt offsets inside the round
+      // (native shot_count / shot_tick[]).
+      this.fireShell(u, tx, ty, tgt, d);
+      const sc = u.def.weapon.shotCount ?? 1;
+      if (sc > 1) {
+        u.burstLeft = sc - 1;
+        u.burstT = u.def.weapon.shotInt ?? 0.2;
+      }
+    }
+    fireShell(u, tx, ty, tgt, d) {
       const acc = hitChance(u.def.weapon, u.path.length > 0, d);
       const dmg = Math.round(effectiveDamage(u.def.weapon.damage, tgt.def.armor, tgt.def.armorClass) * (1 + 0.08 * rankTier(u)) * (1 - 0.05 * rankTier(tgt)) * (u.grounded ? 1.25 : 1));
       if (u.def.weapon.projectileSpeed === 0) {
@@ -814,7 +988,6 @@
       if (u.lastMode === "gun")
         u.cd = Math.max(u.cd, 1.5);
       u.lastMode = "melee";
-      u.facing = Math.atan2(tgt.y - u.y, tgt.x - u.x);
       const crit = Math.random() < mw.crit;
       const dmg = Math.round(effectiveDamage(mw.damage, tgt.def.armor, tgt.def.armorClass) * (crit ? mw.critMul : 1));
       this.applyHit(u, tgt.x, tgt.y, tgt, dmg, 1);
@@ -876,9 +1049,32 @@
           tgt.hp -= dmg;
           tgt.lastHitBy = u.id;
           this.floats.push({ x: tgt.x, y: tgt.y - 0.8, text: `${Math.round(dmg)}`, color: "#ffd28a", t: 0 });
+          this.aggro(u, tgt);
         } else {
           this.floats.push({ x: tgt.x, y: tgt.y - 0.8, text: "miss", color: "#999", t: 0 });
         }
+      }
+    }
+    aggro(attacker, victim) {
+      // native aggro memory: the struck unit acquires its attacker (Unit.obj);
+      // idle friends within the victim's sight join the fight
+      // (UnitStateType.WARNED_BY_NEARBY_FRIENDS = 1).
+      if (!attacker || !victim || attacker.owner === victim.owner || attacker.hp <= 0)
+        return;
+      const joins = (w) => {
+        if (w.def.weapon && (w.order.kind === "idle" || w.order.kind === "attackMove") && w.targetId === undefined) {
+          w.targetId = attacker.id;
+          if (w.order.kind === "idle" && !w.guard)
+            w.guard = { x: w.x, y: w.y };
+        }
+      };
+      joins(victim);
+      const vr = victim.def.view ?? 8;
+      for (const w of this.units) {
+        if (w === victim || w.owner !== victim.owner || w.hp <= 0)
+          continue;
+        if (Math.hypot(w.x - victim.x, w.y - victim.y) <= vr)
+          joins(w);
       }
     }
     updateProjectiles(dt) {
@@ -1048,6 +1244,7 @@
       return this.buildings.find((b) => b.defId === "hq" && b.owner === owner);
     }
   }
+  // ---- SIM KERNEL END ----
 
   // src/game/engine/ai.ts
   class AI {
@@ -36442,6 +36639,9 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
         stopPlacing();
       sel.clear();
     }
+    // Phase 3: stop command (native task -> TASK_WAIT); full command UI = Phase 4
+    if (e.key.toLowerCase() === "s" && sim && sel.size && !placing && e.target === document.body)
+      sim.commandStop([...sel]);
   });
   window.addEventListener("keyup", (e) => keys.delete(e.key.toLowerCase()));
   mini.addEventListener("pointerdown", (e) => {
