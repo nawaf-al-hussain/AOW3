@@ -1093,3 +1093,21 @@ Work Log:
 
 Stage Summary:
 - The two documented Phase D limits "no join-in-progress / no spectator" are closed on the lockstep stack; late-catchup save sync (the third documented limit) is implicitly solved by the seed+archive welcome path. 2P remains the player-count cap (spectators are unlimited). Rebased onto origin/main post-v=34 (feature builds); version re-bumped v=34 -> v=35.
+
+---
+Task ID: 31
+Agent: Super Z (main)
+Task: Feature-sized build A — siege transform: chassis identities + stage machine + timings (native extraction) + commandSiege reconstruction (v=36)
+
+Work Log:
+- Rebuilt the native workspace from LFS (XAPK 1a41e033… verified byte-exact -> libil2cpp.so 8ace05bb…; dump.cs 0050e67d…) and re-ran the full analysis stack against 6.9.18.
+- Chassis identities CLOSED (CONFIRMED): the v=30 bytes 22/23/31 are UnitType consts — UNIT_TYPE_SHIELD = 22, UNIT_TYPE_FOG = 23, UNIT_TYPE_FIGHTER = 31 (dump.cs:395427-395445); the act-2/3 arm's cmp #0x17 @0x45f685c is the FOG-chassis check of the Seraphim triple transform. Full chassis taxonomy (10..90) + spec bytes (SPEC_SIEGE=1…) captured.
+- Stage machine data CONFIRMED: Unit.SIEGE_STAGE_SEIZE_FIRE/ROTATE_WEAPONS/TRANSFORM = 0/1/2 (393233-393235); Unit fields siege_stage 0xA1, siegeTick 0xA4, siegeAfterWalkTick 0xA8, siege_blocked 0x1C4; durations = UnitType.tick_to_spec 0x4D / tick_from_spec 0x4E (EStat 20/21 TransitionToMarchModeTime / TransitionToSiegeModeTime are the display names); Fraction.siege_hp 0xA4 / autoSiegeDelay 0xF4 / fireRadiusInc 0xF6. Stage + tick are server-simulated and streamed (serializer reads siege_stage @0x44a4d9c; ST deserializer = the single direct set_SiegeTick BL site @0x4553444).
+- Unit vtable blob located in-file at 0x138A480 (anchored on the verified get_Task = [klass+0x1008] pair); UnitType slots anchored on get_Type = [klass+0x4D8] from the act-2/3 arm. Derived: siege accessors 0xDC8..0xE70; UnitType get_Spec 0x3B8 / TickFromSpec 0x418 / TickToSpec 0x448. Documented caveat: klass-relative offsets are not globally unique — whole-binary scans on them are noise-dominated (siege-vt-scan/untype-vt-scan runs kept as tools, findings weighted by call-shape).
+- Sim driver located: $ce(Battle, Unit) @0x47501f0 (20 956 B — calls the v=30 siege helper $hi @0x4831fe4, ×10 UnitType-duration-shaped reads, siegeTick writes); $fe(Battle, Unit) @0x475afa4 = after-walk/auto-siege timers. HIGH confidence on identification, MEDIUM on the exact per-stage tick split (documented as the residual).
+- Tribute reconstruction (v=36): commandSiege(ids, on) — artillery-family gate (minRange > 0), R-key toggle (native hotkeys 27/28), SIEGE_STAGE ladder over SIEGE_TICK_TO=1.6s / SIEGE_TICK_FROM=1.2s (reconstruction constants; per-type sbyte data is server-side), movement lock at issue, fire blocked while stage < 2, TRANSFORM extends the band +SIEGE_FIRE_RADIUS_INC=2 (fireRadiusInc analog via siegeRange(u)), task-replacement release, U-line sg token, Commands "siege" case + LOCKSTEP_NET_TYPES. AOW3_VFX_TAXONOMY untouched (node --check clean).
+- Tests: phase5.test.js 176 -> 199 vectors. Regressions after the change: replay 45/45, commands-determinism 50/50, unit-fsm all, data-model 379/379, stat-caps 37/37, accuracy all — PASS. docs/index.html game.js?v=36.
+- Notes: phase5-missions-minrange.md gains the v=36 siege section (chassis CLOSED, stage data CONFIRMED, vtable maps, $ce/$fe, reconstruction) + refreshed unknowns (siege stage-boundary SPLIT replaces the closed timings/chassis items; TakePositions entry updated with the client-surface decode). New evidence: combat/siege-native.txt, combat/siege-ce-fe-windows.txt, combat/siege-stage-scan.txt (attribution tables); new tools: siege_stage_scan.py, siege_native_analysis.py, siege_vt_scan.py, untype_vt_scan.py, siege_ce_fe_disasm.py.
+
+Stage Summary:
+- v=36: the siege transform unknown is closed at the data level (chassis + stage ladder + duration fields, all CONFIRMED literals) and shipped as a playable feature-sized build (R-key siege with the three-stage ladder and fire-radius bonus). Remaining surfaces: defend $Pg leash VALUE, TakePositions client-side formation nuances, the tick_to_spec internal split (MEDIUM), DontShoot task-vs-spec nuance.
