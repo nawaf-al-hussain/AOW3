@@ -649,7 +649,7 @@
           s.push(`Q${qq.defId},${q(qq.t)}`);
       }
       for (const u of this.units)
-        s.push(`U${u.id},${u.def.id},${u.owner},${q(u.x)},${q(u.y)},${q(u.hp)},${q(u.facing)},${u.order.kind},${o(u.order.x)},${o(u.order.y)},${o(u.order.depotId)},${o(u.targetId)},${o(u.preferredId)},${u.path.length},${xy(u.dest)},${xy(u.guard)},${u.grounded ? 1 : 0},${u.burstLeft},${q(u.aimT)},${q(u.cd)},${u.state},${u.kills},${q(u.captureT ?? -1)},${o(u.lastHitBy)},${o(u.lastTargetId)},${o(u.garrison)},${o(u.order.ax)},${o(u.order.ay)},${u.order.back ? 1 : 0},${u.hiding ? 1 : 0},${u.fireHold ? 1 : 0}`);
+        s.push(`U${u.id},${u.def.id},${u.owner},${q(u.x)},${q(u.y)},${q(u.hp)},${q(u.facing)},${u.order.kind},${o(u.order.x)},${o(u.order.y)},${o(u.order.depotId)},${o(u.targetId)},${o(u.preferredId)},${u.path.length},${xy(u.dest)},${xy(u.guard)},${u.grounded ? 1 : 0},${u.burstLeft},${q(u.aimT)},${q(u.cd)},${u.state},${u.kills},${q(u.captureT ?? -1)},${o(u.lastHitBy)},${o(u.lastTargetId)},${o(u.garrison)},${o(u.order.ax)},${o(u.order.ay)},${u.order.back ? 1 : 0},${u.hiding ? 1 : 0},${u.fireHold ? 1 : 0},${u.sameSpeed !== undefined ? 'ss' + q(u.sameSpeed) : '-'}`);
       for (const b of this.buildings)
         s.push(`B${b.id},${b.defId},${b.owner},${q(b.x)},${q(b.y)},${q(b.hp)},${b.built ? 1 : 0},${q(b.captureT)},${b.captureBy},${o(b.lastHitOwner)}`);
       for (const p of this.projectiles)
@@ -676,10 +676,50 @@
         u.targetId = undefined;
         u.preferredId = undefined;
         u.guard = undefined;
+        u.sameSpeed = undefined; // any fresh move order cancels the march (ACT_RESET_SPEED analog)
         u.path = this.pf.find(u.x, u.y, dx, dy, u.def.kind === "aircraft" && !u.grounded) ?? [];
         u.dest = { x: dx, y: dy };
         i++;
       }
+    }
+    commandSameSpeed(ids, x, y) {
+      // native: ClientUnitStateSpecType.SameSpeed = 8388608 (dump.cs:271191) +
+      // Unit.sameSpeed {sbyte speed, Coordinate coord} at 0x260 (390948) + hotkey
+      // UnitSpecSameSpeed = 49 (255757) + UnitSpeedMoveStyle.SameSpeed = 1
+      // (337636) + own ST serializer pair (368192/368207, a networked order) +
+      // group-gate IsSelectedGroopCanMoveWithSameSpeed (253820). The set-order
+      // coordinator (Battle.$HL, 40 sameSpeed reads) normalizes the group to ONE
+      // march speed; ACT_RESET_SPEED = 6 (GAICommandSpecMode 410916, helper $ii
+      // 0x47F1DFC) is the cancellation arm. Reconstruction: the group marches to
+      // the point at the SLOWEST member's final speed (cap computed at issue,
+      // final velocity space incl. the grounded 0.45 chassis factor); every
+      // member stores the same cap (u.sameSpeed) and followPath applies
+      // min(own, cap). Any other order, stop, or arrival cancels (cap cleared).
+      let i = 0;
+      let cap = Infinity;
+      const members = [];
+      for (const id of ids) {
+        const u = this.units.find((v) => v.id === id);
+        if (!u || u.garrison !== undefined)
+          continue;
+        members.push(u);
+        cap = Math.min(cap, u.def.speed * (u.grounded ? 0.45 : 1));
+      }
+      for (const u of members) {
+        const ang = i % 8 * (Math.PI / 4), ring = Math.floor(i / 8);
+        const r = ring * 1.2;
+        const dx = x + Math.cos(ang) * r, dy = y + Math.sin(ang) * r;
+        u.order = { kind: "move", x: dx, y: dy, same: 1 };
+        u.targetId = undefined;
+        u.preferredId = undefined;
+        u.guard = undefined;
+        u.sameSpeed = cap;
+        u.path = this.pf.find(u.x, u.y, dx, dy, u.def.kind === "aircraft" && !u.grounded) ?? [];
+        u.dest = { x: dx, y: dy };
+        i++;
+      }
+      if (members.length)
+        this.floats.push({ x: members[0].x, y: members[0].y - 1.8, text: "MARCH", color: "#93c5fd", t: 0 });
     }
     commandPatrol(ids, x, y) {
       // native ClientUnitTaskType.Patrol = 1 (dump.cs:271215): repeat a route
@@ -697,6 +737,7 @@
         u.targetId = undefined;
         u.preferredId = undefined;
         u.guard = undefined;
+        u.sameSpeed = undefined;
         u.path = this.pf.find(u.x, u.y, dx, dy, u.def.kind === "aircraft" && !u.grounded) ?? [];
         u.dest = { x: dx, y: dy };
         i++;
@@ -714,6 +755,7 @@
         u.path = [];
         u.dest = undefined;
         u.guard = { x: u.x, y: u.y };
+        u.sameSpeed = undefined; // stop = explicit cancel (ACT_RESET_SPEED analog)
         u.hiding = undefined; // stop releases the ambush (task 4 -> TASK_WAIT)
       }
     }
@@ -743,6 +785,7 @@
         u.hiding = undefined;
         u.targetId = undefined;
         u.preferredId = undefined;
+        u.sameSpeed = undefined;
         u.path = this.pf.find(u.x, u.y, x, y, false) ?? [];
         u.dest = { x, y };
         this.floats.push({ x: u.x, y: u.y - 1.8, text: "HIDE", color: '#a3e635', t: 0 });
@@ -771,6 +814,7 @@
         u.path = [];
         u.dest = undefined;
         u.guard = { x: u.x, y: u.y };
+        u.sameSpeed = undefined;
         this.floats.push({ x: u.x, y: u.y - 1.8, text: "HOLD", color: "#e2e8f0", t: 0 });
       }
     }
@@ -791,6 +835,7 @@
         u.order = { kind: "defend" };
         u.targetId = undefined;
         u.preferredId = undefined;
+        u.sameSpeed = undefined;
         u.path = [];
         u.dest = undefined;
         u.guard = { x: u.x, y: u.y };
@@ -820,6 +865,7 @@
         u.order = { kind: "bombard", x, y };
         u.targetId = undefined;
         u.preferredId = undefined;
+        u.sameSpeed = undefined;
         u.path = this.pf.find(u.x, u.y, x, y, false) ?? [];
         u.dest = { x, y };
         this.floats.push({ x: u.x, y: u.y - 1.8, text: "BOMBARD", color: '#fcd34d', t: 0 });
@@ -874,6 +920,7 @@
         u.targetId = undefined;
         u.preferredId = undefined;
         u.guard = undefined;
+        u.sameSpeed = undefined;
         u.path = this.pf.find(u.x, u.y, dx, dy, u.def.kind === "aircraft" && !u.grounded) ?? [];
         u.dest = { x: dx, y: dy };
         i++;
@@ -893,6 +940,7 @@
         u.targetId = undefined;
         u.preferredId = undefined;
         u.guard = undefined;
+        u.sameSpeed = undefined;
         u.path = this.pf.find(u.x, u.y, d.x, d.y, false) ?? [];
         u.dest = { x: d.x, y: d.y };
       }
@@ -915,6 +963,7 @@
         u.targetId = undefined;
         u.preferredId = undefined;
         u.guard = undefined;
+        u.sameSpeed = undefined;
         u.path = this.pf.find(u.x, u.y, b.x, b.y, false) ?? [];
         u.dest = { x: b.x, y: b.y };
       }
@@ -967,6 +1016,7 @@
         u.targetId = targetId;
         u.preferredId = targetId; // native objPreferred: sticky until the target dies
         u.guard = undefined;
+        u.sameSpeed = undefined;
         u.path = [];
       }
     }
@@ -1336,6 +1386,7 @@
                   u.guard = { x: u.dest.x, y: u.dest.y };
                 } else if (u.order.kind !== "attackMove")
                   u.order = { kind: "idle" };
+                u.sameSpeed = undefined; // arrival cancels the march cap
                 u.dest = undefined;
               }
             } else {
@@ -1487,7 +1538,13 @@
         u.path.shift();
         return;
       }
-      const step = Math.min(d, u.def.speed * (u.grounded ? 0.45 : 1) * dt);
+      // SameSpeed march: the coordinator cap (u.sameSpeed, final velocity space)
+      // overrides the own chassis speed while it is set — min(own, cap) keeps a
+      // slowed-down straggler honest if terrain ever makes it slower than the cap.
+      const spd = u.sameSpeed !== undefined
+        ? Math.min(u.def.speed * (u.grounded ? 0.45 : 1), u.sameSpeed)
+        : u.def.speed * (u.grounded ? 0.45 : 1);
+      const step = Math.min(d, spd * dt);
       let nx = u.x + dx / d * step, ny = u.y + dy / d * step;
       if (!this.passable(u, nx, ny)) {
         if (this.passable(u, nx, u.y))
@@ -1936,7 +1993,7 @@
   // Gameplay command types that must be replicated in lockstep multiplayer.
   // select/cancel are issuer-local UI state (per-player selection) and never
   // travel on the wire.
-  var LOCKSTEP_NET_TYPES = new Set(["move", "patrol", "garrison", "ungarrison", "attack", "stop", "hold", "defend", "bombard", "dontshoot", "canshoot", "takepos", "hide", "capture", "build", "produce", "special"]);
+  var LOCKSTEP_NET_TYPES = new Set(["move", "patrol", "garrison", "ungarrison", "attack", "stop", "hold", "defend", "bombard", "dontshoot", "canshoot", "takepos", "hide", "samespeed", "capture", "build", "produce", "special"]);
   class Commands {
     constructor(sim = null, sel = new Set()) {
       this.sim = sim;
@@ -2050,6 +2107,13 @@
           if (!sim || !cmd.ids || !cmd.ids.length || cmd.x === undefined || cmd.y === undefined)
             return false;
           sim.commandHide(cmd.ids, cmd.x, cmd.y);
+          break;
+        case "samespeed":
+          // native SameSpeed spec 8388608 (own ST serializer pair 368192/368207)
+          // — group march at the slowest member's speed; any new order cancels
+          if (!sim || !cmd.ids || !cmd.ids.length || cmd.x === undefined || cmd.y === undefined)
+            return false;
+          sim.commandSameSpeed(cmd.ids, cmd.x, cmd.y);
           break;
         case "dontshoot":
           // native task 8 / spec 1048576 (ACT_DONT_SHOOT = 7) — fire discipline
@@ -37988,6 +38052,19 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
     disarmBombard();
     disarmTakepos();
     disarmHide();
+    disarmMarch();
+  };
+  // SameSpeed march arm (native hotkey UnitSpecSameSpeed = 49, dump.cs:255757;
+  // UnitSpeedMoveStyle.SameSpeed = 1, 337636) — M arms, the next right-click
+  // marches the group there at the SLOWEST member's speed
+  // (IsSelectedGroopCanMoveWithSameSpeed group-gate analog, 253820).
+  var marchArmed = false;
+  var disarmMarch = () => {
+    if (marchArmed) {
+      marchArmed = false;
+      if ($("prodhint"))
+        $("prodhint").textContent = "";
+    }
   };
   var rel = (e) => {
     const r = cv.getBoundingClientRect();
@@ -38083,6 +38160,15 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
         const t = r3d.screenToTile(p.x, p.y);
         if (t && sel.size) {
           cmd.issue({ type: "patrol", ids: [...sel], x: Math.max(1, Math.min(MAP_W - 2, t.x)), y: Math.max(1, Math.min(MAP_H - 2, t.y)) });
+          r3d.mark(t.x, t.y, "move");
+        }
+        return;
+      }
+      if (marchArmed) {
+        disarmMarch();
+        const t = r3d.screenToTile(p.x, p.y);
+        if (t && sel.size) {
+          cmd.issue({ type: "samespeed", ids: [...sel], x: Math.max(1, Math.min(MAP_W - 2, t.x)), y: Math.max(1, Math.min(MAP_H - 2, t.y)) });
           r3d.mark(t.x, t.y, "move");
         }
         return;
@@ -38308,6 +38394,14 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       if ($("prodhint"))
         $("prodhint").textContent = "PATROL armed \u2014 right-click the far waypoint";
     }
+    // SameSpeed march: M arms (native hotkey UnitSpecSameSpeed = 49) — the next
+    // right-click marches the group at the slowest member's speed
+    if (e.key.toLowerCase() === "m" && sim && sel.size && !placing && cmdTarget) {
+      disarmOrders();
+      marchArmed = true;
+      if ($("prodhint"))
+        $("prodhint").textContent = "MARCH armed \u2014 right-click the destination (group moves at slowest speed)";
+    }
     // Phase 5 gaps: D = defend (native HotkeyAction.UnitSpecDefend = 33,
     // dump.cs:255741) — instant anchored stance, tethered pursuit
     if (e.key.toLowerCase() === "d" && sim && sel.size && !placing && cmdTarget)
@@ -38367,6 +38461,11 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       if (patrolArmed && sim && sel.size) {
         disarmPatrol();
         cmd.issue({ type: "patrol", ids: [...sel], x: Math.max(1, Math.min(MAP_W - 2, mx)), y: Math.max(1, Math.min(MAP_H - 2, my)) });
+        return;
+      }
+      if (marchArmed && sim && sel.size) {
+        disarmMarch();
+        cmd.issue({ type: "samespeed", ids: [...sel], x: Math.max(1, Math.min(MAP_W - 2, mx)), y: Math.max(1, Math.min(MAP_H - 2, my)) });
         return;
       }
       if (sim && sel.size)

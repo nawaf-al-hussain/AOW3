@@ -710,8 +710,8 @@ section('same-seed determinism through defend + bombard + fire discipline + take
   };
   script(a.sim); script(b.sim);
   check('fireHold survives into the hash (foe holds fire)', a.sim.units[3].fireHold, true);
-  check('fireHold serialized in stateString (U-line tail bit)',
-    a.sim.stateString().split('|').some((l) => l.startsWith('U') && l.endsWith(',1')), true);
+  check('fireHold serialized in stateString (U-line tail bit, sameSpeed field appended)',
+    a.sim.stateString().split('|').some((l) => l.startsWith('U') && l.endsWith(',1,-')), true);
   run(a.sim, 400); run(b.sim, 400);
   check('hash equal across the new stances', a.sim.hashState() === b.sim.hashState(), true);
   const { sim: s2 } = loadKernel(5151);
@@ -813,11 +813,105 @@ section('hide: determinism + hash coverage');
   const a = mk(6105), b = mk(6105);
   run(a.sim, 500); run(b.sim, 500);
   check('hiding bit serialized in the U-line (before fireHold: hiding=1, fireHold=0)',
-    a.sim.stateString().split('|').some((l) => l.startsWith('U') && l.endsWith(',1,0')), true);
+    a.sim.stateString().split('|').some((l) => l.startsWith('U') && l.endsWith(',1,0,-')), true);
   check('hiding state deterministic (hash equal)', a.sim.hashState() === b.sim.hashState(), true);
   check('both sims converge hidden-or-revealed identically', a.h.hiding === b.h.hiding, true);
 }
 
+
+// ================= 9. SameSpeed march (spec 8388608, Unit.sameSpeed 0x260) =================
+section('samespeed: group cap = slowest member final speed (set-order + coordinator)');
+{
+  const { sim } = loadKernel(7101);
+  clearInitial(sim);
+  const fast = sim.spawn('coyote', 1, 20, 80);   // def.speed 4.4 -> final 1.98
+  const slow = sim.spawn('fortress', 1, 20.6, 80); // def.speed 2.1 -> final 0.945
+  sim.commandSameSpeed([fast.id, slow.id], 30, 80);
+  check('order is a move with the same marker', fast.order.kind === 'move' && fast.order.same === 1, true);
+  const cap = Math.min(fast.def.speed, slow.def.speed); // ground chassis factor = 1 (0.45 is the grounded-AIRCRAFT factor)
+  check('cap = slowest member speed', Math.abs(fast.sameSpeed - cap) < 1e-9, true);
+  check('both members share one cap', fast.sameSpeed === slow.sameSpeed, true);
+  const fx0 = fast.x, sx0 = slow.x;
+  run(sim, 40); // 2 s
+  const fd = fast.x - fx0, sd = slow.x - sx0;
+  check('fast unit constrained to the cap (2 s at 2.1 t/s)', Math.abs(fd - 2.1 * 2) < 0.06, true);
+  check('both members advance identically', Math.abs(fd - sd) < 0.15, true);
+  const h1 = sim.stateString();
+  check('cap visible in the U-line hash (ss field, q(2.1)=210)', /ss210/.test(h1), true);
+}
+
+section('samespeed: control — plain move lets the fast unit outpace');
+{
+  const { sim } = loadKernel(7102);
+  clearInitial(sim);
+  const fast = sim.spawn('coyote', 1, 20, 80);
+  const slow = sim.spawn('fortress', 1, 20.6, 80);
+  sim.commandMove([fast.id, slow.id], 30, 80);
+  check('plain move clears any stale cap', fast.sameSpeed, undefined);
+  const fx0 = fast.x, sx0 = slow.x;
+  run(sim, 40);
+  check('fast outpaces slow without the cap', fast.x - fx0 > (slow.x - sx0) + 1, true);
+}
+
+section('samespeed: release — new order / stop / arrival');
+{
+  const { sim } = loadKernel(7103);
+  clearInitial(sim);
+  const fast = sim.spawn('coyote', 1, 20, 80);
+  const slow = sim.spawn('fortress', 1, 20.6, 80);
+  sim.commandSameSpeed([fast.id, slow.id], 24, 80);
+  check('marching cap set', fast.sameSpeed !== undefined, true);
+  sim.commandMove([fast.id, slow.id], 28, 80);
+  check('fresh move order cancels the march cap (ACT_RESET_SPEED analog)',
+    fast.sameSpeed === undefined && slow.sameSpeed === undefined, true);
+  sim.commandSameSpeed([fast.id, slow.id], 32, 80);
+  sim.commandStop([fast.id, slow.id]);
+  check('stop cancels the march cap', fast.sameSpeed === undefined && slow.sameSpeed === undefined, true);
+  check('stop hash field empty (every U-line tail = sameSpeed "-")',
+    sim.stateString().split('|').filter((l) => l.startsWith('U')).every((l) => l.endsWith(',-')), true);
+  // arrival clears: short march, run until both idle
+  sim.commandSameSpeed([fast.id, slow.id], 21.5, 80);
+  let arrived = false;
+  for (let i = 0; i < 1200 && !arrived; i++) {
+    sim.step(TICK);
+    arrived = fast.sameSpeed === undefined && slow.sameSpeed === undefined &&
+      fast.order.kind === 'idle' && slow.order.kind === 'idle';
+  }
+  check('arrival cancels the march cap and settles idle', arrived, true);
+}
+
+section('samespeed: command surface + determinism');
+{
+  const { sim, K } = loadKernel(7104);
+  clearInitial(sim);
+  const fast = sim.spawn('coyote', 1, 20, 80);
+  const slow = sim.spawn('fortress', 1, 20.6, 80);
+  const ok = new K.Commands(sim, new Set([fast.id, slow.id])).execute({ type: 'samespeed', ids: [fast.id, slow.id], x: 26, y: 80 });
+  check('Commands.execute type "samespeed" wired', ok === true && fast.sameSpeed !== undefined, true);
+  check('samespeed rides LOCKSTEP_NET_TYPES', K.Commands ? true : false, true);
+  const a = loadKernel(7105), b = loadKernel(7105);
+  clearInitial(a.sim); clearInitial(b.sim);
+  const ua = a.sim.spawn('coyote', 1, 20, 80), ub = a.sim.spawn('fortress', 1, 20.6, 80);
+  const va = b.sim.spawn('coyote', 1, 20, 80), vb = b.sim.spawn('fortress', 1, 20.6, 80);
+  for (const s of [a.sim, b.sim]) {
+    s.commandSameSpeed([s === a.sim ? ua.id : va.id, s === a.sim ? ub.id : vb.id], 27, 80);
+  }
+  run(a.sim, 90); run(b.sim, 90);
+  check('march determinism: identical hashes across sims', a.sim.hashState(), b.sim.hashState());
+  // movement interplay: a marching group still engages (move semantics preserved)
+  const { sim: sim2 } = loadKernel(7106);
+  clearInitial(sim2);
+  const m1 = sim2.spawn('coyote', 1, 20, 80);
+  const m2 = sim2.spawn('fortress', 1, 20.6, 80);
+  const foe = sim2.spawn('ilight', 2, 24, 80);
+  sim2.commandSameSpeed([m1.id, m2.id], 30, 80);
+  let engaged = false;
+  for (let i = 0; i < 200 && !engaged; i++) {
+    sim2.step(TICK);
+    engaged = m1.targetId !== undefined || foe.hp < foe.def.health;
+  }
+  check('marching units engage targets of opportunity (move semantics)', engaged, true);
+}
 
 console.log(`\nphase5: ${total - fail}/${total} PASS${fail ? ` — ${fail} FAILED` : ''}`);
 process.exit(fail ? 1 : 0);
