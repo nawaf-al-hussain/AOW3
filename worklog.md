@@ -939,6 +939,22 @@ Work Log:
   the loop, before the final comparison. Regression vector added -> replay 45/45.
   Shipped as v=26. Live re-verified: divergences [], hashMatch true.
 
+Live QA (Pages v=26, agent-browser fresh sessions, seed 231123):
+- Phase 5 live: patrol order routes anchor<->far (order.kind patrol, legs flip);
+  typhoon dead zone (d=3 < 5) -> 0 projectiles + hold, fires once the target
+  transits the legal band; garrison: infantry enters bunker (garrison set,
+  inert, renderer view hidden), crewed bunker fires (120 -> 52 hp), empty
+  bunker silent (kernel-verified), commandUngarrison exits to a free tile.
+- Replay harness LIVE end-to-end: __aow3Replay.capture() -> run() reproduces
+  the battle bit-exactly (7/7 commands incl. AI build/build/capture + a
+  boundary-tick attack, zero divergences, finalHash match). P hotkey arms
+  patrol via the real keyboard path (prodhint), Escape disarms. Two real bugs
+  + one harness gap were found BY the harness during QA and fixed (v=24
+  patrol dest-resync, v=25 AI unjournaled build, v=26 boundary flush).
+- Zero page errors on desktop 16:9 + iPhone 14 emulation; screenshots saved.
+  Regressions at ship time: phase5 53, replay 45, unit-fsm 29, accuracy 13,
+  data-model 379, commands-determinism 50. main = c67f72f (v=26).
+
 Stage Summary:
 - v=23: Phase 5 combat-reconstruction gaps closed (minRange/patrol/garrison,
   all natively anchored, tuned values documented) + Phase D replay playback
