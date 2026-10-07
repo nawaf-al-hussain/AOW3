@@ -43,7 +43,7 @@ vm.createContext(sandbox);
 }
 vm.runInContext(kernel, sandbox, { filename: 'kernel.js' });
 const K = sandbox.__K;
-if (!K.LockstepSession || K.PROTO !== 2) {
+if (!K.LockstepSession || K.PROTO !== 3) {
   console.error('kernel extraction failed (LockstepSession/PROTO missing)');
   process.exit(1);
 }
@@ -82,8 +82,8 @@ function makeEndpoint(name, slot, opts = {}) {
   return ep;
 }
 const NET = [];
-function attachGame(ep, seed, slot, spec) {
-  ep.sim = new Sim(seed >>> 0);
+function attachGame(ep, seed, slot, spec, seats = 2) {
+  ep.sim = new Sim(seed >>> 0, seats);
   ep.sim.spectate = !!spec;
   ep.sim.viewSlot = slot;
   ep.cmds = new Commands(ep.sim);
@@ -168,11 +168,9 @@ console.log('lockstep-jip: PROTO', PROTO);
     isLive: () => !!(host.sim && host.sim.tick > 0),
     snapshot: () => ({
       seed: host.sim.seed, tick: host.sim.tick,
-      arch: [...host.sess.arch].map(([t, f]) => ({ t, f1: f[1], f2: f[2] })),
-      hashes: [...host.sess.hashArch].flatMap(([t, h]) => [
-        ...(h[1] !== undefined ? [{ t, h: h[1], s: 1 }] : []),
-        ...(h[2] !== undefined ? [{ t, h: h[2], s: 2 }] : [])
-      ])
+      arch: [...host.sess.arch].map(([t, f]) => ({ t, f })),
+      hashes: [...host.sess.hashArch].flatMap(([t, h]) =>
+        Object.keys(h).map((s) => ({ t, h: h[s], s: +s })))
     })
   });
   const guest = makeEndpoint('guest', 2);
@@ -208,7 +206,9 @@ console.log('lockstep-jip: PROTO', PROTO);
   ok(spec.sess.liveSent, 'spectator marked live (no packets to publish)');
   let agree1 = true, agree2 = true;
   for (let t = CHECKPOINT; t <= spec.sim.tick - (spec.sim.tick % CHECKPOINT); t += CHECKPOINT) {
-    const a = spec.sess.myHash.get(t), b1 = spec.sess.peerHash.get(t), b2 = spec.sess.peerHash2.get(t);
+    const a = spec.sess.myHash.get(t);
+    const b1 = spec.sess.peerHashes.get(1) && spec.sess.peerHashes.get(1).get(t);
+    const b2 = spec.sess.peerHashes.get(2) && spec.sess.peerHashes.get(2).get(t);
     if (a && b1 && a !== b1) agree1 = false;
     if (a && b2 && a !== b2) agree2 = false;
   }
@@ -224,11 +224,9 @@ console.log('lockstep-jip: PROTO', PROTO);
     isLive: () => !!(host.sim && host.sim.tick > 0),
     snapshot: () => ({
       seed: host.sim.seed, tick: host.sim.tick,
-      arch: [...host.sess.arch].map(([t, f]) => ({ t, f1: f[1], f2: f[2] })),
-      hashes: [...host.sess.hashArch].flatMap(([t, h]) => [
-        ...(h[1] !== undefined ? [{ t, h: h[1], s: 1 }] : []),
-        ...(h[2] !== undefined ? [{ t, h: h[2], s: 2 }] : [])
-      ])
+      arch: [...host.sess.arch].map(([t, f]) => ({ t, f })),
+      hashes: [...host.sess.hashArch].flatMap(([t, h]) =>
+        Object.keys(h).map((s) => ({ t, h: h[s], s: +s })))
     })
   });
   const guest = makeEndpoint('guest', 2);
@@ -244,8 +242,8 @@ console.log('lockstep-jip: PROTO', PROTO);
   spec.tr.send({ a: 'hello', proto: PROTO, role: 'player' });
   ok(!!welcomed, 'tamper: welcome received');
   // corrupt one archived frame (drop a host command)
-  const victim = welcomed.arch.find((e) => e.f1.length > 0);
-  if (victim) victim.f1 = [];
+  const victim = welcomed.arch.find((e) => e.f && e.f[1] && e.f[1].length > 0);
+  if (victim) victim.f[1] = [];
   attachGame(spec, welcomed.seed, 1, true);
   spec.sess.beginFed(welcomed);
   let desyncAt = -1;
@@ -261,11 +259,9 @@ console.log('lockstep-jip: PROTO', PROTO);
     isLive: () => !!(host.sim && host.sim.tick > 0),
     snapshot: () => ({
       seed: host.sim.seed, tick: host.sim.tick,
-      arch: [...host.sess.arch].map(([t, f]) => ({ t, f1: f[1], f2: f[2] })),
-      hashes: [...host.sess.hashArch].flatMap(([t, h]) => [
-        ...(h[1] !== undefined ? [{ t, h: h[1], s: 1 }] : []),
-        ...(h[2] !== undefined ? [{ t, h: h[2], s: 2 }] : [])
-      ])
+      arch: [...host.sess.arch].map(([t, f]) => ({ t, f })),
+      hashes: [...host.sess.hashArch].flatMap(([t, h]) =>
+        Object.keys(h).map((s) => ({ t, h: h[s], s: +s })))
     })
   });
   const guest = makeEndpoint('guest', 2);
@@ -278,7 +274,7 @@ console.log('lockstep-jip: PROTO', PROTO);
   for (let f = 0; f < 160; f++) { stepEP(host); stepEP(guest); issueOrders(host, guest, null); }
   // guest leaves (bye)
   guest.tr.send({ a: 'bye' });
-  ok(!host.sess.activeP2(), 'seat vacant after guest bye');
+  ok(host.sess.activeSeats().length === 0, 'seat vacant after guest bye');
   // host must NOT stall with an empty seat
   const hBefore = host.sim.tick;
   drive([host], 60);
@@ -344,7 +340,7 @@ console.log('lockstep-jip: PROTO', PROTO);
   const h0b = host.sim.tick;
   drive([host], 10);
   ok(host.sim.tick === h0b, 'host stalls while the peer is merely silent');
-  host.sess.stallSince = performance.now() - (K.STALL_VACATE_MS + 1000); // backdate watchdog
+  host.sess.stallSince[guest.tr.rid] = performance.now() - (K.STALL_VACATE_MS + 1000); // backdate watchdog
   drive([host], 10);
   ok(peerLeft, 'watchdog vacated the lost seat');
   const h1 = host.sim.tick;
@@ -358,11 +354,9 @@ console.log('lockstep-jip: PROTO', PROTO);
     isLive: () => !!(host.sim && host.sim.tick > 0),
     snapshot: () => ({
       seed: host.sim.seed, tick: host.sim.tick,
-      arch: [...host.sess.arch].map(([t, f]) => ({ t, f1: f[1], f2: f[2] })),
-      hashes: [...host.sess.hashArch].flatMap(([t, h]) => [
-        ...(h[1] !== undefined ? [{ t, h: h[1], s: 1 }] : []),
-        ...(h[2] !== undefined ? [{ t, h: h[2], s: 2 }] : [])
-      ])
+      arch: [...host.sess.arch].map(([t, f]) => ({ t, f })),
+      hashes: [...host.sess.hashArch].flatMap(([t, h]) =>
+        Object.keys(h).map((s) => ({ t, h: h[s], s: +s })))
     })
   });
   const guest = makeEndpoint('guest', 2);
@@ -414,11 +408,9 @@ console.log('lockstep-jip: PROTO', PROTO);
     isLive: () => !!(host.sim && host.sim.tick > 0),
     snapshot: () => ({
       seed: host.sim.seed, tick: host.sim.tick,
-      arch: [...host.sess.arch].map(([t, f]) => ({ t, f1: f[1], f2: f[2] })),
-      hashes: [...host.sess.hashArch].flatMap(([t, h]) => [
-        ...(h[1] !== undefined ? [{ t, h: h[1], s: 1 }] : []),
-        ...(h[2] !== undefined ? [{ t, h: h[2], s: 2 }] : [])
-      ])
+      arch: [...host.sess.arch].map(([t, f]) => ({ t, f })),
+      hashes: [...host.sess.hashArch].flatMap(([t, h]) =>
+        Object.keys(h).map((s) => ({ t, h: h[s], s: +s })))
     })
   });
   const guest = makeEndpoint('guest', 2);
@@ -466,6 +458,130 @@ console.log('lockstep-jip: PROTO', PROTO);
   joiner.send({ a: 'hello', proto: PROTO, role: 'player' });
   const up = welcomes[welcomes.length - 1];
   ok(welcomes.length === welcomesN + 1 && up.role === 'player' && up.slot === 2, 'retry: vacant seat -> re-hello upgraded the joiner to a player');
+}
+
+// ---- 8. three-player match: pre-game seating, cross-seat input, full-mesh
+// hash verification (every peer verifies against EVERY seat's checkpoint)
+{
+  NET.length = 0; // isolate
+  const host = makeEndpoint('host', 1, {
+    seats: 3,
+    isLive: () => !!(host.sim && host.sim.tick > 0),
+    snapshot: () => ({
+      seed: host.sim.seed, tick: host.sim.tick,
+      arch: [...host.sess.arch].map(([t, f]) => ({ t, f })),
+      hashes: [...host.sess.hashArch].flatMap(([t, h]) =>
+        Object.keys(h).map((s) => ({ t, h: h[s], s: +s })))
+    })
+  });
+  const p2 = makeEndpoint('p2', 2);
+  const p3 = makeEndpoint('p3', 3);
+  attachGame(host, 555000111, 1, false, 3);
+  attachGame(p2, 0, 2, false, 3);
+  attachGame(p3, 0, 3, false, 3);
+  p2.tr.send({ a: 'hello', proto: PROTO, role: 'player' });
+  p3.tr.send({ a: 'hello', proto: PROTO, role: 'player' });
+  ok(host.sess.helloQueue.length === 2, '3P: both pre-game hellos queued');
+  host.sess.beginMatch(13571357);
+  attachGame(host, 13571357, 1, false, 3);
+  attachGame(p2, 13571357, 2, false, 3);
+  attachGame(p3, 13571357, 3, false, 3);
+  ok(host.sim.seatCount === 3 && host.sim.hq(3) !== undefined, '3P: seat 3 has an HQ');
+  for (let f = 0; f < 220; f++) {
+    stepEP(host); stepEP(p2); stepEP(p3);
+    const t = host.sim.tick;
+    if (t % 41 === 0) { const u = host.sim.units.find((u) => u.owner === 1 && u.garrison === undefined); if (u) host.cmds.issue({ type: 'move', ids: [u.id], x: (u.x + 3) | 0, y: (u.y + 2) | 0 }); }
+    if (t % 43 === 0) { const u = p2.sim.units.find((u) => u.owner === 2 && u.garrison === undefined); if (u) p2.cmds.issue({ type: 'produce', defId: 'ilight', owner: 2 }); }
+    if (t % 47 === 0) { const u = p3.sim.units.find((u) => u.owner === 3 && u.garrison === undefined); if (u) p3.cmds.issue({ type: 'move', ids: [u.id], x: (u.x + 1) | 0, y: (u.y - 3) | 0 }); }
+  }
+  ok(host.sim.tick >= 200 && p2.sim.tick >= 200 && p3.sim.tick >= 200, '3P: all three peers advanced (t=' + host.sim.tick + '/' + p2.sim.tick + '/' + p3.sim.tick + ')');
+  let agree = true;
+  for (let ct = CHECKPOINT; ct <= 200; ct += CHECKPOINT) {
+    const hs = [host, p2, p3].map((ep) => ep.sess.myHash.get(ct));
+    if (hs[0] !== undefined && (hs[0] !== hs[1] || hs[0] !== hs[2])) { agree = false; break; }
+  }
+  ok(agree, '3P: checkpoint hashes agree across all three peers');
+  ok(!host.sess.desynced && !p2.sess.desynced && !p3.sess.desynced, '3P: no desync');
+  while (host.sim.tick < p3.sim.tick) stepEP(host); // equalize the drive-order skew
+  ok(host.sim.hashState() === p3.sim.hashState(), '3P: live state hash equal host vs seat 3');
+  ok(p3.sim.units.some((u) => u.owner === 3), '3P: seat 3 owns units');
+  // mid-match spectator verifies against ALL THREE seats (session slot 2 =
+  // hub=false — fed consumers never run a hub session; the sim views as slot 1)
+  const spec = makeEndpoint('spec', 2, {
+    isLive: () => !!(host.sim && host.sim.tick > 0),
+    snapshot: () => ({
+      seed: host.sim.seed, tick: host.sim.tick,
+      arch: [...host.sess.arch].map(([t, f]) => ({ t, f })),
+      hashes: [...host.sess.hashArch].flatMap(([t, h]) =>
+        Object.keys(h).map((s) => ({ t, h: h[s], s: +s })))
+    })
+  });
+  let specWelcomed = null;
+  spec.sess.onWelcome = (m) => { specWelcomed = m; };
+  spec.tr.send({ a: 'hello', proto: PROTO, role: 'player' });
+  ok(!!specWelcomed && specWelcomed.role === 'spec' && specWelcomed.slot === 0, '3P: full room -> joiner downgraded to spectator');
+  ok(specWelcomed.seats === 3, '3P: welcome carries the seat count');
+  attachGame(spec, specWelcomed.seed, 1, true, 3);
+  spec.sess.beginFed(specWelcomed);
+  for (let f = 0; f < 500 && spec.sim.tick < host.sim.tick + 40; f++) { stepEP(host); stepEP(p2); stepEP(p3); stepEP(spec); }
+  ok(!spec.sess.desynced, '3P: spectator verifies against every seat (no desync)');
+  ok(spec.sim.hashState() === host.sim.hashState(), '3P: spectator hash == host live hash');
+}
+
+// ---- 9. four-player match: seat-4 JIP reclaim mid-match + lost-seat watchdog ----
+{
+  NET.length = 0; // isolate
+  const host = makeEndpoint('host', 1, {
+    seats: 4,
+    isLive: () => !!(host.sim && host.sim.tick > 0),
+    snapshot: () => ({
+      seed: host.sim.seed, tick: host.sim.tick,
+      arch: [...host.sess.arch].map(([t, f]) => ({ t, f })),
+      hashes: [...host.sess.hashArch].flatMap(([t, h]) =>
+        Object.keys(h).map((s) => ({ t, h: h[s], s: +s })))
+    })
+  });
+  const p2 = makeEndpoint('p2', 2);
+  attachGame(host, 888000222, 1, false, 4);
+  attachGame(p2, 0, 2, false, 4);
+  p2.tr.send({ a: 'hello', proto: PROTO, role: 'player' });
+  host.sess.beginMatch(24682468); // seats only p2 (queue length 1 < 3): match launches as-is
+  attachGame(host, 24682468, 1, false, 4);
+  attachGame(p2, 24682468, 2, false, 4);
+  for (let f = 0; f < 140; f++) { stepEP(host); stepEP(p2); }
+  // p3 joins mid-match: the seat-3 slot is vacant pre-launch too -> JIP path
+  let w3 = null;
+  const p3 = makeEndpoint('p3', 3, { onWelcome: (m) => { w3 = m; } });
+  p3.tr.send({ a: 'hello', proto: PROTO, role: 'player' });
+  ok(!!w3 && w3.role === 'player' && w3.slot === 3, '4P: JIP joiner claimed the lowest vacant seat (3)');
+  attachGame(p3, w3.seed, 3, false, 4);
+  p3.sess.beginFed(w3);
+  for (let f = 0; f < 600 && !p3.sess.liveSent; f++) { stepEP(host); stepEP(p2); stepEP(p3); }
+  ok(p3.sess.liveSent, '4P: seat-3 JIP player reached the live edge');
+  // seat 4 joins as JIP while the match runs
+  let w4 = null;
+  const p4 = makeEndpoint('p4', 4, { onWelcome: (m) => { w4 = m; } });
+  p4.tr.send({ a: 'hello', proto: PROTO, role: 'player' });
+  ok(!!w4 && w4.role === 'player' && w4.slot === 4, '4P: second JIP joiner took seat 4');
+  attachGame(p4, w4.seed, 4, false, 4);
+  p4.sess.beginFed(w4);
+  for (let f = 0; f < 900 && !p4.sess.liveSent; f++) { stepEP(host); stepEP(p2); stepEP(p3); stepEP(p4); }
+  ok(p4.sess.liveSent, '4P: seat-4 JIP player reached the live edge');
+  for (let f = 0; f < 80; f++) { stepEP(host); stepEP(p2); stepEP(p3); stepEP(p4); }
+  ok(host.sim.hashState() === p4.sim.hashState(), '4P: live hash equal host vs seat 4');
+  ok(!host.sess.desynced && !p3.sess.desynced && !p4.sess.desynced, '4P: no desync across the four seats');
+  // seat 3 goes silent -> host stalls, watchdog vacates seat 3, match continues
+  p3.tr.dead = true;
+  const h0 = host.sim.tick;
+  for (let f = 0; f < 6; f++) { stepEP(host); stepEP(p2); stepEP(p4); }
+  ok(host.sim.tick > h0 && host.sim.tick <= h0 + host.sess.delay + 1, '4P: host advances only through the horizon after seat 3 went silent');
+  host.sess.stallSince[p3.tr.rid] = performance.now() - (K.STALL_VACATE_MS + 500);
+  for (let f = 0; f < 10; f++) { stepEP(host); stepEP(p2); stepEP(p4); }
+  ok(host.sess.activeSeats().every(([, cl]) => cl.slot !== 3), '4P: watchdog vacated seat 3');
+  const h1 = host.sim.tick;
+  for (let f = 0; f < 60; f++) { stepEP(host); stepEP(p2); stepEP(p4); }
+  ok(host.sim.tick > h1 + 50, '4P: match continues after vacate (t=' + host.sim.tick + ')');
+  ok(!host.sess.desynced && !p2.sess.desynced && !p4.sess.desynced, '4P: remaining seats still desync-free');
 }
 
 console.log('\nlockstep-jip: ' + pass + ' assertions passed, ' + fail + ' failed');

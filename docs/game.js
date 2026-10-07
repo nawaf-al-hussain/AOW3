@@ -436,7 +436,7 @@
     // Phase D: global issue counter shared by every Commands issuer on this sim;
     // replay journals sort by (tick, seq) to reproduce cross-issuer order.
     cmdSeq = 0;
-    constructor(seed = 12345) {
+    constructor(seed = 12345, seatCount = 2) {
       // Phase 4 determinism: every sim random draw flows through this.rng()
       // (mulberry32 seeded from `seed`); seed/rngState/hashes are inspectable.
       this.seed = seed >>> 0;
@@ -444,22 +444,34 @@
       this.hashes = [];
       this.grid = new Uint8Array(MAP_W * MAP_H);
       this.explored = new Uint8Array(MAP_W * MAP_H);
-      this.visible = [new Uint8Array(MAP_W * MAP_H), new Uint8Array(MAP_W * MAP_H)];
-      this.stats = { 1: { produced: 0, kills: 0, losses: 0, bldKills: 0, bldLost: 0 }, 2: { produced: 0, kills: 0, losses: 0, bldKills: 0, bldLost: 0 } };
+      // N player seats (2 = the original duel layout; 3/4 take the top/bottom
+      // mid HQs). Everything downstream (players/visible/stats/economy/winner)
+      // is seat-indexed, so the 2P path is bit-identical to the legacy sim.
+      this.seatCount = Math.max(2, Math.min(MAX_SEATS, seatCount | 0 || 2));
+      this.visible = [];
+      for (let o = 0; o < this.seatCount; o++)
+        this.visible.push(new Uint8Array(MAP_W * MAP_H));
+      this.stats = {};
+      for (let o = 1; o <= this.seatCount; o++)
+        this.stats[o] = { produced: 0, kills: 0, losses: 0, bldKills: 0, bldLost: 0 };
       this.genTerrain(seed);
       this.pf = new Pathfinder(this.grid);
-      this.players = [this.newPlayer(), this.newPlayer()];
-      this.addBuilding("hq", 1, 8, MAP_H / 2);
-      this.addBuilding("hq", 2, MAP_W - 8, MAP_H / 2);
+      this.players = [];
+      for (let o = 1; o <= this.seatCount; o++)
+        this.players.push(this.newPlayer());
+      // HQs + starting force per seat (seats 1/2 reproduce the legacy duel
+      // positions exactly; seats 3/4 mirror the same 3-unit pattern sideways)
+      for (let o = 1; o <= this.seatCount; o++) {
+        const [sx, sy] = SEAT_SPAWN[o];
+        const side = o % 2 ? 1 : -1; // seats 1/3 push right, seats 2/4 push left
+        this.addBuilding("hq", o, sx, sy);
+        this.spawn("ilight", o, sx + side * 4, sy - 2);
+        this.spawn("ilight", o, sx + side * 4, sy + 2);
+        this.spawn("iheavy", o, sx + side * 5, sy);
+      }
       this.addBuilding("depot", 0, MAP_W / 2, 14);
       this.addBuilding("depot", 0, MAP_W / 2, MAP_H - 14);
       this.addBuilding("depot", 0, MAP_W / 2, MAP_H / 2);
-      this.spawn("ilight", 1, 12, MAP_H / 2 - 2);
-      this.spawn("ilight", 1, 12, MAP_H / 2 + 2);
-      this.spawn("iheavy", 1, 13, MAP_H / 2);
-      this.spawn("ilight", 2, MAP_W - 12, MAP_H / 2 - 2);
-      this.spawn("ilight", 2, MAP_W - 12, MAP_H / 2 + 2);
-      this.spawn("iheavy", 2, MAP_W - 13, MAP_H / 2);
     }
     rng() {
       let a = this.rngState = this.rngState + 0x6D2B79F5 | 0;
@@ -594,7 +606,7 @@
         x,
         y,
         hp: def.health,
-        facing: owner === 1 ? 0 : Math.PI,
+        facing: owner <= 2 ? (owner === 1 ? 0 : Math.PI) : (owner === 3 ? Math.PI / 2 : -Math.PI / 2),
         order: { kind: "idle" },
         cd: 0,
         path: [],
@@ -604,7 +616,7 @@
         lastHitBy: 0,
         // Phase 3 FSM state (native field names in comments):
         state: "alive",
-        orientDest: owner === 1 ? 0 : Math.PI,
+        orientDest: owner <= 2 ? (owner === 1 ? 0 : Math.PI) : (owner === 3 ? Math.PI / 2 : -Math.PI / 2),
         rotate: 0,
         aimT: 0,
         burstLeft: 0,
@@ -630,7 +642,7 @@
       return cp;
     }
     refreshEconomy() {
-      for (const o of [1, 2]) {
+      for (let o = 1; o <= this.seatCount; o++) {
         const p = this.players[o - 1];
         let depots = 0;
         let power = 0;
@@ -1181,7 +1193,7 @@
         return;
       this.time += dt;
       this.tick++;
-      for (const o of [1, 2]) {
+      for (let o = 1; o <= this.seatCount; o++) {
         const p = this.players[o - 1];
         p.funds += p.income * dt;
         if (p.queue.length) {
@@ -1192,7 +1204,7 @@
             const producer = PRODUCER_OF[q.defId];
             const prod = this.buildings.find((b) => b.defId === producer && b.owner === o && b.hp > 0 && b.built) || this.buildings.find((b) => b.defId === "hq" && b.owner === o);
             if (prod) {
-              const dir = o === 1 ? 1 : -1;
+              const dir = o % 2 ? 1 : -1; // spawn toward the open half (1/3 -> +x, 2/4 -> -x)
               const u = this.spawn(q.defId, o, prod.x + dir * (prod.radius + 1), prod.y + (this.rng() * 3 - 1.5));
               u.order = { kind: "move", x: prod.x + dir * (prod.radius + 4.5), y: u.y };
               u.path = this.pf.find(u.x, u.y, u.order.x, u.order.y, u.def.kind === "aircraft" && !u.grounded) ?? [];
@@ -1230,11 +1242,15 @@
           }
         }
       }
-      const hq1 = this.buildings.some((b) => b.defId === "hq" && b.owner === 1 && b.hp > 0);
-      const hq2 = this.buildings.some((b) => b.defId === "hq" && b.owner === 2 && b.hp > 0);
-      if (!hq1 || !hq2) {
-        this.winner = hq1 ? 1 : 2;
-        for (const o of [1, 2])
+      const aliveSeats = [];
+      for (let o = 1; o <= this.seatCount; o++)
+        if (this.buildings.some((b) => b.defId === "hq" && b.owner === o && b.hp > 0))
+          aliveSeats.push(o);
+      if (aliveSeats.length < 2 && this.winner === null) {
+        // last HQ standing wins (FFA); the legacy duel tie-break (both HQs
+        // dead in the same tick -> seat 2) is preserved for seatCount 2
+        this.winner = aliveSeats.length === 1 ? aliveSeats[0] : this.seatCount === 2 ? 2 : null;
+        for (let o = 1; o <= this.seatCount; o++)
           this.players[o - 1].alive = this.winner === o;
       }
       if (this.tick % 20 === 0) {
@@ -1437,7 +1453,7 @@
                 d.captureBy = 0;
                 u.captureT = undefined;
                 u.order = { kind: "idle" };
-                this.floats.push({ x: d.x, y: d.y - 2, text: "DEPOT CAPTURED", color: u.owner === 1 ? "#6ab4ff" : "#ff7a6a", t: 0 });
+                this.floats.push({ x: d.x, y: d.y - 2, text: "DEPOT CAPTURED", color: SEAT_COLOR[u.owner] || "#e8e4d0", t: 0 });
               }
             } else
               this.moveToward(u, d.x, d.y, dt);
@@ -2142,14 +2158,14 @@
       // step so every existing consumer (renderer culling, minimap, fog,
       // click-select filters) sees everything without per-site checks
       if (this.spectate) {
-        this.visible[0].fill(1);
-        this.visible[1].fill(1);
+        for (let o = 0; o < this.seatCount; o++)
+          this.visible[o].fill(1);
         this.explored.fill(1);
         return;
       }
-      this.visible[0].fill(0);
-      this.visible[1].fill(0);
-      for (const o of [1, 2]) {
+      for (let o = 0; o < this.seatCount; o++)
+        this.visible[o].fill(0);
+      for (let o = 1; o <= this.seatCount; o++) {
         const vis = this.visible[o - 1];
         const reveal = (x, y, r) => {
           const x0 = Math.max(0, Math.floor(x - r)), x1 = Math.min(MAP_W - 1, Math.ceil(x + r));
@@ -2390,10 +2406,20 @@
   // announces `live` and its seat starts gating the host simulation. A lost
   // peer seat is vacated after STALL_VACATE_MS of host-side stall so the
   // match continues and the seat can be reclaimed via JIP.
-  var PROTO = 2;
+  // PROTO 3: N player seats (2..MAX_SEATS) + spectators. Message deltas vs 2:
+  // cf frames carry a per-slot map f instead of f1/f2; start/welcome carry the
+  // assigned seat; every 'h' hash is tagged with its sender slot.
+  var PROTO = 3;
   var INPUT_DELAY = 3;
   var CHECKPOINT = 20;
   var STALL_VACATE_MS = 6000;
+  // Player seats: 1 = host, 2..MAX_SEATS = joiners (lowest vacant seat wins).
+  // Spectators are unlimited and seat-agnostic. Seat 3/4 reuse faction-1/2
+  // model variants but get distinct 2D seat accents (SEAT_COLOR/SEAT_HEX).
+  var MAX_SEATS = 4;
+  var SEAT_COLOR = { 1: "#6ab8ff", 2: "#ff8a70", 3: "#f5c04a", 4: "#5fd48a" };
+  var SEAT_HEX = { 1: 0x6ab8ff, 2: 0xff8a70, 3: 0xf5c04a, 4: 0x5fd48a };
+  var SEAT_SPAWN = { 1: [8, MAP_H / 2], 2: [MAP_W - 8, MAP_H / 2], 3: [MAP_W / 2, 8], 4: [MAP_W / 2, MAP_H - 8] };
   var Net = {
     mode: "local",
     session: null,
@@ -2411,9 +2437,9 @@
       this.buf = new Map;
       this.sentUpTo = -1;
       this.peerSeen = -1;
+      this.hubSeen = -1;              // non-hub raw: last tick the HUB published (readiness gate)
       this.myHash = new Map;
-      this.peerHash = new Map;
-      this.peerHash2 = new Map;
+      this.peerHashes = new Map;        // slot -> Map(tick -> h)
       this.desynced = false;
       this.dead = false;
       this.onDesync = opts.onDesync || (() => {});
@@ -2422,20 +2448,21 @@
       this.onPeerHello = opts.onPeerHello || (() => {});
       this.onWelcome = opts.onWelcome || (() => {});
       this.onNack = opts.onNack || (() => {});
-      // ---- multi-party (JIP/spectator) ----
+      // ---- multi-party (JIP/spectator / N seats) ----
       this.hub = slot === 1;            // host runs the hub
+      this.seats = Math.max(2, Math.min(MAX_SEATS, (opts.seats | 0) || 2)); // player seats (hub)
       this.fed = false;                 // hub-fed client (spectator / JIP player)
       this.role = opts.role || "player";// fed: "spec" | "player" (JIP reclaim)
       this.clients = new Map;           // hub: rid -> {role, slot, seen, live, raw}
-      this.lastHello = null;            // hub: latest pre-game hello (seated as P2 at launch)
-      this.arch = new Map;              // hub: tick -> {1:[],2:[]} sparse input archive for JIP snapshots
-      this.hashArch = new Map;          // hub: tick -> {1:h,2:h}
+      this.helloQueue = [];             // hub: pre-game player hellos, seated as slots 2..seats at launch
+      this.arch = new Map;              // hub: tick -> {slot: []} sparse input archive for JIP snapshots
+      this.hashArch = new Map;          // hub: tick -> {slot: h}
       this.own = new Map;               // fed player: tick -> [my commands] (published independently of cf-fed buf)
       this.cfUpTo = -1;                 // fed: highest live cf tick seen
       this.catchupUntil = -1;           // fed: replay archive through this tick, then live
       this.liveSent = false;            // fed player: "live" announced (host gates from here on)
       this.matchGen = 0;                // match generation (rematch invalidates stale fed buffers)
-      this.stallSince = undefined;      // hub: stalled-waiting-on-P2 timer start
+      this.stallSince = {};             // hub: rid -> stalled-waiting timer start (per lagging seat)
       this.opts = opts;                 // hub JIP providers (isLive/snapshot)
       transport.onMsg((m) => this.onMsg(m));
       if (transport.onPeerDrop)
@@ -2454,21 +2481,31 @@
         this.tr.sendTo(rid, m);
     }
     onDrop(rid) {
-      // per-connection drop (PeerJS): forget that client; a live P2 seat frees up
+      // per-connection drop (PeerJS): forget that client; a live player seat frees up
       if (!this.hub || this.dead)
         return;
       const cl = this.clients.get(rid);
+      this.helloQueue = this.helloQueue.filter((r) => r !== rid);
       if (!cl)
         return;
       this.clients.delete(rid);
-      if (cl.slot === 2 && cl.live)
+      if (cl.slot >= 2 && cl.live)
         this.onPeerLeave();
     }
-    activeP2() {
-      for (const cl of this.clients.values())
-        if (cl.slot === 2 && cl.live && cl.role === "player")
-          return cl;
-      return null;
+    // hub: lowest unoccupied player seat (2..seats), or undefined when full
+    nextVacantSeat() {
+      for (let s = 2; s <= this.seats; s++)
+        if (![...this.clients.values()].some((cl) => cl.slot === s))
+          return s;
+      return undefined;
+    }
+    // hub: live seated player clients (the seats the match gates on)
+    activeSeats() {
+      const out = [];
+      for (const [rid, cl] of this.clients)
+        if (cl.slot >= 2 && cl.live && cl.role === "player")
+          out.push([rid, cl]);
+      return out;
     }
     onMsg(m) {
       if (!m || this.dead)
@@ -2479,9 +2516,9 @@
       const t = m.t | 0;
       if (m.a === "c") {
         if (this.hub) {
-          // only a live slot-2 player publishes input; spectators are silent
+          // live player seats (2..seats) publish input; spectators are silent
           const cl = from && this.clients.get(from);
-          if (cl && cl.live && cl.slot === 2) {
+          if (cl && cl.live && cl.slot >= 2) {
             if (t > cl.seen)
               cl.seen = t;
             if (t > this.peerSeen)
@@ -2491,7 +2528,7 @@
               per = {};
               this.buf.set(t, per);
             }
-            const arr = per[2] ?? (per[2] = []);
+            const arr = per[m.s] ?? (per[m.s] = []);
             for (const c of m.c || [])
               arr.push(c);
           }
@@ -2500,6 +2537,8 @@
           // content and would poison buf with single-slot shapes
           if (this.fed)
             return;
+          if (m.s === 1 && t > this.hubSeen)
+            this.hubSeen = t; // readiness gates on the hub's publishing horizon
           if (t > this.peerSeen)
             this.peerSeen = t;
           let per = this.buf.get(t);
@@ -2512,36 +2551,38 @@
             arr.push(c);
         }
       } else if (m.a === "h") {
+        // checkpoint hash, tagged with its sender seat (PROTO 3); every peer
+        // verifies its own hash against EVERY seat's hash at each checkpoint
+        const s = (m.s | 0) || 2;
         if (this.hub) {
-          // slot-2 player checkpoint: verify, archive, relay to fed clients
           const cl = from && this.clients.get(from);
-          if (cl && cl.slot === 2) {
-            this.peerHash.set(t, m.h);
+          if (cl && cl.slot >= 2) {
+            if (!this.peerHashes.has(s))
+              this.peerHashes.set(s, new Map);
+            this.peerHashes.get(s).set(t, m.h);
             const ha = this.hashArch.get(t) || (this.hashArch.set(t, {}), this.hashArch.get(t));
-            ha[2] = m.h;
+            ha[s] = m.h;
             for (const [rid2, cl2] of this.clients)
-              if (!cl2.raw)
-                this.sendTo(rid2, { a: "ch", t, h: m.h, s: 2 });
+              if (rid2 !== from)
+                this.sendTo(rid2, { a: "h", t, h: m.h, s });
             this.checkHash(t);
           }
         } else {
-          this.peerHash.set(t, m.h);
+          if (!this.peerHashes.has(s))
+            this.peerHashes.set(s, new Map);
+          this.peerHashes.get(s).set(t, m.h);
           this.checkHash(t);
         }
-      } else if (m.a === "ch") {
-        // fed client: either slot's checkpoint hash (both hash the full state)
-        if (m.s === 2)
-          this.peerHash2.set(t, m.h);
-        else
-          this.peerHash.set(t, m.h);
-        this.checkHash(t);
       } else if (m.a === "cf") {
-        // fed client: authoritative full input frame for tick t (both slots);
-        // the hub never sends cf to raw (pre-game-style) clients
+        // non-hub client: authoritative full per-slot input frame for tick t;
+        // the hub sends cf to every seated peer (raw players compose from it,
+        // fed clients also consume it during catch-up)
         if (!this.hub) {
-          this.buf.set(t, { 1: m.f1 || [], 2: m.f2 || [] });
+          this.buf.set(t, m.fr || {});
           if (t > this.cfUpTo)
             this.cfUpTo = t;
+          if (t > this.hubSeen)
+            this.hubSeen = t;
         }
       } else if (m.a === "hello") {
         if (this.hub)
@@ -2554,7 +2595,7 @@
         // hub-fed player finished catch-up: its seat starts gating the host
         if (this.hub) {
           const cl = from && this.clients.get(from);
-          if (cl && cl.slot === 2 && cl.role === "player") {
+          if (cl && cl.slot >= 2 && cl.role === "player") {
             cl.live = true;
             cl.seen = Math.max(cl.seen, t);
             this.peerSeen = Math.max(this.peerSeen, cl.seen);
@@ -2567,9 +2608,10 @@
       } else if (m.a === "bye") {
         if (this.hub) {
           const cl = from && this.clients.get(from);
+          this.helloQueue = this.helloQueue.filter((r) => r !== from);
           if (cl) {
             this.clients.delete(from);
-            if (cl.slot === 2 && cl.live)
+            if (cl.slot >= 2 && cl.live)
               this.onPeerLeave();
           }
         } else {
@@ -2579,8 +2621,17 @@
       }
     }
     onHubHello(from, m) {
-      // duplicate hello from a known rid = the pre-game guest's 2 s keepalive
-      if (from && (from === this.lastHello || this.clients.has(from))) {
+      // duplicate hello from a known rid: pre-game it is the guest's 2 s
+      // keepalive; once the match is live it can only come from a client whose
+      // welcome was never consumed (it started loading assets after the join
+      // and its startGame threw the payload away) — re-run the live join path
+      // so it gets a FRESH welcome with an up-to-date snapshot. Clients that
+      // actually started stop helloing (their timer is cleared on success).
+      if (from && (this.helloQueue.includes(from) || this.clients.has(from))) {
+        if (this.opts && this.opts.isLive && this.opts.isLive()) {
+          this.onLiveHello(from, m);
+          return;
+        }
         this.onPeerHello(m);
         return;
       }
@@ -2590,61 +2641,73 @@
         return;
       }
       if (this.opts && this.opts.isLive && this.opts.isLive()) {
-        // match in progress: spectator, or P2 seat reclaim if vacant
-        let role = m.role === "spectator" ? "spec" : "player";
-        if (role === "player" && this.activeP2())
-          role = "spec";
-        this.clients.set(from, { role, slot: role === "spec" ? 0 : 2, seen: -1, live: false, raw: false });
-        const snap = this.opts.snapshot ? this.opts.snapshot() : null;
-        this.sendTo(from, {
-          a: "welcome", proto: PROTO, role, slot: role === "spec" ? 0 : 2,
-          seed: snap.seed, tick: snap.tick, arch: snap.arch, hashes: snap.hashes, gen: this.matchGen
-        });
+        this.onLiveHello(from, m);
         return;
       }
-      if (this.lastHello || this.activeP2()) {
-        // pre-game room already has its P2: this joiner waits as a spectator
+      if (this.helloQueue.length >= this.seats - 1) {
+        // pre-game room's player seats are spoken for: wait as a spectator
+        // (a tick-0 welcome is handed out at launch)
         this.clients.set(from, { role: "spec", slot: 0, seen: -1, live: true, raw: false });
         this.sendTo(from, { a: "nack", why: "spectator-wait" });
         return;
       }
-      this.lastHello = from;
+      this.helloQueue.push(from);
       this.onPeerHello(m);
     }
-    // host, right before launching: seat the pre-game guest, hand waiting
-    // spectators a fresh tick-0 welcome, message everyone their part
+    // match in progress: spectator, or seat reclaim if vacant (fresh join AND
+    // retry of a registered client — the role decision is re-run either way and
+    // the client entry is overwritten, so a waiting "player" joiner is upgraded
+    // to the lowest vacant seat)
+    onLiveHello(from, m) {
+      const seat = this.nextVacantSeat();
+      const role = m.role !== "spectator" && seat !== undefined ? "player" : "spec";
+      const slot = role === "player" ? seat : 0;
+      this.clients.set(from, { role, slot, seen: -1, live: false, raw: false });
+      const snap = this.opts.snapshot ? this.opts.snapshot() : null;
+      this.sendTo(from, {
+        a: "welcome", proto: PROTO, role, slot, seats: this.seats,
+        seed: snap.seed, tick: snap.tick, arch: snap.arch, hashes: snap.hashes, gen: this.matchGen
+      });
+    }
+    // host, right before launching: seat every queued pre-game player (slots
+    // 2..seats in hello order), hand waiting spectators a fresh tick-0 welcome,
+    // message everyone their part (start carries the assigned seat)
     beginMatch(seed) {
-      if (this.lastHello)
-        this.clients.set(this.lastHello, { role: "player", slot: 2, seen: -1, live: true, raw: true });
+      this.helloQueue.slice(0, this.seats - 1).forEach((rid, i) => {
+        if (!this.clients.has(rid))
+          this.clients.set(rid, { role: "player", slot: i + 2, seen: -1, live: true, raw: true });
+      });
+      this.helloQueue = [];
       for (const [rid, cl] of this.clients) {
-        if (cl.slot === 2 && cl.role === "player")
-          this.sendTo(rid, { a: "start", proto: PROTO, seed, gen: this.matchGen });
+        if (cl.slot >= 2 && cl.role === "player")
+          this.sendTo(rid, { a: "start", proto: PROTO, seed, gen: this.matchGen, slot: cl.slot, seats: this.seats });
         else
-          this.sendTo(rid, { a: "welcome", proto: PROTO, role: "spec", slot: 0, seed, tick: 0, arch: [], hashes: [], gen: this.matchGen });
+          this.sendTo(rid, { a: "welcome", proto: PROTO, role: "spec", slot: 0, seed, tick: 0, arch: [], hashes: [], seats: this.seats, gen: this.matchGen });
       }
     }
     checkHash(t) {
       if (this.desynced)
         return;
       const mine = this.myHash.get(t);
-      const theirs = this.peerHash.get(t);
-      const theirs2 = this.peerHash2.get(t);
-      if (mine !== undefined && ((theirs !== undefined && mine !== theirs) || (theirs2 !== undefined && mine !== theirs2))) {
-        this.desynced = true;
-        this.onDesync(t, mine, theirs !== undefined ? theirs : theirs2);
+      if (mine !== undefined) {
+        for (const [s, ph] of this.peerHashes) {
+          const th = ph.get(t);
+          if (th !== undefined && mine !== th) {
+            this.desynced = true;
+            this.onDesync(t, mine, th);
+            break;
+          }
+        }
       }
       if (this.myHash.size > 240)
         for (const k of [...this.myHash.keys()])
           if (k < t - 200)
             this.myHash.delete(k);
-      if (this.peerHash.size > 240)
-        for (const k of [...this.peerHash.keys()])
-          if (k < t - 200)
-            this.peerHash.delete(k);
-      if (this.peerHash2.size > 240)
-        for (const k of [...this.peerHash2.keys()])
-          if (k < t - 200)
-            this.peerHash2.delete(k);
+      for (const [, ph] of this.peerHashes)
+        if (ph.size > 240)
+          for (const k of [...ph.keys()])
+            if (k < t - 200)
+              ph.delete(k);
     }
     // publish my input packet for tick T once T is within the delay window
     pump(tick) {
@@ -2660,22 +2723,24 @@
           for (const t of [...this.buf.keys()])
             if (t < tick - 8)
               this.buf.delete(t);
-        // lost-peer watchdog: if the live P2 stops publishing while the host
+        // lost-peer watchdog: if a live seat stops publishing while the host
         // is stalled on it, vacate the seat so the match continues (the peer's
         // own hash checks will flag its stale timeline; it can JIP-rejoin)
-        const p2 = this.activeP2();
-        if (p2 && p2.seen < tick) {
-          if (this.stallSince === undefined)
-            this.stallSince = performance.now();
-          else if (performance.now() - this.stallSince > STALL_VACATE_MS) {
-            for (const [rid, cl] of this.clients)
-              if (cl === p2)
-                this.clients.delete(rid);
-            this.stallSince = undefined;
-            this.onPeerLeave();
-          }
-        } else
-          this.stallSince = undefined;
+        let anyVacated = false;
+        for (const [rid, cl] of this.activeSeats()) {
+          if (cl.seen < tick) {
+            if (this.stallSince[rid] === undefined)
+              this.stallSince[rid] = performance.now();
+            else if (performance.now() - this.stallSince[rid] > STALL_VACATE_MS) {
+              this.clients.delete(rid);
+              delete this.stallSince[rid];
+              anyVacated = true;
+            }
+          } else
+            delete this.stallSince[rid];
+        }
+        if (anyVacated)
+          this.onPeerLeave();
         return;
       }
       if (this.fed) {
@@ -2685,7 +2750,7 @@
         while (this.sentUpTo < horizon) {
           this.sentUpTo++;
           const mine = this.own.get(this.sentUpTo) || [];
-          this.send({ a: "c", t: this.sentUpTo, s: 2, c: mine });
+          this.send({ a: "c", t: this.sentUpTo, s: this.slot, c: mine });
         }
         return;
       }
@@ -2732,49 +2797,44 @@
     }
     ready(tick) {
       if (this.hub) {
-        const p2 = this.activeP2();
-        return !(p2 && p2.seen < tick);
+        for (const [, cl] of this.activeSeats())
+          if (cl.seen < tick)
+            return false;
+        return true;
       }
       if (this.fed)
         return tick <= this.catchupUntil || this.buf.has(tick) || this.cfUpTo >= tick;
-      return this.peerSeen >= tick;
+      return this.hubSeen >= tick;
     }
     apply(tick) {
       if (this.hub) {
         const per = this.buf.get(tick);
-        const f1 = per && per[1] || [], f2 = per && per[2] || [];
+        const f = {};
+        for (let s = 1; s <= this.seats; s++)
+          f[s] = per && per[s] || [];
         if (this.clients.size) {
-          let cf = null;
-          for (const [rid, cl] of this.clients) {
-            if (cl.raw)
-              continue;
-            if (!cf)
-              cf = { a: "cf", t: tick, f1, f2 };
+          // frame field is `fr` — `f` collides with the transport envelope's
+          // sender-rid field and would leak a rid string into the buf
+          const cf = { a: "cf", t: tick, fr: f };
+          for (const rid of this.clients.keys())
             this.sendTo(rid, cf);
-          }
-          if (f1.length || f2.length)
-            this.arch.set(tick, { 1: f1.slice(), 2: f2.slice() });
+          const any = [...this.clients.keys()].length;
+          if (any && (f[1].length || Object.keys(f).some((s) => +s >= 2 && f[s].length)))
+            this.arch.set(tick, JSON.parse(JSON.stringify(f)));
         }
-        for (const list of [f1, f2])
-          for (const c2 of list)
+        for (let s = 1; s <= this.seats; s++)
+          for (const c2 of f[s])
             this.cmds.applyRemote(c2);
         return;
       }
-      if (this.fed) {
-        const f = this.buf.get(tick);
-        if (f)
-          for (const list of [f[1], f[2]])
-            if (Array.isArray(list))
-              for (const c2 of list)
-                this.cmds.applyRemote(c2);
+      // fed + raw peers alike compose from the cf per-slot map (ascending slot
+      // order — the same order the hub applied them in)
+      const f = this.buf.get(tick);
+      if (!f)
         return;
-      }
-      const per = this.buf.get(tick);
-      if (!per)
-        return;
-      for (const p of [1, 2]) {
-        const list = per[p];
-        if (list)
+      for (const s of Object.keys(f).map(Number).sort((a, b) => a - b)) {
+        const list = f[s];
+        if (Array.isArray(list))
           for (const c2 of list)
             this.cmds.applyRemote(c2);
       }
@@ -2787,11 +2847,9 @@
       if (this.hub) {
         const ha = this.hashArch.get(tick) || (this.hashArch.set(tick, {}), this.hashArch.get(tick));
         ha[1] = h;
-        for (const [rid, cl] of this.clients)
-          if (!cl.raw)
-            this.sendTo(rid, { a: "ch", t: tick, h, s: 1 });
+        this.send({ a: "h", t: tick, h, s: 1 });
       } else if (!this.fed || this.liveSent)
-        this.send({ a: "h", t: tick, h });
+        this.send({ a: "h", t: tick, h, s: this.slot });
       this.checkHash(tick);
       Net.lastHash = h;
       Net.lastHashTick = tick;
@@ -2801,7 +2859,7 @@
     // stay — the archive covers 0..W, the frames W+1.. the live stream.
     beginFed(m) {
       this.role = m.role === "player" ? "player" : "spec";
-      this.slot = this.role === "player" ? 2 : 0;
+      this.slot = this.role === "player" ? (m.slot | 0) || 2 : 0;
       this.fed = true;
       // a new match generation invalidates every buffered frame from the old
       // one (rematch / fresh welcome); same-generation raced-ahead frames stay
@@ -2811,8 +2869,7 @@
         this.matchGen = m.gen;
       }
       this.myHash.clear();
-      this.peerHash.clear();
-      this.peerHash2.clear();
+      this.peerHashes.clear();
       this.own.clear();
       this.catchupUntil = m.tick | 0;
       this.sentUpTo = -1;
@@ -2822,9 +2879,13 @@
       this.liveSent = false;
       this.stallSince = undefined;
       for (const e of m.arch || [])
-        this.buf.set(e.t | 0, { 1: e.f1 || [], 2: e.f2 || [] });
-      for (const e of m.hashes || [])
-        (e.s === 2 ? this.peerHash2 : this.peerHash).set(e.t | 0, e.h);
+        this.buf.set(e.t | 0, e.f || {});
+      for (const e of m.hashes || []) {
+        const s = (e.s | 0) || 2;
+        if (!this.peerHashes.has(s))
+          this.peerHashes.set(s, new Map);
+        this.peerHashes.get(s).set(e.t | 0, e.h);
+      }
     }
     // fed client reached the live edge: announce the seat (players only) and
     // start publishing from beyond the hub's composed horizon
@@ -2842,9 +2903,9 @@
       this.own.clear();
       this.sentUpTo = -1;
       this.peerSeen = -1;
+      this.hubSeen = -1;
       this.myHash.clear();
-      this.peerHash.clear();
-      this.peerHash2.clear();
+      this.peerHashes.clear();
       this.arch.clear();
       this.hashArch.clear();
       this.desynced = false;
@@ -2853,7 +2914,8 @@
       this.catchupUntil = -1;
       this.liveSent = false;
       this.matchGen++;
-      this.stallSince = undefined;
+      this.stallSince = {};
+      this.helloQueue = [];
       for (const cl of this.clients.values()) {
         cl.seen = -1;
         if (cl.raw)
@@ -2916,7 +2978,11 @@
   // accepts N connections (guest + spectators/JIP); each conn is addressed
   // by its PeerJS peer id, which doubles as the rid.
   class PeerTransport {
-    constructor() {
+    // cfg (optional): {host, port, path, secure} — a SELF-HOSTED PeerJS
+    // signaling server (npx peer --port 9000). When absent the public cloud
+    // broker is used; signaling only — game traffic is always P2P.
+    constructor(cfg) {
+      this.cfg = cfg || null;
       this._msg = null;
       this._close = null;
       this._drop = null;
@@ -2924,6 +2990,12 @@
       this.byPeer = new Map;
       this.peer = null;
       this.rid = null;
+    }
+    _peerOpts() {
+      const o = { debug: 0 };
+      if (this.cfg)
+        Object.assign(o, this.cfg);
+      return o;
     }
     onMsg(fn) {
       this._msg = fn;
@@ -2973,7 +3045,7 @@
     }
     host(code) {
       return PeerTransport.loadLib().then((Peer) => new Promise((res, rej) => {
-        const p = new Peer("AOW3LS-" + code, { debug: 0 });
+        const p = new Peer("AOW3LS-" + code, tr._peerOpts());
         this.peer = p;
         p.on("open", () => {
           this.rid = p.id;
@@ -3002,7 +3074,7 @@
     }
     join(code) {
       return PeerTransport.loadLib().then((Peer) => new Promise((res, rej) => {
-        const p = new Peer({ debug: 0 });
+        const p = new Peer(tr._peerOpts());
         this.peer = p;
         p.on("error", (e) => rej(e));
         p.on("open", () => {
@@ -35570,16 +35642,21 @@ void main() {
     });
     return inst;
   }
+  function factionVariant(owner) {
+    // seats 3/4 reuse the faction-1/2 model variants (2-faction art pipeline);
+    // they are told apart by the seat accents (rings/minimap/flags/HUD)
+    return owner <= 2 ? owner : owner - 2;
+  }
   function buildGlbUnit(def, owner) {
     const pair = UNIT_MODEL[def.id];
     if (!pair)
       return null;
-    const t = templates.get(pair[owner - 1]);
+    const t = templates.get(pair[factionVariant(owner) - 1]);
     if (!t)
       return null;
     const group = new Group;
     const inst = cloneScaled(t);
-    if (def.swapTint && owner === 2)
+    if (def.swapTint && factionVariant(owner) === 2)
       swapRedBlue(inst);
     const size = t.size;
     if (size.z > size.x) {
@@ -35625,7 +35702,7 @@ void main() {
       return null;
     const group = new Group;
     const inst = cloneScaled(t);
-    if (owner === 2) {
+    if (factionVariant(owner) === 2) {
       inst.traverse((o) => {
         const mesh = o;
         if (!mesh.isMesh)
@@ -35709,7 +35786,7 @@ void main() {
       return null;
     const group = new Group;
     const inst = cloneScaled(t);
-    if (owner === 2)
+    if (factionVariant(owner) === 2)
       swapRedBlue(inst);
     const wrap = new Group;
     wrap.add(inst);
@@ -35833,7 +35910,7 @@ void main() {
     return g;
   }
   function buildUnit(def, owner) {
-    const f = FACTION[owner];
+    const f = FACTION[factionVariant(owner)];
     const group = new Group;
     const animNodes = [];
     let turret;
@@ -36784,7 +36861,7 @@ void main() {
           this.bldViews.set(b.id, v);
         }
         if (v.flag) {
-          const col = b.owner === 1 ? FACTION[1].accent : b.owner === 2 ? FACTION[2].accent : 13157556;
+          const col = SEAT_HEX[b.owner] || 13157556;
           v.flag.material.color.setHex(col);
         }
         if (v.capRing) {
@@ -36795,7 +36872,7 @@ void main() {
             const old = v.capRing.geometry;
             v.capRing.geometry = new RingGeometry(v.def.radius + 0.05, v.def.radius + 0.35, 28, 1, -Math.PI / 2, theta);
             old.dispose();
-            v.capRing.material.color.setHex(b.captureBy === 1 ? FACTION[1].accent : b.captureBy === 2 ? FACTION[2].accent : 14540253);
+            v.capRing.material.color.setHex(SEAT_HEX[b.captureBy] || 14540253);
           } else
             v.capRing.visible = false;
         }
@@ -36837,7 +36914,7 @@ void main() {
             const shown = underC ? b.buildT / b.buildTotal : frac;
             if (Math.abs(shown - v.lastHp) > 0.01) {
               v.lastHp = shown;
-              this.paintHp(v.hpCanvas, shown, b.owner === 2);
+              this.paintHp(v.hpCanvas, shown, b.owner !== (sim.viewSlot || 1));
               v.hpTex.needsUpdate = true;
             }
           } else
@@ -36931,13 +37008,13 @@ void main() {
         const pad = new Mesh(new CylinderGeometry(2.3, 2.5, 0.2, 10), mat(8222571, { rough: 1 }));
         pad.receiveShadow = true;
         group.add(pad);
-        const hq = buildGlbHq(b.owner === 1 ? 1 : 2);
+        const hq = buildGlbHq(factionVariant(b.owner));
         if (hq) {
           hq.group.rotation.y = Math.PI / 4;
           group.add(hq.group);
           view.glb = hq;
         } else {
-          const isRed = b.owner === 2;
+          const isRed = b.owner !== (sim.viewSlot || 1);
           const m = new Mesh(new PlaneGeometry(7, 7), new MeshBasicMaterial({ map: isRed ? this.hqRed : this.hqBlue, transparent: true, depthWrite: false }));
           m.position.y = 2.6;
           m.renderOrder = 5;
@@ -36946,7 +37023,7 @@ void main() {
         const pole = new Mesh(new CylinderGeometry(0.045, 0.045, 1.7, 6), mat(5592405, { metal: 0.5, rough: 0.5 }));
         pole.position.set(0, hq ? 4.6 : 6.1, 0);
         group.add(pole);
-        const flag = new Mesh(new PlaneGeometry(1.15, 0.7, 8, 4), new MeshBasicMaterial({ color: b.owner === 1 ? 4027360 : 12599312, side: DoubleSide }));
+        const flag = new Mesh(new PlaneGeometry(1.15, 0.7, 8, 4), new MeshBasicMaterial({ color: SEAT_HEX[b.owner] || 12599312, side: DoubleSide }));
         flag.position.set(0.62, hq ? 5.05 : 6.55, 0);
         group.add(flag);
         view.flag = flag;
@@ -36988,7 +37065,7 @@ void main() {
           const pole = new Mesh(new CylinderGeometry(0.04, 0.04, 2.1, 6), mat(5592405, { metal: 0.5, rough: 0.5 }));
           pole.position.set(def.radius * 0.85, 1.05, -def.radius * 0.6);
           group.add(pole);
-          const flag = new Mesh(new PlaneGeometry(0.85, 0.5, 8, 4), new MeshBasicMaterial({ color: b.owner === 1 ? 4027360 : 12599312, side: DoubleSide }));
+          const flag = new Mesh(new PlaneGeometry(0.85, 0.5, 8, 4), new MeshBasicMaterial({ color: SEAT_HEX[b.owner] || 12599312, side: DoubleSide }));
           flag.position.set(def.radius * 0.85 + 0.45, 1.95, -def.radius * 0.6);
           group.add(flag);
           view.flag = flag;
@@ -37383,7 +37460,7 @@ void main() {
       rankSprite.visible = false;
       rankSprite.renderOrder = 41;
       model.group.add(rankSprite);
-      const selRing = this.texSelRing ? new Mesh(new PlaneGeometry(2, 2), new MeshBasicMaterial({ color: u.owner === (sim.viewSlot || 1) ? 5363281 : 16728128, map: this.texSelRing, transparent: true, opacity: 0.95, depthWrite: false, side: DoubleSide })) : new Mesh(new RingGeometry(0.82, 1, 26), new MeshBasicMaterial({ color: 9109354, transparent: true, opacity: 0.95, depthWrite: false, side: DoubleSide }));
+      const selRing = this.texSelRing ? new Mesh(new PlaneGeometry(2, 2), new MeshBasicMaterial({ color: u.owner === (sim.viewSlot || 1) ? 5363281 : (SEAT_HEX[u.owner] || 16728128), map: this.texSelRing, transparent: true, opacity: 0.95, depthWrite: false, side: DoubleSide })) : new Mesh(new RingGeometry(0.82, 1, 26), new MeshBasicMaterial({ color: 9109354, transparent: true, opacity: 0.95, depthWrite: false, side: DoubleSide }));
       selRing.rotation.x = -Math.PI / 2;
       selRing.position.y = 0.07;
       selRing.visible = false;
@@ -37985,7 +38062,7 @@ void main() {
       for (const b of sim.buildings) {
         if (b.defId === "depot" && b.owner !== 1 && !exp[Math.round(b.y) * MAP_W + Math.round(b.x)])
           continue;
-        const col = b.owner === 1 ? "#7ab4ff" : b.owner === 2 ? "#ff8a70" : "#e8e4d0";
+        const col = SEAT_COLOR[b.owner] || "#e8e4d0";
         ctx.fillStyle = col;
         const s = b.defId === "hq" ? 6 : 4;
         ctx.fillRect(b.x * sx - s / 2, b.y * sy - s / 2, s, s);
@@ -37993,7 +38070,7 @@ void main() {
       for (const u of sim.units) {
         if (u.owner !== (sim.viewSlot || 1) && !vis[Math.round(u.y) * MAP_W + Math.round(u.x)])
           continue;
-        ctx.fillStyle = u.owner === (sim.viewSlot || 1) ? sel.has(u.id) ? "#ffffff" : "#6ab8ff" : "#ff8a70";
+        ctx.fillStyle = u.owner === (sim.viewSlot || 1) ? (sel.has(u.id) ? "#ffffff" : SEAT_COLOR[u.owner] || "#6ab8ff") : (SEAT_COLOR[u.owner] || "#ff8a70");
         ctx.fillRect(u.x * sx - 1.5, u.y * sy - 1.5, 3, 3);
       }
       const corners = [[0, 0], [viewW, 0], [viewW, viewH], [0, viewH]];
@@ -38312,9 +38389,10 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
         s += A[Math.floor(Math.random() * A.length)];
       return s;
     },
-    makeSession(slot) {
+    makeSession(slot, seats) {
       const mp = this;
       return new LockstepSession(this.transport, slot, cmd, {
+        seats,
         onDesync: (t, mine, theirs) => {
           $("desync").classList.remove("hidden");
           $("mp-dot").classList.add("desync");
@@ -38338,9 +38416,12 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
             mp.helloTimer = null;
           }
           // (re)match start: drop all stale per-match session state so the
-          // guest publishes from tick 0 of the new seed, not the old horizon
+          // guest publishes from tick 0 of the new seed, not the old horizon;
+          // the start packet carries the assigned seat (2..MAX_SEATS)
           mp.session.reset();
-          mp.begin(m.seed | 0, 2);
+          mp.session.slot = (m.slot | 0) || 2;
+          mp.session.seats = (m.seats | 0) || 2;
+          mp.begin(m.seed | 0, mp.session.slot, mp.session.seats);
         },
         onPeerHello: (m) => {
           // mid-game strays (e.g. a spectator hello heard by the guest tab)
@@ -38370,30 +38451,29 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
         snapshot: () => ({
           seed: sim.seed,
           tick: sim.tick,
-          arch: [...mp.session.arch].map(([t, f]) => ({ t, f1: f[1], f2: f[2] })),
-          hashes: [...mp.session.hashArch].flatMap(([t, h]) => [
-            ...(h[1] !== undefined ? [{ t, h: h[1], s: 1 }] : []),
-            ...(h[2] !== undefined ? [{ t, h: h[2], s: 2 }] : [])
-          ])
+          arch: [...mp.session.arch].map(([t, f]) => ({ t, f })),
+          hashes: [...mp.session.hashArch].flatMap(([t, h]) =>
+            Object.keys(h).map((s) => ({ t, h: h[s], s: +s })))
         })
       });
     },
     host() {
       const xp = $("mp-xp").value;
+      const seats = +$("mp-seats").value || 2;
       const code = this.genCode();
-      this.st("Opening room " + code + "…");
-      const tr = xp === "p2p" ? new PeerTransport() : new BroadcastTransport("aow3-ls-" + code);
+      this.st("Opening room " + code + " (" + seats + " player seats)…");
+      const tr = xp === "p2p" ? new PeerTransport(this.brokerCfg()) : new BroadcastTransport("aow3-ls-" + code);
       this.transport = tr;
       this.code = code;
       const boot = xp === "p2p" ? tr.host(code) : Promise.resolve(code);
       boot.then(() => {
         if (this.transport !== tr)
           return;
-        this.session = this.makeSession(1);
+        this.session = this.makeSession(1, seats);
         if (xp === "p2p")
-          this.st("ROOM " + code + " — waiting for a challenger…");
+          this.st("ROOM " + code + " (" + seats + " seats) — waiting for players…");
         else
-          this.st("CODE " + code + " — open the site in a second tab and join with this code.");
+          this.st("CODE " + code + " (" + seats + " seats) — open the site in more tabs and join with this code.");
       }).catch((e) => {
         this.reset("Host failed: " + (e && e.message || e) + " — try 'Same browser' mode.");
       });
@@ -38406,7 +38486,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
         return;
       }
       this.st("Joining " + code + "…");
-      const tr = xp === "p2p" ? new PeerTransport() : new BroadcastTransport("aow3-ls-" + code);
+      const tr = xp === "p2p" ? new PeerTransport(this.brokerCfg()) : new BroadcastTransport("aow3-ls-" + code);
       this.transport = tr;
       this.code = code;
       this.session = this.makeSession(2);
@@ -38430,7 +38510,37 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
         this.st("Looking for host in room " + code + "… (host presses START)");
       }
     },
+    // self-hosted PeerJS signaling: "host[:port][/path]" from the optional
+    // broker field (empty = default public cloud). Page-over-https with no
+    // explicit port is treated as a secure 443 endpoint.
+    brokerCfg() {
+      const v = ($("mp-broker").value || "").trim();
+      if (!v)
+        return null;
+      const m = /^([^:\/]+)(?::(\d+))?(\/.*)?$/.exec(v);
+      if (!m || !m[1])
+        return null;
+      const port = m[2] ? +m[2] : undefined;
+      return { host: m[1], port, path: m[3] || "/", secure: location.protocol === "https:" && !port };
+    },
     launch() {
+      // the start packet seats the guests BEFORE the host's own startGame — if
+      // local assets are still baking the host would strand its own match
+      if (!ready) {
+        this.st("Still loading — the match can start once the map is ready.");
+        return;
+      }
+      if (this.session && this.session.hub) {
+        const seats = this.session.seats;
+        // queued pre-game hellos + already-seated clients (rematch keeps the
+        // original players in clients after reset)
+        const seated = this.session.helloQueue.length
+          + [...this.session.clients.values()].filter((cl) => cl.slot >= 2 && cl.role === "player").length;
+        if (seated < seats - 1) {
+          this.st("Waiting for players — " + (seated + 1) + "/" + seats + " seated (" + (seats - 1 - seated) + " more to fill). Lower the seat count or share the code.");
+          return;
+        }
+      }
       const seed = Math.floor(Math.random() * 1e9);
       if (this.helloTimer) {
         clearInterval(this.helloTimer);
@@ -38438,8 +38548,8 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       }
       if (this.session)
         this.session.reset();
-      // seat the pre-game guest (targeted start), hand waiting spectators a
-      // fresh tick-0 welcome, then launch locally as P1
+      // seat the queued pre-game players (targeted starts), hand waiting
+      // spectators a fresh tick-0 welcome, then launch locally as P1
       this.session.beginMatch(seed);
       this.begin(seed, 1);
     },
@@ -38455,19 +38565,34 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
         this.helloTimer = null;
       }
       const spec = m.role !== "player";
+      const seat = spec ? 1 : (m.slot | 0) || 2;
       this.session.beginFed(m);
+      this.session.seats = (m.seats | 0) || 2;
       Net.session = this.session;
-      const ok = startGame({ seed: m.seed | 0, lockstep: true, slot: spec ? 1 : 2, spec });
+      const ok = startGame({ seed: m.seed | 0, lockstep: true, slot: seat, seats: m.seats, spec });
       if (ok) {
         $("menu").classList.add("hidden");
         this.armed = false;
         this.pending = false;
         this.st(spec ? "Spectating — catching up…" : "Rejoined — catching up…");
+      } else {
+        // assets were still baking: the payload above is discarded with the
+        // failed startGame — re-hello so the host issues a fresh welcome once
+        // we are actually ready. KEEP this (already fed) session: a brand-new
+        // one would ingest the hub's raw c broadcasts unfed and poison its
+        // buffer; beginFed is re-entrant and the next welcome supersedes.
+        this.st("Still loading assets — will rejoin when ready…");
+        const hello = () => {
+          if (this.session && !this.session.dead)
+            this.session.send({ a: "hello", proto: PROTO, role: "player" });
+        };
+        this.helloTimer = setInterval(hello, 2500);
+        setTimeout(hello, 2500);
       }
     },
-    begin(seed, slot) {
+    begin(seed, slot, seats) {
       Net.session = this.session;
-      const ok = startGame({ seed, lockstep: true, slot });
+      const ok = startGame({ seed, lockstep: true, slot, seats });
       if (ok) {
         $("menu").classList.add("hidden");
         this.armed = false;
@@ -38487,7 +38612,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
     const lockstep = !!opts.lockstep;
     const spec = !!opts.spec;
     const mSeed = lockstep ? 0 : /[#&]seed=(\d+)/.exec(location.hash || "");
-    sim = new Sim(opts.seed ?? (mSeed ? +mSeed[1] >>> 0 : Math.floor(Math.random() * 1e9)));
+    sim = new Sim(opts.seed ?? (mSeed ? +mSeed[1] >>> 0 : Math.floor(Math.random() * 1e9)), lockstep ? Math.max(2, Math.min(MAX_SEATS, (opts.seats | 0) || 2)) : 2);
     try {
       window.__aow3sim = sim;
     } catch (e) {}
@@ -38515,7 +38640,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
     $("desync").classList.add("hidden");
     ["resbar", "clock", "minimap-wrap", "prodwrap"].forEach((id) => $(id).classList.remove("hidden"));
     if (lockstep) {
-      $("mp-info").textContent = spec ? "SPECTATOR" : "LOCKSTEP P" + sim.viewSlot + (sim.viewSlot === 1 ? " HOST" : " GUEST");
+      $("mp-info").textContent = spec ? "SPECTATOR" : "LOCKSTEP P" + sim.viewSlot + (sim.viewSlot === 1 ? " HOST" : "");
       $("mp-live").classList.remove("hidden");
       $("mp-dot").classList.remove("desync");
     } else
@@ -39304,14 +39429,14 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       if (Net.session && Net.session.fed && !Net.session.liveSent)
         $("mp-info").textContent = (Net.session.role === "spec" ? "SPEC CATCH-UP " : "JIP CATCH-UP ") + sim.tick + "/" + Net.session.catchupUntil;
       else if (Net.session && Net.session.fed && Net.session.liveSent && Net.session.role === "player")
-        $("mp-info").textContent = "LOCKSTEP P2 (JIP)";
+        $("mp-info").textContent = "LOCKSTEP P" + (Net.session.slot || Net.mySlot) + " (JIP)";
       else if (Net.spectator && Net.session)
         $("mp-info").textContent = "SPECTATOR (LIVE)";
     }
     if (sim.winner !== null) {
-      const win = sim.winner === 1;
+      const win = sim.winner === mySlot();
       const specView = Net.mode === "lockstep" && Net.session && Net.session.fed && Net.session.role === "spec";
-      $("verdict").style.color = specView ? (sim.winner === 1 ? "#6ab8ff" : "#ff8a70") : win ? "#34d399" : "#f87171";
+      $("verdict").style.color = specView ? (SEAT_COLOR[sim.winner] || "#e8e4d0") : win ? "#34d399" : "#f87171";
       $("verdict").textContent = specView ? ("PLAYER " + sim.winner + " WINS") : win ? "VICTORY" : "DEFEAT";
       window.__sfx && window.__sfx.play(specView ? "ann_victory" : win ? "ann_victory" : "ann_defeat", { vol: 0.9 });
       $("verdict-sub").textContent = specView ? ("Player " + sim.winner + " destroyed the enemy HQ.") : win ? "Enemy HQ destroyed. The region is yours." : "Your HQ has fallen. Regroup and try again.";
