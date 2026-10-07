@@ -1,0 +1,792 @@
+BUILD B — TAKEPOSITIONS FORMATION ALGORITHM DECODED (client placement surface, 6.9.18)
+libil2cpp.so sha256 8ace05bbaa2cdfda156e377cfbcb0c0a6fb223fa68188fa3df49f677f10e90c5
+dump.cs      sha256 0050e67d23f898588f0771c69ba7f30f9122cd6eccd66674c0f7c87b7f24714b
+Tool: reverse/tools/takepos_disasm.py
+
+VERDICT (answers the v=36 remaining-unknown): there is NO server formation
+solver — placement is PLAYER-driven per cell. The pieces:
+
+1. STATIC OCCUPANCY MASKS (.cctor 0x81D4DF4, CONFIRMED literals):
+   m_occupancyMaskAll                = 0x215F
+   m_occupancyMaskHelicopterBehaviour= 0xFEE0   (= ~All)
+   m_occupancyMaskLand               = 0xFEFD   (= ~All)
+   each of the last two is the exact bit-complement of All.
+
+2. GetUnitOccupancyMask(ClientUnit) 0x81D43BC (CONFIRMED, decoded):
+   category = ClientUnit type vtable [0x5B8] -> [type-klass+0x288] sbyte
+   = UNIT_CATEGORY (UnitType consts 395462-395465:
+     INFANTRY=1 VEHICLE=2 AIRCRAFT=3 SHIP=4):
+     0 -> mask 0 (never placeable)
+     1 (INFANTRY) -> All; then [type+0x348]() object with [+0x10]==2 -> mask
+        &= Land & ~0x4 (sub-type refinement)
+     2 (VEHICLE)  -> Land
+     3 (AIRCRAFT) -> IsHelicopterBehaviour(unit) 0x8011840 ?
+                     HelicopterBehaviour & All : 0  (fixed-wing NEVER)
+     4 (SHIP)     -> [type+0x4D8]() chassis byte: UNIT_TYPE 42
+                     (UNIT_TYPE_AMPHIBIAN) -> 0xFFE5, else 0xFFEF
+   GetHeroUnitOccupancyMask 0x81D4568 = the hero variant of the same.
+
+3. CalculateCellsMask 0x81D4780 (CONFIRMED, decoded): m_cellsMask starts at
+   0x7FFF and ANDs every alive-not-sent selected unit's mask — the drawable
+   grid is the intersection of the remaining group's capabilities.
+
+4. SendNearestUnitToCell(Point2i) 0x81D4954 (CONFIRMED, decoded):
+   TryGetCell(cell) -> battleCell.CheckByMask(m_cellsMask) coarse gate ->
+   among m_aliveNotSendedUnits pick the unit minimizing
+   DistanceSqr(unit.get_Cell(), cell) (0x8d3047c, cell-space squares) whose
+   own mask passes battleCell.CheckByMask(mask, 0) ->
+   SendUnitsMove([unit], cell, UnitMoveStyle.Forced = 1, true, ..., true)
+   (0x82d4a50; UnitMoveStyle {Assault = 0, Forced = 1} dump.cs:337622-337627)
+   -> remove from m_aliveNotSendedUnits -> OnUnitsCountUpdate(count).
+   THE MOVE IS A FORCED MARCH: strict walk to the cell, no en-route
+   engagement; the server-side Unit.set_TakePosition(Coordinate) 0x45B16B8
+   stores the taken cell.
+
+5. Update 0x81D4CC4: per-frame CalculateCellsMask + eligibility purge of
+   m_aliveNotSendedUnits via IsUnitAliveAndCanTakePositions 0x81D4364.
+
+Tribute mapping (v=36): commandTakePositions(ids, spots) performs the same
+nearest-match in tile space; Forced maps to the dedicated takepos order
+(already engagement-free, arriving to hold); the category gate is modeled as
+aircraft-excluded-unless-helicopter; leftovers stay unsent.
+
+================ RAW DISASSEMBLY ================
+BUILD B — UnitTakePositionsManager decode (client TakePositions placement)
+sha256 libil2cpp.so 8ace05bbaa2cdfda156e377cfbcb0c0a6fb223fa68188fa3df49f677f10e90c5
+
+
+==== .cctor (static masks) @ 0x81d4df4 .. 0x81d4e4c (88 bytes) ====
+  0x81d4df4: str      x30, [sp, #-0x20]!
+  0x81d4df8: stp      x20, x19, [sp, #0x10]
+  0x81d4dfc: adrp     x19, #0x9d23000
+  0x81d4e00: adrp     x20, #0x96f3000
+  0x81d4e04: ldrb     w8, [x19, #0x2f0]
+  0x81d4e08: ldr      x20, [x20, #0x9f0]
+  0x81d4e0c: tbnz     w8, #0, #0x81d4e24
+  0x81d4e10: adrp     x0, #0x96f3000
+  0x81d4e14: ldr      x0, [x0, #0x9f0]
+  0x81d4e18: bl       #0x3cc7948
+  0x81d4e1c: mov      w8, #1
+  0x81d4e20: strb     w8, [x19, #0x2f0]
+  0x81d4e24: ldr      x8, [x20]
+  0x81d4e28: mov      w9, #0x215f
+  0x81d4e2c: mov      w10, #0xfefd
+  0x81d4e30: ldp      x20, x19, [sp, #0x10]
+  0x81d4e34: movk     w9, #0xfee0, lsl #16
+  0x81d4e38: ldr      x8, [x8, #0xb8]
+  0x81d4e3c: str      w9, [x8]
+  0x81d4e40: strh     w10, [x8, #4]
+  0x81d4e44: ldr      x30, [sp], #0x20
+  0x81d4e48: ret      
+
+==== GetUnitOccupancyMask @ 0x81d43bc .. 0x81d4568 (428 bytes) ====
+  0x81d43bc: stp      x30, x21, [sp, #-0x20]!
+  0x81d43c0: stp      x20, x19, [sp, #0x10]
+  0x81d43c4: adrp     x19, #0x9d23000
+  0x81d43c8: adrp     x21, #0x96f3000
+  0x81d43cc: mov      x20, x0
+  0x81d43d0: ldrb     w8, [x19, #0x2eb]
+  0x81d43d4: ldr      x21, [x21, #0x9f0]
+  0x81d43d8: tbnz     w8, #0, #0x81d43f0
+  0x81d43dc: adrp     x0, #0x96f3000
+  0x81d43e0: ldr      x0, [x0, #0x9f0]
+  0x81d43e4: bl       #0x3cc7948
+  0x81d43e8: mov      w8, #1
+  0x81d43ec: strb     w8, [x19, #0x2eb]
+  0x81d43f0: ldr      x0, [x21]
+  0x81d43f4: ldr      w8, [x0, #0xe4]
+  0x81d43f8: cbnz     w8, #0x81d4404
+  0x81d43fc: bl       #0x3cc7ac8
+  0x81d4400: ldr      x0, [x21]
+  0x81d4404: cbz      x20, #0x81d4564
+  0x81d4408: ldr      x8, [x0, #0xb8]
+  0x81d440c: ldr      x9, [x20]
+  0x81d4410: mov      x0, x20
+  0x81d4414: ldrh     w19, [x8]
+  0x81d4418: ldr      x8, [x9, #0x5b8]
+  0x81d441c: ldr      x1, [x9, #0x5c0]
+  0x81d4420: blr      x8
+  0x81d4424: cbz      x0, #0x81d4564
+  0x81d4428: ldr      x8, [x0]
+  0x81d442c: ldr      x9, [x8, #0x288]
+  0x81d4430: ldr      x1, [x8, #0x290]
+  0x81d4434: blr      x9
+  0x81d4438: sxtb     w8, w0
+  0x81d443c: cmp      w8, #2
+  0x81d4440: b.gt     #0x81d4474
+  0x81d4444: cmp      w8, #1
+  0x81d4448: b.eq     #0x81d44c4
+  0x81d444c: cmp      w8, #2
+  0x81d4450: b.ne     #0x81d4554
+  0x81d4454: ldr      x0, [x21]
+  0x81d4458: ldr      w8, [x0, #0xe4]
+  0x81d445c: cbnz     w8, #0x81d4468
+  0x81d4460: bl       #0x3cc7ac8
+  0x81d4464: ldr      x0, [x21]
+  0x81d4468: ldr      x8, [x0, #0xb8]
+  0x81d446c: ldrh     w8, [x8, #4]
+  0x81d4470: b        #0x81d4550
+  0x81d4474: cmp      w8, #3
+  0x81d4478: b.eq     #0x81d4524
+  0x81d447c: cmp      w8, #4
+  0x81d4480: b.ne     #0x81d4554
+  0x81d4484: ldr      x8, [x20]
+  0x81d4488: mov      x0, x20
+  0x81d448c: ldr      x9, [x8, #0x5b8]
+  0x81d4490: ldr      x1, [x8, #0x5c0]
+  0x81d4494: blr      x9
+  0x81d4498: cbz      x0, #0x81d4564
+  0x81d449c: ldr      x8, [x0]
+  0x81d44a0: ldr      x9, [x8, #0x4d8]
+  0x81d44a4: ldr      x1, [x8, #0x4e0]
+  0x81d44a8: blr      x9
+  0x81d44ac: and      w9, w0, #0xff
+  0x81d44b0: mov      w8, #-0x11
+  0x81d44b4: cmp      w9, #0x2a
+  0x81d44b8: mov      w9, #-0x1b
+  0x81d44bc: csel     w8, w9, w8, eq
+  0x81d44c0: b        #0x81d4550
+  0x81d44c4: ldr      x0, [x21]
+  0x81d44c8: ldr      w8, [x0, #0xe4]
+  0x81d44cc: cbnz     w8, #0x81d44d8
+  0x81d44d0: bl       #0x3cc7ac8
+  0x81d44d4: ldr      x0, [x21]
+  0x81d44d8: ldr      x8, [x0, #0xb8]
+  0x81d44dc: ldr      x9, [x20]
+  0x81d44e0: mov      x0, x20
+  0x81d44e4: ldrh     w21, [x8, #4]
+  0x81d44e8: ldr      x8, [x9, #0x5b8]
+  0x81d44ec: ldr      x1, [x9, #0x5c0]
+  0x81d44f0: blr      x8
+  0x81d44f4: cbz      x0, #0x81d4564
+  0x81d44f8: ldr      x8, [x0]
+  0x81d44fc: ldr      x9, [x8, #0x348]
+  0x81d4500: ldr      x1, [x8, #0x350]
+  0x81d4504: blr      x9
+  0x81d4508: cbz      x0, #0x81d4564
+  0x81d450c: ldr      w8, [x0, #0x10]
+  0x81d4510: and      w9, w21, w19
+  0x81d4514: and      w10, w9, #0xfffffffb
+  0x81d4518: cmp      w8, #2
+  0x81d451c: csel     w19, w10, w9, eq
+  0x81d4520: b        #0x81d4554
+  0x81d4524: mov      x0, x20
+  0x81d4528: mov      x1, xzr
+  0x81d452c: bl       #0x8011840   ; -> public static bool IsHelicopterBehaviour(ClientUnit clientUnit) { }
+  0x81d4530: tbz      w0, #0, #0x81d4554
+  0x81d4534: ldr      x0, [x21]
+  0x81d4538: ldr      w8, [x0, #0xe4]
+  0x81d453c: cbnz     w8, #0x81d4548
+  0x81d4540: bl       #0x3cc7ac8
+  0x81d4544: ldr      x0, [x21]
+  0x81d4548: ldr      x8, [x0, #0xb8]
+  0x81d454c: ldrh     w8, [x8, #2]
+  0x81d4550: and      w19, w8, w19
+  0x81d4554: mov      w0, w19
+  0x81d4558: ldp      x20, x19, [sp, #0x10]
+  0x81d455c: ldp      x30, x21, [sp], #0x20
+  0x81d4560: ret      
+  0x81d4564: bl       #0x3cc7bf4
+
+==== GetHeroUnitOccupancyMask @ 0x81d4568 .. 0x81d4780 (536 bytes) ====
+  0x81d4568: str      x30, [sp, #-0x30]!
+  0x81d456c: stp      x22, x21, [sp, #0x10]
+  0x81d4570: stp      x20, x19, [sp, #0x20]
+  0x81d4574: adrp     x19, #0x9d23000
+  0x81d4578: adrp     x22, #0x96f3000
+  0x81d457c: mov      x20, x0
+  0x81d4580: ldrb     w8, [x19, #0x2ec]
+  0x81d4584: ldr      x22, [x22, #0x9f0]
+  0x81d4588: tbnz     w8, #0, #0x81d45c4
+  0x81d458c: adrp     x0, #0x9674000
+  0x81d4590: ldr      x0, [x0, #0xea0]
+  0x81d4594: bl       #0x3cc7948
+  0x81d4598: adrp     x0, #0x9698000
+  0x81d459c: ldr      x0, [x0, #0x810]
+  0x81d45a0: bl       #0x3cc7948
+  0x81d45a4: adrp     x0, #0x96f3000
+  0x81d45a8: ldr      x0, [x0, #0x9f0]
+  0x81d45ac: bl       #0x3cc7948
+  0x81d45b0: adrp     x0, #0x96f3000
+  0x81d45b4: ldr      x0, [x0, #0x9f8]
+  0x81d45b8: bl       #0x3cc7948
+  0x81d45bc: mov      w8, #1
+  0x81d45c0: strb     w8, [x19, #0x2ec]
+  0x81d45c4: ldr      x0, [x22]
+  0x81d45c8: ldr      w8, [x0, #0xe4]
+  0x81d45cc: cbnz     w8, #0x81d45d8
+  0x81d45d0: bl       #0x3cc7ac8
+  0x81d45d4: ldr      x0, [x22]
+  0x81d45d8: cbz      x20, #0x81d477c
+  0x81d45dc: ldr      x8, [x0, #0xb8]
+  0x81d45e0: ldr      x9, [x20]
+  0x81d45e4: mov      x0, x20
+  0x81d45e8: ldrh     w19, [x8]
+  0x81d45ec: ldr      x8, [x9, #0x5b8]
+  0x81d45f0: ldr      x1, [x9, #0x5c0]
+  0x81d45f4: blr      x8
+  0x81d45f8: cbz      x0, #0x81d477c
+  0x81d45fc: ldr      x8, [x0]
+  0x81d4600: ldr      x9, [x8, #0x4d8]
+  0x81d4604: ldr      x1, [x8, #0x4e0]
+  0x81d4608: blr      x9
+  0x81d460c: sxtb     w21, w0
+  0x81d4610: sub      w8, w21, #0x3e
+  0x81d4614: cmp      w8, #0xe
+  0x81d4618: b.hi     #0x81d469c
+  0x81d461c: mov      w9, #1
+  0x81d4620: mov      w10, #0x6a1c
+  0x81d4624: lsl      w9, w9, w8
+  0x81d4628: tst      w9, w10
+  0x81d462c: b.eq     #0x81d4650
+  0x81d4630: ldr      x0, [x22]
+  0x81d4634: ldr      w8, [x0, #0xe4]
+  0x81d4638: cbnz     w8, #0x81d4644
+  0x81d463c: bl       #0x3cc7ac8
+  0x81d4640: ldr      x0, [x22]
+  0x81d4644: ldr      x8, [x0, #0xb8]
+  0x81d4648: ldrh     w8, [x8, #4]
+  0x81d464c: b        #0x81d4764
+  0x81d4650: mov      w10, #0x502
+  0x81d4654: tst      w9, w10
+  0x81d4658: b.eq     #0x81d467c
+  0x81d465c: ldr      x0, [x22]
+  0x81d4660: ldr      w8, [x0, #0xe4]
+  0x81d4664: cbnz     w8, #0x81d4670
+  0x81d4668: bl       #0x3cc7ac8
+  0x81d466c: ldr      x0, [x22]
+  0x81d4670: ldr      x8, [x0, #0xb8]
+  0x81d4674: ldrh     w8, [x8, #2]
+  0x81d4678: b        #0x81d4764
+  0x81d467c: mov      w9, #1
+  0x81d4680: lsl      w8, w9, w8
+  0x81d4684: mov      w9, #0x1001
+  0x81d4688: tst      w8, w9
+  0x81d468c: b.eq     #0x81d469c
+  0x81d4690: mov      w8, #0xffe5
+  0x81d4694: and      w19, w19, w8
+  0x81d4698: b        #0x81d4768
+  0x81d469c: cmp      w21, #0x3d
+  0x81d46a0: b.eq     #0x81d4718
+  0x81d46a4: cmp      w21, #0x3c
+  0x81d46a8: b.eq     #0x81d4630
+  0x81d46ac: adrp     x8, #0x9674000
+  0x81d46b0: ldr      x8, [x8, #0xea0]
+  0x81d46b4: ldr      x0, [x8]
+  0x81d46b8: bl       #0x3cc7be4
+  0x81d46bc: mov      w1, wzr
+  0x81d46c0: mov      x2, xzr
+  0x81d46c4: mov      x20, x0
+  0x81d46c8: bl       #0x82d9178   ; -> public void .ctor(int capacity = 0) { }
+  0x81d46cc: cbz      x20, #0x81d477c
+  0x81d46d0: mov      x0, x20
+  0x81d46d4: mov      w1, #0x24
+  0x81d46d8: mov      w2, w21
+  0x81d46dc: mov      x3, xzr
+  0x81d46e0: bl       #0x82da254   ; -> public void Add(CEParamNameI key, int value) { }
+  0x81d46e4: adrp     x8, #0x9698000
+  0x81d46e8: ldr      x8, [x8, #0x810]
+  0x81d46ec: ldr      x0, [x8]
+  0x81d46f0: ldr      w8, [x0, #0xe4]
+  0x81d46f4: cbnz     w8, #0x81d46fc
+  0x81d46f8: bl       #0x3cc7ac8
+  0x81d46fc: adrp     x8, #0x96f3000
+  0x81d4700: mov      x1, x20
+  0x81d4704: mov      x2, xzr
+  0x81d4708: ldr      x8, [x8, #0x9f8]
+  0x81d470c: ldr      x0, [x8]
+  0x81d4710: bl       #0x799faa8   ; -> public static void Error(string messageShort, ClientEventPairList parameters) { }
+  0x81d4714: b        #0x81d4768
+  0x81d4718: mov      x0, x20
+  0x81d471c: mov      x1, xzr
+  0x81d4720: bl       #0x8011840   ; -> public static bool IsHelicopterBehaviour(ClientUnit clientUnit) { }
+  0x81d4724: mov      w8, w0
+  0x81d4728: ldr      x0, [x22]
+  0x81d472c: ldr      w9, [x0, #0xe4]
+  0x81d4730: tbz      w8, #0, #0x81d474c
+  0x81d4734: cbnz     w9, #0x81d4740
+  0x81d4738: bl       #0x3cc7ac8
+  0x81d473c: ldr      x0, [x22]
+  0x81d4740: ldr      x8, [x0, #0xb8]
+  0x81d4744: add      x8, x8, #2
+  0x81d4748: b        #0x81d4760
+  0x81d474c: cbnz     w9, #0x81d4758
+  0x81d4750: bl       #0x3cc7ac8
+  0x81d4754: ldr      x0, [x22]
+  0x81d4758: ldr      x8, [x0, #0xb8]
+  0x81d475c: add      x8, x8, #4
+  0x81d4760: ldrh     w8, [x8]
+  0x81d4764: and      w19, w8, w19
+  0x81d4768: mov      w0, w19
+  0x81d476c: ldp      x20, x19, [sp, #0x20]
+  0x81d4770: ldp      x22, x21, [sp, #0x10]
+  0x81d4774: ldr      x30, [sp], #0x30
+  0x81d4778: ret      
+  0x81d477c: bl       #0x3cc7bf4
+
+==== CalculateCellsMask @ 0x81d4780 .. 0x81d4954 (468 bytes) ====
+  0x81d4780: sub      sp, sp, #0x80
+  0x81d4784: str      x30, [sp, #0x40]
+  0x81d4788: stp      x24, x23, [sp, #0x50]
+  0x81d478c: stp      x22, x21, [sp, #0x60]
+  0x81d4790: stp      x20, x19, [sp, #0x70]
+  0x81d4794: adrp     x20, #0x9d23000
+  0x81d4798: mov      x19, x0
+  0x81d479c: ldrb     w8, [x20, #0x2ed]
+  0x81d47a0: tbnz     w8, #0, #0x81d47e8
+  0x81d47a4: adrp     x0, #0x96ea000
+  0x81d47a8: ldr      x0, [x0, #0x9b8]
+  0x81d47ac: bl       #0x3cc7948
+  0x81d47b0: adrp     x0, #0x96ea000
+  0x81d47b4: ldr      x0, [x0, #0x9c0]
+  0x81d47b8: bl       #0x3cc7948
+  0x81d47bc: adrp     x0, #0x96ea000
+  0x81d47c0: ldr      x0, [x0, #0x9c8]
+  0x81d47c4: bl       #0x3cc7948
+  0x81d47c8: adrp     x0, #0x96ea000
+  0x81d47cc: ldr      x0, [x0, #0x9d8]
+  0x81d47d0: bl       #0x3cc7948
+  0x81d47d4: adrp     x0, #0x96f3000
+  0x81d47d8: ldr      x0, [x0, #0x9f0]
+  0x81d47dc: bl       #0x3cc7948
+  0x81d47e0: mov      w8, #1
+  0x81d47e4: strb     w8, [x20, #0x2ed]
+  0x81d47e8: ldr      x0, [x19, #0x10]
+  0x81d47ec: stp      xzr, xzr, [sp, #0x20]
+  0x81d47f0: str      xzr, [sp, #0x30]
+  0x81d47f4: cbz      x0, #0x81d48e8
+  0x81d47f8: adrp     x8, #0x96ea000
+  0x81d47fc: adrp     x23, #0x96ea000
+  0x81d4800: adrp     x24, #0x96f3000
+  0x81d4804: ldr      x8, [x8, #0x9d8]
+  0x81d4808: adrp     x21, #0x96ea000
+  0x81d480c: ldr      x23, [x23, #0x9c0]
+  0x81d4810: ldr      x24, [x24, #0x9f0]
+  0x81d4814: ldr      x21, [x21, #0x9b8]
+  0x81d4818: ldr      x1, [x8]
+  0x81d481c: add      x8, sp, #8
+  0x81d4820: bl       #0x59ae2dc
+  0x81d4824: ldr      x8, [sp, #0x18]
+  0x81d4828: ldur     q0, [sp, #8]
+  0x81d482c: mov      w22, #0x7fff
+  0x81d4830: str      x8, [sp, #0x30]
+  0x81d4834: add      x8, sp, #0x20
+  0x81d4838: str      q0, [sp, #0x20]
+  0x81d483c: stp      xzr, x8, [sp, #8]
+  0x81d4840: ldr      x1, [x23]
+  0x81d4844: add      x0, sp, #0x20
+  0x81d4848: bl       #0x736a6ac
+  0x81d484c: tbz      w0, #0, #0x81d48b8
+  0x81d4850: ldr      x20, [sp, #0x30]
+  0x81d4854: cbz      x20, #0x81d48e0
+  0x81d4858: ldr      x8, [x20]
+  0x81d485c: ldr      x1, [x8, #0x5c0]
+  0x81d4860: ldr      x9, [x8, #0x5b8]
+  0x81d4864: mov      x0, x20
+  0x81d4868: blr      x9
+  0x81d486c: cbz      x0, #0x81d48e4
+  0x81d4870: ldr      x8, [x0]
+  0x81d4874: ldp      x9, x1, [x8, #0x1f8]
+  0x81d4878: blr      x9
+  0x81d487c: mov      w8, w0
+  0x81d4880: ldr      x0, [x24]
+  0x81d4884: ldr      w9, [x0, #0xe4]
+  0x81d4888: tbz      w8, #0, #0x81d48a0
+  0x81d488c: cbnz     w9, #0x81d4894
+  0x81d4890: bl       #0x3cc7ac8
+  0x81d4894: mov      x0, x20
+  0x81d4898: bl       #0x81d4568   ; -> private static short GetHeroUnitOccupancyMask(ClientUnit unit) { }
+  0x81d489c: b        #0x81d48b0
+  0x81d48a0: cbnz     w9, #0x81d48a8
+  0x81d48a4: bl       #0x3cc7ac8
+  0x81d48a8: mov      x0, x20
+  0x81d48ac: bl       #0x81d43bc   ; -> private static short GetUnitOccupancyMask(ClientUnit unit) { }
+  0x81d48b0: and      w22, w0, w22
+  0x81d48b4: b        #0x81d4840
+  0x81d48b8: ldr      x1, [x21]
+  0x81d48bc: add      x0, sp, #0x20
+  0x81d48c0: bl       #0x736a6a8
+  0x81d48c4: strh     w22, [x19, #0x18]
+  0x81d48c8: ldp      x20, x19, [sp, #0x70]
+  0x81d48cc: ldp      x22, x21, [sp, #0x60]
+  0x81d48d0: ldr      x30, [sp, #0x40]
+  0x81d48d4: ldp      x24, x23, [sp, #0x50]
+  0x81d48d8: add      sp, sp, #0x80
+  0x81d48dc: ret      
+  0x81d48e0: bl       #0x3cc7bf4
+  0x81d48e4: bl       #0x3cc7bf4
+  0x81d48e8: bl       #0x3cc7bf4
+  0x81d48ec: b        #0x81d490c
+  0x81d48f0: b        #0x81d490c
+  0x81d48f4: b        #0x81d490c
+  0x81d48f8: b        #0x81d490c
+  0x81d48fc: b        #0x81d490c
+  0x81d4900: b        #0x81d490c
+  0x81d4904: b        #0x81d490c
+  0x81d4908: b        #0x81d490c
+  0x81d490c: cmp      w1, #1
+  0x81d4910: b.ne     #0x81d493c
+  0x81d4914: bl       #0x8fd69e0
+  0x81d4918: ldr      x20, [x0]
+  0x81d491c: str      x20, [sp, #8]
+  0x81d4920: bl       #0x8fd69f0
+  0x81d4924: ldr      x0, [sp, #0x10]
+  0x81d4928: ldr      x1, [x21]
+  0x81d492c: bl       #0x736a6a8
+  0x81d4930: cbz      x20, #0x81d48c4
+  0x81d4934: mov      x0, x20
+  0x81d4938: bl       #0x3cc7bec
+  0x81d493c: mov      x19, x0
+  0x81d4940: add      x0, sp, #8
+  0x81d4944: bl       #0x3c6a81c
+  0x81d4948: mov      x0, x19
+  0x81d494c: bl       #0x3db58cc
+  0x81d4950: bl       #0x38a8c98
+
+==== SendNearestUnitToCell @ 0x81d4954 .. 0x81d4cc4 (880 bytes) ====
+  0x81d4954: sub      sp, sp, #0x60
+  0x81d4958: stp      x30, x27, [sp, #0x10]
+  0x81d495c: stp      x26, x25, [sp, #0x20]
+  0x81d4960: stp      x24, x23, [sp, #0x30]
+  0x81d4964: stp      x22, x21, [sp, #0x40]
+  0x81d4968: stp      x20, x19, [sp, #0x50]
+  0x81d496c: adrp     x21, #0x9d23000
+  0x81d4970: mov      x20, x1
+  0x81d4974: mov      x19, x0
+  0x81d4978: ldrb     w8, [x21, #0x2ee]
+  0x81d497c: tbnz     w8, #0, #0x81d49f4
+  0x81d4980: adrp     x0, #0x9674000
+  0x81d4984: ldr      x0, [x0, #0x5c8]
+  0x81d4988: bl       #0x3cc7948
+  0x81d498c: adrp     x0, #0x96dc000
+  0x81d4990: ldr      x0, [x0, #0xcd8]
+  0x81d4994: bl       #0x3cc7948
+  0x81d4998: adrp     x0, #0x96ec000
+  0x81d499c: ldr      x0, [x0, #0x548]
+  0x81d49a0: bl       #0x3cc7948
+  0x81d49a4: adrp     x0, #0x96c5000
+  0x81d49a8: ldr      x0, [x0, #0xdd8]
+  0x81d49ac: bl       #0x3cc7948
+  0x81d49b0: adrp     x0, #0x96b7000
+  0x81d49b4: ldr      x0, [x0, #0x578]
+  0x81d49b8: bl       #0x3cc7948
+  0x81d49bc: adrp     x0, #0x96b7000
+  0x81d49c0: ldr      x0, [x0, #0x588]
+  0x81d49c4: bl       #0x3cc7948
+  0x81d49c8: adrp     x0, #0x96c5000
+  0x81d49cc: ldr      x0, [x0, #0xdd0]
+  0x81d49d0: bl       #0x3cc7948
+  0x81d49d4: adrp     x0, #0x9674000
+  0x81d49d8: ldr      x0, [x0, #0x5f0]
+  0x81d49dc: bl       #0x3cc7948
+  0x81d49e0: adrp     x0, #0x96f3000
+  0x81d49e4: ldr      x0, [x0, #0x9f0]
+  0x81d49e8: bl       #0x3cc7948
+  0x81d49ec: mov      w8, #1
+  0x81d49f0: strb     w8, [x21, #0x2ee]
+  0x81d49f4: ldr      x8, [x19, #0x10]
+  0x81d49f8: str      xzr, [sp, #8]
+  0x81d49fc: cbz      x8, #0x81d4b7c
+  0x81d4a00: ldr      w8, [x8, #0x18]
+  0x81d4a04: cbz      w8, #0x81d4b80
+  0x81d4a08: adrp     x21, #0x9674000
+  0x81d4a0c: ldr      x21, [x21, #0x5c8]
+  0x81d4a10: ldr      x0, [x21]
+  0x81d4a14: ldr      w8, [x0, #0xe4]
+  0x81d4a18: cbnz     w8, #0x81d4a20
+  0x81d4a1c: bl       #0x3cc7ac8
+  0x81d4a20: adrp     x22, #0x9d10000
+  0x81d4a24: ldrb     w8, [x22, #0x3f3]
+  0x81d4a28: cbnz     w8, #0x81d4a40
+  0x81d4a2c: adrp     x0, #0x9674000
+  0x81d4a30: ldr      x0, [x0, #0x5c8]
+  0x81d4a34: bl       #0x3cc7948
+  0x81d4a38: mov      w8, #1
+  0x81d4a3c: strb     w8, [x22, #0x3f3]
+  0x81d4a40: ldr      x0, [x21]
+  0x81d4a44: ldr      w8, [x0, #0xe4]
+  0x81d4a48: cbnz     w8, #0x81d4a54
+  0x81d4a4c: bl       #0x3cc7ac8
+  0x81d4a50: ldr      x0, [x21]
+  0x81d4a54: ldr      x8, [x0, #0xb8]
+  0x81d4a58: ldr      x0, [x8, #0xf8]
+  0x81d4a5c: cbz      x0, #0x81d4b7c
+  0x81d4a60: add      x2, sp, #8
+  0x81d4a64: mov      x1, x20
+  0x81d4a68: mov      x3, xzr
+  0x81d4a6c: bl       #0x80521c0   ; -> public bool TryGetCell(Point2i cell, out ClientBattleCell battleCell) { }
+  0x81d4a70: ldr      x0, [sp, #8]
+  0x81d4a74: cbz      x0, #0x81d4ca8
+  0x81d4a78: ldrh     w1, [x19, #0x18]
+  0x81d4a7c: mov      x2, xzr
+  0x81d4a80: bl       #0x8054284   ; -> public bool CheckByMask(short mask) { }
+  0x81d4a84: mov      w8, w0
+  0x81d4a88: mov      x0, xzr
+  0x81d4a8c: tbz      w8, #0, #0x81d4ca8
+  0x81d4a90: ldr      x0, [x19, #0x10]
+  0x81d4a94: cbz      x0, #0x81d4b7c
+  0x81d4a98: adrp     x25, #0x96b7000
+  0x81d4a9c: adrp     x26, #0x96f3000
+  0x81d4aa0: mov      x21, xzr
+  0x81d4aa4: ldr      x25, [x25, #0x588]
+  0x81d4aa8: ldr      x26, [x26, #0x9f0]
+  0x81d4aac: mov      w22, wzr
+  0x81d4ab0: mov      w27, #0x7fffffff
+  0x81d4ab4: ldr      w8, [x0, #0x18]
+  0x81d4ab8: cmp      w22, w8
+  0x81d4abc: b.ge     #0x81d4b88
+  0x81d4ac0: ldr      x2, [x25]
+  0x81d4ac4: mov      w1, w22
+  0x81d4ac8: bl       #0x59ad48c
+  0x81d4acc: cbz      x0, #0x81d4b7c
+  0x81d4ad0: mov      x1, xzr
+  0x81d4ad4: mov      x23, x0
+  0x81d4ad8: bl       #0x807ef3c   ; -> public Point2i get_Cell() { }
+  0x81d4adc: mov      x1, x20
+  0x81d4ae0: mov      x2, xzr
+  0x81d4ae4: bl       #0x8d3047c   ; -> public static int DistanceSqr(Point2i a, Point2i b) { }
+  0x81d4ae8: ldr      x8, [x23]
+  0x81d4aec: mov      w24, w0
+  0x81d4af0: mov      x0, x23
+  0x81d4af4: ldr      x9, [x8, #0x5b8]
+  0x81d4af8: ldr      x1, [x8, #0x5c0]
+  0x81d4afc: blr      x9
+  0x81d4b00: cbz      x0, #0x81d4b7c
+  0x81d4b04: ldr      x8, [x0]
+  0x81d4b08: ldp      x9, x1, [x8, #0x1f8]
+  0x81d4b0c: blr      x9
+  0x81d4b10: mov      w8, w0
+  0x81d4b14: ldr      x0, [x26]
+  0x81d4b18: ldr      w9, [x0, #0xe4]
+  0x81d4b1c: tbz      w8, #0, #0x81d4b34
+  0x81d4b20: cbnz     w9, #0x81d4b28
+  0x81d4b24: bl       #0x3cc7ac8
+  0x81d4b28: mov      x0, x23
+  0x81d4b2c: bl       #0x81d4568   ; -> private static short GetHeroUnitOccupancyMask(ClientUnit unit) { }
+  0x81d4b30: b        #0x81d4b44
+  0x81d4b34: cbnz     w9, #0x81d4b3c
+  0x81d4b38: bl       #0x3cc7ac8
+  0x81d4b3c: mov      x0, x23
+  0x81d4b40: bl       #0x81d43bc   ; -> private static short GetUnitOccupancyMask(ClientUnit unit) { }
+  0x81d4b44: ldr      x0, [sp, #8]
+  0x81d4b48: cbz      x0, #0x81d4b7c
+  0x81d4b4c: mov      w1, wzr
+  0x81d4b50: mov      x2, xzr
+  0x81d4b54: bl       #0x8054284   ; -> public bool CheckByMask(short mask) { }
+  0x81d4b58: cmp      w24, w27
+  0x81d4b5c: mov      w8, w0
+  0x81d4b60: ldr      x0, [x19, #0x10]
+  0x81d4b64: cset     w9, lt
+  0x81d4b68: add      w22, w22, #1
+  0x81d4b6c: tst      w8, w9
+  0x81d4b70: csel     w27, w24, w27, ne
+  0x81d4b74: csel     x21, x23, x21, ne
+  0x81d4b78: cbnz     x0, #0x81d4ab4
+  0x81d4b7c: bl       #0x3cc7bf4
+  0x81d4b80: mov      x0, xzr
+  0x81d4b84: b        #0x81d4ca8
+  0x81d4b88: adrp     x8, #0x9674000
+  0x81d4b8c: ldr      x8, [x8, #0x5f0]
+  0x81d4b90: ldr      x0, [x8]
+  0x81d4b94: ldr      w8, [x0, #0xe4]
+  0x81d4b98: cbnz     w8, #0x81d4ba0
+  0x81d4b9c: bl       #0x3cc7ac8
+  0x81d4ba0: mov      x0, x21
+  0x81d4ba4: mov      x1, xzr
+  0x81d4ba8: mov      x2, xzr
+  0x81d4bac: bl       #0x89e9314   ; -> public static bool op_Equality(Object x, Object y) { }
+  0x81d4bb0: mov      w8, w0
+  0x81d4bb4: mov      x0, xzr
+  0x81d4bb8: tbnz     w8, #0, #0x81d4ca8
+  0x81d4bbc: adrp     x8, #0x96c5000
+  0x81d4bc0: ldr      x8, [x8, #0xdd0]
+  0x81d4bc4: ldr      x0, [x8]
+  0x81d4bc8: bl       #0x3cc7be4
+  0x81d4bcc: adrp     x8, #0x96c5000
+  0x81d4bd0: mov      x22, x0
+  0x81d4bd4: ldr      x8, [x8, #0xdd8]
+  0x81d4bd8: ldr      x1, [x8]
+  0x81d4bdc: bl       #0x59acef4
+  0x81d4be0: cbz      x22, #0x81d4b7c
+  0x81d4be4: adrp     x9, #0x96dc000
+  0x81d4be8: ldr      x9, [x9, #0xcd8]
+  0x81d4bec: ldr      w10, [x22, #0x1c]
+  0x81d4bf0: ldr      x8, [x22, #0x10]
+  0x81d4bf4: ldr      x9, [x9]
+  0x81d4bf8: add      w10, w10, #1
+  0x81d4bfc: str      w10, [x22, #0x1c]
+  0x81d4c00: cbz      x8, #0x81d4b7c
+  0x81d4c04: ldrsw    x10, [x22, #0x18]
+  0x81d4c08: ldr      w11, [x8, #0x18]
+  0x81d4c0c: cmp      w10, w11
+  0x81d4c10: b.hs     #0x81d4c30
+  0x81d4c14: add      x0, x8, x10, lsl #3
+  0x81d4c18: add      w9, w10, #1
+  0x81d4c1c: mov      x1, x21
+  0x81d4c20: str      w9, [x22, #0x18]
+  0x81d4c24: str      x21, [x0, #0x20]!
+  0x81d4c28: bl       #0x3cc78ec
+  0x81d4c2c: b        #0x81d4c48
+  0x81d4c30: ldr      x8, [x9, #0x20]
+  0x81d4c34: mov      x0, x22
+  0x81d4c38: mov      x1, x21
+  0x81d4c3c: ldr      x8, [x8, #0xc0]
+  0x81d4c40: ldr      x2, [x8, #0x70]
+  0x81d4c44: bl       #0x59ad75c
+  0x81d4c48: mov      x0, x22
+  0x81d4c4c: mov      x1, x20
+  0x81d4c50: mov      w2, #1
+  0x81d4c54: mov      w3, wzr
+  0x81d4c58: mov      w4, #1
+  0x81d4c5c: mov      x5, xzr
+  0x81d4c60: bl       #0x82d4a50   ; -> public static void SendUnitsMove(IList<ClientUnit> units, Point2i cell, UnitMoveStyle move
+  0x81d4c64: ldr      x0, [x19, #0x10]
+  0x81d4c68: cbz      x0, #0x81d4b7c
+  0x81d4c6c: adrp     x8, #0x96ec000
+  0x81d4c70: mov      x1, x21
+  0x81d4c74: ldr      x8, [x8, #0x548]
+  0x81d4c78: ldr      x2, [x8]
+  0x81d4c7c: bl       #0x59aecf4
+  0x81d4c80: ldr      x20, [x19, #0x20]
+  0x81d4c84: mov      x0, x19
+  0x81d4c88: bl       #0x81d3c34   ; -> public int get_NotSendedUnitsCount() { }
+  0x81d4c8c: cbz      x20, #0x81d4b7c
+  0x81d4c90: mov      w1, w0
+  0x81d4c94: ldr      x8, [x20, #0x18]
+  0x81d4c98: ldr      x0, [x20, #0x40]   ; CLASS-STATIC base?
+  0x81d4c9c: ldr      x2, [x20, #0x28]
+  0x81d4ca0: blr      x8
+  0x81d4ca4: mov      x0, x21
+  0x81d4ca8: ldp      x20, x19, [sp, #0x50]
+  0x81d4cac: ldp      x22, x21, [sp, #0x40]
+  0x81d4cb0: ldp      x24, x23, [sp, #0x30]
+  0x81d4cb4: ldp      x26, x25, [sp, #0x20]
+  0x81d4cb8: ldp      x30, x27, [sp, #0x10]
+  0x81d4cbc: add      sp, sp, #0x60
+  0x81d4cc0: ret      
+
+==== Update @ 0x81d4cc4 .. 0x81d4df4 (304 bytes) ====
+  0x81d4cc4: stp      x30, x23, [sp, #-0x30]!
+  0x81d4cc8: stp      x22, x21, [sp, #0x10]
+  0x81d4ccc: stp      x20, x19, [sp, #0x20]
+  0x81d4cd0: adrp     x20, #0x9d23000
+  0x81d4cd4: mov      x19, x0
+  0x81d4cd8: ldrb     w8, [x20, #0x2ef]
+  0x81d4cdc: tbnz     w8, #0, #0x81d4d18
+  0x81d4ce0: adrp     x0, #0x96ec000
+  0x81d4ce4: ldr      x0, [x0, #0x548]
+  0x81d4ce8: bl       #0x3cc7948
+  0x81d4cec: adrp     x0, #0x96b7000
+  0x81d4cf0: ldr      x0, [x0, #0x578]
+  0x81d4cf4: bl       #0x3cc7948
+  0x81d4cf8: adrp     x0, #0x96b7000
+  0x81d4cfc: ldr      x0, [x0, #0x588]
+  0x81d4d00: bl       #0x3cc7948
+  0x81d4d04: adrp     x0, #0x96f3000
+  0x81d4d08: ldr      x0, [x0, #0x9f0]
+  0x81d4d0c: bl       #0x3cc7948
+  0x81d4d10: mov      w8, #1
+  0x81d4d14: strb     w8, [x20, #0x2ef]
+  0x81d4d18: ldr      x8, [x19, #0x10]
+  0x81d4d1c: cbz      x8, #0x81d4d94
+  0x81d4d20: ldr      w8, [x8, #0x18]
+  0x81d4d24: cbz      w8, #0x81d4d98
+  0x81d4d28: mov      x0, x19
+  0x81d4d2c: bl       #0x81d4780   ; -> private void CalculateCellsMask() { }
+  0x81d4d30: ldr      x0, [x19, #0x10]
+  0x81d4d34: cbz      x0, #0x81d4d94
+  0x81d4d38: adrp     x22, #0x96b7000
+  0x81d4d3c: adrp     x23, #0x96f3000
+  0x81d4d40: mov      w20, wzr
+  0x81d4d44: ldr      x22, [x22, #0x588]
+  0x81d4d48: ldr      x23, [x23, #0x9f0]
+  0x81d4d4c: ldr      w8, [x0, #0x18]
+  0x81d4d50: cmp      w20, w8
+  0x81d4d54: b.ge     #0x81d4d98
+  0x81d4d58: ldr      x2, [x22]
+  0x81d4d5c: mov      w1, w20
+  0x81d4d60: bl       #0x59ad48c
+  0x81d4d64: ldr      x8, [x23]
+  0x81d4d68: mov      x21, x0
+  0x81d4d6c: ldr      w9, [x8, #0xe4]
+  0x81d4d70: cbnz     w9, #0x81d4d7c
+  0x81d4d74: mov      x0, x8
+  0x81d4d78: bl       #0x3cc7ac8
+  0x81d4d7c: mov      x0, x21
+  0x81d4d80: bl       #0x81d4364   ; -> private static bool IsUnitAliveAndCanTakePositions(ClientUnit unit) { }
+  0x81d4d84: tbz      w0, #0, #0x81d4da8
+  0x81d4d88: ldr      x0, [x19, #0x10]
+  0x81d4d8c: add      w20, w20, #1
+  0x81d4d90: cbnz     x0, #0x81d4d4c
+  0x81d4d94: bl       #0x3cc7bf4
+  0x81d4d98: ldp      x20, x19, [sp, #0x20]
+  0x81d4d9c: ldp      x22, x21, [sp, #0x10]
+  0x81d4da0: ldp      x30, x23, [sp], #0x30
+  0x81d4da4: ret      
+  0x81d4da8: ldr      x0, [x19, #0x10]
+  0x81d4dac: cbz      x0, #0x81d4d94
+  0x81d4db0: adrp     x8, #0x96ec000
+  0x81d4db4: mov      x1, x21
+  0x81d4db8: ldr      x8, [x8, #0x548]
+  0x81d4dbc: ldr      x2, [x8]
+  0x81d4dc0: bl       #0x59aecf4
+  0x81d4dc4: ldr      x20, [x19, #0x20]
+  0x81d4dc8: mov      x0, x19
+  0x81d4dcc: bl       #0x81d3c34   ; -> public int get_NotSendedUnitsCount() { }
+  0x81d4dd0: cbz      x20, #0x81d4d94
+  0x81d4dd4: mov      w1, w0
+  0x81d4dd8: ldr      x0, [x20, #0x40]   ; CLASS-STATIC base?
+  0x81d4ddc: ldr      x2, [x20, #0x28]
+  0x81d4de0: ldr      x3, [x20, #0x18]
+  0x81d4de4: ldp      x20, x19, [sp, #0x20]
+  0x81d4de8: ldp      x22, x21, [sp, #0x10]
+  0x81d4dec: ldp      x30, x23, [sp], #0x30
+  0x81d4df0: br       x3
+
+==== get_NotSendedUnitsCount @ 0x81d3c34 .. 0x81d3c7c (72 bytes) ====
+  0x81d3c34: str      x30, [sp, #-0x20]!
+  0x81d3c38: stp      x20, x19, [sp, #0x10]
+  0x81d3c3c: adrp     x20, #0x9d23000
+  0x81d3c40: mov      x19, x0
+  0x81d3c44: ldrb     w8, [x20, #0x2e7]
+  0x81d3c48: tbnz     w8, #0, #0x81d3c60
+  0x81d3c4c: adrp     x0, #0x96b7000
+  0x81d3c50: ldr      x0, [x0, #0x578]
+  0x81d3c54: bl       #0x3cc7948
+  0x81d3c58: mov      w8, #1
+  0x81d3c5c: strb     w8, [x20, #0x2e7]
+  0x81d3c60: ldr      x8, [x19, #0x10]
+  0x81d3c64: cbz      x8, #0x81d3c78
+  0x81d3c68: ldp      x20, x19, [sp, #0x10]
+  0x81d3c6c: ldr      w0, [x8, #0x18]
+  0x81d3c70: ldr      x30, [sp], #0x20
+  0x81d3c74: ret      
+  0x81d3c78: bl       #0x3cc7bf4
+
+==== get_CellsMask @ 0x81d3c7c .. 0x81d3c84 (8 bytes) ====
+  0x81d3c7c: ldrh     w0, [x0, #0x18]
+  0x81d3c80: ret      
+
+==== IsUnitAliveAndCanTakePositions @ 0x81d4364 .. 0x81d43bc (88 bytes) ====
+  0x81d4364: stp      x30, x19, [sp, #-0x10]!
+  0x81d4368: cbz      x0, #0x81d43b8
+  0x81d436c: ldr      x8, [x0]
+  0x81d4370: mov      x19, x0
+  0x81d4374: ldr      x9, [x8, #0x5c8]
+  0x81d4378: ldr      x1, [x8, #0x5d0]
+  0x81d437c: blr      x9
+  0x81d4380: tbz      w0, #0, #0x81d438c
+  0x81d4384: mov      w0, wzr
+  0x81d4388: b        #0x81d43b0
+  0x81d438c: mov      x0, x19
+  0x81d4390: mov      x1, xzr
+  0x81d4394: bl       #0x807d1d4   ; -> public UnitStateType get_PrototypeState() { }
+  0x81d4398: cbz      x0, #0x81d43b8
+  0x81d439c: ldr      x8, [x0]
+  0x81d43a0: ldr      x9, [x8, #0x5d8]
+  0x81d43a4: ldr      x1, [x8, #0x5e0]
+  0x81d43a8: blr      x9
+  0x81d43ac: ubfx     w0, w0, #0x16, #1
+  0x81d43b0: ldp      x30, x19, [sp], #0x10
+  0x81d43b4: ret      
+  0x81d43b8: bl       #0x3cc7bf4

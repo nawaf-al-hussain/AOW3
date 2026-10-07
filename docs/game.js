@@ -975,22 +975,80 @@
       // tooltip reads "...after all units are placed" — a per-unit placement
       // flow (ShowString(unitsCount) counts down); PointTakePositionAction
       // marker (254946); sim stores Unit.TakePosition : Coordinate (393244).
-      // Reconstruction: each unit walks to ITS assigned spot and then holds
-      // there (hold window semantics at the taken position).
-      let i = 0;
+      // FORMATION ALGORITHM DECODED (UnitTakePositionsManager, TDI 7806 —
+      // evidence combat/takepos-native.txt): placement is PLAYER-driven per
+      // cell, not a server solver. SendNearestUnitToCell(Point2i) 0x81D4954:
+      // among the alive-not-yet-placed selected units the cell goes to the
+      // NEAREST one by DistanceSqr(unit.Cell, cell) (0x8d3047c) whose
+      // occupancy mask accepts it; the move is then issued as
+      // SendUnitsMove([unit], cell, UnitMoveStyle.Forced = 1, ...) 0x82d4a50
+      // (Assault = 0 / Forced = 1, dump.cs:337622) — a strict march, no
+      // en-route engagement. Occupancy masks (.cctor 0x81D4DF4):
+      // All = 0x215F, HelicopterBehaviour = 0xFEE0, Land = 0xFEFD (exact
+      // complements); GetUnitOccupancyMask 0x81D43BC keys on the type's
+      // UNIT_CATEGORY byte [type+0x288] (INFANTRY = 1 / VEHICLE = 2 /
+      // AIRCRAFT = 3 / SHIP = 4, dump.cs:395462-395465): infantry -> All
+      // (& Land adjustments), vehicles -> Land, aircraft -> HelicopterBehaviour
+      // & All only when IsHelicopterBehaviour (0x8011840) else mask 0 (fixed
+      // -wing fliers can NEVER take positions), ships -> 0xFFEF (amphibian
+      // UNIT_TYPE 42 special 0xFFE5). m_cellsMask = AND over the remaining
+      // unsent units (CalculateCellsMask 0x81D4780, init 0x7FFF).
+      // Reconstruction: nearest-match assignment per spot in tile space
+      // (the Forced move maps to the dedicated takepos order — no en-route
+      // acquisition — with hold semantics at the taken spot); units whose
+      // category is excluded (non-helicopter aircraft) never enter the pool;
+      // unplaced leftovers are untouched (native: they simply stay unsent).
+      const pool = [];
       for (const id of ids) {
         const u = this.units.find((v) => v.id === id);
         if (!u || u.garrison !== undefined)
           continue;
+        if (u.def.kind === "aircraft" || u.def.aircraft) {
+          // native GetUnitOccupancyMask category 3: mask 0 unless
+          // IsHelicopterBehaviour — only the helicopter chassis participates
+          if (u.def.id !== "helicopter")
+            continue;
+        }
+        pool.push(u);
+      }
+      const remaining = pool.slice();
+      if (Array.isArray(spots) && spots.length) {
+        for (const sp of spots) {
+          let best = null, bd = Infinity;
+          for (const u of remaining) {
+            const d2 = (u.x - sp.x) * (u.x - sp.x) + (u.y - sp.y) * (u.y - sp.y);
+            if (d2 < bd) {
+              bd = d2;
+              best = u;
+            }
+          }
+          if (!best)
+            break;
+          remaining.splice(remaining.indexOf(best), 1);
+          best.order = { kind: "takepos", x: sp.x, y: sp.y };
+          best.targetId = undefined;
+          best.preferredId = undefined;
+          best.guard = undefined;
+          best.sameSpeed = undefined;
+          best.hiding = undefined;
+          best.path = this.pf.find(best.x, best.y, sp.x, sp.y, false) ?? [];
+          best.dest = { x: sp.x, y: sp.y };
+        }
+        return; // leftovers stay unsent (native semantics)
+      }
+      // legacy no-spots call: one ring-spread spot per unit, nearest-match
+      // degenerates to identity (each spot sits on its unit)
+      let i = 0;
+      for (const u of pool) {
         const ring = Math.floor(i / 8), ang = i % 8 * (Math.PI / 4) + ring;
-        const sp = spots && spots[i] ? spots[i] : { x: u.x, y: u.y };
-        const dx = sp.x + Math.cos(ang) * (ring ? 1.2 : 0), dy = sp.y + Math.sin(ang) * (ring ? 1.2 : 0);
+        const dx = u.x + Math.cos(ang) * (ring ? 1.2 : 0), dy = u.y + Math.sin(ang) * (ring ? 1.2 : 0);
         u.order = { kind: "takepos", x: dx, y: dy };
         u.targetId = undefined;
         u.preferredId = undefined;
         u.guard = undefined;
         u.sameSpeed = undefined;
-        u.path = this.pf.find(u.x, u.y, dx, dy, u.def.kind === "aircraft" && !u.grounded) ?? [];
+        u.hiding = undefined;
+        u.path = this.pf.find(u.x, u.y, dx, dy, false) ?? [];
         u.dest = { x: dx, y: dy };
         i++;
       }

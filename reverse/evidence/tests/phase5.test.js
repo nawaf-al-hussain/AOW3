@@ -680,12 +680,16 @@ section('takepos: per-unit placement then hold at the taken spot');
   const a = sim.spawn('ilight', 1, 18, 80);
   const b = sim.spawn('ilight', 1, 22, 80);
   sim.commandTakePositions([a.id, b.id], [{ x: 26, y: 78 }, { x: 26, y: 82 }]);
+  // v=36 native matching: SendNearestUnitToCell assigns each cell to the
+  // nearest unsent unit — b (22,80) is nearer to spot A (26,78), a takes
+  // spot B (26,82). (The pre-v=36 index-order expectation was the legacy
+  // simplification; the decode in combat/takepos-native.txt supersedes it.)
   check('order kind takepos with per-unit spot', a.order.kind, 'takepos');
-  check('spot A assigned', Math.hypot(a.order.x - 26, a.order.y - 78) < 0.01, true);
-  check('spot B assigned (different unit, different spot)', Math.hypot(b.order.x - 26, b.order.y - 82) < 0.01, true);
+  check('spot A assigned to the NEARER unit b (native nearest-match)', Math.hypot(b.order.x - 26, b.order.y - 78) < 0.01, true);
+  check('spot B taken by unit a (different unit, different spot)', Math.hypot(a.order.x - 26, a.order.y - 82) < 0.01, true);
   const done = stepUntil(sim, () => a.order.kind === 'hold' && b.order.kind === 'hold', 900);
   check('both units hold at their taken positions', done > 0, true);
-  check('unit A near its spot', Math.hypot(a.x - 26, a.y - 78) < 1.2, true);
+  check('unit A holds near its matched spot', Math.hypot(a.x - 26, a.y - 82) < 1.2, true);
   // hold semantics at the spot: no chase
   const foe = sim.spawn('ilight', 2, 34, 78);
   const px = a.x;
@@ -1065,6 +1069,55 @@ section('siege: U-line hash coverage + determinism');
   check('siege ladder deterministic (hash equal)', a.sim.hashState(), b.sim.hashState());
   const ok = new a.K.Commands(a.sim, new Set([ua.id])).execute({ type: 'siege', ids: [ua.id], on: false });
   check('Commands.execute passes the siege case through', ok === true, true);
+}
+
+section('takepos: native formation algorithm — nearest-unit matching + category gate');
+{
+  // native UnitTakePositionsManager (TDI 7806): SendNearestUnitToCell
+  // 0x81D4954 assigns each placed cell to the ALIVE-NOT-YET-PLACED unit with
+  // the minimum DistanceSqr(unit.Cell, cell) (0x8d3047c) whose occupancy mask
+  // accepts it; the move is SendUnitsMove(..., UnitMoveStyle.Forced = 1,
+  // 0x82d4a50) — no en-route engagement; GetUnitOccupancyMask 0x81D43BC
+  // category 3 (AIRCRAFT) returns mask 0 unless IsHelicopterBehaviour
+  // (0x8011840) — fixed-wing fliers never take positions.
+  const { sim, K } = loadKernel(9201);
+  clearInitial(sim);
+  const near = sim.spawn('fortress', 1, 21, 80);
+  const far = sim.spawn('fortress', 1, 30, 80);
+  const spotNear = { x: 22, y: 80 }, spotFar = { x: 31, y: 80 };
+  sim.commandTakePositions([near.id, far.id], [spotFar, spotNear]); // spots given out of order
+  check('nearest unit wins the near cell (index order ignored)', near.order.x, spotNear.x);
+  check('far unit gets the far cell', far.order.x, spotFar.x);
+  check('assignment is a takepos march', near.order.kind, 'takepos');
+  // aircraft gate: helicopter participates; a fixed-wing def (no roster
+  // member today — exercised via a derived def) is excluded (mask 0)
+  const heli = sim.spawn('helicopter', 1, 25, 78);
+  const jet = sim.spawn('helicopter', 1, 25, 82);
+  jet.def = Object.create(jet.def);
+  jet.def.id = 'fighter';
+  const s3 = { x: 26, y: 78 }, s4 = { x: 26, y: 82 };
+  sim.commandTakePositions([heli.id, jet.id], [s3, s4]);
+  check('helicopter participates (IsHelicopterBehaviour analog)', heli.order.kind, 'takepos');
+  check('fixed-wing excluded (mask 0 category 3)', jet.order.kind, 'idle');
+  // leftovers stay unsent (native: not-yet-placed units are untouched)
+  const a = sim.spawn('fortress', 1, 40, 80);
+  const b = sim.spawn('fortress', 1, 41, 80);
+  const c = sim.spawn('fortress', 1, 42, 80);
+  a.order = { kind: 'hold' };
+  sim.commandTakePositions([a.id, b.id, c.id], [{ x: 43, y: 80 }]);
+  check('only one cell placed', [a, b, c].filter((u) => u.order.kind === 'takepos').length, 1);
+  check('leftover keeps its previous order (stays unsent)', a.order.kind, 'hold');
+  // determinism
+  const s1 = loadKernel(9202), s2 = loadKernel(9202);
+  clearInitial(s1.sim); clearInitial(s2.sim);
+  const u1 = s1.sim.spawn('fortress', 1, 20, 80), u2 = s1.sim.spawn('fortress', 1, 24, 80);
+  const v1 = s2.sim.spawn('fortress', 1, 20, 80), v2 = s2.sim.spawn('fortress', 1, 24, 80);
+  s1.sim.commandTakePositions([u1.id, u2.id], [{ x: 25, y: 80 }, { x: 22, y: 80 }]);
+  s2.sim.commandTakePositions([v1.id, v2.id], [{ x: 25, y: 80 }, { x: 22, y: 80 }]);
+  run(s1.sim, 200); run(s2.sim, 200);
+  check('nearest-matched placement deterministic (hash equal)', s1.sim.hashState(), s2.sim.hashState());
+  const ok = new s1.K.Commands(s1.sim, new Set([u1.id])).execute({ type: 'takepos', ids: [u1.id], spots: [{ x: 21, y: 80 }] });
+  check('Commands surface unchanged', ok === true, true);
 }
 
 console.log(`\nphase5: ${total - fail}/${total} PASS${fail ? ` — ${fail} FAILED` : ''}`);

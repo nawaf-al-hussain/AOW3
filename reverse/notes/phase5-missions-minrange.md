@@ -376,22 +376,54 @@ determinism + hash coverage).
   progression/timing, movement lock, fire-block during transform, band
   extension reach, release ladder, task replacement, U-line + determinism).
 
+### TakePositions formation build (v=36, native decode + tribute nearest-match)
+
+The "native TakePositions formation algorithm" is DECODED — there is NO server
+formation solver; placement is PLAYER-driven per cell through
+`UnitTakePositionsManager` (TDI 7806), all CONFIRMED by direct disassembly
+(`reverse/evidence/combat/takepos-native.txt`, tool `takepos_disasm.py`):
+- Static occupancy masks (.cctor 0x81D4DF4): **All = 0x215F,
+  HelicopterBehaviour = 0xFEE0, Land = 0xFEFD** (the latter two are the exact
+  bit-complements of All).
+- `GetUnitOccupancyMask` 0x81D43BC keys the mask on the type's
+  **UNIT_CATEGORY byte** (INFANTRY = 1 / VEHICLE = 2 / AIRCRAFT = 3 / SHIP = 4,
+  dump.cs:395462-395465): infantry -> All (with a Land & ~0x4 refinement for a
+  sub-type flag), vehicles -> Land, aircraft -> HelicopterBehaviour & All only
+  when `IsHelicopterBehaviour` (0x8011840) else **mask 0 — fixed-wing fliers
+  can never take positions**, ships -> 0xFFEF with the UNIT_TYPE 42 amphibian
+  special-case 0xFFE5. `GetHeroUnitOccupancyMask` 0x81D4568 is the hero variant.
+- `CalculateCellsMask` 0x81D4780: the drawable grid = AND of the remaining
+  unsent units' masks (init 0x7FFF).
+- `SendNearestUnitToCell` 0x81D4954: coarse `CheckByMask(m_cellsMask)` gate,
+  then the cell goes to the **nearest unsent unit by DistanceSqr(unit.Cell,
+  cell)** (0x8d3047c) whose own mask accepts it, sent as
+  **SendUnitsMove([unit], cell, UnitMoveStyle.Forced = 1, ...)** (0x82d4a50;
+  `UnitMoveStyle {Assault = 0, Forced = 1}` 337622-337627) — a strict forced
+  march with no en-route engagement; `Unit.set_TakePosition(Coordinate)`
+  0x45B16B8 stores the taken cell server-side.
+- Tribute (v=36): `commandTakePositions(ids, spots)` upgraded from index-order
+  to the native nearest-match in tile space, the category gate modeled as
+  aircraft-excluded-unless-helicopter, leftovers stay unsent (native: simply
+  never sent); Forced maps to the takepos order (already engagement-free, hold
+  at the taken spot). Tests: phase5.test.js 199 -> 208 (nearest-match out of
+  order, helicopter participates / fixed-wing excluded via a derived def,
+  leftovers untouched, determinism; the v=28 index-order expectation updated
+  to the decoded semantics with a note).
+
 ### Remaining unknowns (documented, after v=36)
 
 - Defend leash VALUE and the full `$Pg` chase micro-logic (44 KB state machine; the
   anchor mechanism + task flow are proven, the numeric leash is server-side).
-- Native TakePositions formation algorithm (how the sim distributes per-unit
-  Coordinates when the player places a group; client surface decoded:
-  `UnitTakePositionsManager` occupancy masks All/HelicopterBehaviour/Land +
-  `SendNearestUnitToCell(Point2i)` 0x81D4954 — the placement is PLAYER-driven
-  on a masked grid, not a server formation solver).
 - Siege stage-boundary SPLIT inside `tick_to_spec` (how the duration divides
   across SEIZE_FIRE/ROTATE_WEAPONS/TRANSFORM — the fields and ladder are
   CONFIRMED, the per-stage tick math inside `$ce` is MEDIUM).
 - DontShoot task-vs-spec exclusivity nuance (sticky toggle vs task replacement).
+- TakePositions cell-class SEMANTICS of the 15 occupancy bits (the mask values
+  and category rules are CONFIRMED; the per-bit meaning of the underlying
+  cell-surface classes is inferential).
 
 ## Coverage
-- `reverse/evidence/tests/phase5.test.js` — 199 vectors (min-range gates, patrol
+- `reverse/evidence/tests/phase5.test.js` — 208 vectors (min-range gates, patrol
   oscillation/engagement/resume/journal, garrison enter/protect/crew-fire/exit/
   capacity/death/rejections, hold stance entry/window-fire/no-pursuit/
   retaliation/minRange-aggro/building/melee/warn-join/interplay/release,
@@ -404,7 +436,7 @@ determinism + hash coverage).
   command-surface/determinism, multipoint-patrol route-shape/cyclic-legs/
   legacy-compat/pts-gate/determinism, siege capability/ladder-timing/
   move-lock/fire-block/band-extension/release/task-replacement/hash-
-  determinism).
+  determinism, takepos nearest-match/category-gate/leftovers/determinism).
 - `reverse/evidence/tests/replay.test.js` — 45 vectors (bit-exact reproduction,
   baseline, cross-issuer ordering, tamper detection seed/drop/alter/terrain,
   540-command journal vs 512 ring, live-shaped build+patrol+garrison run, JSON
@@ -419,4 +451,8 @@ determinism + hash coverage).
   identification, serializer proof) + `siege-ce-fe-windows.txt`
   (annotated disasm) + `siege-stage-scan.txt` (field-access attribution),
   tools `reverse/tools/siege_stage_scan.py` / `siege_native_analysis.py`.
+- TakePositions native (v=36): `reverse/evidence/combat/takepos-native.txt`
+  (occupancy masks, category rules, nearest-match, Forced move style —
+  annotated disasm of all seven UnitTakePositionsManager methods), tool
+  `reverse/tools/takepos_disasm.py`.
 - Regressions: unit-fsm 29, accuracy 13, data-model 379, commands-determinism 50.

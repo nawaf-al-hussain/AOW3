@@ -1111,3 +1111,18 @@ Work Log:
 
 Stage Summary:
 - v=36: the siege transform unknown is closed at the data level (chassis + stage ladder + duration fields, all CONFIRMED literals) and shipped as a playable feature-sized build (R-key siege with the three-stage ladder and fire-radius bonus). Remaining surfaces: defend $Pg leash VALUE, TakePositions client-side formation nuances, the tick_to_spec internal split (MEDIUM), DontShoot task-vs-spec nuance.
+
+---
+Task ID: 32
+Agent: Super Z (main)
+Task: Feature-sized build B — TakePositions formation algorithm decoded (UnitTakePositionsManager) + tribute nearest-match upgrade (v=36)
+
+Work Log:
+- Decoded all seven UnitTakePositionsManager methods by direct disassembly (evidence combat/takepos-native.txt, tool takepos_disasm.py): static occupancy masks All=0x215F / HelicopterBehaviour=0xFEE0 / Land=0xFEFD (exact complements, .cctor 0x81D4DF4); GetUnitOccupancyMask 0x81D43BC keys on the type's UNIT_CATEGORY byte (INFANTRY=1/VEHICLE=2/AIRCRAFT=3/SHIP=4, dump.cs:395462-395465) — aircraft are mask-0 (never placeable) unless IsHelicopterBehaviour 0x8011840, ships get 0xFFEF with the UNIT_TYPE 42 amphibian special 0xFFE5; CalculateCellsMask 0x81D4780 ANDs the remaining group's masks (init 0x7FFF); SendNearestUnitToCell 0x81D4954 = nearest unsent unit by DistanceSqr(unit.Cell, cell) 0x8d3047c with per-cell mask gate, sent as SendUnitsMove([unit], cell, UnitMoveStyle.Forced = 1, ...) 0x82d4a50 (Assault=0/Forced=1, 337622-337627); Update 0x81D4CC4 purges eligibility per frame.
+- VERDICT: there is NO server formation solver — placement is player-driven per cell with capability-masked cells and nearest-unit matching. This answers the "native TakePositions formation algorithm" unknown at CONFIRMED level for mechanism + masks + matching; the per-bit semantics of the 15 cell classes stay inferential (documented residual).
+- Tribute (v=36): commandTakePositions upgraded from index-order to native nearest-match in tile space; category gate = aircraft-excluded-unless-helicopter; leftovers stay unsent; Forced maps to the engagement-free takepos order with hold-at-spot arrival.
+- Tests: phase5.test.js 199 -> 208. The v=28 index-order expectation was updated to the decoded semantics (noted in the vector). Regressions: replay 45/45, commands-determinism 50/50, unit-fsm all, data-model 379/379, stat-caps 37/37, accuracy all — PASS. node --check clean; AOW3_VFX_TAXONOMY untouched.
+- Note updated: v=36 TakePositions section + refreshed unknowns.
+
+Stage Summary:
+- The TakePositions unknown is closed (mechanism CONFIRMED, tribute behavior aligned); phase5 coverage now 208 vectors. Remaining: defend $Pg leash VALUE + micro-logic, siege stage-boundary split (MEDIUM), DontShoot task-vs-spec nuance, TakePositions 15-bit cell-class semantics (inferential).
