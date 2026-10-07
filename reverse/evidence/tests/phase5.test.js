@@ -659,7 +659,7 @@ section('fire discipline: hold fire — tracks but never fires');
   check('fires again after CanShoot', again > 0, true);
 }
 
-section('fire discipline: melee + building fire also gated');
+section('fire discipline: explicit attack order fires (build E attack-path decode), discipline resumes after the kill');
 {
   const { sim } = loadKernel(41);
   clearInitial(sim);
@@ -668,8 +668,28 @@ section('fire discipline: melee + building fire also gated');
   sim.commandDontShoot([u.id]);
   sim.commandAttack([u.id], foe.id); // explicit attack order + fireHold
   const hp0 = foe.hp;
-  run(sim, 150);
-  check('explicit attack does not bypass fire discipline', foe.hp, hp0);
+  // native: attack order = AICommUnitsMove(targetId) whose application
+  // replaces the task (AICommUnitsMove.$CMA set_Task x2 + $Hi x1 @0x4909950),
+  // so the ordered engagement FIRES through hold-fire.
+  const fired = stepUntil(sim, () => foe.hp < hp0, 400);
+  check('explicit attack order bypasses hold-fire (native task replacement)', fired > 0, true);
+  check('ordered engagement locks only the ordered foe', u.targetId === foe.id, true);
+  foe.hp = 1;
+  const killed = stepUntil(sim, () => foe.hp <= 0, 500);
+  check('ordered target dies to the ordered engagement', killed > 0, true);
+  check('fireHold survives the attack (sticky, native spec bit 20 persists)', u.fireHold, true);
+  u.hp = u.def.health; // decouple the next assertions from duel attrition
+  console.log('DBG heal:', u.hp, 'units:', sim.units.map(v => v.def.id + ':' + v.owner + ':hp' + Math.round(v.hp) + ':' + v.state).join(','));
+  run(sim, 250);
+  console.log('DBG post-250:', u.hp.toFixed(1), 'units:', sim.units.map(v => v.def.id + ':' + v.owner + ':hp' + Math.round(v.hp) + ':' + v.state).join(','));
+  const foe2 = sim.spawn('ilight', 2, 21, 82);
+  const hp2 = foe2.hp;
+  sim.commandDontShoot([foe2.id]); // keep the probe passive: isolation of u's resume semantics
+  run(sim, 400);
+  check('no autonomous re-engagement after the kill (discipline resumed)', foe2.hp, hp2);
+  sim.commandCanShoot([u.id]);
+  const again = stepUntil(sim, () => foe2.hp < hp2, 500);
+  check('weapons free re-enables fire after the resumed discipline', again > 0, true);
 }
 
 // ================= 5e. Phase 5 unknowns: take positions (spec 4194304) =================
