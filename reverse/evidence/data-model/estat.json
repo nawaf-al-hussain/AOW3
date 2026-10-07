@@ -1,0 +1,332 @@
+{
+ "source": "dump.cs (Il2CppDumper 6.7.46, metadata v31, AOW3 6.9.18 XAPK LFS chain)",
+ "dump_sha256": "0050e67d23f898588f0771c69ba7f30f9122cd6eccd66674c0f7c87b7f24714b",
+ "generated": "2026-10-07",
+ "namespace": "com.geargames.aow.ugui.army.models.info",
+ "decl_line": 168776,
+ "count": 78,
+ "values": [
+  {
+   "id": 0,
+   "name": "None"
+  },
+  {
+   "id": 1,
+   "name": "Health"
+  },
+  {
+   "id": 2,
+   "name": "Price"
+  },
+  {
+   "id": 3,
+   "name": "PriceUranum"
+  },
+  {
+   "id": 4,
+   "name": "CommandPoints"
+  },
+  {
+   "id": 5,
+   "name": "TrainTime"
+  },
+  {
+   "id": 6,
+   "name": "Speed"
+  },
+  {
+   "id": 7,
+   "name": "ArmorLight"
+  },
+  {
+   "id": 8,
+   "name": "ArmorMedium"
+  },
+  {
+   "id": 9,
+   "name": "ArmorHeavy"
+  },
+  {
+   "id": 10,
+   "name": "View"
+  },
+  {
+   "id": 11,
+   "name": "ConstructionRadius"
+  },
+  {
+   "id": 12,
+   "name": "ConstructionTime"
+  },
+  {
+   "id": 13,
+   "name": "CommandPointsProduce"
+  },
+  {
+   "id": 14,
+   "name": "SupplyIncome"
+  },
+  {
+   "id": 15,
+   "name": "EnergyProduction"
+  },
+  {
+   "id": 16,
+   "name": "EnergyNeed"
+  },
+  {
+   "id": 17,
+   "name": "BuildingSize"
+  },
+  {
+   "id": 18,
+   "name": "HealthRegeneration"
+  },
+  {
+   "id": 19,
+   "name": "JumpRange"
+  },
+  {
+   "id": 20,
+   "name": "TransitionToMarchModeTime"
+  },
+  {
+   "id": 21,
+   "name": "TransitionToSiegeModeTime"
+  },
+  {
+   "id": 22,
+   "name": "MineDeactivationTime"
+  },
+  {
+   "id": 23,
+   "name": "DeminingSpeed"
+  },
+  {
+   "id": 24,
+   "name": "EnergyReserve"
+  },
+  {
+   "id": 25,
+   "name": "EnergyConsumption"
+  },
+  {
+   "id": 26,
+   "name": "ShieldStrength"
+  },
+  {
+   "id": 27,
+   "name": "ShieldRadius"
+  },
+  {
+   "id": 28,
+   "name": "EnergyRegeneration"
+  },
+  {
+   "id": 29,
+   "name": "ShieldActivationTime"
+  },
+  {
+   "id": 30,
+   "name": "ShieldDeactivationTime"
+  },
+  {
+   "id": 31,
+   "name": "FogRadius"
+  },
+  {
+   "id": 32,
+   "name": "FogActivationTime"
+  },
+  {
+   "id": 33,
+   "name": "FogDeactivationTime"
+  },
+  {
+   "id": 34,
+   "name": "MineDetection"
+  },
+  {
+   "id": 35,
+   "name": "ForestUnitDetection"
+  },
+  {
+   "id": 36,
+   "name": "SubmarineDetection"
+  },
+  {
+   "id": 37,
+   "name": "FuelReserve"
+  },
+  {
+   "id": 38,
+   "name": "FuelConsumption"
+  },
+  {
+   "id": 39,
+   "name": "RefuelingSpeed"
+  },
+  {
+   "id": 40,
+   "name": "CerberusWeaponSwitchTime"
+  },
+  {
+   "id": 41,
+   "name": "SeraphimGroundModeTransitionTime"
+  },
+  {
+   "id": 42,
+   "name": "SeraphimAirModeTransitionTime"
+  },
+  {
+   "id": 43,
+   "name": "WorkshopRepairRadius"
+  },
+  {
+   "id": 44,
+   "name": "WorkshopRepairSpeed"
+  },
+  {
+   "id": 45,
+   "name": "WorkshopModeTransitionTime"
+  },
+  {
+   "id": 46,
+   "name": "DeploymentTime"
+  },
+  {
+   "id": 47,
+   "name": "InitialResourceReserve"
+  },
+  {
+   "id": 48,
+   "name": "SpaceStrikePreparationTime"
+  },
+  {
+   "id": 49,
+   "name": "LaunchPreparationTime"
+  },
+  {
+   "id": 50,
+   "name": "MissileFlightTime"
+  },
+  {
+   "id": 51,
+   "name": "MaxViewReachTime"
+  },
+  {
+   "id": 52,
+   "name": "PsiAttackSpeedReduction"
+  },
+  {
+   "id": 53,
+   "name": "PsiSlowdownDuration"
+  },
+  {
+   "id": 54,
+   "name": "WolverineMachineGunMaxAccelerationTime"
+  },
+  {
+   "id": 55,
+   "name": "CoilTankMaxTargets"
+  },
+  {
+   "id": 56,
+   "name": "CoilTankFrontalArmor"
+  },
+  {
+   "id": 57,
+   "name": "AtlasImmortalityTime"
+  },
+  {
+   "id": 58,
+   "name": "WeaponDistance"
+  },
+  {
+   "id": 59,
+   "name": "WeaponAccuracy"
+  },
+  {
+   "id": 60,
+   "name": "WeaponFireRate"
+  },
+  {
+   "id": 61,
+   "name": "WeaponArmorLight"
+  },
+  {
+   "id": 62,
+   "name": "WeaponArmorMedium"
+  },
+  {
+   "id": 63,
+   "name": "WeaponArmorHeavy"
+  },
+  {
+   "id": 64,
+   "name": "WeaponExplosionRadius"
+  },
+  {
+   "id": 65,
+   "name": "WeaponBombCount"
+  },
+  {
+   "id": 66,
+   "name": "WeaponMineCost"
+  },
+  {
+   "id": 67,
+   "name": "WeaponMineTime"
+  },
+  {
+   "id": 68,
+   "name": "WeaponSuperWeaponCost"
+  },
+  {
+   "id": 69,
+   "name": "WeaponSuperWeaponTime"
+  },
+  {
+   "id": 70,
+   "name": "WeaponSuperWeaponCP"
+  },
+  {
+   "id": 71,
+   "name": "MinePrice"
+  },
+  {
+   "id": 72,
+   "name": "WeaponSuperWeaponArmorLight"
+  },
+  {
+   "id": 73,
+   "name": "WeaponSuperWeaponArmorMedium"
+  },
+  {
+   "id": 74,
+   "name": "WeaponSuperWeaponArmorHeavy"
+  },
+  {
+   "id": 75,
+   "name": "WeaponSuperWeaponCommandPoints"
+  },
+  {
+   "id": 76,
+   "name": "WeaponSuperWeaponDistance"
+  },
+  {
+   "id": 77,
+   "name": "WeaponSuperWeaponExplosionRadius"
+  }
+ ],
+ "categories": {
+  "decl_line": 168861,
+  "values": {
+   "None": 0,
+   "Base": 1,
+   "Produce": 2,
+   "Cost": 3,
+   "Special": 4
+  }
+ }
+}

@@ -1280,10 +1280,17 @@ Governing plans (read before scoping any pass): `docs/AOW3_DEVELOPMENT_PLAN.md`
 Precedence: confirmed AOW3 behavior wins over architecture convenience; architecture
 stages must not skip the evidence/boundary/determinism stages beneath them; neither
 plan justifies a wholesale rewrite of docs/game.js. Implementation status against
-these plans: Phase 0 (evidence pipeline) and Phase 1 fixed-timestep stepping are
-DONE; the known Phase 1/§31 gaps are seeded randomness (sim still uses
-Math.random()) and state-hash/replay fixtures (roadmap Phase D); renderer
-interpolation between sim states is approximated by per-frame smoothing.
+these plans: Phase 0 (evidence pipeline), Phase 1 fixed-timestep stepping, and
+Phase 2 data-model extraction are DONE. Phase 2 (v=17, bumped from v=16 after colliding with the concurrent remote FX pass 2f0bd7f): gameplay data lives in
+`docs/data/*.js` (`AOW3_DATA`: stats/weapons/units/buildings/factions) instead of
+hardcoded tables in game.js — schema machine-extracted to
+`reverse/evidence/data-model/*.json` (EStat 78, weapon 27-field schema, UnitType
+ids, HeroTypes), fixture-verified byte-identical values
+(`reverse/evidence/tests/data-model.test.js`, 265 assertions). Native balance
+VALUES remain server-delivered (not in APK) — per-unit numbers are documented
+gameplay-tuned approximations. The known Phase 1/§31 gaps are seeded randomness
+(sim still uses Math.random()) and state-hash/replay fixtures (roadmap Phase D);
+renderer interpolation between sim states is approximated by per-frame smoothing.
 
 Recommended order:
 

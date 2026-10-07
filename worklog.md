@@ -679,6 +679,9 @@ Stage Summary:
   (seeded sim PRNG + state hashes/replay fixtures) and data-model extraction,
   NOT Wasm/multiplayer yet.
 
+---
+Task ID: 16b
+Agent: concurrent agent (remote push, normalized header on rebase)
 Task: audit item #2 (damage pipeline) + MinePrice/71 xref + VFX taxonomy fold-in
 
 Work Log:
@@ -693,3 +696,38 @@ Stage Summary:
 - Damage pipeline now reconstructed end-to-end with native evidence at every hop; the only damage math remains the 0.9/0.1 curve + counter-triangle int triad + level scaling.
 - EStat MinePrice/71 consumer account complete (78/78 stat usage surfaces accounted).
 - Tribute FX naming now anchored to the confirmed 6.9.18 Addressables taxonomy; battle verified error-free.
+
+---
+Task ID: 17
+Agent: Super Z (main)
+Task: Phase 2 — data-model extraction (AOW3_DEVELOPMENT_PLAN Phase 2), v=17
+
+Work Log:
+- dump.cs re-extracted from reverse/dump.cs.zip after env reset (sha256 0050e67d
+  matches recorded provenance; 63,922,449 B).
+- reverse/tools/extract_data_model.py: parse dump.cs -> reverse/evidence/data-model/
+  {estat.json (78 EStat + EStatCategory), weapon-schema.json (27 fields 0x10..0x60),
+  unit-type-ids.json (43 UNIT_ID_* + categories + HeroTypes 13)}. All counts match
+  the established evidence (estat-stat-models.md, roster note).
+- Fixture guard: pre-refactor data tables (game.js v=15 lines 15-409) snapshotted via
+  vm to reverse/evidence/tests/data-model-fixture.json (18 units / 7 buildings /
+  16 armed units / 19 weapon configs incl. cerber melee).
+- docs/data/ (6 modules -> window.AOW3_DATA, node-loadable): stats.js (estat 78 +
+  fieldEstat + weaponFieldMap + tributeLocal), weapons.js (19 named configs),
+  units.js (18 defs, weapon refs), buildings.js (hq/depot/7), factions.js
+  (rosters/producers/economy + powerIncome/powerCP), index.js (resolution + version +
+  nativeUnits evidence map). Values generator-transcribed from fixture (no hand-copy).
+- game.js: lines 15-409 (395 lines of literals) -> 19-line AOW3_DATA consumer block
+  (same var names/values); power*2 hardcodes -> ECONOMY.powerIncome/powerCP (2/2).
+  37,229 -> 36,853 lines. index.html: 6 data script tags + game.js?v=17.
+- reverse/evidence/tests/data-model.test.js: 265 assertions PASSED (fixture deep-eq,
+  estat vs estat.json 78/78, schema anchors, field coverage, UnitType/HeroTypes ids,
+  referential integrity); accuracy.test.js 13 vectors still pass; node --check clean.
+- reverse/notes/data-model-extraction.md written (mapping + value policy + gaps);
+  AGENTS.md §32 updated: Phase 2 DONE.
+
+Stage Summary:
+- Phase 2 live as v=17 (v=16 collided with the concurrent remote FX pass 2f0bd7f;
+  bumped per §35): gameplay data is machine-readable and separated from engine
+  code; schema evidence reproducible; behavior fixture-verified neutral. Next per
+  plan: Phase 3 unit state machines, or determinism gaps (seeded PRNG, state hashes).

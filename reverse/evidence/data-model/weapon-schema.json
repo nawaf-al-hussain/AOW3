@@ -1,0 +1,145 @@
+{
+ "source": "dump.cs",
+ "dump_sha256": "0050e67d23f898588f0771c69ba7f30f9122cd6eccd66674c0f7c87b7f24714b",
+ "generated": "2026-10-07",
+ "decl_line": 256556,
+ "note": "Serialized per-weapon balance row schema (map-editor config). Balance values are backend-delivered at runtime; APK ships structure only (see reverse/notes/data-model-extraction.md).",
+ "field_count": 27,
+ "fields": [
+  {
+   "type": "int",
+   "name": "m_weaponTableId",
+   "offset": "0x10"
+  },
+  {
+   "type": "short",
+   "name": "m_type",
+   "offset": "0x14"
+  },
+  {
+   "type": "int",
+   "name": "m_damageLight",
+   "offset": "0x18"
+  },
+  {
+   "type": "int",
+   "name": "m_damageMedium",
+   "offset": "0x1C"
+  },
+  {
+   "type": "int",
+   "name": "m_damageHeavy",
+   "offset": "0x20"
+  },
+  {
+   "type": "sbyte",
+   "name": "m_hitBonus",
+   "offset": "0x24"
+  },
+  {
+   "type": "int",
+   "name": "m_distance",
+   "offset": "0x28"
+  },
+  {
+   "type": "int",
+   "name": "m_distanceMin",
+   "offset": "0x2C"
+  },
+  {
+   "type": "int",
+   "name": "m_explosionRadius",
+   "offset": "0x30"
+  },
+  {
+   "type": "sbyte",
+   "name": "m_explosionDecr",
+   "offset": "0x34"
+  },
+  {
+   "type": "int",
+   "name": "m_velocity",
+   "offset": "0x38"
+  },
+  {
+   "type": "sbyte",
+   "name": "m_bulletTrajectoryType",
+   "offset": "0x3C"
+  },
+  {
+   "type": "short",
+   "name": "m_gravity",
+   "offset": "0x3E"
+  },
+  {
+   "type": "short",
+   "name": "m_shotStart",
+   "offset": "0x40"
+  },
+  {
+   "type": "short",
+   "name": "m_shotInt",
+   "offset": "0x42"
+  },
+  {
+   "type": "sbyte",
+   "name": "m_shotCount",
+   "offset": "0x44"
+  },
+  {
+   "type": "short",
+   "name": "m_flarePrepare",
+   "offset": "0x46"
+  },
+  {
+   "type": "short",
+   "name": "m_roundLen",
+   "offset": "0x48"
+  },
+  {
+   "type": "short",
+   "name": "m_coneAngle",
+   "offset": "0x4A"
+  },
+  {
+   "type": "short",
+   "name": "m_coneBaseline",
+   "offset": "0x4C"
+  },
+  {
+   "type": "short",
+   "name": "m_accuracyStatic",
+   "offset": "0x4E"
+  },
+  {
+   "type": "short",
+   "name": "m_accuracyDynamic",
+   "offset": "0x50"
+  },
+  {
+   "type": "short",
+   "name": "m_accuracyWalk",
+   "offset": "0x52"
+  },
+  {
+   "type": "short",
+   "name": "m_rotateDiap",
+   "offset": "0x54"
+  },
+  {
+   "type": "short",
+   "name": "m_rotateSpeed",
+   "offset": "0x56"
+  },
+  {
+   "type": "sbyte",
+   "name": "m_aiming",
+   "offset": "0x58"
+  },
+  {
+   "type": "MapEditorFireTypeConfig",
+   "name": "m_fireType",
+   "offset": "0x60"
+  }
+ ]
+}
