@@ -614,3 +614,43 @@ Stage Summary:
 - Both follow-ups closed and pushed (893c4bb, 5c25608) after rebase onto the concurrent v=14 roster pass (fa603a3).
 - Open detail noted: EStat.MinePrice/71 has no IStatModel class (likely non-UI code path).
 - Audit next-investigations: #1-#4 all closed with native/catalog evidence; only #5 remains (blocked: no 6.5.22 binary). docs/game.js untouched.
+
+---
+Task ID: 16
+Agent: Super Z (main)
+Task: Per-unit card art + hero units (Cerber/Seraphim) — 1:1 pass (v=15)
+
+Work Log:
+- RE: hero surface pinned from dump.cs/stringliterals — HeroTypes enum (Cerber=1,
+  Wasp=2, Seraphim=3, ...12 total), EStat.CerberusWeaponSwitchTime=40,
+  Seraphim{Ground,Air}ModeTransitionTime=41/42, ClientUnitStateSpecType
+  SeraphimLand/Depart, hotkeys 44/45, hero buy/training/slot/uranium methods.
+  Balance numbers remain documented approximations (server-side tables).
+- Re-fetched XAPK + extracted-assets.zip via LFS batch API (sha256 verified).
+  Recovered the prior extraction tree; extracted ALL base-APK assets (5540 files)
+  into bundles_all; assembled hero GLBs with the proven pipeline:
+  f1_hero_cerber (move/w1/die clips), f1_hero_seraphim (rotate/w1/w2), f1_bld_hero.
+- Card art: authentic aow_f1_* icon sprites + hero_card_ico_{cerber,seraphim}
+  wired per def; hammer/shield cropped from int_ico_heroes_f1 atlas.
+- Discovered concurrent roster pass on origin/main (92298eb, 15 units, v=14).
+  Rebased; replayed the hero/card feature as patch_v8/v8b adapted to the
+  native roster (ids ilight/iheavy/torrent/zeus/typhoon/fortress/hammer/shield).
+- Sim: hero slot rule (1 living hero, queue-dup guard), Cerber meleeStrike
+  (area splash + crit x2 + weapon-switch penalty), Seraphim commandLandDepart
+  (grounded: +25% dmg, 45% speed, ground-targetable, airburst/AA retargeting
+  via (kind===aircraft||def.aircraft) && !grounded), Hero Building producer.
+- UI: gold hero cards in build bar, Hero Building card (bld-hero icon), selinfo
+  HERO badge + blades stats + LAND/DEPART button (delegated click), authentic
+  card art wins over GLB portraits (portraits now fallback-only).
+- Render: grounded-aware altitude with smooth airY lerp, seraphim crash-death,
+  ground shadow, hero fire anims, seraphim sfx pool.
+- Live QA: production cycle (enqueue -> 24s -> spawn at Hero Building), slot
+  gating incl CP cap, air immunity vs ground units / AA targeting, melee mode,
+  altitude 2.15 <-> 0.01, zero page errors (local + live).
+- Git: two forced-sync rounds vs concurrent pushes; final main = 7f1dbd8 (v=15).
+
+Stage Summary:
+- Per-unit authentic card art + 2 native hero units with Hero Building live on
+  Pages (v=15). Follow-ups: remaining 10 heroes (prefabs already built: wasp,
+  codomash, gatling...), f2 hero building, hero active abilities, torrent/typhoon
+  model-role cross-check vs icon art.
