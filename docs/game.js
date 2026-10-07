@@ -106,6 +106,11 @@
   // GAICommandSpecMode 410916) — anchored stance; no native leash constant is
   // recoverable from the APK (server-delivered), tether is gameplay-tuned.
   const DEFEND_TETHER = 4;
+  // hide (native task 4 / spec 131072): a hidden unit is untargetable beyond
+  // this range — the VISIBLE_HIDDEN -> VISIBLE_DETECTED transition radius
+  // (Unit.VISIBLE_HIDDEN = 1 / VISIBLE_DETECTED = 3, dump.cs:393226; detect
+  // radius server-side, tuned here)
+  const HIDE_DETECT = 2.5;
   const FSM_DEFAULTS = {
     // hull turn rate rad/s (native UnitStateType.rotate)
     rotate: { infantry: 10, vehicle: 3.2, aircraft: 4.5 },
@@ -585,7 +590,7 @@
           s.push(`Q${qq.defId},${q(qq.t)}`);
       }
       for (const u of this.units)
-        s.push(`U${u.id},${u.def.id},${u.owner},${q(u.x)},${q(u.y)},${q(u.hp)},${q(u.facing)},${u.order.kind},${o(u.order.x)},${o(u.order.y)},${o(u.order.depotId)},${o(u.targetId)},${o(u.preferredId)},${u.path.length},${xy(u.dest)},${xy(u.guard)},${u.grounded ? 1 : 0},${u.burstLeft},${q(u.aimT)},${q(u.cd)},${u.state},${u.kills},${q(u.captureT ?? -1)},${o(u.lastHitBy)},${o(u.lastTargetId)},${o(u.garrison)},${o(u.order.ax)},${o(u.order.ay)},${u.order.back ? 1 : 0},${u.fireHold ? 1 : 0}`);
+        s.push(`U${u.id},${u.def.id},${u.owner},${q(u.x)},${q(u.y)},${q(u.hp)},${q(u.facing)},${u.order.kind},${o(u.order.x)},${o(u.order.y)},${o(u.order.depotId)},${o(u.targetId)},${o(u.preferredId)},${u.path.length},${xy(u.dest)},${xy(u.guard)},${u.grounded ? 1 : 0},${u.burstLeft},${q(u.aimT)},${q(u.cd)},${u.state},${u.kills},${q(u.captureT ?? -1)},${o(u.lastHitBy)},${o(u.lastTargetId)},${o(u.garrison)},${o(u.order.ax)},${o(u.order.ay)},${u.order.back ? 1 : 0},${u.hiding ? 1 : 0},${u.fireHold ? 1 : 0}`);
       for (const b of this.buildings)
         s.push(`B${b.id},${b.defId},${b.owner},${q(b.x)},${q(b.y)},${q(b.hp)},${b.built ? 1 : 0},${q(b.captureT)},${b.captureBy},${o(b.lastHitOwner)}`);
       for (const p of this.projectiles)
@@ -650,6 +655,39 @@
         u.path = [];
         u.dest = undefined;
         u.guard = { x: u.x, y: u.y };
+        u.hiding = undefined; // stop releases the ambush (task 4 -> TASK_WAIT)
+      }
+    }
+    commandHide(ids, x, y) {
+      // native: ClientUnitTaskType.Hide = 4 (dump.cs:271218) + spec
+      // Hide = 131072 (271187) + GAICommandSpecMode.ACT_HIDE = 4 (410916).
+      // A TARGETED order (GUIBattleActionUnitSpecHide :
+      // AbstractGUIBattleActionUnitSpecTargeting, dump.cs:309519; hotkey
+      // UnitSpecHide = 39, 255747; "enemy spotted while hidden" voice
+      // ItemInfEnemySpottedSpecHide = 35, 81528). Native execute() arm:
+      // capability gate = type-spec bit 17, skip if task already 4, drop the
+      // target lock (set_Obj(null)), clear `forced`, fog/position sync, park
+      // (caravan), task = 4. Visibility: VISIBLE_HIDDEN = 1 ->
+      // VISIBLE_DETECTED = 3 (393226) — hidden units are untargetable beyond
+      // the detection radius but keep acquiring (ambush). Firing reveals
+      // (flag_shoot analog). Reconstruction: infantry-only (per-type spec
+      // mask analog), walk to the spot, then hide; any non-hide order or a
+      // shot breaks it.
+      let i = 0;
+      for (const id of ids) {
+        const u = this.units.find((v) => v.id === id);
+        if (!u || u.garrison !== undefined)
+          continue;
+        if (u.def.kind !== "infantry")
+          continue; // native per-type capability: spec bit 17
+        u.order = { kind: "hide", x, y };
+        u.hiding = undefined;
+        u.targetId = undefined;
+        u.preferredId = undefined;
+        u.path = this.pf.find(u.x, u.y, x, y, false) ?? [];
+        u.dest = { x, y };
+        this.floats.push({ x: u.x, y: u.y - 1.8, text: "HIDE", color: '#a3e635', t: 0 });
+        i++;
       }
     }
     commandHold(ids) {
@@ -1004,12 +1042,16 @@
           this.pops.push({ x: u.x, y: u.y, t: 0, max: 0.35 });
           this.floats.push({ x: u.x, y: u.y - 1.8, text: "MINE SET", color: "#a3e635", t: 0 });
         }
+        // any non-hide order releases the ambush (native task 4 is replaced,
+        // not stacked)
+        if (u.hiding && u.order.kind !== "hide")
+          u.hiding = undefined;
         // native orient -> orient_dest at UnitStateType.rotate (hull rotation)
         this.updateRotation(u, dt);
         // native obj lifecycle: validation, objPreferred stickiness, acquisition
         this.updateTargeting(u);
         let buildingTarget;
-        if (u.def.weapon && u.targetId === undefined && (u.order.kind === "attackMove" || u.order.kind === "idle" || u.order.kind === "patrol" || u.order.kind === "hold" || u.order.kind === "defend")) {
+        if (u.def.weapon && u.targetId === undefined && (u.order.kind === "attackMove" || u.order.kind === "idle" || u.order.kind === "patrol" || u.order.kind === "hold" || u.order.kind === "defend" || (u.order.kind === "hide" && u.hiding))) {
           buildingTarget = this.buildings.find((b) => {
             const bd2 = Math.hypot(b.x - u.x, b.y - u.y);
             return b.hp > 0 && b.owner !== u.owner && b.owner !== 0 && bd2 <= u.def.weapon.range + b.radius && bd2 >= (u.def.weapon.minRange || 0) + b.radius;
@@ -1055,9 +1097,9 @@
               u.aimT = Math.max(0, u.aimT - dt);
             else if (this.facingOk(u, tgt.x, tgt.y, fsmStat(u, "fireArc")))
               this.shoot(u, tgt.x, tgt.y, tgt, d);
-          } else if (u.order.kind === "hold") {
-            // hold never pursues (native ClientUnitTaskType.HoldPosition = 3):
-            // stand ground, track the hull toward the out-of-window target
+          } else if (u.order.kind === "hold" || (u.order.kind === "hide" && u.hiding)) {
+            // hold never pursues (native ClientUnitTaskType.HoldPosition = 3);
+            // hide behaves the same once ambushed (native task 4)
             u.path = [];
             u.orientDest = Math.atan2(tgt.y - u.y, tgt.x - u.x);
           } else if (u.order.kind === "defend" && u.guard) {
@@ -1096,8 +1138,8 @@
               this.shootBuilding(u, buildingTarget, d);
           } else if (d < minR2 + buildingTarget.radius)
             u.path = []; // dead zone: hold (distance_min symmetric with the unit gate)
-          else if (u.order.kind === "hold")
-            u.path = []; // hold never pursues a building outside the window
+          else if (u.order.kind === "hold" || (u.order.kind === "hide" && u.hiding))
+            u.path = []; // hold/hide never pursue a building outside the window
           else if (u.order.kind === "defend" && u.guard && Math.hypot(u.guard.x - buildingTarget.x, u.guard.y - buildingTarget.y) > DEFEND_TETHER + u.def.weapon.range)
             u.path = []; // defend: building beyond the tether — break off
           else
@@ -1167,6 +1209,18 @@
             u.path = [];
           else
             this.moveToward(u, u.guard.x, u.guard.y, dt);
+        } else if (u.order.kind === "hide" && u.order.x !== undefined && !u.hiding) {
+          // hide (native task 4 / ACT_HIDE = 4): walk to the ambush spot,
+          // then hide — anchored, untargetable beyond HIDE_DETECT, fires from
+          // cover (reveal on fire)
+          const hd = Math.hypot(u.order.x - u.x, u.order.y - u.y);
+          if (hd < 0.9 || u.path.length === 0 && hd < 1.4) {
+            u.hiding = true;
+            u.path = [];
+            u.dest = undefined;
+            u.guard = { x: u.x, y: u.y };
+          } else
+            this.moveToward(u, u.order.x, u.order.y, dt);
         } else if (u.order.kind === "bombard" && u.order.x !== undefined) {
           // bombard (native task 5 / AICommUnitsBombard point order, 433431):
           // keep the weapon band [minRange, range] around the POINT and shell
@@ -1300,7 +1354,7 @@
       }
       if (u.targetId === undefined || !this.units.some((t) => t.id === u.targetId && t.hp > 0 && t.garrison === undefined)) {
         u.targetId = undefined;
-        if (u.order.kind === "idle" || u.order.kind === "attackMove" || u.order.kind === "patrol" || u.order.kind === "hold" || u.order.kind === "defend") {
+        if (u.order.kind === "idle" || u.order.kind === "attackMove" || u.order.kind === "patrol" || u.order.kind === "hold" || u.order.kind === "defend" || (u.order.kind === "hide" && u.hiding)) {
           const t = this.findTarget(u);
           if (t) {
             u.targetId = t.id;
@@ -1332,6 +1386,10 @@
         if (tAir && (!u.def.antiAir || shooterAir))
           continue;
         const d = Math.hypot(t.x - u.x, t.y - u.y);
+        // VISIBLE_HIDDEN -> VISIBLE_DETECTED (dump.cs:393226): a hidden unit
+        // is untargetable beyond the detection radius (ambush)
+        if (t.hiding && d > HIDE_DETECT)
+          continue;
         // native weaponType.damage_priority: prefer targets the weapon is strong
         // against — weighted by damage-vs-armorClass as a fraction of target health.
         const dmgVs = effectiveDamage(u.def.weapon.damage, t.def.armor, t.def.armorClass);
@@ -1392,6 +1450,8 @@
     shoot(u, tx, ty, tgt, d) {
       if (u.cd > 0 || u.fireHold)
         return;
+      if (u.hiding)
+        u.hiding = false; // firing reveals the ambush (native flag_shoot)
       u.cd = u.def.weapon.cooldown * (u.def.spinUp ? Math.max(0.55, 1 - 0.45 * (u.heat ?? 0)) : 1);
       if (u.def.spinUp)
         u.heat = Math.min(1, (u.heat ?? 0) + 0.4);
@@ -1442,6 +1502,8 @@
       // dispatch: SHELL_TYPE percent branches, weapon-type note §3.1).
       if (u.cd > 0 || u.fireHold)
         return;
+      if (u.hiding)
+        u.hiding = false; // firing reveals
       u.cd = u.def.weapon.cooldown;
       const acc = hitChance(u.def.weapon, false, d);
       this.projectiles.push({
@@ -1484,6 +1546,8 @@
     meleeStrike(u, tgt, d) {
       if (u.cd > 0 || u.fireHold)
         return;
+      if (u.hiding)
+        u.hiding = false; // striking reveals
       const mw = u.def.melee;
       u.cd = mw.cooldown;
       if (u.lastMode === "gun")
@@ -1517,6 +1581,8 @@
     shootBuilding(u, b, d) {
       if (u.cd > 0 || u.fireHold)
         return;
+      if (u.hiding)
+        u.hiding = false; // firing reveals
       u.cd = u.def.weapon.cooldown;
       u.facing = Math.atan2(b.y - u.y, b.x - u.x);
       const dmg = Math.round(effectiveDamage(u.def.weapon.damage, { light: 30, medium: 24, heavy: 18 }, "heavy") * (1 + 0.08 * rankTier(u)));
@@ -1601,6 +1667,8 @@
       if (!attacker || !victim || attacker.owner === victim.owner || attacker.hp <= 0)
         return;
       const joins = (w) => {
+        if (w.order.kind === "hide")
+          return; // hidden units keep the ambush — no aggro-join while hiding
         if (w.def.weapon && (w.order.kind === "idle" || w.order.kind === "attackMove" || w.order.kind === "patrol" || w.order.kind === "hold" || w.order.kind === "defend") && w.targetId === undefined && w.garrison === undefined) {
           // native distance_min: a dead-zone attacker is not acquirable — the
           // findTarget rule ("no dead-zone lock") must hold through aggro too,
@@ -1809,7 +1877,7 @@
   // Gameplay command types that must be replicated in lockstep multiplayer.
   // select/cancel are issuer-local UI state (per-player selection) and never
   // travel on the wire.
-  var LOCKSTEP_NET_TYPES = new Set(["move", "patrol", "garrison", "ungarrison", "attack", "stop", "hold", "defend", "bombard", "dontshoot", "canshoot", "takepos", "capture", "build", "produce", "special"]);
+  var LOCKSTEP_NET_TYPES = new Set(["move", "patrol", "garrison", "ungarrison", "attack", "stop", "hold", "defend", "bombard", "dontshoot", "canshoot", "takepos", "hide", "capture", "build", "produce", "special"]);
   class Commands {
     constructor(sim = null, sel = new Set()) {
       this.sim = sim;
@@ -1917,6 +1985,12 @@
           if (!sim || !cmd.ids || !cmd.ids.length || cmd.x === undefined || cmd.y === undefined)
             return false;
           sim.commandBombard(cmd.ids, cmd.x, cmd.y);
+          break;
+        case "hide":
+          // native ClientUnitTaskType.Hide = 4 — targeted ambush order
+          if (!sim || !cmd.ids || !cmd.ids.length || cmd.x === undefined || cmd.y === undefined)
+            return false;
+          sim.commandHide(cmd.ids, cmd.x, cmd.y);
           break;
         case "dontshoot":
           // native task 8 / spec 1048576 (ACT_DONT_SHOOT = 7) — fire discipline
@@ -35284,14 +35358,11 @@ void main() {
             if (!g)
               return;
             const parts = [];
-            let qBake = null;
             g.scene.updateMatrixWorld(true);
             g.scene.traverse((o) => {
               const mesh = o;
               if (!mesh.isMesh)
                 return;
-              if (!qBake)
-                qBake = new Quaternion().setFromRotationMatrix(new Matrix4().extractRotation(mesh.matrixWorld));
               const geo = mesh.geometry.clone();
               geo.applyMatrix4(mesh.matrixWorld);
               const m = mesh.material.clone();
@@ -35339,8 +35410,7 @@ void main() {
               parts,
               baseH: bakedH,
               maxDim,
-              ground: isGround,
-              qfix: qBake ? qBake.clone().invert() : null
+              ground: isGround
             });
           } catch {}
         }));
@@ -35810,14 +35880,7 @@ void main() {
             const wx2 = e.p[0] + RMAP.shx, wz2 = e.p[2] + RMAP.shz;
             const gy2 = heightAtWorld(wx2, wz2);
             dummy.position.set(wx2, t.cat === "ground" ? gy2 : Math.max(e.p[1] - 0.05, gy2), wz2);
-            // map.json quats are authored-space (Unity): they include the Z-up->Y-up
-            // +90degX correction for source art. GLBs that already baked that same
-            // correction into their root node must NOT get it twice — strip exactly
-            // the rotation the template bake absorbed (qfix = inverse of baked root
-            // rotation). Un-baked templates (ground decals) keep the raw quat.
             dummy.quaternion.set(e.q[0], e.q[1], e.q[2], e.q[3]);
-            if (t.qfix)
-              dummy.quaternion.multiply(t.qfix);
             dummy.scale.set(e.s[0], e.s[1], e.s[2]);
             dummy.updateMatrix();
             im.setMatrixAt(i, dummy.matrix);
@@ -37837,10 +37900,24 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
         $("prodhint").textContent = "";
     }
   };
+  // Phase 5 adjacents: hide arm (native task 4 / spec 131072, hotkey
+  // UnitSpecHide = 39, dump.cs:255747) — G arms, the next right-click sends
+  // the selected infantry to that spot to hide (targeting order,
+  // GUIBattleActionUnitSpecHide : AbstractGUIBattleActionUnitSpecTargeting,
+  // 309519). Only infantry accept (native per-type spec mask).
+  var hideArmed = false;
+  var disarmHide = () => {
+    if (hideArmed) {
+      hideArmed = false;
+      if ($("prodhint"))
+        $("prodhint").textContent = "";
+    }
+  };
   var disarmOrders = () => {
     disarmPatrol();
     disarmBombard();
     disarmTakepos();
+    disarmHide();
   };
   var rel = (e) => {
     const r = cv.getBoundingClientRect();
@@ -37962,6 +38039,15 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
             disarmTakepos();
             cmd.issue({ type: "takepos", ids: [...sel], spots });
           }
+        }
+        return;
+      }
+      if (hideArmed) {
+        disarmHide();
+        const t = r3d.screenToTile(p.x, p.y);
+        if (t && sel.size) {
+          cmd.issue({ type: "hide", ids: [...sel], x: Math.max(1, Math.min(MAP_W - 2, t.x)), y: Math.max(1, Math.min(MAP_H - 2, t.y)) });
+          r3d.mark(t.x, t.y, "move");
         }
         return;
       }
@@ -38174,6 +38260,14 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       takeposSpots = [];
       if ($("prodhint"))
         $("prodhint").textContent = `POSITIONS: ${sel.size} unit(s) left \u2014 right-click to place`;
+    }
+    // Phase 5 adjacents: G arms hide (native HotkeyAction.UnitSpecHide = 39,
+    // dump.cs:255747) — next right-click sends infantry to hide at that spot
+    if (e.key.toLowerCase() === "g" && sim && sel.size && !placing && cmdTarget) {
+      disarmOrders();
+      hideArmed = true;
+      if ($("prodhint"))
+        $("prodhint").textContent = "HIDE armed — right-click the ambush spot (infantry only)";
     }
     // Phase 5 gaps: F toggles fire discipline (native DontShoot = 8 / spec
     // 1048576 vs CanShoot = 2097152, hotkeys 26/32) — HOLD FIRE / WEAPONS FREE

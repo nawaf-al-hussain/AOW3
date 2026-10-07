@@ -722,5 +722,102 @@ section('same-seed determinism through defend + bombard + fire discipline + take
   check('CanShoot clears the discipline', f2.fireHold, false);
 }
 
+// ================= 8. hide (native task 4 / spec 131072) =================
+section('hide: capability + walk-to-spot + ambush entry');
+{
+  const { sim } = loadKernel(6101);
+  clearInitial(sim);
+  const inf = sim.spawn('ilight', 1, 20, 80);
+  const veh = sim.spawn('typhoon', 1, 20, 82);
+  sim.commandHide([inf.id, veh.id], 24, 80);
+  check('infantry accepts hide (targeted order {kind, x, y})',
+    inf.order.kind === 'hide' && inf.order.x === 24 && inf.order.y === 80, true);
+  check('vehicle rejected (native per-type spec bit 17 analog)', veh.order.kind, 'idle');
+  run(sim, 260); // ~13 s: walk 4 tiles then settle
+  check('infantry arrived and hides', inf.hiding, true);
+  check('hide anchors a guard at the arrival spot', !!inf.guard && Math.hypot(inf.guard.x - inf.x, inf.guard.y - inf.y) < 1.2, true);
+  check('hide order kept (sticky stance, no x/y loss)', inf.order.kind, 'hide');
+}
+
+section('hide: VISIBLE_HIDDEN -> VISIBLE_DETECTED targeting gate');
+{
+  const HIDE_DETECT = 2.5;
+  const { sim } = loadKernel(6102);
+  clearInitial(sim);
+  const hider = sim.spawn('ilight', 1, 24, 80);
+  sim.commandHide([hider.id], 24, 80);
+  sim.commandDontShoot([hider.id]); // keep the ambush: fire discipline (firing would reveal)
+  run(sim, 200);
+  check('hider is hidden before engagement', hider.hiding, true);
+  // distant enemy tank: never acquires the hidden infantry
+  const far = sim.spawn('mammoth', 2, 30, 80); // d = 6 > HIDE_DETECT
+  run(sim, 200);
+  check('enemy beyond detect radius cannot lock the hider', far.targetId, undefined);
+  // close scout: inside 2.5 tiles -> detects and locks
+  const near = sim.spawn('mammoth', 2, 25.8, 80); // d ~ 1.8 < HIDE_DETECT
+  let locked = -1;
+  for (let i = 0; i < 120 && locked < 0; i++) { sim.step(TICK); if (near.targetId !== undefined) locked = i; }
+  check('enemy within detect radius acquires the hider', locked >= 0, true);
+}
+
+section('hide: fires from cover, firing reveals');
+{
+  const { sim } = loadKernel(6103);
+  clearInitial(sim);
+  const hider = sim.spawn('ilight', 1, 24, 80);
+  sim.commandHide([hider.id], 24, 80);
+  run(sim, 200);
+  const foe = sim.spawn('mammoth', 2, 29.5, 80); // d = 5.5: outside detect, inside weapon range
+  const cd0 = hider.cd;
+  let fired = -1;
+  for (let i = 0; i < 400 && fired < 0; i++) {
+    sim.step(TICK);
+    if (hider.cd > cd0 || hider.hiding === false && i > 2) fired = i;
+  }
+  check('hider acquired and fired from cover', fired >= 0, true);
+  check('firing revealed the ambush (flag_shoot analog)', hider.hiding, false);
+}
+
+section('hide: release paths');
+{
+  const { sim } = loadKernel(6104);
+  clearInitial(sim);
+  const h = sim.spawn('ilight', 1, 20, 80);
+  sim.commandHide([h.id], 20, 80);
+  run(sim, 200);
+  check('hidden', h.hiding, true);
+  sim.commandMove([h.id], 26, 80);
+  run(sim, 4);
+  check('move order releases the ambush', h.hiding ?? false, false);
+  sim.commandHide([h.id], 26, 84);
+  run(sim, 300);
+  check('re-hide works', h.hiding, true);
+  sim.commandStop([h.id]);
+  run(sim, 4);
+  check('stop releases the ambush (task 4 -> TASK_WAIT)', h.hiding ?? false, false);
+  // garrisoned units reject hide (inert inside the bunker)
+  check('garrisoned units not hijacked by the unhide guard', h.garrison, undefined);
+}
+
+section('hide: determinism + hash coverage');
+{
+  const mk = (seed) => {
+    const { sim } = loadKernel(seed);
+    clearInitial(sim);
+    const h = sim.spawn('ilight', 1, 20, 80);
+    const foe = sim.spawn('ilight', 2, 30, 80);
+    sim.commandHide([h.id], 24, 80);
+    sim.commandHold([foe.id]);
+    return { sim, h };
+  };
+  const a = mk(6105), b = mk(6105);
+  run(a.sim, 500); run(b.sim, 500);
+  check('hiding bit serialized in the U-line (before fireHold: hiding=1, fireHold=0)',
+    a.sim.stateString().split('|').some((l) => l.startsWith('U') && l.endsWith(',1,0')), true);
+  check('hiding state deterministic (hash equal)', a.sim.hashState() === b.sim.hashState(), true);
+  check('both sims converge hidden-or-revealed identically', a.h.hiding === b.h.hiding, true);
+}
+
+
 console.log(`\nphase5: ${total - fail}/${total} PASS${fail ? ` — ${fail} FAILED` : ''}`);
 process.exit(fail ? 1 : 0);

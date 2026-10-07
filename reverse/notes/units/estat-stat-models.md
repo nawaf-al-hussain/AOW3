@@ -227,6 +227,110 @@ it is the mine's *price/cost cap* identity — but it is a cap-tier pseudo-key, 
 displayable stat. 45/45 class bindings unchanged; the 78-value EStat taxonomy now has a
 native consumer account for all 78 values' usage surfaces.
 
+## 7. Tier thresholds extracted natively — StatInfo {BaseMax, FirstMax?, MegaMax?} per EStat (2026-10-07)
+
+Method: linear-disassembly parse of `MaxStatValueProvider..ctor(ILogger)` (VA 0x7CC0C00,
+end 0x7CC1640) — the constructor that populates `m_statInfos : Dictionary<EStat, StatInfo>`
+(field 0x10). Entry shapes observed: (a) float literals -> s0[/s1[/s2]] -> `bl StatInfo.Max1/2/3`
+(0x7CC1640/0x7CC16F0/0x7CC1650, sret via x8) -> Add; (b) direct struct build
+(`str wN,[sp,#0xC]` = BaseMax bits, `stp xzr,xzr,[sp,#0x10]` = nullables). Dictionary.Add
+helper 0x7181154 (x0=dict, w1=key, x2=&StatInfo). Tool: `reverse/tools/extract_maxstat_tiers.py`;
+full output: `reverse/evidence/estat/estat-tiers.txt`.
+
+| EStat | BaseMax | FirstMax | MegaMax |
+|---|---|---|---|
+| Health / 1 | 8000 | 25000 | 45000 |
+| Price / 2 | 1000 | 2600 | - |
+| PriceUranum / 3 | 5 | - | - |
+| CommandPoints / 4 | 15 | - | - |
+| TrainTime / 5 | 150 | - | - |
+| Speed / 6 | 100 | 450 | - |
+| ArmorLight / 7 | 80 | 530 | - |
+| ArmorMedium / 8 | 80 | 530 | - |
+| ArmorHeavy / 9 | 80 | 530 | - |
+| View / 10 | 20 | - | - |
+| ConstructionRadius / 11 | 11 | - | - |
+| ConstructionTime / 12 | 140 | - | - |
+| CommandPointsProduce / 13 | 10 | - | - |
+| SupplyIncome / 14 | 250 | - | - |
+| EnergyProduction / 15 | 250 | - | - |
+| EnergyNeed / 16 | 300 | - | - |
+| BuildingSize / 17 | 9 | - | - |
+| HealthRegeneration / 18 | 2000 | - | - |
+| JumpRange / 19 | 7 | - | - |
+| TransitionToMarchModeTime / 20 | 2.2 | - | - |
+| TransitionToSiegeModeTime / 21 | 2.2 | - | - |
+| MineDeactivationTime / 22 | 2 | - | - |
+| DeminingSpeed / 23 | 100 | 450 | - |
+| EnergyReserve / 24 | 300 | - | - |
+| EnergyConsumption / 25 | 200 | - | - |
+| ShieldStrength / 26 | 100 | - | - |
+| ShieldRadius / 27 | 5 | - | - |
+| EnergyRegeneration / 28 | 400 | - | - |
+| ShieldActivationTime / 29 | 2 | - | - |
+| ShieldDeactivationTime / 30 | 2 | - | - |
+| FogRadius / 31 | 5 | - | - |
+| FogActivationTime / 32 | 2 | - | - |
+| FogDeactivationTime / 33 | 2 | - | - |
+| MineDetection / 34 | 4 | - | - |
+| ForestUnitDetection / 35 | 5 | - | - |
+| SubmarineDetection / 36 | 10 | - | - |
+| FuelReserve / 37 | 300 | - | - |
+| FuelConsumption / 38 | 200 | - | - |
+| RefuelingSpeed / 39 | 400 | - | - |
+| CerberusWeaponSwitchTime / 40 | 2 | - | - |
+| SeraphimGroundModeTransitionTime / 41 | 2 | - | - |
+| SeraphimAirModeTransitionTime / 42 | 2 | - | - |
+| WorkshopRepairRadius / 43 | 4.5 | - | - |
+| WorkshopRepairSpeed / 44 | 150 | - | - |
+| WorkshopModeTransitionTime / 45 | 2 | - | - |
+| DeploymentTime / 46 | 60 | - | - |
+| InitialResourceReserve / 47 | 2500 | - | - |
+| SpaceStrikePreparationTime / 48 | 20 | - | - |
+| LaunchPreparationTime / 49 | 20 | - | - |
+| MissileFlightTime / 50 | 19 | - | - |
+| MaxViewReachTime / 51 | 20 | - | - |
+| PsiAttackSpeedReduction / 52 | 100 | - | - |
+| PsiSlowdownDuration / 53 | 2.5 | - | - |
+| WolverineMachineGunMaxAccelerationTime / 54 | 10 | - | - |
+| CoilTankMaxTargets / 55 | 10 | - | - |
+| CoilTankFrontalArmor / 56 | 530 | - | - |
+| AtlasImmortalityTime / 57 | 10 | - | - |
+| WeaponDistance / 58 | 16 | - | - |
+| WeaponAccuracy / 59 | 100 | - | - |
+| WeaponExplosionRadius / 64 | 2.5 | - | - |
+| WeaponBombCount / 65 | 5 | - | - |
+| WeaponMineTime / 67 | 7.5 | - | - |
+| MinePrice / 71 | **30** | - | - |
+| WeaponArmorLight / 61 | 300 | 4000 | 20000 |
+| WeaponArmorMedium / 62 | 300 | 4000 | 20000 |
+| WeaponArmorHeavy / 63 | 300 | 4000 | 20000 |
+| WeaponSuperWeaponArmorLight / 72 | 300 | 4000 | 55000 |
+| WeaponSuperWeaponArmorMedium / 73 | 300 | 4000 | 55000 |
+| WeaponSuperWeaponArmorHeavy / 74 | 300 | 4000 | 55000 |
+| WeaponSuperWeaponCommandPoints / 75 | 40 | - | - |
+| WeaponSuperWeaponDistance / 76 | 100 | - | - |
+| WeaponSuperWeaponExplosionRadius / 77 | 12 | - | - |
+
+Findings:
+
+- **72 of 78 EStats are registered** with an explicit cap. Unregistered: 0 (None —
+  the prebuilt `{BaseMax 1.0}` placeholder entry is registered under key 0 first),
+  **60 WeaponFireRate, 66 WeaponMineCost, 70 WeaponSuperWeaponCP** — these three run
+  uncapped (or are capped elsewhere); consistent with 66 being the mine-cost VALUE
+  channel while its cap key is 71 (§6.7, now with the value: **MinePrice/71 cap = 30**).
+- Three-tier (base/first/mega) caps exist only for Health (8000/25000/45000) and the
+  six+three weapon-armor damage keys (61/62/63 = 300/4000/20000; 72/73/74 =
+  300/4000/55000) — the veterancy/mega-upgrade surfaces. Two-tier caps: Price,
+  Speed, the armor triad (80/530), DeminingSpeed.
+- The 0.9/0.1 mitigation curve (armor note §3.2) consumes `Get(value, EStat)` BEFORE
+  tier clamping for keys 61-63/72-74; these caps are the progress-bar maxima for the
+  UI stat panels, i.e. the display normalization domain, not additional sim math.
+
+Classification: **CONFIRMED (native, literal extraction)** — the table is a direct
+read-out of constructor literals, not inference. Reproduce with
+`python3 reverse/tools/extract_maxstat_tiers.py`.
+
 ## Implementation
 
 Tribute mapping guidance (Phase 5+ / Phase 26 consumers):
@@ -266,4 +370,4 @@ Tribute mapping guidance (Phase 5+ / Phase 26 consumers):
   (interface tail-call `m_max.Get(value, 71)`, VA 0x80e8f08); no other consumer exists.
 - The numeric balance values behind every stat (backend-delivered; out of APK scope, as
   established by the audit).
-- `MaxStatValueProvider` tier thresholds (BaseMax/FirstMax/MegaMax values) — native data.
+- ~~`MaxStatValueProvider` tier thresholds (BaseMax/FirstMax/MegaMax values) — native data.~~ **Resolved 2026-10-07** — §7: full 72-entry table extracted from the ctor literals (`estat-tiers.txt`); MinePrice/71 cap = 30; only WeaponFireRate/60, WeaponMineCost/66, WeaponSuperWeaponCP/70 run unregistered.

@@ -1045,3 +1045,20 @@ Work Log:
 Stage Summary:
 - Decor orientation restored to native: baked-template quats stripped of the double Z-up correction, un-baked (ground decals) untouched — one unified per-template mechanism (t.qfix), zero data regeneration needed for 813 decor GLBs / 6371 placements.
 - Commit 6d1ed03 (code, v=30) + this worklog commit; push + live verify pending at time of writing.
+
+---
+Task ID: 27
+Agent: Super Z (main)
+Task: Phase 5 adjacents natively anchored + reconstructed (siege/hide/reset-speed acts, bombard duration, defend anchor) + MaxStatValueProvider tier thresholds extracted (v=30/31)
+
+Work Log:
+- Rebuilt the native workspace from LFS (XAPK 1a41e033… -> libil2cpp.so 8ace05bb…; dump.cs 0050e67d…) and decoded GAICommandSpecMode.execute() arms beyond v=28: ACT_SIEGE_TO/FROM (2/3) = one arm gated on (type.specs & (ToSiege|ToShield|ToFog)) / (FromSiege|FromShield|FromFog) — the Seraphim-family triple transform, task cleared to 0; ACT_HIDE (4) = spec-bit-17 capability + drop target (set_Obj(null)) + clear forced + caravan + $Hi(task=4); ACT_RESET_SPEED (6) = $ii(Battle,Unit,true) cancelling the SameSpeed march (SameSpeed {speed, coord} @Unit+0x260, Battle.$HL coordinator located). vtable slots resolved by call-shape + body disasm (dump.cs Slot annotations drift by 2 in the 249-256 region — get_X/get_Y verified via the defend-arm Coordinate(x*100, y*100) ctor).
+- Bombard duration: AICommUnitsBombard.$CMA is a 37-state jump-table machine with an LCG scatter (0x852906a7/0x9fe0597f) — NO duration literal; task_until_tick (0x104) written at only 6 sites, 5 in BattleAct.$uA (battle-finish freeze). "Shell until released" model stands.
+- Defend anchor CONFIRMED: execute() act-5 arm builds a 1-point PatrolRoute at Coordinate(unit.x*100, unit.y*100) and stores it via set_PatrolDefend ([klass+0xD38]) — patrol_defend//0x158 mechanism exact; chase/leash lives in UnitAct.$Pg (0x483C244, 99 route sites) + $sH; leash value not a literal (server-side); act-5 gate = battle.$gm() flags int at [Battle+0x80].
+- MaxStatValueProvider tier thresholds EXTRACTED (ctor 0x7CC0C00 literal parse, tool extract_maxstat_tiers.py -> evidence estat/estat-tiers.txt): 72/78 EStats registered — Health 8000/25000/45000, armor triad 80/530, WeaponArmor{L,M,H} 300/4000/20000, SuperWeaponArmor 300/4000/55000, MinePrice/71 cap = 30; only 60/66/70 unregistered (66 capped via 71 per §6.7). CONFIRMED (native literal read-out).
+- Tribute reconstruction (v=30/31): commandHide(ids, x, y) — infantry-only targeted ambush order (G arm + right-click; native hotkey 39): walk to spot, hide (u.hiding), untargetable beyond HIDE_DETECT=2.5 (VISIBLE_HIDDEN->DETECTED analog), fires from cover, firing reveals (shoot/fireShell/meleeStrike/shootBuilding), any non-hide order/stop releases, no aggro-join while hiding, U-line hash bit (hiding before fireHold), LOCKSTEP_NET_TYPES + Commands "hide" case. node --check clean.
+- Tests: phase5.test.js 128 -> 146 vectors (capability gate, walk+entry, detect gate far/near, fire-from-cover reveal, release paths, re-hide, determinism + hash coverage). Regressions: replay 45/45, commands-determinism 50/50, unit-fsm all, data-model 379, accuracy all — PASS. index.html v=31.
+- Notes: phase5-missions-minrange.md gains the v=30 section (acts decode + bombard duration + defend anchor + hide reconstruction + refreshed unknowns); units/estat-stat-models.md gains §7 (full tier table) + Unknown closed. New tools: extract_maxstat_tiers.py, phase5_adjacent_native_analysis.py, field_access_scan.py; evidence: estat/estat-tiers.txt, combat/phase5-adjacent-native.txt.
+
+Stage Summary:
+- v=31: all documented Phase 5 adjacents except the $Pg micro-logic/SameSpeed coordinator/TakePositions formation are now natively anchored; hide is implemented and hash-covered; the stat-cap table (task b) is a complete native literal extraction. FileUpload audit list stays closed; open surfaces are now gameplay-feature-sized (SameSpeed march, transform units) rather than knowledge gaps.

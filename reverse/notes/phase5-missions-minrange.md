@@ -1,4 +1,4 @@
-# Phase 5 — missions & minimum range + Phase D replay harness (v=23) + stances: defend/bombard/dontshoot/takepos (v=28)
+# Phase 5 — missions & minimum range + Phase D replay harness (v=23) + stances: defend/bombard/dontshoot/takepos (v=28) + acts siege/hide/reset-speed (v=30)
 
 Native anchors (dump.cs 6.9.18, sha256 0050e67d…):
 
@@ -233,33 +233,106 @@ specmode-native.txt`, tool `reverse/tools/specmode_native_analysis.py`).
   the replay hash are untouched — the sim holds aircraft stationary, which
   remains an approximation (orbit kinematics + attack passes UNRESOLVED).
 
-### Remaining unknowns (documented)
-- Native defend leash value/duration and the Battle-level gate predicate in
-  `execute()` act 5 (needs vtable-slot mapping of the Battle virtual).
-- Bombard point-denial duration (`task_until_tick` semantics) and whether
-  bombard units keep self-defense acquisition while bombarding.
-- DontShoot task-vs-spec exclusivity nuance (sticky toggle vs task
-  replacement).
-- Native TakePositions formation algorithm (how the sim distributes
-  per-unit Coordinates when the player places a group).
-- ACT_SIEGE_TO/FROM, ACT_HIDE/UNHIDE, ACT_RESET_SPEED (SameSpeed
-  `SameSpeed // 0x18` object), `Hide/Unhide` specs: still open Phase 5
-  adjacents (stealth/siege-unit specifics), not part of the documented gap
-  list.
+### Acts siege/hide/reset-speed + bombard duration + defend anchor (v=30 native pass)
+
+Native method: full decode of `GAICommandSpecMode.execute(Battle)` arms (VA 0x45F61E0;
+evidence `reverse/evidence/combat/phase5-adjacent-native.txt`, tools
+`reverse/tools/phase5_adjacent_native_analysis.py` + `field_access_scan.py`); Unit
+vtable calls resolved by call-shape + dataflow (the dump.cs Slot annotations do not
+map 1:1 onto the runtime vtable in the 249-256 region — get_X/get_Y sit two slots
+earlier than annotated; every used slot was verified by disassembling the method body
+or by its call-shape, e.g. get_Task at [klass+0x1008] is confirmed inside $Hi where the
+byte result is compared against the task argument).
+
+- **ACT_SIEGE_TO / ACT_SIEGE_FROM (2/3)** — one arm for both: `specBit = (act==2 ?
+  ToSiege 16 : FromSiege 32)`; mask = `specBit | (act==2 ? ToShield|ToFog :
+  FromShield|FromFog)` (0x140 = 64|256, 0x280 = 128|512); the arm requires
+  `(unitType.specs & mask) != 0` — i.e. the command applies WHICHEVER transform the
+  type supports (siege/shield/fog — the Seraphim/Kodomash/Beholder family), not a
+  siege-only toggle. Chassis byte check via the type's interface (23 -> proceed,
+  else 22 -> w24, else alternate path); flag 32 added; target dropped (set_Obj(null)),
+  `forced` cleared, position/fog helper `$Gi`, `caravan` set true, task cleared to 0
+  (transform is a STATE, not a task), chassis-22/23 units get a final `$Yh(Battle,
+  Unit, int)` call. Client surface: `ClientUnitStateSpecType.ToSiege/FromSiege = 16/32`
+  (271176/271177), `Unit.SIEGE_STAGE_*` consts {SEIZE_FIRE=0, ROTATE_WEAPONS=1,
+  TRANSFORM=2} + `siege_stage/siegeTick/siegeAfterWalkTick/siege_blocked` fields
+  (393225 region), `SeraphimTurbo/SeraphimSiege/TypeAutoSiege/StateAutoSiege`
+  properties. NOT reconstructed in the tribute (no transform units modeled; the
+  Seraphim land/depart ability already covers its transform).
+- **ACT_HIDE (4)** — capability = type-spec bit 17 (Hide 131072); skip if
+  `get_Task() == 4`; clear `forced`; `$he(Battle, Unit, -1)` notify; drop target;
+  fog/position sync; `caravan` true; `$ki`/`$ji` cleanup; `$Hi(Battle, Unit, 4)` = set
+  task Hide. A TARGETED order (`GUIBattleActionUnitSpecHide :
+  AbstractGUIBattleActionUnitSpecTargeting` 309519, hotkey `UnitSpecHide = 39`
+  255747, task icon 322941, "enemy spotted while hidden" voice
+  `ItemInfEnemySpottedSpecHide = 35` 81528). Visibility consts
+  `VISIBLE_HIDDEN = 1` / `VISIBLE_DETECTED = 3` (393226).
+- **ACT_RESET_SPEED (6)** — a single helper `$ii(Battle, Unit, true)` (0x47F1DFC)
+  switching on the game-mode static then normalizing speed — the cancellation arm of
+  the SameSpeed march (`SameSpeed {sbyte speed, Coordinate coord}` 390948 stored at
+  `Unit.sameSpeed // 0x260`; `ClientUnitStateSpecType.SameSpeed = 8388608` 271191;
+  hotkey `UnitSpecSameSpeed = 49` 255757; `UnitSpeedMoveStyle.SameSpeed = 1` 337636;
+  own ST serializer pair 368192/368207; group-gate `IsSelectedGroopCanMoveWithSameSpeed`
+  253820). The SameSpeed SET order + per-tick coordinator (`Battle.$HL`, 40
+  sameSpeed reads) remain unreconstructed (movement-kernel feature; document-only).
+- **Bombard duration** — `AICommUnitsBombard.$CMA` (0x4906390) is a 37-state jump-table
+  machine: it computes the shell POINT with an LCG-scatter around the ordered
+  coordinates (constants 0x852906a7 / 0x9fe0597f), repositions via `$Gi`, and drives
+  the unit across ticks — there is NO single duration constant; `task_until_tick`
+  (Unit field 0x104) is written at only 6 call sites, 5 of them in
+  `BattleAct.$uA(Battle, PvPBattleResults, ...)` (battle-finish freeze), NOT by the
+  bombard executor. The tribute's "shell until released" model is consistent with the
+  native structure (duration = task lifetime, terminated by the next order).
+- **Defend anchor CONFIRMED natively** — the execute() act-5 arm allocates a
+  `PatrolRoute` (ctor 0x459F740), adds ONE `Coordinate(unit.x*100, unit.y*100)`
+  (Coordinate ctor 0x4593100, the x100 tile->pixel scale), and stores it via
+  `set_PatrolDefend` (vtable pair [klass+0xD38]) — the v=28 `commandDefend` anchor +
+  `patrol_defend // 0x158` reading is exact. The chase/leash logic lives in
+  `UnitAct.$Pg(Battle, Unit)` (0x483C244, ~44 KB, 99 route-touching sites) and
+  `UnitAct.$sH` (0x47F3F10); the leash VALUE is not a compile-time literal (server
+  balance) — the tuned `DEFEND_TETHER = 4` stands, now with the mechanism proven.
+  The act-5 battle gate = `battle.$gm()` (vtable [0x508]) reading a flags int at
+  [Battle+0x80] AND-ed with act==5 — a battle-mode permission check.
+
+### Hide reconstruction (v=30, tribute)
+
+`commandHide(ids, x, y)` — infantry-only (per-type spec-mask analog), TARGETED order
+(G key arms, right-click picks the ambush spot; hotkey analog UnitSpecHide = 39):
+walk to the spot, then `u.hiding = true` anchored. Hidden units: untargetable beyond
+`HIDE_DETECT = 2.5` (VISIBLE_HIDDEN -> VISIBLE_DETECTED transition; detect radius
+server-side, tuned), still acquire and fire from cover; FIRING REVEALS
+(`shoot`/`fireShell`/`meleeStrike`/`shootBuilding` clear hiding — the flag_shoot
+analog); any non-hide order or stop releases; no aggro-join while hiding; state
+covered by the U-line hash (hiding bit before fireHold). `Commands` type "hide" rides
+LOCKSTEP_NET_TYPES. Tests: phase5.test.js 128 -> 146 vectors (capability gate,
+walk+entry, detect gate far/near, fire-from-cover reveal, move/stop release, re-hide,
+determinism + hash coverage).
+
+### Remaining unknowns (documented, after v=30)
+
+- Defend leash VALUE and the full `$Pg` chase micro-logic (44 KB state machine; the
+  anchor mechanism + task flow are proven, the numeric leash is server-side).
+- SameSpeed set-order + `Battle.$HL` per-tick coordinator (document-only above).
+- Native TakePositions formation algorithm (how the sim distributes per-unit
+  Coordinates when the player places a group).
+- Siege transform stage timings (SIEGE_STAGE_* progression inside the Unit tick) and
+  the chassis-byte identities (22/23/31 via the UnitType interface).
+- DontShoot task-vs-spec exclusivity nuance (sticky toggle vs task replacement).
 - Native patrol is a MULTI-POINT route (`PatrolRoute.points : List<Coordinate>`
   dump.cs:386963; `SendSelectedUnitsPatrolTargeting(List<Vector3>)` 337727) —
   the tribute's anchor<->B two-leg flip is a simplification (documented v=23).
 
 ## Coverage
-- `reverse/evidence/tests/phase5.test.js` — 128 vectors (min-range gates, patrol
+- `reverse/evidence/tests/phase5.test.js` — 146 vectors (min-range gates, patrol
   oscillation/engagement/resume/journal, garrison enter/protect/crew-fire/exit/
   capacity/death/rejections, hold stance entry/window-fire/no-pursuit/
   retaliation/minRange-aggro/building/melee/warn-join/interplay/release,
   defend anchor/engage/tether/break-off/lock-drop/re-anchor/release,
   bombard filter/point-shells/area-damage/band/dead-zone/release,
   fire-discipline track/no-fire/restore/melee+building gating,
-  takepos per-unit spots/arrival-hold/no-pursuit, cross-feature determinism
-  incl. fireHold in the hash).
+  takepos per-unit spots/arrival-hold/no-pursuit, hide capability/walk-entry/
+  detect-gate/fire-reveal/release/determinism, cross-feature determinism incl.
+  fireHold + hiding in the hash).
 - `reverse/evidence/tests/replay.test.js` — 45 vectors (bit-exact reproduction,
   baseline, cross-issuer ordering, tamper detection seed/drop/alter/terrain,
   540-command journal vs 512 ring, live-shaped build+patrol+garrison run, JSON

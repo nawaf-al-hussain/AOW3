@@ -1,0 +1,679 @@
+AOW3 6.9.18 — phase 5 adjacent unknowns + max-stat tier extraction
+sha256(libil2cpp.so) = 8ace05bbaa2cdfda156e377cfbcb0c0a6fb223fa68188fa3df49f677f10e90c5
+sha256(dump.cs)      = 0050e67d23f898588f0771c69ba7f30f9122cd6eccd66674c0f7c87b7f24714b
+
+== A. direct-BL call sites of Unit accessors ==
+
+-- Unit.get_Hiding() (0x45b0af8): 0 direct BL site(s)
+
+-- Unit.get_Patrol() (0x45b1254): 0 direct BL site(s)
+
+-- Unit.set_Patrol(PatrolRoute) (0x45b125c): 0 direct BL site(s)
+
+-- Unit.get_PatrolDefend() (0x45b126c): 0 direct BL site(s)
+
+-- Unit.set_PatrolDefend(PatrolRoute) (0x45b1274): 0 direct BL site(s)
+
+-- Unit.get_Task() (0x45b13cc): 0 direct BL site(s)
+
+-- Unit.set_Task(sbyte) (0x45b13d4): 0 direct BL site(s)
+
+-- Unit.get_TaskUntilTick() (0x45b13ec): 0 direct BL site(s)
+
+-- Unit.set_TaskUntilTick(int) (0x45b13f4): 0 direct BL site(s)
+
+-- Unit.set_VisibleClient(sbyte) (0x45b144c): 0 direct BL site(s)
+
+-- Unit.get_SameSpeed() (0x45b1698): 0 direct BL site(s)
+
+-- Unit.set_SameSpeed(SameSpeed) (0x45b16a0): 0 direct BL site(s)
+
+-- Unit.get_TakePosition() (0x45b16b0): 0 direct BL site(s)
+
+-- Unit.set_TakePosition(Coordinate) (0x45b16b8): 0 direct BL site(s)
+
+-- $he(Battle,Unit,int) (0x4758128): 50 direct BL site(s)
+   bl from 0x45f64d0
+   bl from 0x45f6634
+   bl from 0x45f6774
+   bl from 0x45f6a94
+   bl from 0x45f6ad8
+   bl from 0x45f6ce4
+   bl from 0x45fc208
+   bl from 0x466956c
+   bl from 0x472a834
+   bl from 0x473c4f8
+   bl from 0x4755058
+   bl from 0x47fd2a0
+   bl from 0x48048c4
+   bl from 0x4806b6c
+   bl from 0x4806d84
+   bl from 0x480a6d8
+   bl from 0x480c030
+   bl from 0x4812e1c
+   bl from 0x4813344
+   bl from 0x4817404
+   bl from 0x4819d54
+   bl from 0x481af5c
+   bl from 0x481ba40
+   bl from 0x481bfe4
+   bl from 0x481d5c8
+   bl from 0x481d82c
+   bl from 0x481dca0
+   bl from 0x4831600
+   bl from 0x4833e34
+   bl from 0x4834f68
+   bl from 0x483e300
+   bl from 0x484a334
+   bl from 0x48694dc
+   bl from 0x487d754
+   bl from 0x488af50
+   bl from 0x488e3cc
+   bl from 0x4894710
+   bl from 0x48951c0
+   bl from 0x4896754
+   bl from 0x4899030
+   bl from 0x48a2930
+   bl from 0x48cca70
+   bl from 0x48fe588
+   bl from 0x48fff90
+   bl from 0x490049c
+   bl from 0x4906af0
+   bl from 0x490809c
+   bl from 0x490c0e8
+   bl from 0x4910bdc
+   bl from 0x4912758
+
+-- $ii(Battle,Unit,bool) [reset speed] (0x47f1dfc): 16 direct BL site(s)
+   bl from 0x45f6b9c
+   bl from 0x476cd0c
+   bl from 0x47bdae4
+   bl from 0x47beca0
+   bl from 0x47ce538
+   bl from 0x47cf2d8
+   bl from 0x47df444
+   bl from 0x47ea870
+   bl from 0x47ff990
+   bl from 0x48322dc
+   bl from 0x4836984
+   bl from 0x483fa34
+   bl from 0x485113c
+   bl from 0x487f798
+   bl from 0x488a040
+   bl from 0x490c390
+
+-- $Gi(Battle,Unit,int,int) (0x4809330): 54 direct BL site(s)
+   bl from 0x45f6690
+   bl from 0x45f67d0
+   bl from 0x45f695c
+   bl from 0x45f6b34
+   bl from 0x4725dc8
+   bl from 0x47271b4
+   bl from 0x4728f28
+   bl from 0x472a808
+   bl from 0x473b7b8
+   bl from 0x473ba4c
+   bl from 0x4750528
+   bl from 0x47b7904
+   bl from 0x47fe024
+   bl from 0x47ffac0
+   bl from 0x4802988
+   bl from 0x4802fe0
+   bl from 0x48072fc
+   bl from 0x48073a0
+   bl from 0x480a71c
+   bl from 0x480af64
+   bl from 0x480b104
+   bl from 0x4813234
+   bl from 0x481400c
+   bl from 0x4817580
+   bl from 0x4818c04
+   bl from 0x481afac
+   bl from 0x481ba80
+   bl from 0x481c028
+   bl from 0x481d870
+   bl from 0x481e468
+   bl from 0x481f70c
+   bl from 0x482d204
+   bl from 0x4832080
+   bl from 0x4832f90
+   bl from 0x48331f4
+   bl from 0x4833474
+   bl from 0x4833628
+   bl from 0x48427f8
+   bl from 0x4856b40
+   bl from 0x487ac20
+   bl from 0x4885b7c
+   bl from 0x488afa8
+   bl from 0x4894768
+   bl from 0x4899340
+   bl from 0x48d7450
+   bl from 0x48f6afc
+   bl from 0x48fffc0
+   bl from 0x49004b4
+   bl from 0x4904d4c
+   bl from 0x49067c4
+   bl from 0x4906ff8
+   bl from 0x490d338
+   bl from 0x490fa38
+   bl from 0x49126c4
+
+-- $Hi(Battle,Unit,sbyte) [SetTask] (0x48178fc): 33 direct BL site(s)
+   bl from 0x45f39fc
+   bl from 0x45f6594
+   bl from 0x45f66e0
+   bl from 0x45f6820
+   bl from 0x45f6aa8
+   bl from 0x45f6b84
+   bl from 0x45f6dd4
+   bl from 0x45fc340
+   bl from 0x473bfe0
+   bl from 0x4753c84
+   bl from 0x47b6c28
+   bl from 0x4801d94
+   bl from 0x480b28c
+   bl from 0x480b92c
+   bl from 0x480c250
+   bl from 0x480c760
+   bl from 0x4813380
+   bl from 0x4814028
+   bl from 0x4819044
+   bl from 0x4819b70
+   bl from 0x484fde0
+   bl from 0x487f14c
+   bl from 0x48a2f88
+   bl from 0x48a3550
+   bl from 0x48fe68c
+   bl from 0x490000c
+   bl from 0x49000e0
+   bl from 0x4906b0c
+   bl from 0x490817c
+   bl from 0x490dc50
+   bl from 0x4910bfc
+   bl from 0x4912778
+   bl from 0x4914798
+
+-- $ki(Battle,Unit,sbyte) (0x4817a8c): 36 direct BL site(s)
+   bl from 0x45f6558
+   bl from 0x45f66bc
+   bl from 0x45f67fc
+   bl from 0x45f6a54
+   bl from 0x45f6b60
+   bl from 0x45f6d6c
+   bl from 0x45fc364
+   bl from 0x47256e4
+   bl from 0x473be60
+   bl from 0x4801900
+   bl from 0x4801c48
+   bl from 0x480a4d0
+   bl from 0x480b130
+   bl from 0x480b82c
+   bl from 0x48132e0
+   bl from 0x48144d0
+   bl from 0x4819a74
+   bl from 0x481af24
+   bl from 0x481b9e8
+   bl from 0x481bf94
+   bl from 0x48316d0
+   bl from 0x4833818
+   bl from 0x484ec2c
+   bl from 0x484f198
+   bl from 0x484fa4c
+   bl from 0x48a28b4
+   bl from 0x48b99dc
+   bl from 0x48ccb5c
+   bl from 0x48fbb9c
+   bl from 0x48fe604
+   bl from 0x48fffe0
+   bl from 0x4906aa0
+   bl from 0x4908138
+   bl from 0x490b018
+   bl from 0x490ff14
+   bl from 0x4912708
+
+-- $hi(Battle,Unit,int,int) [siege position] (0x4831fe4): 15 direct BL site(s)
+   bl from 0x45f652c
+   bl from 0x45f6d58
+   bl from 0x45fc288
+   bl from 0x46d02f8
+   bl from 0x46fd450
+   bl from 0x4752e74
+   bl from 0x47b3a84
+   bl from 0x47b6834
+   bl from 0x4819f04
+   bl from 0x481dd28
+   bl from 0x48316a4
+   bl from 0x48a5100
+   bl from 0x48ccabc
+   bl from 0x48fe5e4
+   bl from 0x49080f8
+
+-- $ji(Battle,Unit) (0x4832100): 17 direct BL site(s)
+   bl from 0x45f6568
+   bl from 0x45f66cc
+   bl from 0x45f680c
+   bl from 0x45f6a68
+   bl from 0x45f6b70
+   bl from 0x45f6dc0
+   bl from 0x45fc350
+   bl from 0x473be9c
+   bl from 0x484ec38
+   bl from 0x48a28c4
+   bl from 0x48fe614
+   bl from 0x48ffff0
+   bl from 0x4906ab0
+   bl from 0x4908148
+   bl from 0x490b028
+   bl from 0x4910b88
+   bl from 0x491273c
+
+-- $Yh(Battle,Unit,int) [siege final] (0x483241c): 3 direct BL site(s)
+   bl from 0x45f6dec
+   bl from 0x480b8bc
+   bl from 0x4836dfc
+
+
+== A2. context around key call sites ==
+  --- call of $ii(Battle,Unit,bool) [reset speed] around 0x45f6b9c ---
+       0x45f6b5c: mov      x3, xzr
+       0x45f6b60: bl       #0x4817a8c
+         -> public static void $ki(Battle 1, Unit 1, sbyte 1) { }
+       0x45f6b64: mov      x0, x19
+       0x45f6b68: mov      x1, x21
+       0x45f6b6c: mov      x2, xzr
+       0x45f6b70: bl       #0x4832100
+         -> public static void $ji(Battle 1, Unit 1) { }
+       0x45f6b74: mov      x0, x19
+       0x45f6b78: mov      x1, x21
+       0x45f6b7c: mov      w2, #3
+       0x45f6b80: mov      x3, xzr
+       0x45f6b84: bl       #0x48178fc
+         -> public static void $Hi(Battle 1, Unit 1, sbyte 1) { }
+       0x45f6b88: b        #0x45f6324
+       0x45f6b8c: mov      x0, x19
+       0x45f6b90: mov      x1, x21
+       0x45f6b94: mov      w2, #1
+       0x45f6b98: mov      x3, xzr
+   >>> 0x45f6b9c: bl       #0x47f1dfc
+         -> public static void $ii(Battle 1, Unit 1, bool 1) { }
+       0x45f6ba0: b        #0x45f6324
+       0x45f6ba4: ldr      x8, [x21]
+       0x45f6ba8: ldr      x1, [x8, #0x370]
+       0x45f6bac: ldr      x9, [x8, #0x368]
+       0x45f6bb0: mov      x0, x21
+       0x45f6bb4: blr      x9
+       0x45f6bb8: cbz      x0, #0x45f6e44
+       0x45f6bbc: ldr      x8, [x0]
+       0x45f6bc0: ldr      x1, [x8, #0x4e0]
+       0x45f6bc4: ldr      x9, [x8, #0x4d8]
+       0x45f6bc8: blr      x9
+       0x45f6bcc: and      w8, w0, #0xff
+       0x45f6bd0: cmp      w8, #0x16
+       0x45f6bd4: cset     w24, eq
+       0x45f6bd8: ldrb     w8, [x20, #0x30]
+       0x45f6bdc: ldr      x9, [x21]
+       0x45f6be0: cmp      w8, #2
+       0x45f6be4: ldr      x8, [x9, #0x8e8]
+       0x45f6be8: ldr      x1, [x9, #0x8f0]
+       0x45f6bec: mov      w9, #0x280
+       0x45f6bf0: csel     w23, w29, w9, eq
+       0x45f6bf4: mov      x0, x21
+       0x45f6bf8: blr      x8
+       0x45f6bfc: cmp      w0, #1
+       0x45f6c00: b.lt     #0x45f6324
+       0x45f6c04: ldr      x8, [x21]
+       0x45f6c08: ldr      x9, [x8, #0x6a8]
+       0x45f6c0c: ldr      x2, [x8, #0x6b0]
+       0x45f6c10: mov      x0, x21
+       0x45f6c14: mov      w1, #0x20
+       0x45f6c18: blr      x9
+  --- call of $ii(Battle,Unit,bool) [reset speed] around 0x476cd0c ---
+       0x476cccc: ldr      x8, [x8, #0x4d8]
+       0x476ccd0: ldr      x0, [x8]
+       0x476ccd4: ldr      w8, [x0, #0xe4]
+       0x476ccd8: cbnz     w8, #0x476ccec
+       0x476ccdc: bl       #0x3cc7ac8
+       0x476cce0: adrp     x8, #0x968e000
+       0x476cce4: ldr      x8, [x8, #0x4d8]
+       0x476cce8: ldr      x0, [x8]
+       0x476ccec: ldr      x8, [x0, #0xb8]
+       0x476ccf0: mov      x0, x21
+       0x476ccf4: mov      x1, x19
+       0x476ccf8: mov      x3, xzr
+       0x476ccfc: ldp      w9, w8, [x8, #4]
+       0x476cd00: mul      w8, w8, w9
+       0x476cd04: cmp      w8, #0
+       0x476cd08: cset     w2, ne
+   >>> 0x476cd0c: bl       #0x47f1dfc
+         -> public static void $ii(Battle 1, Unit 1, bool 1) { }
+       0x476cd10: adrp     x8, #0x968e000
+       0x476cd14: ldr      x8, [x8, #0x4d8]
+       0x476cd18: ldr      x8, [x8]
+       0x476cd1c: b        #0x476df48
+       0x476cd20: ldr      x0, [sp, #0xb0]
+       0x476cd24: cbz      x0, #0x476e424
+       0x476cd28: ldr      x8, [x0]
+       0x476cd2c: ldr      x9, [x8, #0x218]
+       0x476cd30: ldr      x1, [x8, #0x220]
+       0x476cd34: blr      x9
+       0x476cd38: cbz      x0, #0x476e424
+       0x476cd3c: adrp     x8, #0x968e000
+       0x476cd40: ldr      x8, [x8, #0x4d8]
+       0x476cd44: ldr      w20, [x0, #0x18]
+       0x476cd48: ldr      x8, [x8]
+       0x476cd4c: ldr      w9, [x8, #0xe4]
+       0x476cd50: cbnz     w9, #0x476cd68
+       0x476cd54: mov      x0, x8
+       0x476cd58: bl       #0x3cc7ac8
+       0x476cd5c: adrp     x8, #0x968e000
+       0x476cd60: ldr      x8, [x8, #0x4d8]
+       0x476cd64: ldr      x8, [x8]
+       0x476cd68: ldr      x10, [x8, #0xb8]
+       0x476cd6c: ldp      w9, w11, [x10, #0xc]
+       0x476cd70: eor      w9, w11, w9
+       0x476cd74: cmp      w20, w9
+       0x476cd78: b.ne     #0x476d144
+       0x476cd7c: ldr      w9, [x8, #0xe4]
+       0x476cd80: cbnz     w9, #0x476cd9c
+       0x476cd84: mov      x0, x8
+       0x476cd88: bl       #0x3cc7ac8
+  --- call of $ii(Battle,Unit,bool) [reset speed] around 0x47bdae4 ---
+       0x47bdaa4: add      x9, x11, w10, sxtw #1
+       0x47bdaa8: ldp      w11, w10, [sp, #0x1c]
+       0x47bdaac: add      w10, w11, w10
+       0x47bdab0: strh     w10, [x9, #0x20]
+       0x47bdab4: ldr      w9, [x8, #0xe4]
+       0x47bdab8: cbnz     w9, #0x47bdac8
+       0x47bdabc: mov      x0, x8
+       0x47bdac0: bl       #0x3cc7ac8
+       0x47bdac4: ldr      x8, [x29]
+       0x47bdac8: ldr      x8, [x8, #0xb8]
+       0x47bdacc: mov      x0, x28
+       0x47bdad0: mov      x1, x19
+       0x47bdad4: mov      x3, xzr
+       0x47bdad8: ldp      w9, w8, [x8, #0xc]
+       0x47bdadc: cmp      w9, w8
+       0x47bdae0: cset     w2, ne
+   >>> 0x47bdae4: bl       #0x47f1dfc
+         -> public static void $ii(Battle 1, Unit 1, bool 1) { }
+       0x47bdae8: b        #0x47be4c8
+       0x47bdaec: cbz      x22, #0x47be724
+       0x47bdaf0: ldr      w9, [x22, #0x18]
+       0x47bdaf4: cmp      w25, w9
+       0x47bdaf8: b.hs     #0x47be728
+       0x47bdafc: add      x9, x22, w25, sxtw
+       0x47bdb00: ldr      w10, [x8, #0xe4]
+       0x47bdb04: ldrsb    w27, [x9, #0x20]
+       0x47bdb08: cbnz     w10, #0x47bdb18
+       0x47bdb0c: mov      x0, x8
+       0x47bdb10: bl       #0x3cc7ac8
+       0x47bdb14: ldr      x8, [x29]
+       0x47bdb18: ldr      x9, [x8, #0xb8]
+       0x47bdb1c: ldr      w10, [x9, #0x34]
+       0x47bdb20: ldr      w9, [x8, #0xe4]
+       0x47bdb24: cmp      w10, w27
+       0x47bdb28: b.ne     #0x47be4e8
+       0x47bdb2c: cbnz     w9, #0x47bdb3c
+       0x47bdb30: mov      x0, x8
+       0x47bdb34: bl       #0x3cc7ac8
+       0x47bdb38: ldr      x8, [x29]
+       0x47bdb3c: ldr      x9, [x8, #0xb8]
+       0x47bdb40: ldr      w9, [x9, #0x34]
+       0x47bdb44: str      w9, [sp, #0x5c]
+       0x47bdb48: b        #0x47bd794
+       0x47bdb4c: cbz      x22, #0x47be724
+       0x47bdb50: ldr      w9, [x22, #0x18]
+       0x47bdb54: cmp      w25, w9
+       0x47bdb58: b.hs     #0x47be728
+       0x47bdb5c: add      x9, x22, w25, sxtw
+       0x47bdb60: ldr      w10, [x8, #0xe4]
+  --- call of $ii(Battle,Unit,bool) [reset speed] around 0x47beca0 ---
+       0x47bec60: bl       #0x3cc7ac8
+       0x47bec64: ldr      x0, [x22]
+       0x47bec68: ldr      x8, [x0, #0xb8]
+       0x47bec6c: add      x8, x8, #0x34
+       0x47bec70: b        #0x47beaf4
+       0x47bec74: ldr      w8, [x0, #0xe4]
+       0x47bec78: cbnz     w8, #0x47bec84
+       0x47bec7c: bl       #0x3cc7ac8
+       0x47bec80: ldr      x0, [x22]
+       0x47bec84: ldr      x8, [x0, #0xb8]
+       0x47bec88: mov      x0, x20
+       0x47bec8c: mov      x1, x19
+       0x47bec90: mov      x3, xzr
+       0x47bec94: ldp      w9, w8, [x8, #0xc]
+       0x47bec98: cmp      w9, w8
+       0x47bec9c: cset     w2, ne
+   >>> 0x47beca0: bl       #0x47f1dfc
+         -> public static void $ii(Battle 1, Unit 1, bool 1) { }
+       0x47beca4: tbz      w26, #0, #0x47becc0
+       0x47beca8: cbz      x19, #0x47bed88
+       0x47becac: ldr      x8, [x19]
+       0x47becb0: mov      x0, x19
+       0x47becb4: ldr      x9, [x8, #0x17e8]
+       0x47becb8: ldr      x1, [x8, #0x17f0]
+       0x47becbc: blr      x9
+       0x47becc0: tbz      w28, #0, #0x47bed6c
+       0x47becc4: ldr      x0, [x22]
+       0x47becc8: ldr      w8, [x0, #0xe4]
+       0x47beccc: cbnz     w8, #0x47becd8
+       0x47becd0: bl       #0x3cc7ac8
+       0x47becd4: ldr      x0, [x22]
+       0x47becd8: ldr      x8, [x0, #0xb8]
+       0x47becdc: mov      w28, #1
+       0x47bece0: add      x8, x8, #0x14
+       0x47bece4: b        #0x47beaf4
+       0x47bece8: tbz      w27, #0, #0x47bed0c
+       0x47becec: ldr      w8, [x0, #0xe4]
+       0x47becf0: cbnz     w8, #0x47becfc
+       0x47becf4: bl       #0x3cc7ac8
+       0x47becf8: ldr      x0, [x22]
+       0x47becfc: ldr      x8, [x0, #0xb8]
+       0x47bed00: mov      w27, #1
+       0x47bed04: add      x8, x8, #0x85c
+       0x47bed08: b        #0x47beaf4
+       0x47bed0c: mov      w27, wzr
+       0x47bed10: tbnz     w26, #0, #0x47beca8
+       0x47bed14: b        #0x47becc0
+       0x47bed18: ldr      w8, [x0, #0xe4]
+       0x47bed1c: cbnz     w8, #0x47bed24
+  --- call of $ii(Battle,Unit,bool) [reset speed] around 0x47ce538 ---
+       0x47ce4f8: b.hs     #0x47cf590
+       0x47ce4fc: add      x9, x24, w19, sxtw #1
+       0x47ce500: ldr      w10, [x8, #0xe4]
+       0x47ce504: add      w11, w28, w20
+       0x47ce508: strh     w11, [x9, #0x20]
+       0x47ce50c: cbnz     w10, #0x47ce51c
+       0x47ce510: mov      x0, x8
+       0x47ce514: bl       #0x3cc7ac8
+       0x47ce518: ldr      x8, [x26]
+       0x47ce51c: ldr      x8, [x8, #0xb8]
+       0x47ce520: ldr      x0, [sp, #0x10]
+       0x47ce524: mov      x1, x22
+       0x47ce528: mov      x3, xzr
+       0x47ce52c: ldp      w9, w8, [x8, #0xc]
+       0x47ce530: cmp      w9, w8
+       0x47ce534: cset     w2, ne
+   >>> 0x47ce538: bl       #0x47f1dfc
+         -> public static void $ii(Battle 1, Unit 1, bool 1) { }
+       0x47ce53c: ldr      x8, [x26]
+       0x47ce540: b        #0x47ce5bc
+       0x47ce544: cmp      w9, #7
+       0x47ce548: b.eq     #0x47ce5dc
+       0x47ce54c: cmp      w9, #8
+       0x47ce550: b.ne     #0x47ce7fc
+       0x47ce554: cbz      x22, #0x47cf58c
+       0x47ce558: ldr      x8, [x22]
+       0x47ce55c: mov      x0, x22
+       0x47ce560: ldr      x9, [x8, #0x8e8]
+       0x47ce564: ldr      x1, [x8, #0x8f0]
+       0x47ce568: blr      x9
+       0x47ce56c: ldr      x8, [x26]
+       0x47ce570: mov      w25, w0
+       0x47ce574: ldr      w9, [x8, #0xe4]
+       0x47ce578: cbnz     w9, #0x47ce588
+       0x47ce57c: mov      x0, x8
+       0x47ce580: bl       #0x3cc7ac8
+       0x47ce584: ldr      x8, [x26]
+       0x47ce588: ldr      x9, [x8, #0xb8]
+       0x47ce58c: ldp      w10, w11, [x9, #4]
+       0x47ce590: mul      w10, w11, w10
+       0x47ce594: cmp      w25, w10
+       0x47ce598: b.le     #0x47ce5bc
+       0x47ce59c: ldr      w10, [x8, #0xe4]
+       0x47ce5a0: cbnz     w10, #0x47ce5b4
+       0x47ce5a4: mov      x0, x8
+       0x47ce5a8: bl       #0x3cc7ac8
+       0x47ce5ac: ldr      x8, [x26]
+       0x47ce5b0: ldr      x9, [x8, #0xb8]
+       0x47ce5b4: add      x9, x9, #0x14
+  --- call of $ii(Battle,Unit,bool) [reset speed] around 0x47cf2d8 ---
+       0x47cf298: cmp      w21, #2
+       0x47cf29c: b.eq     #0x47cf3d4
+       0x47cf2a0: cmp      w21, #3
+       0x47cf2a4: b.ne     #0x47cf510
+       0x47cf2a8: ldr      x0, [x26]
+       0x47cf2ac: ldr      w8, [x0, #0xe4]
+       0x47cf2b0: cbnz     w8, #0x47cf2bc
+       0x47cf2b4: bl       #0x3cc7ac8
+       0x47cf2b8: ldr      x0, [x26]
+       0x47cf2bc: ldr      x8, [x0, #0xb8]
+       0x47cf2c0: ldr      x0, [sp, #0x10]
+       0x47cf2c4: mov      x1, x22
+       0x47cf2c8: mov      x3, xzr
+       0x47cf2cc: ldp      w9, w8, [x8, #0xc]
+       0x47cf2d0: cmp      w9, w8
+       0x47cf2d4: cset     w2, ne
+   >>> 0x47cf2d8: bl       #0x47f1dfc
+         -> public static void $ii(Battle 1, Unit 1, bool 1) { }
+       0x47cf2dc: ldr      x8, [x26]
+       0x47cf2e0: b        #0x47cf4f0
+       0x47cf2e4: cmp      w21, #4
+       0x47cf2e8: b.eq     #0x47cf448
+       0x47cf2ec: cmp      w21, #5
+       0x47cf2f0: b.ne     #0x47cf510
+       0x47cf2f4: cbz      x22, #0x47cf58c
+       0x47cf2f8: ldr      x8, [x22]
+       0x47cf2fc: mov      x0, x22
+       0x47cf300: ldr      x9, [x8, #0x368]
+       0x47cf304: ldr      x1, [x8, #0x370]
+       0x47cf308: blr      x9
+       0x47cf30c: cbz      x0, #0x47cf58c
+       0x47cf310: ldr      x8, [x0]
+       0x47cf314: ldr      x9, [x8, #0x288]
+       0x47cf318: ldr      x1, [x8, #0x290]
+       0x47cf31c: blr      x9
+       0x47cf320: ldr      w10, [sp, #0x1c]
+       0x47cf324: ldr      x8, [x26]
+       0x47cf328: and      w9, w0, #0xff
+       0x47cf32c: cmp      w9, w10, uxtb
+       0x47cf330: b.eq     #0x47cf3fc
+       0x47cf334: ldr      w9, [x8, #0xe4]
+       0x47cf338: cbnz     w9, #0x47cf348
+       0x47cf33c: mov      x0, x8
+       0x47cf340: bl       #0x3cc7ac8
+       0x47cf344: ldr      x8, [x26]
+       0x47cf348: ldr      x8, [x8, #0xb8]
+       0x47cf34c: add      x8, x8, #8
+       0x47cf350: b        #0x47cf1b8
+       0x47cf354: cbz      x22, #0x47cf58c
+  --- call of $ii(Battle,Unit,bool) [reset speed] around 0x47df444 ---
+       0x47df404: cmp      w9, #5
+       0x47df408: b.eq     #0x47df5a0
+       0x47df40c: cmp      w9, #6
+       0x47df410: b.ne     #0x47df610
+       0x47df414: ldr      x0, [x25]
+       0x47df418: ldr      w8, [x0, #0xe4]
+       0x47df41c: cbnz     w8, #0x47df428
+       0x47df420: bl       #0x3cc7ac8
+       0x47df424: ldr      x0, [x25]
+       0x47df428: ldr      x8, [x0, #0xb8]
+       0x47df42c: mov      x0, x29
+       0x47df430: mov      x1, x22
+       0x47df434: mov      x3, xzr
+       0x47df438: ldp      w9, w8, [x8, #0xc]
+       0x47df43c: cmp      w9, w8
+       0x47df440: cset     w2, ne
+   >>> 0x47df444: bl       #0x47f1dfc
+         -> public static void $ii(Battle 1, Unit 1, bool 1) { }
+       0x47df448: ldr      x8, [x25]
+       0x47df44c: b        #0x47df580
+       0x47df450: ldr      x8, [x25]
+       0x47df454: ldr      w9, [x8, #0xe4]
+       0x47df458: cbnz     w9, #0x47df468
+       0x47df45c: mov      x0, x8
+       0x47df460: bl       #0x3cc7ac8
+       0x47df464: ldr      x8, [x25]
+       0x47df468: ldr      x9, [x8, #0xb8]
+       0x47df46c: mov      w11, #0x65ad
+       0x47df470: movk     w11, #0xc01, lsl #16
+       0x47df474: ldr      w10, [x9, #0x54]
+       0x47df478: add      w10, w10, w11
+       0x47df47c: cmp      w10, w27
+       0x47df480: b.le     #0x47df4e0
+       0x47df484: ldr      w10, [x8, #0xe4]
+       0x47df488: cbnz     w10, #0x47df49c
+       0x47df48c: mov      x0, x8
+       0x47df490: bl       #0x3cc7ac8
+       0x47df494: ldr      x8, [x25]
+       0x47df498: ldr      x9, [x8, #0xb8]
+       0x47df49c: ldr      w9, [x9, #0x14]
+       0x47df4a0: b        #0x47df668
+       0x47df4a4: cbz      x22, #0x47df6b8
+       0x47df4a8: ldr      x8, [x22]
+       0x47df4ac: mov      x0, x22
+       0x47df4b0: ldr      x9, [x8, #0x368]
+       0x47df4b4: ldr      x1, [x8, #0x370]
+       0x47df4b8: blr      x9
+       0x47df4bc: cbz      x0, #0x47df6b8
+       0x47df4c0: ldr      x8, [x0]
+  --- call of $ii(Battle,Unit,bool) [reset speed] around 0x47ea870 ---
+       0x47ea830: mov      x0, x21
+       0x47ea834: mov      x1, x25
+       0x47ea838: bl       #0x59ad75c
+       0x47ea83c: b        #0x47ea708
+       0x47ea840: ldr      x0, [x28]
+       0x47ea844: ldr      w8, [x0, #0xe4]
+       0x47ea848: cbnz     w8, #0x47ea854
+       0x47ea84c: bl       #0x3cc7ac8
+       0x47ea850: ldr      x0, [x28]
+       0x47ea854: ldr      x8, [x0, #0xb8]
+       0x47ea858: mov      x0, x26
+       0x47ea85c: mov      x1, x23
+       0x47ea860: ldp      w9, w8, [x8, #4]
+       0x47ea864: mul      w8, w8, w9
+       0x47ea868: cmp      w8, #0
+       0x47ea86c: cset     w2, ne
+   >>> 0x47ea870: bl       #0x47f1dfc
+         -> public static void $ii(Battle 1, Unit 1, bool 1) { }
+       0x47ea874: cbz      x23, #0x47f1df4
+       0x47ea878: ldr      x8, [x23]
+       0x47ea87c: mov      x0, x23
+       0x47ea880: ldr      x9, [x8, #0xc08]
+       0x47ea884: ldr      x1, [x8, #0xc10]
+       0x47ea888: blr      x9
+       0x47ea88c: ldr      x8, [x23]
+       0x47ea890: str      x0, [sp, #0xa0]
+       0x47ea894: mov      x0, x23
+       0x47ea898: ldr      x9, [x8, #0xc28]
+       0x47ea89c: ldr      x1, [x8, #0xc30]
+       0x47ea8a0: blr      x9
+       0x47ea8a4: ldr      x8, [x28]
+       0x47ea8a8: ldr      w12, [sp, #0x4c]
+       0x47ea8ac: str      x0, [sp, #0x10]
+       0x47ea8b0: ldr      x9, [x8, #0xb8]
+       0x47ea8b4: ldp      w10, w11, [x9, #4]
+       0x47ea8b8: mul      w11, w11, w10
+       0x47ea8bc: ldr      w10, [x8, #0xe4]
+       0x47ea8c0: cmp      w11, w12
+       0x47ea8c4: b.ne     #0x47ed1a4
+       0x47ea8c8: ldr      w11, [sp, #0xdc]
+       0x47ea8cc: tbz      w11, #0, #0x47ed1a4
+       0x47ea8d0: cbz      w10, #0x47ed540
+       0x47ea8d4: mov      w12, w24
+       0x47ea8d8: b        #0x47ed554
+       0x47ea8dc: ldr      x0, [sp, #0x130]
+       0x47ea8e0: cbz      x0, #0x47f1df4
+       0x47ea8e4: ldr      x8, [x0]
+       0x47ea8e8: ldr      x9, [x8, #0x388]
+       0x47ea8ec: ldr      x1, [x8, #0x390]
