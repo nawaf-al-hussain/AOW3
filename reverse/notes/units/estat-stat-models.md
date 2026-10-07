@@ -343,7 +343,13 @@ Tribute mapping guidance (Phase 5+ / Phase 26 consumers):
    interval) + explosion radius, mirroring `MineStatsFactory`; the cost stat's progress
    bar caps read from a separate `MinePrice/71` cap key, not from its value key 66.
 4. Stat caps should use the three-tier `StatInfo {BaseMax, FirstMax?, MegaMax?}` shape
-   where upgrades/veterancy push stats beyond base.
+   where upgrades/veterancy push stats beyond base. **DONE (v=32, commit dcb393a):**
+   the full 72-entry table is ported VERBATIM into the tribute sim kernel as
+   `AOW3_MAX_STAT_TIERS` + `maxStatCap`/`maxStatGet` (the `IMaxStatValueProvider.Get`
+   analog, rank-tier fallback chain, unregistered 0/60/66/70 pass through); the
+   selection panel renders a CAP BASE/FIRST/MEGA progress bar (the native
+   display-normalization domain). Tests: `reverse/evidence/tests/stat-caps.test.js`
+   (37 vectors).
 
 ## Test
 

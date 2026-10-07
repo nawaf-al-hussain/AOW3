@@ -274,7 +274,11 @@ byte result is compared against the task argument).
   hotkey `UnitSpecSameSpeed = 49` 255757; `UnitSpeedMoveStyle.SameSpeed = 1` 337636;
   own ST serializer pair 368192/368207; group-gate `IsSelectedGroopCanMoveWithSameSpeed`
   253820). The SameSpeed SET order + per-tick coordinator (`Battle.$HL`, 40
-  sameSpeed reads) remain unreconstructed (movement-kernel feature; document-only).
+  sameSpeed reads) were the last document-only piece — RECONSTRUCTED v=33:
+  `commandSameSpeed(ids, x, y)` (group cap = slowest member's speed, each member
+  stores `u.sameSpeed`, `followPath` applies `min(own, cap)`; cancel on any other
+  order / stop / arrival = the ACT_RESET_SPEED arm; M key arms, hotkey analog 49;
+  "samespeed" rides LOCKSTEP_NET_TYPES; U-line ss field hash-covered).
 - **Bombard duration** — `AICommUnitsBombard.$CMA` (0x4906390) is a 37-state jump-table
   machine: it computes the shell POINT with an LCG-scatter around the ordered
   coordinates (constants 0x852906a7 / 0x9fe0597f), repositions via `$Gi`, and drives
@@ -308,22 +312,34 @@ LOCKSTEP_NET_TYPES. Tests: phase5.test.js 128 -> 146 vectors (capability gate,
 walk+entry, detect gate far/near, fire-from-cover reveal, move/stop release, re-hide,
 determinism + hash coverage).
 
-### Remaining unknowns (documented, after v=30)
+### Feature-sized builds from the extracted data (v=32..34)
+
+- **Stat tier caps (v=32)** — the §7 72-entry table ported VERBATIM into the sim
+  kernel (`AOW3_MAX_STAT_TIERS` + `maxStatCap`/`maxStatGet`, the
+  `IMaxStatValueProvider.Get` analog with the rank-tier fallback chain;
+  unregistered 0/60/66/70 pass through). Consumer = the native display domain
+  (caps are UI stat-panel progress-bar maxima): the selection panel renders a
+  CAP BASE/FIRST/MEGA bar normalizing weapon damage to the tier cap.
+  Tests: `stat-caps.test.js` 37 vectors.
+- **SameSpeed march (v=33)** — see the ACT_RESET_SPEED bullet above.
+- **Multi-point patrol (v=34)** — native `PatrolRoute.points : List<Coordinate>`
+  (dump.cs:386963; `SendSelectedUnitsPatrolTargeting(List<Vector3>)` 337727):
+  `commandPatrol(ids, x, y, pts)` walks a CYCLIC route (per-unit ring-spread on
+  every leg, `order.pts`/`leg` hashed via rt/lg tokens; legacy two-leg flip
+  preserved verbatim for no-pts calls; shift+right-click stages waypoints).
+
+### Remaining unknowns (documented, after v=34)
 
 - Defend leash VALUE and the full `$Pg` chase micro-logic (44 KB state machine; the
   anchor mechanism + task flow are proven, the numeric leash is server-side).
-- SameSpeed set-order + `Battle.$HL` per-tick coordinator (document-only above).
 - Native TakePositions formation algorithm (how the sim distributes per-unit
   Coordinates when the player places a group).
 - Siege transform stage timings (SIEGE_STAGE_* progression inside the Unit tick) and
   the chassis-byte identities (22/23/31 via the UnitType interface).
 - DontShoot task-vs-spec exclusivity nuance (sticky toggle vs task replacement).
-- Native patrol is a MULTI-POINT route (`PatrolRoute.points : List<Coordinate>`
-  dump.cs:386963; `SendSelectedUnitsPatrolTargeting(List<Vector3>)` 337727) —
-  the tribute's anchor<->B two-leg flip is a simplification (documented v=23).
 
 ## Coverage
-- `reverse/evidence/tests/phase5.test.js` — 146 vectors (min-range gates, patrol
+- `reverse/evidence/tests/phase5.test.js` — 176 vectors (min-range gates, patrol
   oscillation/engagement/resume/journal, garrison enter/protect/crew-fire/exit/
   capacity/death/rejections, hold stance entry/window-fire/no-pursuit/
   retaliation/minRange-aggro/building/melee/warn-join/interplay/release,
@@ -332,7 +348,9 @@ determinism + hash coverage).
   fire-discipline track/no-fire/restore/melee+building gating,
   takepos per-unit spots/arrival-hold/no-pursuit, hide capability/walk-entry/
   detect-gate/fire-reveal/release/determinism, cross-feature determinism incl.
-  fireHold + hiding in the hash).
+  fireHold + hiding + sameSpeed in the hash, samespeed cap/control/release/
+  command-surface/determinism, multipoint-patrol route-shape/cyclic-legs/
+  legacy-compat/pts-gate/determinism).
 - `reverse/evidence/tests/replay.test.js` — 45 vectors (bit-exact reproduction,
   baseline, cross-issuer ordering, tamper detection seed/drop/alter/terrain,
   540-command journal vs 512 ring, live-shaped build+patrol+garrison run, JSON
