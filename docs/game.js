@@ -3046,7 +3046,7 @@
     }
     host(code) {
       return PeerTransport.loadLib().then((Peer) => new Promise((res, rej) => {
-        const p = new Peer("AOW3LS-" + code, tr._peerOpts());
+        const p = new Peer("AOW3LS-" + code, this._peerOpts());
         this.peer = p;
         p.on("open", () => {
           this.rid = p.id;
@@ -3075,7 +3075,7 @@
     }
     join(code) {
       return PeerTransport.loadLib().then((Peer) => new Promise((res, rej) => {
-        const p = new Peer(tr._peerOpts());
+        const p = new Peer(this._peerOpts());
         this.peer = p;
         p.on("error", (e) => rej(e));
         p.on("open", () => {
