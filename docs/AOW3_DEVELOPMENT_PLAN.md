@@ -1,3 +1,96 @@
+## Technical Architecture & Online Infrastructure
+
+The gameplay-development plan in this document remains the primary roadmap for reproducing AOW3's gameplay, systems, mechanics, and behavior from the original Android game.
+
+The long-term technical architecture required to support the browser version—including deterministic simulation, Rust/WebAssembly, online multiplayer, accounts, matchmaking, persistence, replays, and deployment—is documented separately in:
+
+**`docs/AOW3_TECHNICAL_ARCHITECTURE_ROADMAP.md`**
+
+That document is a companion to this development plan, not a replacement for it.
+
+### Architecture dependency order
+
+The architecture work must follow the gameplay/reverse-engineering work rather than bypass it:
+
+```text
+Original AOW3 reverse engineering
+          ↓
+Evidence-backed gameplay rules
+          ↓
+Clean simulation boundary
+          ↓
+Fixed 20 Hz deterministic simulation
+          ↓
+Deterministic tests + replay fixtures
+          ↓
+Rust simulation core
+          ↓
+WebAssembly browser build
+          ↓
+Shared browser/server simulation
+          ↓
+Authoritative online multiplayer
+          ↓
+Accounts + persistent player data
+          ↓
+Matchmaking + replays + ranked systems
+```
+
+Do not implement later stages merely because the infrastructure is available. Each stage must have a working, tested foundation underneath it.
+
+### Important architectural rule
+
+The current Three.js browser implementation must remain playable during this migration.
+
+Do **not** perform a wholesale rewrite of `docs/game.js` simply to introduce the new architecture. Migrate systems incrementally and preserve behavior unless a reverse-engineering finding justifies a change.
+
+The Rust/Wasm simulation must eventually become independent of:
+
+* Three.js
+* DOM/UI
+* browser rendering
+* animation systems
+* audio
+* camera logic
+* mouse/keyboard/touch APIs
+* WebSocket implementation
+* authentication providers
+* databases
+* hosting providers
+
+These belong to the client/server integration layers, not the authoritative simulation.
+
+### Relationship between the two plans
+
+**This document (`AOW3_DEVELOPMENT_PLAN.md`) answers:**
+
+> How do we reproduce the actual behavior of AOW3?
+
+**`AOW3_TECHNICAL_ARCHITECTURE_ROADMAP.md` answers:**
+
+> How do we turn that verified simulation into a maintainable browser engine with Wasm, authoritative multiplayer, accounts, persistence, matchmaking, and replays?
+
+Neither document should override the other.
+
+If a proposed architecture conflicts with confirmed AOW3 behavior, AOW3 behavior wins.
+
+If reverse engineering reveals that an existing implementation is incorrect, update the gameplay implementation and its evidence here first; then update the architecture where necessary.
+
+### Current priority
+
+The immediate priority remains:
+
+1. Reverse engineer and verify the original AOW3 behavior.
+2. Resolve unknown or approximate gameplay rules.
+3. Separate simulation state from rendering state.
+4. Establish a genuinely fixed simulation timestep.
+5. Build deterministic regression tests.
+6. Only then begin substantial Rust/Wasm migration.
+7. Use the resulting deterministic core as the foundation for authoritative multiplayer.
+
+**Do not treat WebAssembly, multiplayer, accounts, or hosting as reasons to postpone reverse engineering or gameplay correctness.**
+
+
 AOW3 — Complete Development and Reverse-Engineering Plan
 Objective
 
