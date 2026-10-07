@@ -1885,7 +1885,10 @@
         const y = hq.y + Math.sin(ang) * r * 0.9;
         const cx = Math.max(4, Math.min(MAP_W - 5, x));
         const cy = Math.max(4, Math.min(MAP_H - 5, y));
-        if (sim.tryPlace(me, want, cx, cy))
+        // through the command layer — direct tryPlace bypassed the journal and
+        // broke replay determinism (live-QA-found: capture-time barracks had
+        // no journal entry -> replay diverged at the next 1 Hz mark)
+        if (this.cmd.issue({ type: "build", defId: want, owner: me, x: cx, y: cy }))
           return;
       }
     }

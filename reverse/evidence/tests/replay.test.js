@@ -21,8 +21,21 @@ if (bIdx < 0 || eIdx < 0 || eIdx < bIdx) {
 }
 const start = src.indexOf('\n', bIdx) + 1;
 const end = src.lastIndexOf('\n', eIdx) + 1;
-const kernel = src.slice(start, end) +
-  '\n;globalThis.__K = { Sim, Commands, Replay, mulberry32, fnv1a, Pathfinder, UNITS, BLD, ECONOMY, PRODUCER_OF, rankTier, hitChance, effectiveDamage, FSM_DEFAULTS, GARRISON_CAP, angleWrap, MAP_W, MAP_H };\n';
+let kernel = src.slice(start, end);
+// ALSO extract the real AI class (lives outside the kernel markers but is
+// DOM-free) — a replay of a live battle must include AI commands, so the
+// end-to-end vector below runs the actual AI, captures, and replays it.
+const aiIdx = src.indexOf('class AI {');
+if (aiIdx < 0) { console.error('class AI not found in docs/game.js'); process.exit(1); }
+{
+  let i = src.indexOf('{', aiIdx), depth = 0, close = -1;
+  for (; i < src.length; i++) {
+    if (src[i] === '{') depth++;
+    else if (src[i] === '}') { depth--; if (depth === 0) { close = i; break; } }
+  }
+  kernel += '\n' + src.slice(aiIdx, close + 1) + '\n';
+}
+kernel += '\n;globalThis.__K = { Sim, Commands, Replay, AI, mulberry32, fnv1a, Pathfinder, UNITS, BLD, ECONOMY, PRODUCER_OF, BUILD_ORDER_F2, rankTier, hitChance, effectiveDamage, FSM_DEFAULTS, GARRISON_CAP, angleWrap, MAP_W, MAP_H };\n';
 
 function loadKernel(seed = 777) {
   const sandbox = {};
@@ -215,6 +228,38 @@ section('replay: live-shaped run — build command + patrol + garrison through t
   check('hash reproduced (features)', out.sim.hashState(), sim.hashState());
   check('garrison state reproduced', out.sim.units.filter((u) => u.garrison !== undefined).length, sim.units.filter((u) => u.garrison !== undefined).length);
   check('bunker reproduced in replay', out.sim.buildings.some((b) => b.defId === 'bunker' && b.owner === 1), true);
+}
+
+section('replay: REAL AI live-style loop — build/produce/capture all journaled');
+{
+  // mirrors the shipped game loop exactly: sim.step then ai.step every tick,
+  // player commands interleaved; capture must reproduce the full battle.
+  // Regression: AI.maybeBuild called sim.tryPlace DIRECTLY (unjournaled) and
+  // live replays diverged at the first 1 Hz mark after the AI barracks.
+  const { sim, K } = loadKernel(231123);
+  const cmd = new K.Commands(sim);
+  const ai = new K.AI(sim, 2);
+  const playerCmds = [
+    { type: 'select', mode: 'set', ids: [1, 2, 3] },
+    { type: 'move', ids: [1, 2, 3], x: 20, y: 82 },
+    { type: 'patrol', ids: [1], x: 30, y: 84 },
+    { type: 'stop', ids: [2] }
+  ];
+  let pc = 0;
+  for (let t = 0; t < 900; t++) {
+    while (pc < playerCmds.length && t >= 20 * (pc + 1)) { cmd.issue(playerCmds[pc]); pc++; }
+    sim.step(TICK);
+    ai.step(TICK);
+  }
+  check('AI actually issued build commands (precondition)', ai.cmd.full.some((e) => e.cmd.type === 'build'), true);
+  check('AI actually issued produce commands (precondition)', ai.cmd.full.some((e) => e.cmd.type === 'produce'), true);
+  check('AI barracks exists (precondition)', sim.buildings.some((b) => b.defId === 'barracks' && b.owner === 2), true);
+  const rec = K.Replay.capture(sim, [{ ownerTag: 1, full: cmd.full }, { ownerTag: 2, full: ai.cmd.full }]);
+  check('build commands captured', rec.commands.filter((c) => c.cmd.type === 'build').length > 0, true);
+  const out = K.Replay.play(rec);
+  check('zero divergences with the real AI', out.divergences.length === 0 ? 0 : out.divergences[0], 0);
+  check('hash reproduced (real AI)', out.sim.hashState(), sim.hashState());
+  check('barracks reproduced in replay', out.sim.buildings.some((b) => b.defId === 'barracks' && b.owner === 2), true);
 }
 
 section('replay: JSON round-trip (serialize -> parse -> play)');

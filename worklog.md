@@ -921,6 +921,16 @@ Work Log:
   FIX: patrol orders re-sync dest/path to the CURRENT leg target every tick
   (patrol-only guard; move/attackMove behavior untouched). 6 regression vectors
   added (chase-interruption) -> phase5 53/53. Shipped as v=24.
+- Live replay end-to-end then DIVERGED at tick 60 (headless repro: AI barracks
+  B12 in live state, absent in replay; player funds -400). ROOT CAUSE: AI
+  maybeBuild called sim.tryPlace DIRECTLY — unjournaled sim mutation outside
+  the command layer (Phase 4 QA had only verified produce/capture). FIX: routed
+  through this.cmd.issue({type:'build'}) — the ONLY unjournaled AI mutation
+  found (full AI class scan clean). replay.test.js now extracts the REAL AI
+  class alongside the kernel and runs the shipped game-loop shape (sim.step +
+  ai.step + player commands) end-to-end: capture -> play -> zero divergences,
+  7 new vectors -> replay 41/41. Shipped as v=25. Desync lesson recorded:
+  every sim mutation must be reachable ONLY through Commands.issue.
 
 Stage Summary:
 - v=23: Phase 5 combat-reconstruction gaps closed (minRange/patrol/garrison,
