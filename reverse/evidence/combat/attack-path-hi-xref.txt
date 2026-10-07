@@ -1,0 +1,1318 @@
+
+==== $Hi @ 0x48178fc : 33 direct BL sites ====
+  BL @ 0x45f39fc   in [0x45f3274] public override void execute(Battle battle) { }
+  BL @ 0x45f6594   in [0x45f61e0] public override void execute(Battle battle) { }
+  BL @ 0x45f66e0   in [0x45f61e0] public override void execute(Battle battle) { }
+  BL @ 0x45f6820   in [0x45f61e0] public override void execute(Battle battle) { }
+  BL @ 0x45f6aa8   in [0x45f61e0] public override void execute(Battle battle) { }
+  BL @ 0x45f6b84   in [0x45f61e0] public override void execute(Battle battle) { }
+  BL @ 0x45f6dd4   in [0x45f61e0] public override void execute(Battle battle) { }
+  BL @ 0x45fc340   in [0x45fbf10] public override void execute(Battle battle) { }
+  BL @ 0x473bfe0   in [0x473b11c] public static short $uD(Battle 1, Unit 1, Dynamic 1, int 1, int 1, bool 1) { }
+  BL @ 0x4753c84   in [0x47501f0] public static void $ce(Battle 1, Unit 1) { }
+  BL @ 0x47b6c28   in [0x47b69e0] private static void $zE(Battle 1, Unit 1, GAIAttackInfo 1) { }
+  BL @ 0x4801d94   in [0x47fcb0c] public static void $cg(Battle 1, Unit 1) { }
+  BL @ 0x480b28c   in [0x480aa90] public static void $ig(Battle 1, Unit 1, int 1, bool 1) { }
+  BL @ 0x480b92c   in [0x480aa90] public static void $ig(Battle 1, Unit 1, int 1, bool 1) { }
+  BL @ 0x480c250   in [0x480aa90] public static void $ig(Battle 1, Unit 1, int 1, bool 1) { }
+  BL @ 0x480c760   in [0x480aa90] public static void $ig(Battle 1, Unit 1, int 1, bool 1) { }
+  BL @ 0x4813380   in [0x4812854] public static bool $ei(Battle 1, Unit 1) { }
+  BL @ 0x4814028   in [0x4812854] public static bool $ei(Battle 1, Unit 1) { }
+  BL @ 0x4819044   in [0x4818c84] public static void $hH(Battle 1, BattleSide 1, MineLayingSet 1, MineLaying 1) { }
+  BL @ 0x4819b70   in [0x48199cc] public static void $kH(Battle 1, Unit 1) { }
+  BL @ 0x484fde0   in [0x484f924] public static void $gH(Battle 1, Unit 1) { }
+  BL @ 0x487f14c   in [0x487e4b8] public static void $Nh(Battle 1, Unit 1, BattleSide 1, BattleSide 1, int 1, sbyte 1, bool 1) { }
+  BL @ 0x48a2f88   in [0x48a2d38] private static void $vF(Battle 1, Unit 1) { }
+  BL @ 0x48a3550   in [0x48a2fc4] public static void $UF(Battle 1, Unit 1) { }
+  BL @ 0x48fe68c   in [0x48fc4a4] public override short $CMA(Battle 1) { }
+  BL @ 0x490000c   in [0x48ffc7c] public override short $CMA(Battle 1) { }
+  BL @ 0x49000e0   in [0x48ffc7c] public override short $CMA(Battle 1) { }
+  BL @ 0x4906b0c   in [0x4906390] public override short $CMA(Battle 1) { }
+  BL @ 0x490817c   in [0x4907e7c] public override short $CMA(Battle 1) { }
+  BL @ 0x490dc50   in [0x4909950] public override short $CMA(Battle 1) { }
+  BL @ 0x4910bfc   in [0x490f7f8] public override short $CMA(Battle 1) { }
+  BL @ 0x4912778   in [0x49120fc] public override short $CMA(Battle 1) { }
+  BL @ 0x4914798   in [0x49140d0] public override short $CMA(Battle 1) { }
+
+==== Unit.set_Task @ 0x45b13d4 : 0 direct BL sites ====
+
+==== Unit.get_Task @ 0x45b13cc : 0 direct BL sites ====
+
+==== Unit.set_FlagShoot @ 0x45b0e80 : 0 direct BL sites ====
+
+==== Unit.get_FlagShoot @ 0x45b0e78 : 0 direct BL sites ====
+
+==== Unit.set_Obj @ 0x45b10c4 : 0 direct BL sites ====
+
+==== $Hi caller windows (task id = w2 mov before BL) ====
+
+  BL $Hi @ 0x45f39fc in [0x45f3274] public override void execute(Battle battle) { }  --> task arg w2 = None
+  ---- window around 0x45f39fc (task-id scan) ----
+    0x45f3994: ldr      x1, [x8, #0x290]
+    0x45f3998: blr      x9
+    0x45f399c: and      w8, w0, #0xff
+    0x45f39a0: cmp      w8, #4
+    0x45f39a4: b.ne     #0x45f3b30
+    0x45f39a8: ldr      w8, [x22, #0x18]
+    0x45f39ac: mov      x0, x26
+    0x45f39b0: mov      x1, x22
+    0x45f39b4: add      w8, w8, #1
+    0x45f39b8: str      w8, [x22, #0x18]
+    0x45f39bc: ldr      x8, [x26]
+    0x45f39c0: ldr      x9, [x8, #0x1268]
+    0x45f39c4: ldr      x2, [x8, #0x1270]
+    0x45f39c8: blr      x9
+    0x45f39cc: ldr      x8, [x26]
+    0x45f39d0: mov      x0, x26
+    0x45f39d4: mov      w1, #-1
+    0x45f39d8: ldr      x9, [x8, #0x12c8]
+    0x45f39dc: ldr      x2, [x8, #0x12d0]
+    0x45f39e0: blr      x9
+    0x45f39e4: ldrb     w8, [x19, #0x38]
+    0x45f39e8: mov      x0, x20
+    0x45f39ec: mov      x1, x26
+    0x45f39f0: mov      x3, xzr
+    0x45f39f4: cmp      w8, #3
+    0x45f39f8: cset     w2, eq
+    0x45f39fc: bl       #0x48178fc   ; -> public static void $Hi(Battle 1, Unit 1, sbyte 1) { }
+    0x45f3a00: ldrb     w8, [x19, #0x38]
+    0x45f3a04: ldr      x9, [x26]
+    0x45f3a08: mov      x0, x26
+    0x45f3a0c: cmp      w8, #4
+    0x45f3a10: ldr      x8, [x9, #0x498]
+
+  BL $Hi @ 0x45f6594 in [0x45f61e0] public override void execute(Battle battle) { }  --> task arg w2 = None
+  ---- window around 0x45f6594 (task-id scan) ----
+    0x45f652c: bl       #0x4831fe4   ; -> public static void $hi(Battle 1, Unit 1, int 1, int 1) { }
+    0x45f6530: ldr      x8, [x21]
+    0x45f6534: ldr      x9, [x8, #0x4b8]
+    0x45f6538: ldr      x2, [x8, #0x4c0]
+    0x45f653c: mov      x0, x21
+    0x45f6540: mov      w1, #0xffff
+    0x45f6544: blr      x9
+    0x45f6548: mov      x0, x19
+    0x45f654c: mov      x1, x21
+    0x45f6550: mov      w2, wzr
+    0x45f6554: mov      x3, xzr
+    0x45f6558: bl       #0x4817a8c   ; -> public static void $ki(Battle 1, Unit 1, sbyte 1) { }
+    0x45f655c: mov      x0, x19
+    0x45f6560: mov      x1, x21
+    0x45f6564: mov      x2, xzr
+    0x45f6568: bl       #0x4832100   ; -> public static void $ji(Battle 1, Unit 1) { }
+    0x45f656c: ldr      x8, [x21]
+    0x45f6570: ldr      x1, [x8, #0x330]
+    0x45f6574: ldr      x9, [x8, #0x328]
+    0x45f6578: mov      x0, x21
+    0x45f657c: blr      x9
+    0x45f6580: tbnz     w0, #0, #0x45f6324
+    0x45f6584: mov      x0, x19
+    0x45f6588: mov      x1, x21
+    0x45f658c: mov      w2, wzr
+    0x45f6590: mov      x3, xzr
+    0x45f6594: bl       #0x48178fc   ; -> public static void $Hi(Battle 1, Unit 1, sbyte 1) { }
+    0x45f6598: b        #0x45f6324
+    0x45f659c: cmp      w8, #4
+    0x45f65a0: b.gt     #0x45f66e8
+    0x45f65a4: sub      w9, w8, #2
+    0x45f65a8: cmp      w9, #2
+
+  BL $Hi @ 0x45f66e0 in [0x45f61e0] public override void execute(Battle battle) { }  --> task arg w2 = 4
+  ---- window around 0x45f66e0 (task-id scan) ----
+    0x45f6678: blr      x9
+    0x45f667c: sxth     w2, w22
+    0x45f6680: sxth     w3, w0
+    0x45f6684: mov      x0, x19
+    0x45f6688: mov      x1, x21
+    0x45f668c: mov      x4, xzr
+    0x45f6690: bl       #0x4809330   ; -> public static void $Gi(Battle 1, Unit 1, int 1, int 1) { }
+    0x45f6694: ldr      x8, [x21]
+    0x45f6698: ldr      x9, [x8, #0x4b8]
+    0x45f669c: ldr      x2, [x8, #0x4c0]
+    0x45f66a0: mov      x0, x21
+    0x45f66a4: mov      w1, #0xffff
+    0x45f66a8: blr      x9
+    0x45f66ac: mov      x0, x19
+    0x45f66b0: mov      x1, x21
+    0x45f66b4: mov      w2, wzr
+    0x45f66b8: mov      x3, xzr
+    0x45f66bc: bl       #0x4817a8c   ; -> public static void $ki(Battle 1, Unit 1, sbyte 1) { }
+    0x45f66c0: mov      x0, x19
+    0x45f66c4: mov      x1, x21
+    0x45f66c8: mov      x2, xzr
+    0x45f66cc: bl       #0x4832100   ; -> public static void $ji(Battle 1, Unit 1) { }
+    0x45f66d0: mov      x0, x19
+    0x45f66d4: mov      x1, x21
+    0x45f66d8: mov      w2, #4
+    0x45f66dc: mov      x3, xzr
+    0x45f66e0: bl       #0x48178fc   ; -> public static void $Hi(Battle 1, Unit 1, sbyte 1) { }
+    0x45f66e4: b        #0x45f6324
+    0x45f66e8: cmp      w8, #5
+    0x45f66ec: b.eq     #0x45f6870
+    0x45f66f0: cmp      w8, #6
+    0x45f66f4: b.eq     #0x45f6b8c
+
+  BL $Hi @ 0x45f6820 in [0x45f61e0] public override void execute(Battle battle) { }  --> task arg w2 = 8
+  ---- window around 0x45f6820 (task-id scan) ----
+    0x45f67b8: blr      x9
+    0x45f67bc: sxth     w2, w22
+    0x45f67c0: sxth     w3, w0
+    0x45f67c4: mov      x0, x19
+    0x45f67c8: mov      x1, x21
+    0x45f67cc: mov      x4, xzr
+    0x45f67d0: bl       #0x4809330   ; -> public static void $Gi(Battle 1, Unit 1, int 1, int 1) { }
+    0x45f67d4: ldr      x8, [x21]
+    0x45f67d8: ldr      x9, [x8, #0x4b8]
+    0x45f67dc: ldr      x2, [x8, #0x4c0]
+    0x45f67e0: mov      x0, x21
+    0x45f67e4: mov      w1, #0xffff
+    0x45f67e8: blr      x9
+    0x45f67ec: mov      x0, x19
+    0x45f67f0: mov      x1, x21
+    0x45f67f4: mov      w2, wzr
+    0x45f67f8: mov      x3, xzr
+    0x45f67fc: bl       #0x4817a8c   ; -> public static void $ki(Battle 1, Unit 1, sbyte 1) { }
+    0x45f6800: mov      x0, x19
+    0x45f6804: mov      x1, x21
+    0x45f6808: mov      x2, xzr
+    0x45f680c: bl       #0x4832100   ; -> public static void $ji(Battle 1, Unit 1) { }
+    0x45f6810: mov      x0, x19
+    0x45f6814: mov      x1, x21
+    0x45f6818: mov      w2, #8
+    0x45f681c: mov      x3, xzr
+    0x45f6820: bl       #0x48178fc   ; -> public static void $Hi(Battle 1, Unit 1, sbyte 1) { }
+    0x45f6824: b        #0x45f6324
+    0x45f6828: ldr      x9, [x21]
+    0x45f682c: cmp      w8, #2
+    0x45f6830: ldr      x8, [x9, #0x368]
+    0x45f6834: ldr      x1, [x9, #0x370]
+
+  BL $Hi @ 0x45f6aa8 in [0x45f61e0] public override void execute(Battle battle) { }  --> task arg w2 = 2
+  ---- window around 0x45f6aa8 (task-id scan) ----
+    0x45f6a40: mov      x0, x19
+    0x45f6a44: mov      x1, x21
+    0x45f6a48: mov      w2, #1
+    0x45f6a4c: mov      x3, xzr
+    0x45f6a50: mov      x26, x28
+    0x45f6a54: bl       #0x4817a8c   ; -> public static void $ki(Battle 1, Unit 1, sbyte 1) { }
+    0x45f6a58: mov      w28, #4
+    0x45f6a5c: mov      x0, x19
+    0x45f6a60: mov      x1, x21
+    0x45f6a64: mov      x2, xzr
+    0x45f6a68: bl       #0x4832100   ; -> public static void $ji(Battle 1, Unit 1) { }
+    0x45f6a6c: ldr      x8, [x21]
+    0x45f6a70: ldr      x9, [x8, #0x798]
+    0x45f6a74: ldr      x2, [x8, #0x7a0]
+    0x45f6a78: mov      x0, x21
+    0x45f6a7c: mov      w1, wzr
+    0x45f6a80: blr      x9
+    0x45f6a84: mov      x0, x19
+    0x45f6a88: mov      x1, x21
+    0x45f6a8c: mov      w2, #-1
+    0x45f6a90: mov      x3, xzr
+    0x45f6a94: bl       #0x4758128   ; -> public static void $he(Battle 1, Unit 1, int 1) { }
+    0x45f6a98: mov      x0, x19
+    0x45f6a9c: mov      x1, x21
+    0x45f6aa0: mov      w2, #2
+    0x45f6aa4: mov      x3, xzr
+    0x45f6aa8: bl       #0x48178fc   ; -> public static void $Hi(Battle 1, Unit 1, sbyte 1) { }
+    0x45f6aac: b        #0x45f6324
+    0x45f6ab0: ldr      x8, [x21]
+    0x45f6ab4: ldr      x9, [x8, #0x798]
+    0x45f6ab8: ldr      x2, [x8, #0x7a0]
+    0x45f6abc: mov      x0, x21
+
+  BL $Hi @ 0x45f6b84 in [0x45f61e0] public override void execute(Battle battle) { }  --> task arg w2 = 3
+  ---- window around 0x45f6b84 (task-id scan) ----
+    0x45f6b1c: blr      x9
+    0x45f6b20: sxth     w2, w22
+    0x45f6b24: sxth     w3, w0
+    0x45f6b28: mov      x0, x19
+    0x45f6b2c: mov      x1, x21
+    0x45f6b30: mov      x4, xzr
+    0x45f6b34: bl       #0x4809330   ; -> public static void $Gi(Battle 1, Unit 1, int 1, int 1) { }
+    0x45f6b38: ldr      x8, [x21]
+    0x45f6b3c: ldr      x9, [x8, #0x4b8]
+    0x45f6b40: ldr      x2, [x8, #0x4c0]
+    0x45f6b44: mov      x0, x21
+    0x45f6b48: mov      w1, #0xffff
+    0x45f6b4c: blr      x9
+    0x45f6b50: mov      x0, x19
+    0x45f6b54: mov      x1, x21
+    0x45f6b58: mov      w2, wzr
+    0x45f6b5c: mov      x3, xzr
+    0x45f6b60: bl       #0x4817a8c   ; -> public static void $ki(Battle 1, Unit 1, sbyte 1) { }
+    0x45f6b64: mov      x0, x19
+    0x45f6b68: mov      x1, x21
+    0x45f6b6c: mov      x2, xzr
+    0x45f6b70: bl       #0x4832100   ; -> public static void $ji(Battle 1, Unit 1) { }
+    0x45f6b74: mov      x0, x19
+    0x45f6b78: mov      x1, x21
+    0x45f6b7c: mov      w2, #3
+    0x45f6b80: mov      x3, xzr
+    0x45f6b84: bl       #0x48178fc   ; -> public static void $Hi(Battle 1, Unit 1, sbyte 1) { }
+    0x45f6b88: b        #0x45f6324
+    0x45f6b8c: mov      x0, x19
+    0x45f6b90: mov      x1, x21
+    0x45f6b94: mov      w2, #1
+    0x45f6b98: mov      x3, xzr
+
+  BL $Hi @ 0x45f6dd4 in [0x45f61e0] public override void execute(Battle battle) { }  --> task arg w2 = None
+  ---- window around 0x45f6dd4 (task-id scan) ----
+    0x45f6d6c: bl       #0x4817a8c   ; -> public static void $ki(Battle 1, Unit 1, sbyte 1) { }
+    0x45f6d70: ldr      x8, [x21]
+    0x45f6d74: ldp      x9, x1, [x8, #0x1f8]
+    0x45f6d78: mov      x0, x21
+    0x45f6d7c: blr      x9
+    0x45f6d80: cbz      x0, #0x45f6e58
+    0x45f6d84: ldr      x8, [x0]
+    0x45f6d88: ldr      x1, [x8, #0x590]
+    0x45f6d8c: ldr      x9, [x8, #0x588]
+    0x45f6d90: blr      x9
+    0x45f6d94: ldr      x8, [x21]
+    0x45f6d98: and      w9, w0, #0xff
+    0x45f6d9c: cmp      w9, #1
+    0x45f6da0: ldr      x9, [x8, #0xed8]
+    0x45f6da4: ldr      x2, [x8, #0xee0]
+    0x45f6da8: cset     w1, eq
+    0x45f6dac: mov      x0, x21
+    0x45f6db0: blr      x9
+    0x45f6db4: mov      x0, x19
+    0x45f6db8: mov      x1, x21
+    0x45f6dbc: mov      x2, xzr
+    0x45f6dc0: bl       #0x4832100   ; -> public static void $ji(Battle 1, Unit 1) { }
+    0x45f6dc4: mov      x0, x19
+    0x45f6dc8: mov      x1, x21
+    0x45f6dcc: mov      w2, wzr
+    0x45f6dd0: mov      x3, xzr
+    0x45f6dd4: bl       #0x48178fc   ; -> public static void $Hi(Battle 1, Unit 1, sbyte 1) { }
+    0x45f6dd8: cbz      w24, #0x45f6324
+    0x45f6ddc: mov      x0, x19
+    0x45f6de0: mov      x1, x21
+    0x45f6de4: mov      w2, w22
+    0x45f6de8: mov      x3, xzr
+
+  BL $Hi @ 0x45fc340 in [0x45fbf10] public override void execute(Battle battle) { }  --> task arg w2 = None
+  ---- window around 0x45fc340 (task-id scan) ----
+    0x45fc2d8: b        #0x45fc310
+    0x45fc2dc: ldr      x8, [x26]
+    0x45fc2e0: mov      x0, x26
+    0x45fc2e4: mov      x1, x25
+    0x45fc2e8: ldr      x9, [x8, #0x1308]
+    0x45fc2ec: ldr      x2, [x8, #0x1310]
+    0x45fc2f0: blr      x9
+    0x45fc2f4: b        #0x45fc310
+    0x45fc2f8: ldr      x8, [x9, #0x20]
+    0x45fc2fc: mov      x0, x25
+    0x45fc300: mov      x1, x26
+    0x45fc304: ldr      x8, [x8, #0xc0]
+    0x45fc308: ldr      x2, [x8, #0x70]
+    0x45fc30c: bl       #0x59ad75c
+    0x45fc310: ldr      x8, [x26]
+    0x45fc314: mov      x0, x26
+    0x45fc318: ldr      x9, [x8, #0x328]
+    0x45fc31c: ldr      x1, [x8, #0x330]
+    0x45fc320: blr      x9
+    0x45fc324: tbz      w0, #0, #0x45fc330
+    0x45fc328: ldrb     w8, [x20, #0x38]
+    0x45fc32c: cbnz     w8, #0x45fc344
+    0x45fc330: mov      x0, x19
+    0x45fc334: mov      x1, x26
+    0x45fc338: mov      w2, wzr
+    0x45fc33c: mov      x3, xzr
+    0x45fc340: bl       #0x48178fc   ; -> public static void $Hi(Battle 1, Unit 1, sbyte 1) { }
+    0x45fc344: mov      x0, x19
+    0x45fc348: mov      x1, x26
+    0x45fc34c: mov      x2, xzr
+    0x45fc350: bl       #0x4832100   ; -> public static void $ji(Battle 1, Unit 1) { }
+    0x45fc354: mov      x0, x19
+
+  BL $Hi @ 0x473bfe0 in [0x473b11c] public static short $uD(Battle 1, Unit 1, Dynamic 1, int 1, int 1, bool 1) { }  --> task arg w2 = None
+  ---- window around 0x473bfe0 (task-id scan) ----
+    0x473bf78: ldr      x1, [x8, #0x9e0]
+    0x473bf7c: blr      x9
+    0x473bf80: tbz      w0, #0, #0x473c310
+    0x473bf84: ldr      x8, [x27]
+    0x473bf88: ldr      w9, [x8, #0xe4]
+    0x473bf8c: tbz      w29, #0, #0x473c230
+    0x473bf90: cbnz     w9, #0x473bfa0
+    0x473bf94: mov      x0, x8
+    0x473bf98: bl       #0x3cc7ac8
+    0x473bf9c: ldr      x8, [x27]
+    0x473bfa0: ldr      x9, [x8, #0xb8]
+    0x473bfa4: mov      w29, #1
+    0x473bfa8: add      x10, x9, #0x890
+    0x473bfac: mov      x9, x8
+    0x473bfb0: b        #0x473b208
+    0x473bfb4: ldr      w8, [x9, #0xe4]
+    0x473bfb8: cbnz     w8, #0x473bfc8
+    0x473bfbc: mov      x0, x9
+    0x473bfc0: bl       #0x3cc7ac8
+    0x473bfc4: ldr      x9, [x27]
+    0x473bfc8: ldr      x8, [x9, #0xb8]
+    0x473bfcc: mov      x0, x20
+    0x473bfd0: mov      x1, x19
+    0x473bfd4: mov      x3, xzr
+    0x473bfd8: ldp      w9, w8, [x8, #4]
+    0x473bfdc: mul      w2, w8, w9
+    0x473bfe0: bl       #0x48178fc   ; -> public static void $Hi(Battle 1, Unit 1, sbyte 1) { }
+    0x473bfe4: ldr      x8, [x27]
+    0x473bfe8: mov      x9, x8
+    0x473bfec: ldr      w10, [x9, #0xe4]
+    0x473bff0: cbnz     w10, #0x473c004
+    0x473bff4: mov      x0, x9
+
+  BL $Hi @ 0x4753c84 in [0x47501f0] public static void $ce(Battle 1, Unit 1) { }  --> task arg w2 = None
+  ---- window around 0x4753c84 (task-id scan) ----
+    0x4753c1c: cbz      x0, #0x47553bc
+    0x4753c20: ldr      x8, [x0]
+    0x4753c24: ldr      x9, [x8, #0xc68]
+    0x4753c28: ldr      x1, [x8, #0xc70]
+    0x4753c2c: blr      x9
+    0x4753c30: ldr      x8, [x19]
+    0x4753c34: tst      w0, #0xff
+    0x4753c38: b.eq     #0x4755124
+    0x4753c3c: ldr      w9, [x8, #0xe4]
+    0x4753c40: cbnz     w9, #0x4753c50
+    0x4753c44: mov      x0, x8
+    0x4753c48: bl       #0x3cc7ac8
+    0x4753c4c: ldr      x8, [x19]
+    0x4753c50: ldr      x8, [x8, #0xb8]
+    0x4753c54: add      x8, x8, #0xa5c
+    0x4753c58: b        #0x47502fc
+    0x4753c5c: ldr      x0, [x19]
+    0x4753c60: ldr      w8, [x0, #0xe4]
+    0x4753c64: cbnz     w8, #0x4753c70
+    0x4753c68: bl       #0x3cc7ac8
+    0x4753c6c: ldr      x0, [x19]
+    0x4753c70: ldr      x8, [x0, #0xb8]
+    0x4753c74: ldp      x0, x1, [sp, #0x100]
+    0x4753c78: mov      x3, xzr
+    0x4753c7c: ldp      w9, w8, [x8, #4]
+    0x4753c80: mul      w2, w8, w9
+    0x4753c84: bl       #0x48178fc   ; -> public static void $Hi(Battle 1, Unit 1, sbyte 1) { }
+    0x4753c88: ldr      x8, [x19]
+    0x4753c8c: b        #0x4755098
+    0x4753c90: ldr      x0, [sp, #0x108]
+    0x4753c94: cbz      x0, #0x47553bc
+    0x4753c98: ldr      x8, [x0]
+
+  BL $Hi @ 0x47b6c28 in [0x47b69e0] private static void $zE(Battle 1, Unit 1, GAIAttackInfo 1) { }  --> task arg w2 = None
+  ---- window around 0x47b6c28 (task-id scan) ----
+    0x47b6bc0: b        #0x47b6ad0
+    0x47b6bc4: ldr      w9, [x8, #0xe4]
+    0x47b6bc8: cbnz     w9, #0x47b6bd8
+    0x47b6bcc: mov      x0, x8
+    0x47b6bd0: bl       #0x3cc7ac8
+    0x47b6bd4: ldr      x8, [x26]
+    0x47b6bd8: ldr      x9, [x8, #0xb8]
+    0x47b6bdc: ldp      w10, w9, [x9, #0xc]
+    0x47b6be0: eor      w9, w9, w10
+    0x47b6be4: b        #0x47b6ff0
+    0x47b6be8: cbz      x27, #0x47b7b5c
+    0x47b6bec: ldr      x8, [x27]
+    0x47b6bf0: mov      x0, x27
+    0x47b6bf4: ldp      x9, x1, [x8, #0x198]
+    0x47b6bf8: blr      x9
+    0x47b6bfc: cbz      x19, #0x47b7b5c
+    0x47b6c00: ldr      x8, [x19]
+    0x47b6c04: mov      x1, x0
+    0x47b6c08: mov      x0, x19
+    0x47b6c0c: ldr      x9, [x8, #0x1308]
+    0x47b6c10: ldr      x2, [x8, #0x1310]
+    0x47b6c14: blr      x9
+    0x47b6c18: b        #0x47b73bc
+    0x47b6c1c: ldp      x0, x1, [sp, #0x38]
+    0x47b6c20: mov      x3, xzr
+    0x47b6c24: ldr      w2, [sp, #0x4c]
+    0x47b6c28: bl       #0x48178fc   ; -> public static void $Hi(Battle 1, Unit 1, sbyte 1) { }
+    0x47b6c2c: cbz      x25, #0x47b7b5c
+    0x47b6c30: ldr      x0, [x26]
+    0x47b6c34: ldrsb    w20, [x25, #0x38]
+    0x47b6c38: ldr      w8, [x0, #0xe4]
+    0x47b6c3c: cbnz     w8, #0x47b6c44
+
+  BL $Hi @ 0x4801d94 in [0x47fcb0c] public static void $cg(Battle 1, Unit 1) { }  --> task arg w2 = None
+  ---- window around 0x4801d94 (task-id scan) ----
+    0x4801d2c: mov      x1, x22
+    0x4801d30: ldr      x9, [x8, #0x388]
+    0x4801d34: ldr      x2, [x8, #0x390]
+    0x4801d38: b        #0x4801d64
+    0x4801d3c: mov      x0, x29
+    0x4801d40: mov      x1, x22
+    0x4801d44: bl       #0x4816e3c   ; -> public static void $KH(Battle 1, Unit 1) { }
+    0x4801d48: b        #0x4802be0
+    0x4801d4c: cbz      x22, #0x4807414
+    0x4801d50: ldr      x8, [x22]
+    0x4801d54: mov      x0, x22
+    0x4801d58: mov      x1, xzr
+    0x4801d5c: ldr      x9, [x8, #0x1308]
+    0x4801d60: ldr      x2, [x8, #0x1310]
+    0x4801d64: blr      x9
+    0x4801d68: b        #0x4802be0
+    0x4801d6c: ldr      x0, [x26]
+    0x4801d70: ldr      w8, [x0, #0xe4]
+    0x4801d74: cbnz     w8, #0x4801d80
+    0x4801d78: bl       #0x3cc7ac8
+    0x4801d7c: ldr      x0, [x26]
+    0x4801d80: ldr      x8, [x0, #0xb8]
+    0x4801d84: mov      x0, x29
+    0x4801d88: mov      x1, x22
+    0x4801d8c: ldp      w9, w8, [x8, #4]
+    0x4801d90: mul      w2, w8, w9
+    0x4801d94: bl       #0x48178fc   ; -> public static void $Hi(Battle 1, Unit 1, sbyte 1) { }
+    0x4801d98: b        #0x4802be0
+    0x4801d9c: cbz      x22, #0x4807414
+    0x4801da0: ldr      x8, [x22]
+    0x4801da4: mov      x0, x22
+    0x4801da8: ldr      x9, [x8, #0x7c8]
+
+  BL $Hi @ 0x480b28c in [0x480aa90] public static void $ig(Battle 1, Unit 1, int 1, bool 1) { }  --> task arg w2 = 163
+  ---- window around 0x480b28c (task-id scan) ----
+    0x480b224: ldr      x0, [x23]
+    0x480b228: mov      x23, x24
+    0x480b22c: ldr      x8, [x0, #0xb8]
+    0x480b230: mov      w3, #0xa045
+    0x480b234: mov      w1, #0x61c
+    0x480b238: mov      w2, #0xa3
+    0x480b23c: movk     w3, #0x74ff, lsl #16
+    0x480b240: ldr      x0, [x8, #0x2820]
+    0x480b244: adrp     x8, #0x968e000
+    0x480b248: ldr      x8, [x8, #0x4f0]
+    0x480b24c: ldr      x4, [x8]
+    0x480b250: bl       #0x5265b74
+    0x480b254: ldr      x8, [x27]
+    0x480b258: cmp      w0, w21
+    0x480b25c: b.eq     #0x480bfb0
+    0x480b260: ldr      w9, [x8, #0xe4]
+    0x480b264: cbnz     w9, #0x480b274
+    0x480b268: mov      x0, x8
+    0x480b26c: bl       #0x3cc7ac8
+    0x480b270: ldr      x8, [x27]
+    0x480b274: ldr      x9, [x8, #0xb8]
+    0x480b278: add      x9, x9, #0x884
+    0x480b27c: b        #0x480ab68
+    0x480b280: ldr      x0, [sp, #0x98]
+    0x480b284: ldr      w2, [sp, #0xb0]
+    0x480b288: mov      x1, x23
+    0x480b28c: bl       #0x48178fc   ; -> public static void $Hi(Battle 1, Unit 1, sbyte 1) { }
+    0x480b290: ldr      x8, [x27]
+    0x480b294: ldr      w9, [x8, #0xe4]
+    0x480b298: cbnz     w9, #0x480b2a8
+    0x480b29c: mov      x0, x8
+    0x480b2a0: bl       #0x3cc7ac8
+
+  BL $Hi @ 0x480b92c in [0x480aa90] public static void $ig(Battle 1, Unit 1, int 1, bool 1) { }  --> task arg w2 = None
+  ---- window around 0x480b92c (task-id scan) ----
+    0x480b8c4: orr      w8, w28, w8
+    0x480b8c8: orr      w9, w10, w25
+    0x480b8cc: orr      w8, w8, w9
+    0x480b8d0: tbnz     w8, #0, #0x480c258
+    0x480b8d4: ldr      x8, [x27]
+    0x480b8d8: ldr      w9, [x8, #0xe4]
+    0x480b8dc: cbnz     w9, #0x480b8ec
+    0x480b8e0: mov      x0, x8
+    0x480b8e4: bl       #0x3cc7ac8
+    0x480b8e8: ldr      x8, [x27]
+    0x480b8ec: ldr      x9, [x8, #0xb8]
+    0x480b8f0: mov      w25, wzr
+    0x480b8f4: mov      w28, wzr
+    0x480b8f8: str      xzr, [sp, #0xb8]
+    0x480b8fc: add      x9, x9, #0x888
+    0x480b900: b        #0x480ab68
+    0x480b904: ldr      w9, [x8, #0xe4]
+    0x480b908: cbnz     w9, #0x480b914
+    0x480b90c: mov      x0, x8
+    0x480b910: bl       #0x3cc7ac8
+    0x480b914: ldr      x8, [x27]
+    0x480b918: mov      x0, x22
+    0x480b91c: mov      x1, x19
+    0x480b920: ldr      x8, [x8, #0xb8]
+    0x480b924: ldp      w9, w8, [x8, #4]
+    0x480b928: mul      w2, w8, w9
+    0x480b92c: bl       #0x48178fc   ; -> public static void $Hi(Battle 1, Unit 1, sbyte 1) { }
+    0x480b930: b        #0x480c790
+    0x480b934: ldr      x8, [x27]
+    0x480b938: ldr      w9, [x8, #0xe4]
+    0x480b93c: cbnz     w9, #0x480b94c
+    0x480b940: mov      x0, x8
+
+  BL $Hi @ 0x480c250 in [0x480aa90] public static void $ig(Battle 1, Unit 1, int 1, bool 1) { }  --> task arg w2 = None
+  ---- window around 0x480c250 (task-id scan) ----
+    0x480c1e8: bl       #0x3cc7ac8
+    0x480c1ec: cbz      x19, #0x480cb3c
+    0x480c1f0: ldr      x8, [x27]
+    0x480c1f4: ldr      x9, [x19]
+    0x480c1f8: mov      x0, x19
+    0x480c1fc: ldr      x8, [x8, #0xb8]
+    0x480c200: ldr      x2, [x9, #0x6b0]
+    0x480c204: ldr      w1, [x8, #0x50]
+    0x480c208: ldr      x8, [x9, #0x6a8]
+    0x480c20c: blr      x8
+    0x480c210: tbz      w0, #0, #0x480c990
+    0x480c214: ldr      x8, [x27]
+    0x480c218: ldr      w9, [sp, #0xbc]
+    0x480c21c: tbnz     w9, #0, #0x480c79c
+    0x480c220: ldr      w9, [x8, #0xe4]
+    0x480c224: cbnz     w9, #0x480c234
+    0x480c228: mov      x0, x8
+    0x480c22c: bl       #0x3cc7ac8
+    0x480c230: ldr      x8, [x27]
+    0x480c234: ldr      x9, [x8, #0xb8]
+    0x480c238: str      wzr, [sp, #0xbc]
+    0x480c23c: add      x9, x9, #0x88c
+    0x480c240: b        #0x480ab68
+    0x480c244: ldr      x1, [sp, #0xa8]
+    0x480c248: ldr      w2, [sp, #0xa4]
+    0x480c24c: mov      x0, x26
+    0x480c250: bl       #0x48178fc   ; -> public static void $Hi(Battle 1, Unit 1, sbyte 1) { }
+    0x480c254: ldr      w10, [sp, #0xb8]
+    0x480c258: tbz      w10, #0, #0x480c764
+    0x480c25c: ldr      x8, [x27]
+    0x480c260: ldr      w9, [x8, #0xe4]
+    0x480c264: cbnz     w9, #0x480c274
+
+  BL $Hi @ 0x480c760 in [0x480aa90] public static void $ig(Battle 1, Unit 1, int 1, bool 1) { }  --> task arg w2 = None
+  ---- window around 0x480c760 (task-id scan) ----
+    0x480c6f8: mov      x29, x27
+    0x480c6fc: mov      x27, x19
+    0x480c700: ldr      x19, [sp, #0x20]
+    0x480c704: ldr      w28, [sp, #0xb4]
+    0x480c708: ldr      x20, [sp, #0x88]
+    0x480c70c: cmp      w8, w9
+    0x480c710: b.ge     #0x480ca60
+    0x480c714: ldr      x8, [x27]
+    0x480c718: ldr      w9, [x8, #0xe4]
+    0x480c71c: cbnz     w9, #0x480c72c
+    0x480c720: mov      x0, x8
+    0x480c724: bl       #0x3cc7ac8
+    0x480c728: ldr      x8, [x27]
+    0x480c72c: ldr      x9, [x8, #0xb8]
+    0x480c730: add      x9, x9, #0x864
+    0x480c734: b        #0x480ab68
+    0x480c738: ldr      w9, [x8, #0xe4]
+    0x480c73c: cbnz     w9, #0x480c74c
+    0x480c740: mov      x0, x8
+    0x480c744: bl       #0x3cc7ac8
+    0x480c748: ldr      x8, [x27]
+    0x480c74c: ldr      x8, [x8, #0xb8]
+    0x480c750: mov      x0, x22
+    0x480c754: mov      x1, x19
+    0x480c758: ldp      w9, w8, [x8, #4]
+    0x480c75c: mul      w2, w8, w9
+    0x480c760: bl       #0x48178fc   ; -> public static void $Hi(Battle 1, Unit 1, sbyte 1) { }
+    0x480c764: tbz      w28, #0, #0x480c790
+    0x480c768: ldr      x8, [x27]
+    0x480c76c: ldr      w9, [x8, #0xe4]
+    0x480c770: cbnz     w9, #0x480c780
+    0x480c774: mov      x0, x8
+
+  BL $Hi @ 0x4813380 in [0x4812854] public static bool $ei(Battle 1, Unit 1) { }  --> task arg w2 = 17
+  ---- window around 0x4813380 (task-id scan) ----
+    0x4813318: ldr      x8, [x8, #0x4f0]
+    0x481331c: ldr      x4, [x8]
+    0x4813320: mov      w3, #0x6cf8
+    0x4813324: mov      w1, #0x408
+    0x4813328: mov      w2, #2
+    0x481332c: movk     w3, #0x359e, lsl #16
+    0x4813330: bl       #0x5265b74
+    0x4813334: mov      w2, w0
+    0x4813338: mov      x0, x22
+    0x481333c: mov      x1, x19
+    0x4813340: mov      x3, xzr
+    0x4813344: bl       #0x4758128   ; -> public static void $he(Battle 1, Unit 1, int 1) { }
+    0x4813348: ldr      x8, [x20]
+    0x481334c: ldr      x8, [x8, #0xb8]
+    0x4813350: ldr      x0, [x8, #0x3028]
+    0x4813354: adrp     x8, #0x968e000
+    0x4813358: ldr      x8, [x8, #0x4f0]
+    0x481335c: ldr      x4, [x8]
+    0x4813360: mov      w3, #0xab7e
+    0x4813364: mov      w1, #0x40c
+    0x4813368: mov      w2, #0x11
+    0x481336c: movk     w3, #0x2927, lsl #16
+    0x4813370: bl       #0x5265b74
+    0x4813374: mov      w2, w0
+    0x4813378: mov      x0, x22
+    0x481337c: mov      x1, x19
+    0x4813380: bl       #0x48178fc   ; -> public static void $Hi(Battle 1, Unit 1, sbyte 1) { }
+    0x4813384: b        #0x48133bc
+    0x4813388: ldr      w8, [x0, #0xe4]
+    0x481338c: cbnz     w8, #0x4813394
+    0x4813390: bl       #0x3cc7ac8
+    0x4813394: cbz      x19, #0x4813c04
+
+  BL $Hi @ 0x4814028 in [0x4812854] public static bool $ei(Battle 1, Unit 1) { }  --> task arg w2 = None
+  ---- window around 0x4814028 (task-id scan) ----
+    0x4813fc0: mov      x1, xzr
+    0x4813fc4: ldr      x9, [x8, #0xab8]
+    0x4813fc8: ldr      x2, [x8, #0xac0]
+    0x4813fcc: blr      x9
+    0x4813fd0: ldr      x8, [x19]
+    0x4813fd4: mov      x0, x19
+    0x4813fd8: ldr      x9, [x8, #0x1108]
+    0x4813fdc: ldr      x1, [x8, #0x1110]
+    0x4813fe0: blr      x9
+    0x4813fe4: ldr      x8, [x19]
+    0x4813fe8: mov      w21, w0
+    0x4813fec: mov      x0, x19
+    0x4813ff0: ldr      x9, [x8, #0x1128]
+    0x4813ff4: ldr      x1, [x8, #0x1130]
+    0x4813ff8: blr      x9
+    0x4813ffc: sxth     w2, w21
+    0x4814000: sxth     w3, w0
+    0x4814004: mov      x0, x22
+    0x4814008: mov      x1, x19
+    0x481400c: bl       #0x4809330   ; -> public static void $Gi(Battle 1, Unit 1, int 1, int 1) { }
+    0x4814010: ldr      x8, [x26]
+    0x4814014: mov      x0, x22
+    0x4814018: mov      x1, x19
+    0x481401c: ldr      x8, [x8, #0xb8]
+    0x4814020: ldp      w9, w8, [x8, #4]
+    0x4814024: mul      w2, w8, w9
+    0x4814028: bl       #0x48178fc   ; -> public static void $Hi(Battle 1, Unit 1, sbyte 1) { }
+    0x481402c: b        #0x48140c4
+    0x4814030: cbnz     w8, #0x481413c
+    0x4814034: cbz      x19, #0x48141e0
+    0x4814038: ldr      x8, [x19]
+    0x481403c: mov      x0, x19
+
+  BL $Hi @ 0x4819044 in [0x4818c84] public static void $hH(Battle 1, BattleSide 1, MineLayingSet 1, MineLaying 1) { }  --> task arg w2 = None
+  ---- window around 0x4819044 (task-id scan) ----
+    0x4818fdc: mov      w23, w0
+    0x4818fe0: ldr      x0, [x24]
+    0x4818fe4: ldr      w8, [x0, #0xe4]
+    0x4818fe8: cbnz     w8, #0x4818ff4
+    0x4818fec: bl       #0x3cc7ac8
+    0x4818ff0: ldr      x0, [x24]
+    0x4818ff4: ldr      x8, [x0, #0xb8]
+    0x4818ff8: ldr      w9, [x8, #0x34]
+    0x4818ffc: cmp      w9, w23, sxtb
+    0x4819000: b.eq     #0x4818e54
+    0x4819004: ldr      w9, [x0, #0xe4]
+    0x4819008: cbnz     w9, #0x4819018
+    0x481900c: bl       #0x3cc7ac8
+    0x4819010: ldr      x0, [x24]
+    0x4819014: ldr      x8, [x0, #0xb8]
+    0x4819018: add      x8, x8, #0x85c
+    0x481901c: b        #0x4818e70
+    0x4819020: ldr      w8, [x0, #0xe4]
+    0x4819024: cbnz     w8, #0x4819030
+    0x4819028: bl       #0x3cc7ac8
+    0x481902c: ldr      x0, [x24]
+    0x4819030: ldr      x8, [x0, #0xb8]
+    0x4819034: ldp      w9, w8, [x8, #4]
+    0x4819038: mul      w2, w8, w9
+    0x481903c: mov      x0, x21
+    0x4819040: mov      x1, x22
+    0x4819044: bl       #0x48178fc   ; -> public static void $Hi(Battle 1, Unit 1, sbyte 1) { }
+    0x4819048: b        #0x4818e54
+    0x481904c: str      w27, [sp, #0x1c]
+    0x4819050: ldp      x20, x19, [sp, #0x80]
+    0x4819054: ldp      x22, x21, [sp, #0x70]
+    0x4819058: ldp      x24, x23, [sp, #0x60]
+
+  BL $Hi @ 0x4819b70 in [0x48199cc] public static void $kH(Battle 1, Unit 1) { }  --> task arg w2 = None
+  ---- window around 0x4819b70 (task-id scan) ----
+    0x4819b08: cbz      x20, #0x4819bf4
+    0x4819b0c: ldr      x8, [x20]
+    0x4819b10: mov      x0, x20
+    0x4819b14: ldr      x9, [x8, #0x508]
+    0x4819b18: ldr      x1, [x8, #0x510]
+    0x4819b1c: blr      x9
+    0x4819b20: tbz      w0, #0, #0x4819be4
+    0x4819b24: ldr      x8, [x21]
+    0x4819b28: ldr      w9, [x8, #0xe4]
+    0x4819b2c: cbnz     w9, #0x4819b3c
+    0x4819b30: mov      x0, x8
+    0x4819b34: bl       #0x3cc7ac8
+    0x4819b38: ldr      x8, [x21]
+    0x4819b3c: ldr      x9, [x8, #0xb8]
+    0x4819b40: add      x9, x9, #0x85c
+    0x4819b44: b        #0x4819a34
+    0x4819b48: ldr      w9, [x8, #0xe4]
+    0x4819b4c: cbnz     w9, #0x4819b5c
+    0x4819b50: mov      x0, x8
+    0x4819b54: bl       #0x3cc7ac8
+    0x4819b58: ldr      x8, [x21]
+    0x4819b5c: ldr      x8, [x8, #0xb8]
+    0x4819b60: mov      x0, x20
+    0x4819b64: mov      x1, x19
+    0x4819b68: ldp      w9, w8, [x8, #4]
+    0x4819b6c: mul      w2, w8, w9
+    0x4819b70: bl       #0x48178fc   ; -> public static void $Hi(Battle 1, Unit 1, sbyte 1) { }
+    0x4819b74: ldr      x8, [x21]
+    0x4819b78: ldr      w9, [x8, #0xe4]
+    0x4819b7c: cbnz     w9, #0x4819b8c
+    0x4819b80: mov      x0, x8
+    0x4819b84: bl       #0x3cc7ac8
+
+  BL $Hi @ 0x484fde0 in [0x484f924] public static void $gH(Battle 1, Unit 1) { }  --> task arg w2 = None
+  ---- window around 0x484fde0 (task-id scan) ----
+    0x484fd78: movk     w3, #0xfa9e, lsl #16
+    0x484fd7c: ldr      x0, [x8, #0x3028]
+    0x484fd80: bl       #0x5265b74
+    0x484fd84: cmp      w0, w21, sxtb
+    0x484fd88: b.ne     #0x484fde4
+    0x484fd8c: ldr      x0, [x22]
+    0x484fd90: ldr      w8, [x0, #0xe4]
+    0x484fd94: cbnz     w8, #0x484fda0
+    0x484fd98: bl       #0x3cc7ac8
+    0x484fd9c: ldr      x0, [x22]
+    0x484fda0: ldr      x8, [x0, #0xb8]
+    0x484fda4: ldr      w8, [x8, #8]
+    0x484fda8: str      w8, [sp, #0x4c]
+    0x484fdac: b        #0x484fcdc
+    0x484fdb0: cmp      w8, #0x12
+    0x484fdb4: b.ne     #0x484fde4
+    0x484fdb8: ldr      x0, [x22]
+    0x484fdbc: ldr      w8, [x0, #0xe4]
+    0x484fdc0: cbnz     w8, #0x484fdcc
+    0x484fdc4: bl       #0x3cc7ac8
+    0x484fdc8: ldr      x0, [x22]
+    0x484fdcc: ldr      x8, [x0, #0xb8]
+    0x484fdd0: mov      x0, x20
+    0x484fdd4: mov      x1, x19
+    0x484fdd8: ldp      w9, w8, [x8, #4]
+    0x484fddc: mul      w2, w8, w9
+    0x484fde0: bl       #0x48178fc   ; -> public static void $Hi(Battle 1, Unit 1, sbyte 1) { }
+    0x484fde4: ldp      x20, x19, [sp, #0x90]
+    0x484fde8: ldr      x30, [sp, #0x40]
+    0x484fdec: ldp      x22, x21, [sp, #0x80]
+    0x484fdf0: ldp      x24, x23, [sp, #0x70]
+    0x484fdf4: ldp      x26, x25, [sp, #0x60]
+
+  BL $Hi @ 0x487f14c in [0x487e4b8] public static void $Nh(Battle 1, Unit 1, BattleSide 1, BattleSide 1, int 1, sbyte 1, bool 1) { }  --> task arg w2 = None
+  ---- window around 0x487f14c (task-id scan) ----
+    0x487f0e4: bl       #0x3cc7ac8
+    0x487f0e8: ldr      x8, [x28]
+    0x487f0ec: ldr      x9, [x8, #0xb8]
+    0x487f0f0: ldp      w10, w11, [x9, #0xc]
+    0x487f0f4: eor      w10, w11, w10
+    0x487f0f8: cmp      w10, w23, sxtb
+    0x487f0fc: b.ne     #0x487f6b0
+    0x487f100: ldr      w10, [x8, #0xe4]
+    0x487f104: cbnz     w10, #0x487f118
+    0x487f108: mov      x0, x8
+    0x487f10c: bl       #0x3cc7ac8
+    0x487f110: ldr      x8, [x28]
+    0x487f114: ldr      x9, [x8, #0xb8]
+    0x487f118: ldr      w9, [x9, #0x87c]
+    0x487f11c: str      w9, [sp, #0x8c]
+    0x487f120: b        #0x487e664
+    0x487f124: ldr      w9, [x8, #0xe4]
+    0x487f128: cbnz     w9, #0x487f138
+    0x487f12c: mov      x0, x8
+    0x487f130: bl       #0x3cc7ac8
+    0x487f134: ldr      x8, [x28]
+    0x487f138: ldr      x8, [x8, #0xb8]
+    0x487f13c: mov      x0, x22
+    0x487f140: mov      x1, x20
+    0x487f144: ldp      w9, w8, [x8, #4]
+    0x487f148: mul      w2, w8, w9
+    0x487f14c: bl       #0x48178fc   ; -> public static void $Hi(Battle 1, Unit 1, sbyte 1) { }
+    0x487f150: ldr      x8, [x28]
+    0x487f154: ldr      w9, [x8, #0xe4]
+    0x487f158: cbnz     w9, #0x487f168
+    0x487f15c: mov      x0, x8
+    0x487f160: bl       #0x3cc7ac8
+
+  BL $Hi @ 0x48a2f88 in [0x48a2d38] private static void $vF(Battle 1, Unit 1) { }  --> task arg w2 = None
+  ---- window around 0x48a2f88 (task-id scan) ----
+    0x48a2f20: cbnz     w8, #0x48a2f2c
+    0x48a2f24: bl       #0x3cc7ac8
+    0x48a2f28: ldr      x0, [x23]
+    0x48a2f2c: ldr      x8, [x0, #0xb8]
+    0x48a2f30: add      x8, x8, #0x34
+    0x48a2f34: b        #0x48a2dcc
+    0x48a2f38: ldp      x20, x19, [sp, #0x30]
+    0x48a2f3c: ldp      x22, x21, [sp, #0x20]
+    0x48a2f40: ldp      x24, x23, [sp, #0x10]
+    0x48a2f44: ldp      x30, x25, [sp], #0x40
+    0x48a2f48: ret      
+    0x48a2f4c: mov      x0, x20
+    0x48a2f50: mov      x1, x19
+    0x48a2f54: mov      x2, xzr
+    0x48a2f58: bl       #0x484eafc   ; -> public static void $ug(Battle 1, Unit 1) { }
+    0x48a2f5c: ldr      x0, [x23]
+    0x48a2f60: ldr      w8, [x0, #0xe4]
+    0x48a2f64: cbnz     w8, #0x48a2f70
+    0x48a2f68: bl       #0x3cc7ac8
+    0x48a2f6c: ldr      x0, [x23]
+    0x48a2f70: ldr      x8, [x0, #0xb8]
+    0x48a2f74: mov      x0, x20
+    0x48a2f78: mov      x1, x19
+    0x48a2f7c: mov      x3, xzr
+    0x48a2f80: ldp      w9, w8, [x8, #4]
+    0x48a2f84: mul      w2, w8, w9
+    0x48a2f88: bl       #0x48178fc   ; -> public static void $Hi(Battle 1, Unit 1, sbyte 1) { }
+    0x48a2f8c: cbz      x21, #0x48a2fc0
+    0x48a2f90: ldr      x8, [x23]
+    0x48a2f94: ldr      x10, [x21]
+    0x48a2f98: mov      x0, x21
+    0x48a2f9c: ldp      x20, x19, [sp, #0x30]
+
+  BL $Hi @ 0x48a3550 in [0x48a2fc4] public static void $UF(Battle 1, Unit 1) { }  --> task arg w2 = None
+  ---- window around 0x48a3550 (task-id scan) ----
+    0x48a34e8: ldr      w8, [x0, #0xe4]
+    0x48a34ec: cbnz     w8, #0x48a34f8
+    0x48a34f0: bl       #0x3cc7ac8
+    0x48a34f4: ldr      x0, [x23]
+    0x48a34f8: ldr      x8, [x0, #0xb8]
+    0x48a34fc: ldr      w8, [x8, #0x34]
+    0x48a3500: str      w8, [sp, #0x1c]
+    0x48a3504: b        #0x48a339c
+    0x48a3508: cbnz     w9, #0x48a3514
+    0x48a350c: bl       #0x3cc7ac8
+    0x48a3510: ldr      x0, [x23]
+    0x48a3514: ldr      x8, [x0, #0xb8]
+    0x48a3518: ldr      w8, [x8, #0x85c]
+    0x48a351c: str      w8, [sp, #0x1c]
+    0x48a3520: b        #0x48a339c
+    0x48a3524: ldr      x0, [x23]
+    0x48a3528: ldr      w8, [x0, #0xe4]
+    0x48a352c: cbnz     w8, #0x48a3538
+    0x48a3530: bl       #0x3cc7ac8
+    0x48a3534: ldr      x0, [x23]
+    0x48a3538: ldr      x8, [x0, #0xb8]
+    0x48a353c: mov      x0, x20
+    0x48a3540: mov      x1, x19
+    0x48a3544: mov      x3, xzr
+    0x48a3548: ldp      w9, w8, [x8, #4]
+    0x48a354c: mul      w2, w8, w9
+    0x48a3550: bl       #0x48178fc   ; -> public static void $Hi(Battle 1, Unit 1, sbyte 1) { }
+    0x48a3554: ldp      x20, x19, [sp, #0x80]
+    0x48a3558: ldp      x22, x21, [sp, #0x70]
+    0x48a355c: ldp      x24, x23, [sp, #0x60]
+    0x48a3560: ldp      x26, x25, [sp, #0x50]
+    0x48a3564: ldp      x30, x27, [sp, #0x40]
+
+  BL $Hi @ 0x48fe68c in [0x48fc4a4] public override short $CMA(Battle 1) { }  --> task arg w2 = None
+  ---- window around 0x48fe68c (task-id scan) ----
+    0x48fe624: ldr      x1, [x8, #0x1010]
+    0x48fe628: blr      x9
+    0x48fe62c: ldr      x8, [x28]
+    0x48fe630: ldr      x9, [x8, #0xb8]
+    0x48fe634: ldr      w10, [x9, #0x64]
+    0x48fe638: cmp      w10, w0, sxtb
+    0x48fe63c: b.eq     #0x48fe7c0
+    0x48fe640: ldr      w10, [x8, #0xe4]
+    0x48fe644: cbnz     w10, #0x48fe658
+    0x48fe648: mov      x0, x8
+    0x48fe64c: bl       #0x3cc7ac8
+    0x48fe650: ldr      x8, [x28]
+    0x48fe654: ldr      x9, [x8, #0xb8]
+    0x48fe658: ldr      w8, [x9, #0x34]
+    0x48fe65c: str      w8, [sp, #0xac]
+    0x48fe660: b        #0x48fe050
+    0x48fe664: ldr      x0, [x28]
+    0x48fe668: ldr      w8, [x0, #0xe4]
+    0x48fe66c: cbnz     w8, #0x48fe678
+    0x48fe670: bl       #0x3cc7ac8
+    0x48fe674: ldr      x0, [x28]
+    0x48fe678: ldr      x8, [x0, #0xb8]
+    0x48fe67c: mov      x0, x19
+    0x48fe680: mov      x1, x23
+    0x48fe684: mov      x3, xzr
+    0x48fe688: ldr      w2, [x8, #0x8c]
+    0x48fe68c: bl       #0x48178fc   ; -> public static void $Hi(Battle 1, Unit 1, sbyte 1) { }
+    0x48fe690: ldr      x8, [x28]
+    0x48fe694: b        #0x48fe7c0
+    0x48fe698: cbz      x26, #0x48febec
+    0x48fe69c: ldr      x8, [x26]
+    0x48fe6a0: ldr      w1, [sp, #0x38]
+
+  BL $Hi @ 0x490000c in [0x48ffc7c] public override short $CMA(Battle 1) { }  --> task arg w2 = None
+  ---- window around 0x490000c (task-id scan) ----
+    0x48fffa4: ldr      x2, [x8, #0xac0]
+    0x48fffa8: blr      x9
+    0x48fffac: ldrsh    w2, [x20, #0x38]
+    0x48fffb0: ldrsh    w3, [x20, #0x3a]
+    0x48fffb4: mov      x0, x19
+    0x48fffb8: mov      x1, x22
+    0x48fffbc: mov      x4, xzr
+    0x48fffc0: bl       #0x4809330   ; -> public static void $Gi(Battle 1, Unit 1, int 1, int 1) { }
+    0x48fffc4: ldr      x8, [x25]
+    0x48fffc8: mov      x0, x19
+    0x48fffcc: mov      x1, x22
+    0x48fffd0: mov      x3, xzr
+    0x48fffd4: ldr      x8, [x8, #0xb8]
+    0x48fffd8: ldp      w9, w8, [x8, #0x18]
+    0x48fffdc: add      w2, w8, w9
+    0x48fffe0: bl       #0x4817a8c   ; -> public static void $ki(Battle 1, Unit 1, sbyte 1) { }
+    0x48fffe4: mov      x0, x19
+    0x48fffe8: mov      x1, x22
+    0x48fffec: mov      x2, xzr
+    0x48ffff0: bl       #0x4832100   ; -> public static void $ji(Battle 1, Unit 1) { }
+    0x48ffff4: ldr      x8, [x25]
+    0x48ffff8: mov      x0, x19
+    0x48ffffc: mov      x1, x22
+    0x4900000: mov      x3, xzr
+    0x4900004: ldr      x8, [x8, #0xb8]
+    0x4900008: ldr      w2, [x8, #0x60]
+    0x490000c: bl       #0x48178fc   ; -> public static void $Hi(Battle 1, Unit 1, sbyte 1) { }
+    0x4900010: b        #0x4900540
+    0x4900014: cbz      x19, #0x49008d8
+    0x4900018: ldr      x8, [x19]
+    0x490001c: mov      x0, x19
+    0x4900020: ldr      x9, [x8, #0x9b8]
+
+  BL $Hi @ 0x49000e0 in [0x48ffc7c] public override short $CMA(Battle 1) { }  --> task arg w2 = None
+  ---- window around 0x49000e0 (task-id scan) ----
+    0x4900078: mov      x0, x8
+    0x490007c: bl       #0x3cc7ac8
+    0x4900080: ldr      x8, [x25]
+    0x4900084: ldr      x9, [x8, #0xb8]
+    0x4900088: ldp      w10, w11, [x9, #0xc]
+    0x490008c: eor      w11, w11, w10
+    0x4900090: ldr      w10, [x8, #0xe4]
+    0x4900094: cmp      w11, w24, sxtb
+    0x4900098: b.ne     #0x49008a4
+    0x490009c: cbnz     w10, #0x49000b0
+    0x49000a0: mov      x0, x8
+    0x49000a4: bl       #0x3cc7ac8
+    0x49000a8: ldr      x8, [x25]
+    0x49000ac: ldr      x9, [x8, #0xb8]
+    0x49000b0: add      x9, x9, #0x884
+    0x49000b4: b        #0x48ffd5c
+    0x49000b8: ldr      w9, [x8, #0xe4]
+    0x49000bc: cbnz     w9, #0x49000cc
+    0x49000c0: mov      x0, x8
+    0x49000c4: bl       #0x3cc7ac8
+    0x49000c8: ldr      x8, [x25]
+    0x49000cc: ldr      x8, [x8, #0xb8]
+    0x49000d0: mov      x0, x19
+    0x49000d4: mov      x1, x22
+    0x49000d8: mov      x3, xzr
+    0x49000dc: ldr      w2, [x8, #0x60]
+    0x49000e0: bl       #0x48178fc   ; -> public static void $Hi(Battle 1, Unit 1, sbyte 1) { }
+    0x49000e4: ldr      x8, [x25]
+    0x49000e8: ldr      w9, [x8, #0xe4]
+    0x49000ec: cbnz     w9, #0x49000fc
+    0x49000f0: mov      x0, x8
+    0x49000f4: bl       #0x3cc7ac8
+
+  BL $Hi @ 0x4906b0c in [0x4906390] public override short $CMA(Battle 1) { }  --> task arg w2 = None
+  ---- window around 0x4906b0c (task-id scan) ----
+    0x4906aa4: mov      x0, x19
+    0x4906aa8: mov      x1, x23
+    0x4906aac: mov      x2, xzr
+    0x4906ab0: bl       #0x4832100   ; -> public static void $ji(Battle 1, Unit 1) { }
+    0x4906ab4: ldr      x8, [x22]
+    0x4906ab8: ldr      x9, [x23]
+    0x4906abc: mov      x0, x23
+    0x4906ac0: ldr      x8, [x8, #0xb8]
+    0x4906ac4: ldr      x11, [x9, #0x798]
+    0x4906ac8: ldr      x2, [x9, #0x7a0]
+    0x4906acc: ldp      w10, w8, [x8, #0xc]
+    0x4906ad0: eor      w1, w8, w10
+    0x4906ad4: blr      x11
+    0x4906ad8: ldr      x8, [x22]
+    0x4906adc: mov      x0, x19
+    0x4906ae0: mov      x1, x23
+    0x4906ae4: mov      x3, xzr
+    0x4906ae8: ldr      x8, [x8, #0xb8]
+    0x4906aec: ldr      w2, [x8, #0x374]
+    0x4906af0: bl       #0x4758128   ; -> public static void $he(Battle 1, Unit 1, int 1) { }
+    0x4906af4: ldr      x8, [x22]
+    0x4906af8: mov      x0, x19
+    0x4906afc: mov      x1, x23
+    0x4906b00: mov      x3, xzr
+    0x4906b04: ldr      x8, [x8, #0xb8]
+    0x4906b08: ldr      w2, [x8, #0x80]
+    0x4906b0c: bl       #0x48178fc   ; -> public static void $Hi(Battle 1, Unit 1, sbyte 1) { }
+    0x4906b10: ldr      x8, [x23]
+    0x4906b14: mov      x0, x23
+    0x4906b18: ldr      x9, [x8, #0xfe8]
+    0x4906b1c: ldr      x1, [x8, #0xff0]
+    0x4906b20: blr      x9
+
+  BL $Hi @ 0x490817c in [0x4907e7c] public override short $CMA(Battle 1) { }  --> task arg w2 = None
+  ---- window around 0x490817c (task-id scan) ----
+    0x4908114: ldr      x8, [x9, #0x4b8]
+    0x4908118: blr      x8
+    0x490811c: ldr      x8, [x27]
+    0x4908120: mov      x0, x19
+    0x4908124: mov      x1, x25
+    0x4908128: mov      x3, xzr
+    0x490812c: ldr      x8, [x8, #0xb8]
+    0x4908130: ldp      w9, w8, [x8, #4]
+    0x4908134: mul      w2, w8, w9
+    0x4908138: bl       #0x4817a8c   ; -> public static void $ki(Battle 1, Unit 1, sbyte 1) { }
+    0x490813c: mov      x0, x19
+    0x4908140: mov      x1, x25
+    0x4908144: mov      x2, xzr
+    0x4908148: bl       #0x4832100   ; -> public static void $ji(Battle 1, Unit 1) { }
+    0x490814c: ldr      x8, [x25]
+    0x4908150: mov      x0, x25
+    0x4908154: ldr      x9, [x8, #0x328]
+    0x4908158: ldr      x1, [x8, #0x330]
+    0x490815c: blr      x9
+    0x4908160: ldr      x8, [x27]
+    0x4908164: mov      w26, w0
+    0x4908168: mov      x0, x19
+    0x490816c: mov      x1, x25
+    0x4908170: mov      x3, xzr
+    0x4908174: ldr      x8, [x8, #0xb8]
+    0x4908178: ldr      w2, [x8, #0x14]
+    0x490817c: bl       #0x48178fc   ; -> public static void $Hi(Battle 1, Unit 1, sbyte 1) { }
+    0x4908180: cbz      x19, #0x49086d8
+    0x4908184: ldr      x8, [x19]
+    0x4908188: mov      x0, x19
+    0x490818c: ldr      x9, [x8, #0x388]
+    0x4908190: ldr      x1, [x8, #0x390]
+
+  BL $Hi @ 0x490dc50 in [0x4909950] public override short $CMA(Battle 1) { }  --> task arg w2 = None
+  ---- window around 0x490dc50 (task-id scan) ----
+    0x490dbe8: ldr      x9, [x8, #0xb8]
+    0x490dbec: ldp      w10, w11, [x9, #0xc]
+    0x490dbf0: eor      w11, w11, w10
+    0x490dbf4: ldr      w10, [x8, #0xe4]
+    0x490dbf8: cmp      w11, w22, sxtb
+    0x490dbfc: b.ne     #0x490e804
+    0x490dc00: str      x23, [sp, #0x28]
+    0x490dc04: cbnz     w10, #0x490dc18
+    0x490dc08: mov      x0, x8
+    0x490dc0c: bl       #0x3cc7ac8
+    0x490dc10: ldr      x8, [x24]
+    0x490dc14: ldr      x9, [x8, #0xb8]
+    0x490dc18: ldr      w8, [x9, #0x95c]
+    0x490dc1c: str      w8, [sp, #0x17c]
+    0x490dc20: b        #0x490a614
+    0x490dc24: ldr      x0, [x24]
+    0x490dc28: ldr      w8, [x0, #0xe4]
+    0x490dc2c: cbnz     w8, #0x490dc38
+    0x490dc30: bl       #0x3cc7ac8
+    0x490dc34: ldr      x0, [x24]
+    0x490dc38: ldr      x8, [x0, #0xb8]
+    0x490dc3c: mov      x0, x19
+    0x490dc40: mov      x1, x25
+    0x490dc44: mov      x3, xzr
+    0x490dc48: ldp      w9, w8, [x8, #4]
+    0x490dc4c: mul      w2, w8, w9
+    0x490dc50: bl       #0x48178fc   ; -> public static void $Hi(Battle 1, Unit 1, sbyte 1) { }
+    0x490dc54: ldr      w22, [sp, #0x4c]
+    0x490dc58: cbz      x19, #0x490e83c
+    0x490dc5c: ldr      x8, [x19]
+    0x490dc60: mov      x0, x19
+    0x490dc64: ldr      x9, [x8, #0x388]
+
+  BL $Hi @ 0x4910bfc in [0x490f7f8] public override short $CMA(Battle 1) { }  --> task arg w2 = None
+  ---- window around 0x4910bfc (task-id scan) ----
+    0x4910b94: cbnz     w8, #0x4910b9c
+    0x4910b98: bl       #0x3cc7ac8
+    0x4910b9c: cbz      x24, #0x49118ac
+    0x4910ba0: ldr      x8, [x25]
+    0x4910ba4: ldr      x10, [x24]
+    0x4910ba8: mov      x0, x24
+    0x4910bac: ldr      x8, [x8, #0xb8]
+    0x4910bb0: ldr      x2, [x10, #0x7a0]
+    0x4910bb4: ldp      w8, w9, [x8, #4]
+    0x4910bb8: mul      w1, w8, w9
+    0x4910bbc: ldr      x8, [x10, #0x798]
+    0x4910bc0: blr      x8
+    0x4910bc4: ldr      x8, [x25]
+    0x4910bc8: mov      x0, x28
+    0x4910bcc: mov      x1, x24
+    0x4910bd0: mov      x3, xzr
+    0x4910bd4: ldr      x8, [x8, #0xb8]
+    0x4910bd8: ldr      w2, [x8, #0x374]
+    0x4910bdc: bl       #0x4758128   ; -> public static void $he(Battle 1, Unit 1, int 1) { }
+    0x4910be0: ldr      x8, [x25]
+    0x4910be4: mov      x0, x28
+    0x4910be8: mov      x1, x24
+    0x4910bec: mov      x3, xzr
+    0x4910bf0: ldr      x8, [x8, #0xb8]
+    0x4910bf4: ldp      w9, w8, [x8, #0xc]
+    0x4910bf8: eor      w2, w8, w9
+    0x4910bfc: bl       #0x48178fc   ; -> public static void $Hi(Battle 1, Unit 1, sbyte 1) { }
+    0x4910c00: ldr      w8, [sp, #0x34]
+    0x4910c04: cbz      w8, #0x4910c2c
+    0x4910c08: ldr      x9, [x25]
+    0x4910c0c: ldr      w8, [x9, #0xe4]
+    0x4910c10: cbnz     w8, #0x4910c20
+
+  BL $Hi @ 0x4912778 in [0x49120fc] public override short $CMA(Battle 1) { }  --> task arg w2 = None
+  ---- window around 0x4912778 (task-id scan) ----
+    0x4912710: ldr      x9, [x23]
+    0x4912714: mov      x0, x23
+    0x4912718: ldr      x8, [x8, #0xb8]
+    0x491271c: ldr      x11, [x9, #0x798]
+    0x4912720: ldr      x2, [x9, #0x7a0]
+    0x4912724: ldp      w10, w8, [x8, #0xc]
+    0x4912728: eor      w1, w8, w10
+    0x491272c: blr      x11
+    0x4912730: mov      x0, x19
+    0x4912734: mov      x1, x23
+    0x4912738: mov      x2, xzr
+    0x491273c: bl       #0x4832100   ; -> public static void $ji(Battle 1, Unit 1) { }
+    0x4912740: ldr      x8, [x26]
+    0x4912744: mov      x0, x19
+    0x4912748: mov      x1, x23
+    0x491274c: mov      x3, xzr
+    0x4912750: ldr      x8, [x8, #0xb8]
+    0x4912754: ldr      w2, [x8, #0x374]
+    0x4912758: bl       #0x4758128   ; -> public static void $he(Battle 1, Unit 1, int 1) { }
+    0x491275c: ldr      x8, [x26]
+    0x4912760: mov      x0, x19
+    0x4912764: mov      x1, x23
+    0x4912768: mov      x3, xzr
+    0x491276c: ldr      x8, [x8, #0xb8]
+    0x4912770: ldp      w9, w8, [x8, #4]
+    0x4912774: mul      w2, w8, w9
+    0x4912778: bl       #0x48178fc   ; -> public static void $Hi(Battle 1, Unit 1, sbyte 1) { }
+    0x491277c: cbz      x19, #0x4912cb8
+    0x4912780: ldr      x8, [x19]
+    0x4912784: mov      x0, x19
+    0x4912788: ldr      x9, [x8, #0x1038]
+    0x491278c: ldr      x1, [x8, #0x1040]
+
+  BL $Hi @ 0x4914798 in [0x49140d0] public override short $CMA(Battle 1) { }  --> task arg w2 = None
+  ---- window around 0x4914798 (task-id scan) ----
+    0x4914730: mov      w10, #0x3c38
+    0x4914734: movk     w10, #0xcb5e, lsl #16
+    0x4914738: ldr      w9, [x9, #0x30]
+    0x491473c: add      w9, w9, w10
+    0x4914740: ldr      w10, [sp, #0x14]
+    0x4914744: cmp      w9, w10, sxtb
+    0x4914748: b.eq     #0x4914cf4
+    0x491474c: ldr      w9, [x8, #0xe4]
+    0x4914750: cbnz     w9, #0x4914760
+    0x4914754: mov      x0, x8
+    0x4914758: bl       #0x3cc7ac8
+    0x491475c: ldr      x8, [x22]
+    0x4914760: ldr      x9, [x8, #0xb8]
+    0x4914764: add      x9, x9, #0x89c
+    0x4914768: b        #0x49141a4
+    0x491476c: ldr      w9, [x8, #0xe4]
+    0x4914770: cbnz     w9, #0x4914780
+    0x4914774: mov      x0, x8
+    0x4914778: bl       #0x3cc7ac8
+    0x491477c: ldr      x8, [x22]
+    0x4914780: ldr      x8, [x8, #0xb8]
+    0x4914784: mov      x0, x19
+    0x4914788: mov      x1, x25
+    0x491478c: mov      x3, xzr
+    0x4914790: ldp      w9, w8, [x8, #4]
+    0x4914794: mul      w2, w8, w9
+    0x4914798: bl       #0x48178fc   ; -> public static void $Hi(Battle 1, Unit 1, sbyte 1) { }
+    0x491479c: b        #0x49149bc
+    0x49147a0: ldr      w9, [x8, #0xe4]
+    0x49147a4: cbnz     w9, #0x49147b4
+    0x49147a8: mov      x0, x8
+    0x49147ac: bl       #0x3cc7ac8
+
+==== $Hi caller task-id histogram ====
+  task 2: 1 sites  ['0x45f6aa8']
+  task 3: 1 sites  ['0x45f6b84']
+  task 4: 1 sites  ['0x45f66e0']
+  task 8: 1 sites  ['0x45f6820']
+  task 17: 1 sites  ['0x4813380']
+  task 163: 1 sites  ['0x480b28c']
+  task None: 27 sites  ['0x45f39fc', '0x45f6594', '0x45f6dd4', '0x45fc340', '0x473bfe0', '0x4753c84', '0x47b6c28', '0x4801d94', '0x480b92c', '0x480c250', '0x480c760', '0x4814028']
+
+==== $Hi @ 0x48178FC .. 0x4817a8c (400 bytes) ====
+  0x48178fc: stp      x30, x23, [sp, #-0x30]!
+  0x4817900: stp      x22, x21, [sp, #0x10]
+  0x4817904: stp      x20, x19, [sp, #0x20]
+  0x4817908: adrp     x22, #0x9d11000
+  0x481790c: adrp     x23, #0x968e000
+  0x4817910: mov      w19, w2
+  0x4817914: ldrb     w8, [x22, #0x9d4]
+  0x4817918: ldr      x23, [x23, #0x4d8]
+  0x481791c: mov      x20, x1
+  0x4817920: mov      x21, x0
+  0x4817924: tbnz     w8, #0, #0x481793c   ; BR
+  0x4817928: adrp     x0, #0x968e000
+  0x481792c: ldr      x0, [x0, #0x4d8]
+  0x4817930: bl       #0x3cc7948
+  0x4817934: mov      w8, #1
+  0x4817938: strb     w8, [x22, #0x9d4]
+  0x481793c: ldr      x0, [x23]
+  0x4817940: ldr      w8, [x0, #0xe4]
+  0x4817944: cbnz     w8, #0x4817950   ; BR
+  0x4817948: bl       #0x3cc7ac8
+  0x481794c: ldr      x0, [x23]
+  0x4817950: ldr      x8, [x0, #0xb8]   ; UNIT.forced
+  0x4817954: add      x8, x8, #0x14
+  0x4817958: ldr      w8, [x8]
+  0x481795c: cmp      w8, #1   ; BR
+  0x4817960: b.eq     #0x48179fc
+  0x4817964: cmp      w8, #2   ; BR
+  0x4817968: b.eq     #0x48179c8
+  0x481796c: cbz      w8, #0x4817a60   ; BR
+  0x4817970: cbz      x20, #0x4817a88   ; BR
+  0x4817974: ldr      x8, [x20]
+  0x4817978: mov      x0, x20
+  0x481797c: ldp      x9, x1, [x8, #0x1f8]
+  0x4817980: blr      x9
+  0x4817984: cbz      x21, #0x4817a88   ; BR
+  0x4817988: ldr      x8, [x21]
+  0x481798c: mov      x22, x0
+  0x4817990: mov      x0, x21
+  0x4817994: ldr      x9, [x8, #0x1038]
+  0x4817998: ldr      x1, [x8, #0x1040]
+  0x481799c: blr      x9
+  0x48179a0: cmp      x22, x0   ; BR
+  0x48179a4: b.ne     #0x4817a20
+  0x48179a8: ldr      x0, [x23]
+  0x48179ac: ldr      w8, [x0, #0xe4]
+  0x48179b0: cbnz     w8, #0x48179bc   ; BR
+  0x48179b4: bl       #0x3cc7ac8
+  0x48179b8: ldr      x0, [x23]
+  0x48179bc: ldr      x8, [x0, #0xb8]   ; UNIT.forced
+  0x48179c0: add      x8, x8, #0x85c
+  0x48179c4: b        #0x4817958
+  0x48179c8: cbz      x21, #0x4817a88   ; BR
+  0x48179cc: ldr      x8, [x21]
+  0x48179d0: mov      x0, x21
+  0x48179d4: ldr      x9, [x8, #0x998]
+  0x48179d8: ldr      x1, [x8, #0x9a0]
+  0x48179dc: blr      x9
+  0x48179e0: cbz      x0, #0x4817a88   ; BR
+  0x48179e4: ldr      x8, [x0]
+  0x48179e8: mov      x1, x20
+  0x48179ec: mov      w2, w19
+  0x48179f0: ldp      x9, x3, [x8, #0x1b8]
+  0x48179f4: blr      x9
+  0x48179f8: b        #0x4817a20
+  0x48179fc: cbz      x20, #0x4817a88   ; BR
+  0x4817a00: ldr      x8, [x20]
+  0x4817a04: mov      x0, x20
+  0x4817a08: ldr      x9, [x8, #0x1008]
+  0x4817a0c: ldr      x1, [x8, #0x1010]
+  0x4817a10: blr      x9
+  0x4817a14: and      w8, w0, #0xff
+  0x4817a18: cmp      w8, w19, uxtb   ; BR
+  0x4817a1c: b.ne     #0x4817a40
+  0x4817a20: ldr      x0, [x23]
+  0x4817a24: ldr      w8, [x0, #0xe4]
+  0x4817a28: cbnz     w8, #0x4817a34   ; BR
+  0x4817a2c: bl       #0x3cc7ac8
+  0x4817a30: ldr      x0, [x23]
+  0x4817a34: ldr      x8, [x0, #0xb8]   ; UNIT.forced
+  0x4817a38: add      x8, x8, #8
+  0x4817a3c: b        #0x4817958
+  0x4817a40: ldr      x0, [x23]
+  0x4817a44: ldr      w8, [x0, #0xe4]
+  0x4817a48: cbnz     w8, #0x4817a54   ; BR
+  0x4817a4c: bl       #0x3cc7ac8
+  0x4817a50: ldr      x0, [x23]
+  0x4817a54: ldr      x8, [x0, #0xb8]   ; UNIT.forced
+  0x4817a58: add      x8, x8, #0x34
+  0x4817a5c: b        #0x4817958
+  0x4817a60: cbz      x20, #0x4817a88   ; BR
+  0x4817a64: ldr      x8, [x20]
+  0x4817a68: mov      x0, x20
+  0x4817a6c: mov      w1, w19
+  0x4817a70: ldp      x20, x19, [sp, #0x20]
+  0x4817a74: ldp      x22, x21, [sp, #0x10]
+  0x4817a78: ldr      x2, [x8, #0x1020]
+  0x4817a7c: ldr      x3, [x8, #0x1018]
+  0x4817a80: ldp      x30, x23, [sp], #0x30
+  0x4817a84: br       x3
+  0x4817a88: bl       #0x3cc7bf4
+
+==== act dispatch: 0x45F6700 enclosed by [0x45f61e0] public override void execute(Battle battle) { } ====
+    extent -> next start 0x45f7098 (3768 bytes)
+
+==== Unit.set_Task direct caller windows ====
