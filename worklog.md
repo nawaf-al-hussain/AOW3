@@ -825,3 +825,21 @@ Stage Summary:
   seeded sim+AI randomness, state hashing + command journals as Phase D
   groundwork. Next per plan: Phase 5 combat reconstruction gaps (min-range,
   patrol/hold tasks) or replay playback harness.
+
+Live QA (Pages v=22, agent-browser fresh sessions):
+- Command layer through real input paths: click-select/drag-box (select journal),
+  right-click move (order set + journal), ctrl+right-click attack-move (order
+  attackMove + journal), S stop via keyboard (idle + guard + journal),
+  minimap right-click move (journal), build card -> click (tryPlace + journal,
+  correct HQ-proximity rejection at 3.2 tiles), produce card -> queue + funds
+  deduct (correct rejection: no producer / producer still under construction),
+  AI's own Commands instance live (produce/capture entries logged, hero pass
+  AI intact: enemy barracks+power built).
+- Determinism LIVE: two independent loads with #seed=424242 -> identical h0
+  (885305a6) AND h1 (efd54a2b); hash journal advancing 1 Hz; seed logged.
+- QA fixes shipped: setPointerCapture guarded (stale pointer ids were killing
+  the whole input path -> NotFoundError); S hotkey now works while a UI button
+  holds focus (v=21, v=22).
+- Zero page errors on all sessions (desktop 16:9 + iPhone 14); mobile HUD/cards
+  intact. Regressions: unit-fsm 29, accuracy 13, data-model 379 PASS;
+  node --check clean. main = 1eb0572.
