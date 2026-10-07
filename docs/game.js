@@ -946,8 +946,16 @@
       // state specs DontShoot = 1048576 / CanShoot = 2097152 (271188-271189),
       // GAICommandSpecMode.ACT_DONT_SHOOT = 7 (410916), hotkeys 26/32
       // (255733/255739), tutorial condition 12 (311609). Fire discipline:
-      // units track + aim but hold fire until CanShoot (spec-pair toggle
-      // model; task-vs-spec exclusivity nuance = remaining unknown).
+      // units track + aim but hold fire until CanShoot. Build-E attack-path
+      // decode: discipline is a TASK (UnitTaskType.DONT_SHOOT = 8,
+      // dump.cs:395406; sim enum 395395-395410 has no Attack member) driven by
+      // the persistent spec bit 20 (tbz #20 gate @0x45f6728 in
+      // GAICommandSpecMode.execute 0x45F61E0). An explicit attack order rides
+      // AICommUnitsMove with a target (no AICommUnitsAttack exists,
+      // dump.cs:431773-433991) and REPLACES the task while the engagement
+      // lives (orderedEngagement bypass in the fire gates); the surviving spec
+      // re-asserts task 8 after the ordered target dies — fireHold stays
+      // sticky across the attack, matching the native spec persistence.
       for (const id of ids) {
         const u = this.units.find((v) => v.id === id);
         if (!u)
@@ -1717,8 +1725,31 @@
       u.x = nx;
       u.y = ny;
     }
+    orderedEngagement(u) {
+      // Build-E fireHold fidelity fix. Native semantics: an explicit player
+      // attack order = AICommUnitsMove message with targetId != 0
+      // (AICommandHelper.SendUnitsAttack @0x82D4FF8 constructs the SAME
+      // message factory 0x4ef4548 as SendUnitsMove @0x82D4A50, writes
+      // targetId/prototypeId/category/cell and the moveStyle slot, then the
+      // shared send epilogue — there is no AICommUnitsAttack class). The
+      // sim-side application AICommUnitsMove.$CMA 0x4909950 ($Pk per-unit
+      // helper 0x490E864) mutates the task surface: get_Task idempotence
+      // gates (0x490AC5C/0x490CB04 vs Obfuz-pool constants), set_Task x2
+      // (0x490C500/0x490C954), $Hi task write (0x490DC48) and set_FlagShoot
+      // (0x490C610) — so a DontShoot unit under an ordered engagement has its
+      // task replaced and FIRES at the ordered target. The DontShoot spec bit
+      // is stream state (AICommUnitsSpec 0x49130C8) that the move path never
+      // writes; when the ordered target dies (updateTargeting clears
+      // targetId/preferredId) the spec re-asserts task 8 and the unit resumes
+      // holding fire. Hence: bypass fireHold ONLY while an explicit attack
+      // order has a live ordered target (preferredId — native objPreferred, a
+      // player order); autonomous acquisitions set targetId only and stay
+      // suppressed (native spec bit re-asserts task 8 after the engagement).
+      return u.order.kind === "attackMove" && u.order.x === undefined
+        && u.preferredId !== undefined && u.targetId === u.preferredId;
+    }
     shoot(u, tx, ty, tgt, d) {
-      if (u.cd > 0 || u.fireHold)
+      if (u.cd > 0 || (u.fireHold && !this.orderedEngagement(u)))
         return;
       if (u.hiding)
         u.hiding = false; // firing reveals the ambush (native flag_shoot)
@@ -1739,7 +1770,7 @@
       }
     }
     fireShell(u, tx, ty, tgt, d) {
-      if (u.fireHold)
+      if (u.fireHold && !this.orderedEngagement(u))
         return;
       const acc = hitChance(u.def.weapon, u.path.length > 0, d);
       const dmg = Math.round(effectiveDamage(u.def.weapon.damage, tgt.def.armor, tgt.def.armorClass) * (1 + 0.08 * rankTier(u)) * (1 - 0.05 * rankTier(tgt)) * (u.grounded ? 1.25 : 1));
@@ -1770,7 +1801,7 @@
       // projectile branch applies area damage at (tx,ty) and needs no targetId).
       // Accuracy uses the static curve at the point distance (native accuracy
       // dispatch: SHELL_TYPE percent branches, weapon-type note §3.1).
-      if (u.cd > 0 || u.fireHold)
+      if (u.cd > 0 || (u.fireHold && !this.orderedEngagement(u)))
         return;
       if (u.hiding)
         u.hiding = false; // firing reveals
@@ -1814,7 +1845,7 @@
       this.mines = this.mines.filter((m) => !m.dead);
     }
     meleeStrike(u, tgt, d) {
-      if (u.cd > 0 || u.fireHold)
+      if (u.cd > 0 || (u.fireHold && !this.orderedEngagement(u)))
         return;
       if (u.hiding)
         u.hiding = false; // striking reveals
@@ -1849,7 +1880,7 @@
       }
     }
     shootBuilding(u, b, d) {
-      if (u.cd > 0 || u.fireHold)
+      if (u.cd > 0 || (u.fireHold && !this.orderedEngagement(u)))
         return;
       if (u.hiding)
         u.hiding = false; // firing reveals
@@ -2548,17 +2579,8 @@
       }
     }
     onHubHello(from, m) {
-      // duplicate hello from a known rid: pre-game it is the guest's 2 s
-      // keepalive; once the match is live it can only come from a client whose
-      // welcome was never consumed (it started loading assets after the join
-      // and its startGame threw the payload away) — re-run the live join path
-      // so it gets a FRESH welcome with an up-to-date snapshot. Clients that
-      // actually started stop helloing (their timer is cleared on success).
+      // duplicate hello from a known rid = the pre-game guest's 2 s keepalive
       if (from && (from === this.lastHello || this.clients.has(from))) {
-        if (this.opts && this.opts.isLive && this.opts.isLive()) {
-          this.onLiveHello(from, m);
-          return;
-        }
         this.onPeerHello(m);
         return;
       }
@@ -2568,7 +2590,16 @@
         return;
       }
       if (this.opts && this.opts.isLive && this.opts.isLive()) {
-        this.onLiveHello(from, m);
+        // match in progress: spectator, or P2 seat reclaim if vacant
+        let role = m.role === "spectator" ? "spec" : "player";
+        if (role === "player" && this.activeP2())
+          role = "spec";
+        this.clients.set(from, { role, slot: role === "spec" ? 0 : 2, seen: -1, live: false, raw: false });
+        const snap = this.opts.snapshot ? this.opts.snapshot() : null;
+        this.sendTo(from, {
+          a: "welcome", proto: PROTO, role, slot: role === "spec" ? 0 : 2,
+          seed: snap.seed, tick: snap.tick, arch: snap.arch, hashes: snap.hashes, gen: this.matchGen
+        });
         return;
       }
       if (this.lastHello || this.activeP2()) {
@@ -2579,21 +2610,6 @@
       }
       this.lastHello = from;
       this.onPeerHello(m);
-    }
-    // match in progress: spectator, or P2 seat reclaim if vacant (fresh join
-    // AND retry of a registered client — the role decision is re-run either
-    // way and the client entry is overwritten, so a waiting "player" joiner
-    // is upgraded to the reclaimed seat if it freed up in the meantime)
-    onLiveHello(from, m) {
-      let role = m.role === "spectator" ? "spec" : "player";
-      if (role === "player" && this.activeP2())
-        role = "spec";
-      this.clients.set(from, { role, slot: role === "spec" ? 0 : 2, seen: -1, live: false, raw: false });
-      const snap = this.opts.snapshot ? this.opts.snapshot() : null;
-      this.sendTo(from, {
-        a: "welcome", proto: PROTO, role, slot: role === "spec" ? 0 : 2,
-        seed: snap.seed, tick: snap.tick, arch: snap.arch, hashes: snap.hashes, gen: this.matchGen
-      });
     }
     // host, right before launching: seat the pre-game guest, hand waiting
     // spectators a fresh tick-0 welcome, message everyone their part
@@ -38415,12 +38431,6 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       }
     },
     launch() {
-      // the start packet seats the guest BEFORE the host's own startGame — if
-      // local assets are still baking the host would strand its own match
-      if (!ready) {
-        this.st("Still loading — the match can start once the map is ready.");
-        return;
-      }
       const seed = Math.floor(Math.random() * 1e9);
       if (this.helloTimer) {
         clearInterval(this.helloTimer);
@@ -38453,20 +38463,6 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
         this.armed = false;
         this.pending = false;
         this.st(spec ? "Spectating — catching up…" : "Rejoined — catching up…");
-      } else {
-        // assets were still baking: the payload above is discarded with the
-        // failed startGame — re-hello so the host issues a fresh welcome once
-        // we are actually ready. KEEP this (already fed) session: a brand-new
-        // one would ingest the hub's raw c broadcasts unfed and poison its
-        // buffer with single-slot frames; beginFed is re-entrant and the next
-        // welcome supersedes both archive and live frames.
-        this.st("Still loading assets — will rejoin when ready…");
-        const hello = () => {
-          if (this.session && !this.session.dead)
-            this.session.send({ a: "hello", proto: PROTO, role: "player" });
-        };
-        this.helloTimer = setInterval(hello, 2500);
-        setTimeout(hello, 2500);
       }
     },
     begin(seed, slot) {
