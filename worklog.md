@@ -1160,3 +1160,20 @@ Work Log:
 
 Stage Summary:
 - v=37: the fireHold fidelity question is settled at the structural level (CONFIRMED): attack order = AICommUnitsMove(target), task replaced during the engagement, spec bit 20 re-asserts task 8 afterwards — ordered fire flows, discipline resumes. Shipped as the orderedEngagement bypass in the five fire gates. Remaining surfaces: $Pg branch enumeration, siege stage-boundary split (build F), Obfuz pool values, TakePositions 15-bit cell-class semantics.
+
+---
+Task ID: 35
+Agent: Super Z (main)
+Task: Feature-sized build F — siege stage-boundary split decode ($xh fixed-point carry, corrected vtable map, $ce full trace) (v=37 notes/evidence, no code change)
+
+Work Log:
+- Full annotation trace of $ce(Battle, Unit) 0x47501F0..0x47553CC (5,240 ins → combat/siege-ce-full-trace.txt): all TEN duration vtable calls are get_TickFromSpec (0x418) — every siege behaviour gate (fire windows at 0x4750F78/0x47516BC/0x4751700/0x4752E9C/0x4752FDC/0x4753218/0x47534D0/0x475359C/0x4753CF4/0x4753F64) compares the siege state against TickFromSpec-derived bounds; calls $se for the flag_shoot fire-control check.
+- New scan: set_SiegeStage live slot = 0xDD8 (setter convention fn = blob − 8). Writers: $sC(Battle) 0x46FDCBC (init path), $xh(Battle, Unit) 0x488B9FC ×2, GAICommandRound 0x45F2AF8, ST serializers. siegeTick has ZERO vtable callers — direct field accesses only: $he 1w/5r, $fe 1w/7r, $Ie 2w, $cg 2w/3r, $ig 3w, $yG 1w, $UG 1w, $Pg 6w/2r, $mG 3w/12r.
+- CORRECTION to build A's siege accessor map: the vtable blob is 24-byte {0x403, fn, mi} records; live code loads compacted {fn, mi} pairs. Live slots: get_SiegeStage 0xDC8, set_SiegeStage 0xDD8, get_SiegeTick 0xDE8, set_SiegeTick 0xDF8, get/set_SiegeAfterWalkTick 0xE08/0xE18, get/set_SiegeBlocked 0xE28/0xE38. Build A's 0xDF8/0xE10 read was one record late.
+- THE SPLIT DECODED (structural, CONFIRMED): $xh mode-8 arm (0x488BAE0..0x488BC18) is the fixed-point carry — DEN = pool[0x364] × pool[0x368]; `set_SiegeTick(siegeTick + stage/DEN)` (sdiv) then `set_SiegeStage(stage mod DEN)` (msub). siege_stage is NOT the 0/1/2 stage enum — it is a fractional-tick accumulator in 1/DEN-tick units; whole ticks roll into siegeTick; the ST serializer streams the remainder byte. The SIEGE_STAGE_* consts name behaviour bands evaluated against the accumulator + tick, not stored state. Mode 10 uses the same pool-multiplier pattern (pool[4]×pool[8]).
+- Obfuz barrier precisely bounded: pool values decrypt via .cctor 0x4975844 → trampoline 0x5265B74 → runtime-resolved delegate → 0x5265090; {offset, keyA, keyB} triples visible (e.g. statics+0x130 ← 0x6E09FF7F/0x31C54641) but the final keystream lives in runtime-initialized IL2CPP structures — Unicorn emulation of class init is the follow-up. Numeric stage-band fractions stay MEDIUM (the v=36 30% reconstruction constant stands).
+- Tribute: no code change — the float-fraction model (f = t/T, bands at 30%/100%) is observationally equivalent to the native fixed-point accumulator; sg token unchanged; 213/213 phase5 vectors and all suites were green at the last run and game.js is untouched since v=37.
+- Notes: reverse/notes/siege-stage-boundary-split.md (new); phase5-missions-minrange.md siege unknown reduced to Obfuz pool VALUES + evidence list updated. Evidence: combat/siege-ce-full-trace.txt, siege-xh-mg-decode.txt; tools ce_full_trace.py, xh_mg_decode.py.
+
+Stage Summary:
+- The siege stage-boundary mechanism is closed at CONFIRMED level (fixed-point accumulator + carry, corrected vtable map, writer/reader inventory); the residual is exactly the Obfuz-encrypted pool constants. Open surfaces: $Pg branch enumeration, Obfuz pool values (Unicorn), TakePositions 15-bit cell-class semantics.
