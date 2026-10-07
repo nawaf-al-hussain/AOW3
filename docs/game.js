@@ -29,7 +29,7 @@
       captures: true,
       radius: 0.45,
       weapon: { damage: { light: 16, medium: 7, heavy: 3 }, range: 6.5, cooldown: 1.1, accStatic: 72, accWalk: 48, splash: 0, projectileSpeed: 0, walkingShot: 1 },
-      card: "assets/card-infantry.png",
+      card: "assets/card-f1-rifle.png",
       tint: "#8fb573",
       desc: "Light infantry (UNIT_ID_ILIGHT_CONF=0 / ILIGHT_RES=100). Cheap capture unit."
     },
@@ -49,7 +49,7 @@
       captures: true,
       radius: 0.45,
       weapon: { damage: { light: 10, medium: 34, heavy: 42 }, range: 7.5, cooldown: 2.4, accStatic: 78, accWalk: 55, splash: 1.1, projectileSpeed: 14, walkingShot: 1 },
-      card: "assets/card-mech.png",
+      card: "assets/card-f1-rpg.png",
       tint: "#c28f6d",
       desc: "Heavy rocket infantry (UNIT_ID_IHEAVY_CONF=1 / IHEAVY_RES=101). Punishes vehicles."
     },
@@ -89,7 +89,7 @@
       captures: false,
       radius: 0.7,
       weapon: { damage: { light: 42, medium: 30, heavy: 20 }, range: 9, cooldown: 1.8, accStatic: 82, accWalk: 62, splash: 0.6, projectileSpeed: 26 },
-      card: "assets/card-tank.png",
+      card: "assets/card-f1-hammer.png",
       tint: "#7d9c6a",
       desc: "Confederation MBT (UNIT_ID_HAMMER=11). Solid all-round gun."
     },
@@ -150,7 +150,7 @@
       radius: 0.62,
       antiAir: true,
       weapon: { damage: { light: 14, medium: 46, heavy: 4 }, range: 10.5, cooldown: 0.55, accStatic: 84, accWalk: 70, splash: 0, projectileSpeed: 34 },
-      card: "assets/card-flak.png",
+      card: "assets/card-f1-artillery.png",
       tint: "#a8a06e",
       desc: "Twin-gun AA vehicle (UNIT_ID_TORRENT=16). Shreds gunships; harmless to armor."
     },
@@ -191,7 +191,7 @@
       captures: false,
       radius: 0.65,
       weapon: { damage: { light: 40, medium: 38, heavy: 46 }, range: 15, cooldown: 4.2, accStatic: 62, accWalk: 44, splash: 2.6, projectileSpeed: 12, splashScatter: 1, explosionDecr: 30 },
-      card: "assets/card-rocket.png",
+      card: "assets/card-f1-tank.png",
       tint: "#9c8a5e",
       desc: "Rocket MLRS (UNIT_ID_TYPHOON=12, b_rocket1+radar nodes). Long-range splash."
     },
@@ -231,7 +231,7 @@
       captures: false,
       radius: 0.65,
       weapon: { damage: { light: 30, medium: 34, heavy: 26 }, range: 8.5, cooldown: 1.5, accStatic: 80, accWalk: 64, splash: 0.4, projectileSpeed: 30 },
-      card: "assets/card-storm.png",
+      card: "assets/card-f1-flak.png",
       tint: "#739c93",
       desc: "Dual-weapon platform (UNIT_ID_ZEUS=15). Native chain-lightning shell NOT reproduced."
     },
@@ -271,7 +271,7 @@
       captures: false,
       radius: 0.85,
       weapon: { damage: { light: 50, medium: 55, heavy: 60 }, range: 14, cooldown: 3.4, accStatic: 70, accWalk: 50, splash: 1.6, projectileSpeed: 16, splashScatter: 1, explosionDecr: 20 },
-      card: "assets/card-storm.png",
+      card: "assets/card-f1-mammoth.png",
       tint: "#6d8a5e",
       desc: "Siege platform (UNIT_ID_FORTRESS=10, UNIT_TYPE_FORTRESS=24). Long-range bombard."
     },
@@ -291,7 +291,7 @@
       captures: false,
       radius: 0.6,
       aura: { regen: 2, radius: 6 },
-      card: "assets/card-mech.png",
+      card: "assets/card-f1-shield.png",
       tint: "#739c93",
       desc: "Support drone (UNIT_ID_SHIELD=17, model has no weapon clips). Heals nearby friendlies."
     },
@@ -330,15 +330,62 @@
       captures: false,
       radius: 0.6,
       weapon: { damage: { light: 34, medium: 26, heavy: 16 }, range: 8.5, cooldown: 1.2, accStatic: 76, accWalk: 68, splash: 0.4, projectileSpeed: 30, guided: 1 },
-      card: "assets/card-gunship.png",
+      card: "assets/card-f1-helicopter.png",
       tint: "#739c93",
       desc: "Gunship (ItemF1/F2AviaHelicopter). Ignores terrain \u2014 shredded by AA guns."
+    },
+    cerber: {
+      id: "cerber",
+      name: 'HERO "Cerber"',
+      kind: "hero",
+      faction: 1,
+      hero: true,
+      armorClass: "medium",
+      armor: { light: 20, medium: 16, heavy: 12 },
+      health: 920,
+      price: 1500,
+      cp: 4,
+      trainTime: 24,
+      speed: 3.4,
+      view: 10,
+      regen: 2,
+      captures: false,
+      radius: 0.7,
+      weapon: { damage: { light: 22, medium: 26, heavy: 18 }, range: 7.5, cooldown: 1.5, accStatic: 78, accWalk: 55, splash: 0, projectileSpeed: 28 },
+      melee: { damage: { light: 46, medium: 58, heavy: 42 }, range: 2.1, cooldown: 1.05, splash: 1.5, crit: 0.22, critMul: 2 },
+      card: "assets/card-hero-cerber.png",
+      tint: "#7d9cc0",
+      desc: "F1 hero walker (HeroTypes.Cerber=1). Twin blades shred groups up close (area + crit); switch-gun chips from afar."
+    },
+    seraphim: {
+      id: "seraphim",
+      name: 'HERO "Seraphim"',
+      kind: "hero",
+      faction: 1,
+      hero: true,
+      aircraft: true,
+      armorClass: "medium",
+      armor: { light: 16, medium: 14, heavy: 10 },
+      health: 780,
+      price: 1650,
+      cp: 4,
+      trainTime: 26,
+      speed: 6.2,
+      view: 12.5,
+      regen: 2,
+      captures: false,
+      radius: 0.65,
+      weapon: { damage: { light: 34, medium: 26, heavy: 16 }, range: 9, cooldown: 1.05, accStatic: 80, accWalk: 72, splash: 0.3, projectileSpeed: 32, guided: 1 },
+      card: "assets/card-hero-seraphim.png",
+      tint: "#739cc0",
+      desc: "F1 flying hero (HeroTypes.Seraphim=3). Fast lazer strikes; LAND for stabilized +25% dmg and armor — departs back to the sky."
     }
   };
   // Native build rosters per faction (voice-key + UNIT_ID evidence). Player = f1, AI = f2.
   var BUILD_ORDER_F1 = ["ilight", "iheavy", "hammer", "torrent", "zeus", "typhoon", "fortress", "shield", "helicopter"];
   var BUILD_ORDER_F2 = ["ilight", "iheavy", "sniper", "coyote", "jaguar", "armadillo", "porcupine", "mammoth", "chameleon", "helicopter"];
   var BUILD_ORDER = BUILD_ORDER_F1;
+  var HERO_ORDER = ["cerber", "seraphim"];
   var HQ = { id: "hq", name: "Headquarters", health: 4200, radius: 2.2, view: 13 };
   var DEPOT = { id: "depot", name: "Supply Depot", health: 600, radius: 1.6, view: 8 };
   var BLD = {
@@ -347,10 +394,11 @@
     heavyfactory: { id: "heavyfactory", name: "Heavy Factory", health: 1400, radius: 2.3, view: 9, price: 850, buildTime: 24, model: "f1_bld_factory_heavy" },
     power: { id: "power", name: "Power Plant", health: 700, radius: 1.7, view: 8, price: 300, buildTime: 10, model: "f1_bld_power" },
     turret: { id: "turret", name: "Turret", health: 800, radius: 1.2, view: 11, price: 450, buildTime: 12, model: "f1_bld_tower", antiAir: true, weapon: { damage: { light: 34, medium: 30, heavy: 20 }, range: 10.5, cooldown: 1.35, accStatic: 88, accWalk: 66, splash: 0, projectileSpeed: 30 } },
-    bunker: { id: "bunker", name: "Bunker", health: 1000, radius: 1.4, view: 9, price: 350, buildTime: 10, model: "f1_bld_bunker", weapon: { damage: { light: 26, medium: 8, heavy: 2 }, range: 7.5, cooldown: 0.7, accStatic: 80, accWalk: 60, splash: 0, projectileSpeed: 0 } }
+    bunker: { id: "bunker", name: "Bunker", health: 1000, radius: 1.4, view: 9, price: 350, buildTime: 10, model: "f1_bld_bunker", weapon: { damage: { light: 26, medium: 8, heavy: 2 }, range: 7.5, cooldown: 0.7, accStatic: 80, accWalk: 60, splash: 0, projectileSpeed: 0 } },
+    herobld: { id: "herobld", name: "Hero Building", health: 1300, radius: 2.1, view: 9, price: 900, buildTime: 26, model: "f1_bld_hero" }
   };
-  var BUILDINGS_ORDER = ["barracks", "factory", "heavyfactory", "power", "turret", "bunker"];
-  var PRODUCER_OF = { ilight: "barracks", iheavy: "barracks", sniper: "barracks", hammer: "factory", torrent: "factory", zeus: "factory", shield: "factory", coyote: "factory", jaguar: "factory", armadillo: "factory", porcupine: "factory", fortress: "heavyfactory", typhoon: "heavyfactory", mammoth: "heavyfactory", chameleon: "heavyfactory", helicopter: "heavyfactory" };
+  var BUILDINGS_ORDER = ["barracks", "factory", "heavyfactory", "power", "turret", "bunker", "herobld"];
+  var PRODUCER_OF = { ilight: "barracks", iheavy: "barracks", sniper: "barracks", hammer: "factory", torrent: "factory", zeus: "factory", shield: "factory", coyote: "factory", jaguar: "factory", armadillo: "factory", porcupine: "factory", fortress: "heavyfactory", typhoon: "heavyfactory", mammoth: "heavyfactory", chameleon: "heavyfactory", helicopter: "heavyfactory", cerber: "herobld", seraphim: "herobld" };
   var ECONOMY = {
     baseIncome: 14,
     depotIncome: 11,
@@ -818,7 +866,7 @@
         const dx = x + Math.cos(ang) * r, dy = y + Math.sin(ang) * r;
         u.order = { kind: attackMove ? "attackMove" : "move", x: dx, y: dy };
         u.targetId = undefined;
-        u.path = this.pf.find(u.x, u.y, dx, dy, u.def.kind === "aircraft") ?? [];
+        u.path = this.pf.find(u.x, u.y, dx, dy, u.def.kind === "aircraft" && !u.grounded) ?? [];
         u.dest = { x: dx, y: dy };
         i++;
       }
@@ -843,7 +891,7 @@
         const u = this.units.find((v) => v.id === id);
         if (!u)
           continue;
-        if (t && t.def.kind === "aircraft" && !u.def.antiAir)
+        if (t && (t.def.kind === "aircraft" || t.def.aircraft) && !t.grounded && !u.def.antiAir)
           continue;
         u.order = { kind: "attackMove", x: undefined, y: undefined };
         u.targetId = targetId;
@@ -861,6 +909,8 @@
       if (p.funds < def.price)
         return false;
       if (p.queue.length >= 8)
+        return false;
+      if (def.hero && (this.units.some((v) => v.owner === owner && v.def.hero) || p.queue.some((q) => UNITS[q.defId].hero)))
         return false;
       if (p.cpUsed + def.cp > p.cpCap)
         return false;
@@ -888,7 +938,7 @@
               const dir = o === 1 ? 1 : -1;
               const u = this.spawn(q.defId, o, prod.x + dir * (prod.radius + 1), prod.y + (Math.random() * 3 - 1.5));
               u.order = { kind: "move", x: prod.x + dir * (prod.radius + 4.5), y: u.y };
-              u.path = this.pf.find(u.x, u.y, u.order.x, u.order.y, u.def.kind === "aircraft") ?? [];
+              u.path = this.pf.find(u.x, u.y, u.order.x, u.order.y, u.def.kind === "aircraft" && !u.grounded) ?? [];
             }
             this.refreshEconomy();
           }
@@ -928,7 +978,7 @@
       }
     }
     passable(u, x, y) {
-      if (u.def.kind === "aircraft")
+      if (u.def.kind === "aircraft" && !u.grounded)
         return true;
       const gx = Math.round(x), gy = Math.round(y);
       if (gx < 0 || gy < 0 || gx >= MAP_W || gy >= MAP_H)
@@ -958,7 +1008,11 @@
         const tgt = u.targetId !== undefined ? this.units.find((t) => t.id === u.targetId) : undefined;
         if (tgt) {
           const d = Math.hypot(tgt.x - u.x, tgt.y - u.y);
-          if (d <= u.def.weapon.range) {
+          const mw = u.def.melee;
+          if (mw && d <= mw.range) {
+            u.path = [];
+            this.meleeStrike(u, tgt, d);
+          } else if (d <= u.def.weapon.range) {
             u.path = [];
             this.shoot(u, tgt.x, tgt.y, tgt, d);
           } else {
@@ -999,7 +1053,7 @@
                 u.order = { kind: "idle" };
               u.dest = undefined;
             } else {
-              u.path = this.pf.find(u.x, u.y, u.order.x, u.order.y, u.def.kind === "aircraft") ?? [];
+              u.path = this.pf.find(u.x, u.y, u.order.x, u.order.y, u.def.kind === "aircraft" && !u.grounded) ?? [];
               if (!u.path.length) {
                 u.order = { kind: "idle" };
                 u.dest = undefined;
@@ -1041,11 +1095,11 @@
         return undefined;
       let best;
       let bd = u.def.weapon.range + 2.5;
-      const shooterAir = u.def.kind === "aircraft";
+      const shooterAir = (u.def.kind === "aircraft" || u.def.aircraft) && !u.grounded;
       for (const t of this.units) {
         if (t.owner === u.owner || t.hp <= 0)
           continue;
-        const tAir = t.def.kind === "aircraft";
+        const tAir = (t.def.kind === "aircraft" || t.def.aircraft) && !t.grounded;
         if (tAir && (!u.def.antiAir || shooterAir))
           continue;
         const d = Math.hypot(t.x - u.x, t.y - u.y);
@@ -1062,7 +1116,7 @@
     moveToward(u, x, y, dt) {
       u.repathCd = Math.max(0, (u.repathCd ?? 0) - dt);
       if ((!u.dest || Math.hypot(u.dest.x - x, u.dest.y - y) > 1.5) && (u.repathCd ?? 0) <= 0) {
-        u.path = this.pf.find(u.x, u.y, x, y, u.def.kind === "aircraft") ?? [];
+        u.path = this.pf.find(u.x, u.y, x, y, u.def.kind === "aircraft" && !u.grounded) ?? [];
         u.dest = { x, y };
         u.repathCd = 0.5;
       }
@@ -1078,7 +1132,7 @@
         u.path.shift();
         return;
       }
-      const step = Math.min(d, u.def.speed * dt);
+      const step = Math.min(d, u.def.speed * (u.grounded ? 0.45 : 1) * dt);
       let nx = u.x + dx / d * step, ny = u.y + dy / d * step;
       if (!this.passable(u, nx, ny)) {
         if (this.passable(u, nx, u.y))
@@ -1086,7 +1140,7 @@
         else if (this.passable(u, u.x, ny))
           nx = u.x;
         else {
-          u.path = this.pf.find(u.x, u.y, u.dest?.x ?? u.x, u.dest?.y ?? u.y, u.def.kind === "aircraft") ?? [];
+          u.path = this.pf.find(u.x, u.y, u.dest?.x ?? u.x, u.dest?.y ?? u.y, u.def.kind === "aircraft" && !u.grounded) ?? [];
           return;
         }
       }
@@ -1100,9 +1154,12 @@
       if (u.cd > 0)
         return;
       u.cd = u.def.weapon.cooldown;
+      if (u.lastMode === "melee")
+        u.cd = Math.max(u.cd, 1.5);
+      u.lastMode = "gun";
       u.facing = Math.atan2(ty - u.y, tx - u.x);
       const acc = hitChance(u.def.weapon, u.path.length > 0, d);
-      const dmg = Math.round(effectiveDamage(u.def.weapon.damage, tgt.def.armor, tgt.def.armorClass) * (1 + 0.08 * rankTier(u)) * (1 - 0.05 * rankTier(tgt)));
+      const dmg = Math.round(effectiveDamage(u.def.weapon.damage, tgt.def.armor, tgt.def.armorClass) * (1 + 0.08 * rankTier(u)) * (1 - 0.05 * rankTier(tgt)) * (u.grounded ? 1.25 : 1));
       if (u.def.weapon.projectileSpeed === 0) {
         this.applyHit(u, tx, ty, tgt, dmg, acc);
       } else {
@@ -1120,9 +1177,43 @@
           owner: u.owner,
           srcId: u.id,
           targetId: tgt.id,
-          airburst: tgt.def.kind === "aircraft",
+          airburst: (tgt.def.kind === "aircraft" || tgt.def.aircraft) && !tgt.grounded,
           trail: 0
         });
+      }
+    }
+    meleeStrike(u, tgt, d) {
+      if (u.cd > 0)
+        return;
+      const mw = u.def.melee;
+      u.cd = mw.cooldown;
+      if (u.lastMode === "gun")
+        u.cd = Math.max(u.cd, 1.5);
+      u.lastMode = "melee";
+      u.facing = Math.atan2(tgt.y - u.y, tgt.x - u.x);
+      const crit = Math.random() < mw.crit;
+      const dmg = Math.round(effectiveDamage(mw.damage, tgt.def.armor, tgt.def.armorClass) * (crit ? mw.critMul : 1));
+      this.applyHit(u, tgt.x, tgt.y, tgt, dmg, 1);
+      if (crit)
+        this.floats.push({ x: tgt.x, y: tgt.y - 1.6, text: "CRIT " + dmg, color: "#fca5a5", t: 0 });
+      if (mw.splash)
+        for (const o of this.units) {
+          if (o === tgt || o.owner === u.owner || o.hp <= 0)
+            continue;
+          if (Math.hypot(o.x - tgt.x, o.y - tgt.y) <= mw.splash)
+            this.applyHit(u, o.x, o.y, o, Math.round(dmg * 0.6), 1);
+        }
+    }
+    commandLandDepart(ids) {
+      for (const id of ids) {
+        const u = this.units.find((v) => v.id === id);
+        if (!u || !u.def.hero || !u.def.aircraft)
+          continue;
+        u.grounded = !u.grounded;
+        u.cd = Math.max(u.cd, u.grounded ? 1.2 : 1);
+        u.path = [];
+        u.lastMode = undefined;
+        this.floats.push({ x: u.x, y: u.y - 2.2, text: u.grounded ? "LANDING" : "DEPARTING", color: "#7dd3fc", t: 0 });
       }
     }
     shootBuilding(u, b, d) {
@@ -1247,9 +1338,9 @@
             for (const t of this.units) {
               if (t.owner === b.owner || t.hp <= 0)
                 continue;
-              if (t.def.kind === "aircraft" && !BLD[b.defId].antiAir)
+              if ((t.def.kind === "aircraft" || t.def.aircraft) && !t.grounded && !BLD[b.defId].antiAir)
                 continue;
-              const d = Math.hypot(t.x - b.x, t.y - b.y) - (t.def.kind === "aircraft" && BLD[b.defId].antiAir ? 3 : 0);
+              const d = Math.hypot(t.x - b.x, t.y - b.y) - ((t.def.kind === "aircraft" || t.def.aircraft) && !t.grounded && BLD[b.defId].antiAir ? 3 : 0);
               if (d < bd) {
                 bd = d;
                 best = t;
@@ -33641,7 +33732,9 @@ void main() {
     fortress: ["f1_veh_fortress", "f1_veh_fortress"],
     shield: ["f1_veh_shield", "f1_veh_shield"],
     chameleon: ["f2_veh_chameleon", "f2_veh_chameleon"],
-    helicopter: ["f1_avia_helicopter", "f2_avia_helicopter"]
+    helicopter: ["f1_avia_helicopter", "f2_avia_helicopter"],
+    cerber: ["f1_hero_cerber", "f1_hero_cerber"],
+    seraphim: ["f1_hero_seraphim", "f1_hero_seraphim"]
   };
   var HQ_MODEL = "f1_bld_hq";
   var templates = new Map;
@@ -33814,7 +33907,7 @@ void main() {
       }
     }
     let rotorBlades;
-    if (def.kind === "aircraft") {
+    if (def.kind === "aircraft" || def.aircraft) {
       rotorBlades = collectRotorBlades(inst);
     }
     const muzzles = collectMuzzles(inst);
@@ -35215,8 +35308,10 @@ void main() {
         while (d < -Math.PI)
           d += Math.PI * 2;
         v.yaw += d * Math.min(1, 12 * dt());
-        const air = u.def.kind === "aircraft";
-        g.position.set(v.pos.x, air ? 2.1 + Math.sin(this.time * 2.1 + u.id) * 0.09 : heightAtWorld(v.pos.x, v.pos.z), v.pos.z);
+        const air = (u.def.kind === "aircraft" || u.def.aircraft) && !u.grounded;
+        const wantY = air ? 2.1 + Math.sin(this.time * 2.1 + u.id) * 0.09 : heightAtWorld(v.pos.x, v.pos.z);
+        v.airY = v.airY === undefined ? wantY : v.airY + (wantY - v.airY) * Math.min(1, dt() * 2.4);
+        g.position.set(v.pos.x, v.airY, v.pos.z);
         g.rotation.y = v.yaw;
         const moving = Math.hypot(u.vx, u.vy) > 0.008;
         if (v.model.anim) {
@@ -35325,7 +35420,7 @@ void main() {
         v.capRing.visible = false;
         const uD = v.model.group.userData.unit;
         const canDie = !!v.model.anim && (v.model.anim.has("die_bullet") || v.model.anim.has("die_explosion"));
-        if (uD.def.kind === "aircraft") {
+        if (uD.def.kind === "aircraft" || uD.def.aircraft) {
           v.dieT = 0;
           v.dieDur = 1.6;
           v.dieMode = "crash";
@@ -35490,7 +35585,7 @@ void main() {
             anim.oneshot("w1_round", 0.06);
           else if (!moving && anim.has("w2_round"))
             anim.oneshot("w2_round", 0.06);
-        } else if (kind === "aircraft") {
+        } else if (kind === "aircraft" || kind === "hero") {
           if (anim.has("w2_round"))
             anim.oneshot("w2_round", 0.06);
           else if (anim.has("w1_round"))
@@ -35506,7 +35601,7 @@ void main() {
       const model = buildUnit(u.def, u.owner);
       model.group.userData.unit = u;
       const [wx, wz] = t2w(u.x, u.y);
-      model.group.position.set(wx, u.def.kind === "aircraft" ? 2.1 : 0, wz);
+      model.group.position.set(wx, u.def.kind === "aircraft" || u.def.aircraft ? 2.1 : 0, wz);
       this.scene.add(model.group);
       const hpCanvas = document.createElement("canvas");
       hpCanvas.width = 64;
@@ -35557,7 +35652,7 @@ void main() {
         rankSprite,
         rankT: -1
       };
-      if (u.def.kind === "aircraft") {
+      if (u.def.kind === "aircraft" || u.def.aircraft) {
         const sh = new Sprite(new SpriteMaterial({ map: this.texShadow, transparent: true, depthWrite: false }));
         sh.scale.set(2.6, 2.6, 1);
         this.scene.add(sh);
@@ -35833,7 +35928,8 @@ void main() {
           key.intensity = inf ? 4.4 : 3.1;
           rim.intensity = inf ? 2 : 1.35;
           pr.render(scene, cam2);
-          UNITS[id].card = pr.domElement.toDataURL("image/png");
+          if (!UNITS[id].card)
+            UNITS[id].card = pr.domElement.toDataURL("image/png");
           scene.remove(wrap);
         }
         pr.dispose();
@@ -36269,6 +36365,10 @@ button{cursor:pointer;border:0;border-radius:8px}
 .card .pr{font-size:10px;font-weight:700;background:rgba(0,0,0,.8);padding:2px;color:#fcd34d}
 .card .pr .cp{color:#7dd3fc;margin-left:6px}
 .card:disabled{opacity:.4}
+.card.hero{border-color:rgba(252,211,77,.55);box-shadow:0 0 8px rgba(252,211,77,.25)}
+.card.hero .nm{color:#fcd34d}
+.hbtn{margin-top:2px;background:rgba(125,211,252,.15);border:1px solid #7dd3fc;color:#7dd3fc;font-weight:800;font-size:10px;padding:3px 8px;border-radius:4px;cursor:pointer}
+.hbtn:active{background:rgba(125,211,252,.35)}
 .card .qn{position:absolute;right:4px;top:4px;background:rgba(16,185,129,.95);color:#000;font-size:10px;font-weight:800;border-radius:3px;padding:0 4px}
 .gold{color:#fcd34d}.green{color:#6ee7b7;font-size:11px;font-weight:400}.cp{color:#7dd3fc;font-size:12px;font-weight:700}
 #home{background:rgba(255,255,255,.1);color:#fff;font-size:11px;padding:4px 8px;border:1px solid rgba(255,255,255,.2)}
@@ -36368,8 +36468,18 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       b.onclick = () => sim?.enqueue(id, 1);
       cards.appendChild(b);
     }
+    for (const id of HERO_ORDER) {
+      const d = UNITS[id];
+      const b = document.createElement("button");
+      b.className = "card hero";
+      b.title = `${d.name} — ${d.desc}`;
+      b.innerHTML = `<img src="${d.card}"/><div class="nm">${d.name.split('"')[1] || d.name}</div>
+      <div class="pr">${d.price}¤<span class="cp">CP${d.cp}</span></div>`;
+      b.onclick = () => sim?.enqueue(id, 1);
+      cards.appendChild(b);
+    }
   }
-  var BLD_ICON = { barracks: '<img class="bimg" src="assets/ui/bld-barracks.png" draggable="false">', factory: '<img class="bimg" src="assets/ui/bld-factory.png" draggable="false">', heavyfactory: '<img class="bimg" src="assets/ui/bld-heavyfactory.png" draggable="false">', power: '<img class="bimg" src="assets/ui/bld-power.png" draggable="false">', turret: '<img class="bimg" src="assets/ui/bld-turret.png" draggable="false">', bunker: '<img class="bimg" src="assets/ui/bld-bunker.png" draggable="false">' };
+  var BLD_ICON = { herobld: '<img class="bimg" src="assets/ui/bld-hero.png" draggable="false">', barracks: '<img class="bimg" src="assets/ui/bld-barracks.png" draggable="false">', factory: '<img class="bimg" src="assets/ui/bld-factory.png" draggable="false">', heavyfactory: '<img class="bimg" src="assets/ui/bld-heavyfactory.png" draggable="false">', power: '<img class="bimg" src="assets/ui/bld-power.png" draggable="false">', turret: '<img class="bimg" src="assets/ui/bld-turret.png" draggable="false">', bunker: '<img class="bimg" src="assets/ui/bld-bunker.png" draggable="false">' };
   var HINT_DEFAULT = "drag = select \u00B7 right-click / long-press = move \u00B7 attack \u00B7 capture \u00B7 wheel / pinch = zoom \u00B7 WASD = pan";
   var placing = null;
   function startPlacing(defId) {
@@ -36407,6 +36517,11 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       wrap2.appendChild(b);
     }
   }
+  $("selinfo")?.addEventListener("click", (e) => {
+    const b = e.target.closest && e.target.closest(".hbtn");
+    if (b && sim)
+      sim.commandLandDepart([...sel]);
+  });
   var pointers = new Map;
   var pinchDist = 0;
   var longPressTimer = null;
@@ -36687,9 +36802,11 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
         const dmgTxt = dm.light !== undefined ? `${dm.light}/${dm.medium}/${dm.heavy}` : "—";
         const rT = rankTier(su);
         si.innerHTML = `<b>${su.def.name}${sel.size > 1 ? " ×" + sel.size : ""}</b>` +
-          (rT > 0 ? `<span style="color:#fcd34d;font-weight:800;font-size:11px">${["", "VETERAN", "ELITE", "ACE"][rT]} · ${su.kills} kill${su.kills > 1 ? "s" : ""}</span>` : "") +
+          (su.def.hero ? `<span style="color:#fcd34d;font-weight:800;font-size:11px">HERO</span>` : rT > 0 ? `<span style="color:#fcd34d;font-weight:800;font-size:11px">${["", "VETERAN", "ELITE", "ACE"][rT]} · ${su.kills} kill${su.kills > 1 ? "s" : ""}</span>` : "") +
           `<div class="hpbar"><i style="width:${Math.round(fr * 100)}%;background:${fr > 0.55 ? "#58d858" : fr > 0.25 ? "#d8c840" : "#e05840"}"></i></div>` +
-          `<span class="si-stats">DMG ${dmgTxt} · RNG ${w.range ?? "—"} · ARM ${su.def.armorClass ?? "—"}</span>`;
+          `<span class="si-stats">DMG ${dmgTxt} · RNG ${w.range ?? "—"} · ARM ${su.def.armorClass ?? "—"}</span>` +
+          (su.def.hero && su.def.melee ? `<span class="si-stats">BLADES ${su.def.melee.damage.light}/${su.def.melee.damage.medium}/${su.def.melee.damage.heavy} · CRIT ${Math.round(su.def.melee.crit * 100)}%</span>` : "") +
+          (su.def.hero && su.def.aircraft ? `<span class="si-stats">${su.grounded ? "GROUNDED · +25% DMG" : "AIRBORNE"}</span><button class="hbtn" data-act="land">${su.grounded ? "DEPART" : "LAND"}</button>` : "");
       } else
         si.classList.add("hidden");
     } else
@@ -36705,6 +36822,29 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       const afford = p.funds >= d.price && p.cpUsed + d.cp <= p.cpCap;
       btn.disabled = !afford || !hasP;
       btn.title = hasP ? d.name + " \u2014 " + d.desc : d.name + " \u2014 requires " + BLD[producer].name;
+      const qn = p.queue.filter((q) => q.defId === id).length;
+      let badge = btn.querySelector(".qn");
+      if (qn > 0) {
+        if (!badge) {
+          badge = document.createElement("span");
+          badge.className = "qn";
+          btn.appendChild(badge);
+        }
+        badge.textContent = "×" + qn;
+      } else if (badge)
+        badge.remove();
+    });
+    HERO_ORDER.forEach((id, j) => {
+      const d = UNITS[id];
+      const btn = cards[BUILD_ORDER.length + j];
+      if (!btn)
+        return;
+      const producer = PRODUCER_OF[id];
+      const hasP = sim.buildings.some((b) => b.defId === producer && b.owner === 1 && b.hp > 0 && b.built);
+      const heroAlive = sim.units.some((u) => u.owner === 1 && u.def.hero);
+      const afford = p.funds >= d.price && p.cpUsed + d.cp <= p.cpCap;
+      btn.disabled = !afford || !hasP || heroAlive;
+      btn.title = !hasP ? d.name + " — requires " + BLD[producer].name : heroAlive ? d.name + " — hero already deployed" : d.name + " — " + d.desc;
       const qn = p.queue.filter((q) => q.defId === id).length;
       let badge = btn.querySelector(".qn");
       if (qn > 0) {
@@ -37047,7 +37187,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
           let pool;
           if (def.id === "torrent" || def.id === "porcupine")
             pool = ["w_mg4", "w_cannon2", "w_mg2"];
-          else if (def.kind === "aircraft")
+          else if (def.kind === "aircraft" || def.id === "seraphim")
             pool = ["w_missile1", "w_mg2"];
           else if (splash >= 1)
             pool = ["w_missile1", "w_missile2", "w_cannon4"];
