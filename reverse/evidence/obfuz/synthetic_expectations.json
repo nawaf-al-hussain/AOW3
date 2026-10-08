@@ -1,0 +1,232 @@
+[
+ {
+  "slot": "0x1008",
+  "start": 308,
+  "target": 4,
+  "thunk": "int",
+  "raw": "0xd366df71",
+  "expected": 3774912598,
+  "expected_float": null
+ },
+ {
+  "slot": "0x1008",
+  "start": 312,
+  "target": 8,
+  "thunk": "int",
+  "raw": "0x4e89e31d",
+  "expected": 3976349685,
+  "expected_float": null
+ },
+ {
+  "slot": "0x1008",
+  "start": 324,
+  "target": 20,
+  "thunk": "int",
+  "raw": "0x8b56dd9b",
+  "expected": 255249885,
+  "expected_float": null
+ },
+ {
+  "slot": "0x1008",
+  "start": 400,
+  "target": 100,
+  "thunk": "int",
+  "raw": "0xeff21001",
+  "expected": 403820294,
+  "expected_float": null
+ },
+ {
+  "slot": "0x1008",
+  "start": 1132,
+  "target": 868,
+  "thunk": "int",
+  "raw": "0xfbb28d1e",
+  "expected": 2264513633,
+  "expected_float": null
+ },
+ {
+  "slot": "0x1008",
+  "start": 1136,
+  "target": 872,
+  "thunk": "int",
+  "raw": "0x221abd72",
+  "expected": 1179127975,
+  "expected_float": null
+ },
+ {
+  "slot": "0x1008",
+  "start": 1148,
+  "target": 884,
+  "thunk": "int",
+  "raw": "0x5a507cb",
+  "expected": 266184150,
+  "expected_float": null
+ },
+ {
+  "slot": "0x1008",
+  "start": 420,
+  "target": 120,
+  "thunk": "float",
+  "raw": "0x8fd50e17",
+  "expected": 3856862342,
+  "expected_float": -1.3402602603223688e+23
+ },
+ {
+  "slot": "0x1008",
+  "start": 316,
+  "target": 12,
+  "thunk": "int",
+  "raw": "0x56683e42",
+  "expected": 1834939106,
+  "expected_float": null
+ },
+ {
+  "slot": "0x1008",
+  "start": 320,
+  "target": 16,
+  "thunk": "int",
+  "raw": "0x8f69c176",
+  "expected": 3500813701,
+  "expected_float": null
+ },
+ {
+  "slot": "0x1008",
+  "start": 328,
+  "target": 24,
+  "thunk": "int",
+  "raw": "0x4949a329",
+  "expected": 3430147319,
+  "expected_float": null
+ },
+ {
+  "slot": "0x1008",
+  "start": 332,
+  "target": 28,
+  "thunk": "int",
+  "raw": "0x1d36a5dd",
+  "expected": 402221011,
+  "expected_float": null
+ },
+ {
+  "slot": "0x1008",
+  "start": 336,
+  "target": 32,
+  "thunk": "int",
+  "raw": "0xf0d7077",
+  "expected": 3654580466,
+  "expected_float": null
+ },
+ {
+  "slot": "0x1008",
+  "start": 340,
+  "target": 36,
+  "thunk": "int",
+  "raw": "0x515b1392",
+  "expected": 2576662565,
+  "expected_float": null
+ },
+ {
+  "slot": "0x1008",
+  "start": 344,
+  "target": 40,
+  "thunk": "int",
+  "raw": "0xf4ebcaf2",
+  "expected": 2582368404,
+  "expected_float": null
+ },
+ {
+  "slot": "0x1008",
+  "start": 348,
+  "target": 44,
+  "thunk": "int",
+  "raw": "0x4a192e52",
+  "expected": 2777202563,
+  "expected_float": null
+ },
+ {
+  "slot": "0x1008",
+  "start": 1232,
+  "thunk": "string",
+  "raw": "5345445942444b5448444b514d4358554b534445545a5455",
+  "expected_str": "SEDYBDKTHDKQMCXUKSDETZTU"
+ },
+ {
+  "slot": "0x1008",
+  "start": 1376,
+  "thunk": "string",
+  "raw": "44594e4a4f424f564b46515551465a435a4a585455",
+  "expected_str": "DYNJOBOVKFQUQFZCZJXTU"
+ },
+ {
+  "slot": "0x1810",
+  "start": 396,
+  "target": 96,
+  "thunk": "int",
+  "raw": "0xd9e5c486",
+  "expected": 417294523,
+  "expected_float": null
+ },
+ {
+  "slot": "0x1810",
+  "start": 428,
+  "target": 128,
+  "thunk": "int",
+  "raw": "0x8be3cf81",
+  "expected": 530407159,
+  "expected_float": null
+ },
+ {
+  "slot": "0x1810",
+  "start": 456,
+  "target": 176,
+  "thunk": "int",
+  "raw": "0xc9b915f7",
+  "expected": 3974053780,
+  "expected_float": null
+ },
+ {
+  "slot": "0x1810",
+  "start": 468,
+  "target": 200,
+  "thunk": "int",
+  "raw": "0x51960908",
+  "expected": 1026561453,
+  "expected_float": null
+ },
+ {
+  "slot": "0x1810",
+  "start": 488,
+  "target": 224,
+  "thunk": "int",
+  "raw": "0xeaedb2c2",
+  "expected": 1406904759,
+  "expected_float": null
+ },
+ {
+  "slot": "0x1810",
+  "start": 1228,
+  "target": 1024,
+  "thunk": "int",
+  "raw": "0xb878b823",
+  "expected": 300365,
+  "expected_float": null
+ },
+ {
+  "slot": "0x1810",
+  "start": 1372,
+  "target": 1112,
+  "thunk": "int",
+  "raw": "0xd6128ef4",
+  "expected": 414858159,
+  "expected_float": null
+ },
+ {
+  "slot": "0x1810",
+  "start": 1488,
+  "target": 1200,
+  "thunk": "int",
+  "raw": "0x77e9012e",
+  "expected": 3544117010,
+  "expected_float": null
+ }
+]

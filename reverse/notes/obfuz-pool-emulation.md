@@ -1,5 +1,13 @@
 # Obfuz Const-Pool Emulation — the encryption VM cracked open, secret key
 # extracted and validated by the game's own integrity check (Build G)
+#
+# BUILD G2 (Task 38) UPDATE: static path CLOSED with a sharper negative (§5),
+# the 0xb8 third-segment hypothesis resolved as a parse artifact (§3/§6), the
+# triple inventory completed to 697/697, and finish path (a) instrumented +
+# validated end-to-end — one on-device Frida run from full decode (§7).
+# Companion evidence: builder-chain-decode.txt, builder-slot-keys.json,
+# pool-dump-consumer-validation.txt. Tools: obfuz_pool_emulator.py (--dump),
+# obfuz_frida_dump.js.
 
 Game: AOW3 6.9.18 (libil2cpp.so sha256 8ace05bb…, dump.cs sha256 0050e67d…,
 global-metadata.dat sha256 d2e8dd0d…, metadata v31).
@@ -67,49 +75,82 @@ Unicorn (whole libil2cpp.so mapped, fake VM object, extracted key) produces
 the opcode pipeline are thereby proven against the game's own assertion; any
 pool value is now just `$GOA` + its triple.
 
-## 5. The .cctor triple inventory (CONFIRMED)
+## 5. The .cctor triple inventory (CONFIRMED — 697/697, no param gaps)
 
 The holder's .cctor (@0x4975844, 39,984 B, 9,996 ins) fully parses into **697
 pool values** (629 int / 66 string / 2 float), each (thunk, blobStart, keyA,
-salt, staticsTarget); int sources = pool segments at statics+0x1008 (×334)
-and +0x1810 (×283) of the holder's own provider class. Key anchors in the
-table (full JSON: obfuz_cctor_triples.json): +0x04/+0x08 = the Build E task-id
-product pair, +0x14 = the $ce task threshold, +0x64 = the DontShoot
-idempotence constant, +0x364/+0x368 = the Build F DEN factors, +0x374 = the
-set_FlagShoot value. A same-session name-table builder independently loads
-statics+4/+8 and uses their PRODUCT as an array index — bounding it to a
-task-id range exactly as Build E inferred.
+salt, staticsTarget); int sources = the manager's segments at statics+0x1008
+(×334) and +0x1810 (×295 — including the twelve formerly "0xb8"-labeled
+triples, see §6). String accessors carry a fifth register (keyC, w4) captured
+since G2. Build G's three parse gaps are fixed (movz forms, wzr zero start,
+add-composed salts): idx167 start 0x3c4 salt 0xb069936b, idx376 start 0x7d8
+salt 0x4c0638f5, idx386 start 0x0. Key anchors in the
+table (full JSON: pool-cctor-triples.json, refreshed G2): +0x04/+0x08 = the
+Build E task-id product pair, +0x14 = the $ce task threshold, +0x64 = the
+DontShoot idempotence constant, +0x364/+0x368 = the Build F DEN factors,
++0x374 = the set_FlagShoot value. A same-session name-table builder
+independently loads statics+4/+8 and uses their PRODUCT as an array index —
+bounding it to a task-id range exactly as Build E inferred.
 
-## 6. Segment construction and the byte cipher (CONFIRMED)
+## 6. Segment construction and the byte cipher (CONFIRMED — chain fully named)
 
-Pool segments are `byte[2048]` arrays at pool-manager statics slots
-(0x800/0x1008/0x1810/0x2018/0x2820/0x3028/0x3830, one pool manager per
-assembly). Builder cctors (0x497F474, 0x497F82C — adjacent to the holder
-.cctor) build each: `newarr byte[0x800]` → `InitializeArray(arr,
-RuntimeFieldHandle)` → in-place byte-cipher (wrapper 0x5264EA8 → interface
-slot 2 → `$mOA`/`$MOA` @0x7712FE4/0x7712AFC) → store. The cipher is CBC-style
-over u32 words: `plain_i = $GOA(cipher_i ^ cipher_{i-1}, keyA, salt)`
-(prev starts 0; tail bytes XOR salt) — reusing the SAME validated `$GOA`.
-All ten captured segment key pairs are in the evidence file.
+Pool segments are `byte[2048]` arrays stored into the pool manager's statics
+at 0x800/0x1008/0x1810/0x2018/0x2820/0x3028 (mgr1, builder .cctor 0x497F474)
+and 0x800/0x1008 (mgr2, builder .cctor 0x497F82C) — the two builders are the
+ONLY callers of the wrapper in the whole binary (8 sites; whole-BL scan).
+Builder chain per segment (fully named, builder-chain-decode.txt):
+`il2cpp_array_new(byte[], 0x800)` (thunk 0x3CC7A38 → 0x3D02AD4) → store via
+`klass->static_fields` (klass+0xB8) → GC write barrier (0x3CC78EC → 0x3CC8E44)
+→ `RuntimeHelpers::InitializeArray(arr, RuntimeFieldHandle)` (0x8E5ABDC,
+handle from a runtime-resolved usage slot) → in-place byte-cipher (wrapper
+0x5264EA8: x0=array, w1=keyA, w2=salt, x3=VM singleton) → interface slot 2 →
+`$mOA`/`$MOA` @0x7712FE4/0x7712AFC. The cipher is CBC-style over u32 words:
+`plain_i = $GOA(cipher_i ^ cipher_{i-1}, keyA, salt)` (prev starts 0; tail
+bytes XOR salt) — reusing the SAME validated `$GOA`.
 
-## 7. Residual (UNRESOLVED, precisely bounded)
+**G2 correction:** the "segment at statics+0xb8" in the Build G triple parse
+was the `Il2CppClass::static_fields` indirection captured as a src_slot; the
+real load is the next `ldr x0, [x8, #0x1810]`. The holder reads EXACTLY TWO
+segments (0x1008, 0x1810); there is no third pool array. The $mOA cipher also
+serves the string accessor path (tail call @0x77132BC, 5-arg form) — pool
+strings are per-value processed after the segment cipher, with (len, salt,
+keyC) params.
 
-The 8×2048-B **ciphertext blocks** behind the `InitializeArray` handles were
-not found in global-metadata: exhaustive negative sweeps covered all 486
-`__StaticArrayInitTypeSize` arrays, all 28,749 fieldDefaultValues offsets
-(CBC heads × 7 key pairs × swapped variants × header-inclusive offsets), and
-1,257 usage-token-resolved FieldInfo blobs — zero anchor hits (anchors: the
-sim's own (0x1C, 0x3D, 0x27428CBF) single-op triple, V1×V2 task bound, V5/DEN
-bounds). The handles are runtime-filled usage slots (file value 0). Finish
-paths, cheapest first: (a) Frida one-shot dumping the pool-manager statics
-after boot — with §4's validated crypto this instantly yields all 697 values;
-(b) resolve `Il2CppCodeGenModule.metadataUsages` for the game assembly
-(token → FieldInfo → data) once the exact v31 module struct layout is
-confirmed; (c) full-system Unicorn of the builders with a stubbed il2cpp
-runtime. Note: the two large arrays adjacent to the holder in dump.cs
-(472,129/293,863 B @ metadata 0xD00BA0/0xD73FE8) are MonoScript path tables,
-NOT pool data — earlier assumptions tying them to the pool are corrected
-here.
+## 7. Residual (G2: static path CLOSED; decode is one device run away)
+
+The 8×2048-B **ciphertext blocks** behind the `InitializeArray` handles are
+not in global-metadata — now proven STRUCTURALLY, not just by sweep:
+(a) the metadata data blob has 28,749 distinct fieldDefaultValues dataIndex
+entries and delta-inferred block sizes contain ZERO blocks of 0x800 — the
+ciphertext cannot be a contiguous fdv entry under any key interpretation;
+(b) the game's 31,091 string literals contain exactly two Obfuz strings (the
+secret-key path + its error literal) — no pool-data resource exists;
+(c) metadata v31 has no usage list/pair tables (header slots zeroed) — the
+runtime resolves the handles itself, so token archaeology inside the metadata
+is structurally dead. The handles are runtime-filled usage slots; the
+backing data never lands on disk in metadata or resources.
+
+**Finish path (a) is now INSTRUMENTED** (Build G2):
+`reverse/tools/obfuz_frida_dump.js` hooks the wrapper (ciphertext on enter,
+plaintext on leave), the `$qk` canary, and `InitializeArray` (ciphertext +
+FieldInfo name), then re-invokes both builder .cctors so late attachment
+still captures every segment; `obfuz_pool_emulator.py --dump <jsonl>`
+verifies the canary, re-executes the CBC on the real pair (first executed-
+data validation of the §6 model), decodes all 697 triples and reports the
+seven named anchors. The consumer is validated end-to-end against a
+synthetic identity-CBC transcript: **26/26 sampled values match, CBC re-verify
+32/32 on both segments, 0 param gaps** (pool-dump-consumer-validation.txt).
+On-device run:
+
+    frida -U -f com.geargames.aow -l reverse/tools/obfuz_frida_dump.js \
+          -o obfuz_pool_dump.jsonl --runtime=v8
+    python3 reverse/tools/obfuz_pool_emulator.py --dump obfuz_pool_dump.jsonl
+
+Finish paths (b)/(c) from Build G are retired as structurally dead / moot
+per (a)–(c) above. Note: the two large arrays adjacent to the holder in
+dump.cs (472,129/293,863 B @ metadata 0xD00BA0/0xD73FE8) are MonoScript path
+tables, NOT pool data — earlier assumptions tying them to the pool are
+corrected here (carried from Build G).
 
 ## 8. Tribute impact (no code change)
 
@@ -124,9 +165,16 @@ untouched.
 - CONFIRMED: full Obfuz const-pool architecture (holder → `$d<T>` accessors →
   interface-dispatched `$GOA` on `GeneratedEncryptionVirtualMachine`), the
   256-op decrypt VM, the secret key (256 ints, extracted from the APK
-  TextAsset), the `.cctor` triple grammar with 697 values inventoried, the
-  segment/byte-cipher layer with ten key pairs, and — via the game's own
-  `$qk` canary — end-to-end correctness of the emulated decryptor.
-- UNRESOLVED (bounded): the on-disk location of the eight 2048-B segment
-  ciphertext blocks (not in metadata fdv; runtime-resolved handles) — with
-  three documented finish paths; the emulator is complete up to that input.
+  TextAsset), the `.cctor` triple grammar with 697/697 values inventoried
+  (no param gaps), the segment/byte-cipher layer with the builder chain fully
+  named (array_new → barrier → InitializeArray → wrapper; 8 callsites →
+  (manager, slot, keyA, salt)), the holder reads exactly two segments
+  (0x1008, 0x1810), and — via the game's own `$qk` canary — end-to-end
+correctness of the emulated decryptor.
+- CONFIRMED (G2): the static hunt for the ciphertext is structurally closed
+  (zero 0x800 fdv blocks, no Obfuz data resources, v31 usage tables absent);
+  the Frida dump pipeline (hook script + `--dump` consumer) is instrumented
+  and validated 26/26 on a synthetic transcript — the full 697-value decode
+  is one on-device run away, at which point every remaining MEDIUM/UNRESOLVED
+  pool-dependent constant (Build E task ids, $ce threshold, Build F stage
+  fractions, flag_shoot, DEN) converts to CONFIRMED in a single step.

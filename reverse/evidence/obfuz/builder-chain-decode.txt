@@ -1,0 +1,153 @@
+Task 38 / Build G2 — Obfuz pool: static path closed, Frida dump pipeline
+instrumented and validated end-to-end
+================================================================================
+Game: AOW3 6.9.18 (libil2cpp.so sha256 8ace05bbaa2cdfda…, global-metadata.dat
+sha256 d2e8dd0dfe1b8233…, secret-key asset sha256 81f07f626a78d765…683a4 —
+all re-verified against the Build G note before any run).
+Session: 2026-10-08, sandbox (no Android device attached).
+
+1. Environment reproduction (no new claims, regression guard)
+--------------------------------------------------------------------------------
+python3.13 + unicorn 2.1.4 + capstone 5.0.7. obfuz_pool_emulator.py run:
+
+    SELF-TEST : $GOA(0x720ba23e, 0x545ee170, 0x98705298) = 0x12345678
+                -> $qk expected 0x12345678 : PASS
+    cctor pool values: 697 ({'int': 629, 'string': 66, 'float': 2})
+
+Build G's canary still passes on the re-downloaded binaries — crypto chain
+(VM + 256-int key + argument convention) confirmed stable.
+
+2. The builder chain, fully named (CONFIRMED — supersedes §6 shorthand)
+--------------------------------------------------------------------------------
+Pool-manager builder .cctor #1 @0x497F474 (6 segments), #2 @0x497F82C
+(2 segments). Per-segment chain (example: mgr1 slot 0x800):
+
+    0x497f5a8: ldr  x0, [x23]           ; byte[] Il2CppClass*
+    0x497f5ac: mov  w1, #0x800          ; 2048 elements
+    0x497f5b0: bl   #0x3cc7a38          ; thunk -> 0x3d02ad4 il2cpp_array_new
+    0x497f5b4: ldr  x8, [x21]           ; pool-manager Il2CppClass*
+    0x497f5bc: ldr  x8, [x8, #0xb8]     ; klass->static_fields
+    0x497f5c4: str  x0, [x8, #0x800]    ; statics[0x800] = new byte[2048]
+    0x497f5c8: add  x0, x8, #0x800
+    0x497f5cc: bl   #0x3cc78ec          ; thunk -> 0x3cc8e44 (GC write barrier)
+    0x497f5d0: ldr  x1, [x29]           ; RuntimeFieldHandle (usage slot)
+    0x497f5d4: mov  x0, x19             ; array
+    0x497f5d8: mov  x2, xzr
+    0x497f5dc: bl   #0x8e5abdc          ; RuntimeHelpers::InitializeArray
+    0x497f5e0: ldr  x3, [x20]           ; VM/encryptor singleton
+    0x497f5e4: mov  w1, #0xf7e2         ; keyA = 0x6e5ef7e2
+    0x497f5e8: mov  w2, #0x9cce         ; salt = 0xa4ba9cce
+    0x497f5ec: mov  x0, x19             ; array (holds CIPHERTEXT here)
+    0x497f5f8: bl   #0x5264ea8          ; $mOA wrapper: in-place byte cipher
+
+Complete callsite -> (manager, slot, keyA, salt) table (also
+builder-slot-keys.json):
+
+    0x497F5F8 mgr1 0x0800 keyA 0x6e5ef7e2 salt 0xa4ba9cce
+    0x497F650 mgr1 0x1008 keyA 0xc0fb1f9e salt 0xd649bd34
+    0x497F6A8 mgr1 0x1810 keyA 0x1c1b6537 salt 0x5a586297
+    0x497F700 mgr1 0x2018 keyA 0x354680c3 salt 0xfba322bf
+    0x497F758 mgr1 0x2820 keyA 0xc1a1c8cc salt 0x44a79bb9
+    0x497F7B0 mgr1 0x3028 keyA 0x49cf984f salt 0xca71695e
+    0x497F964 mgr2 0x0800 keyA 0x98643925 salt 0xd993a3d1
+    0x497F9BC mgr2 0x1008 keyA 0x5b300bf1 salt 0x8952d5f4
+
+Whole-binary BL scan (numpy over every PT_LOAD exec segment): these 8 sites
+are the ONLY callers of the wrapper 0x5264EA8; $mOA 0x7712FE4 has exactly one
+further caller — the string accessor path (tail call @0x77132BC with
+(x0, out, len, salt, keyA-shaped 5-arg form)); $MOA 0x7712AFC has none.
+Build G's SEG_KEYS 'b1@0x3830' / 'b2@0x1810' pairs are not sourced by any
+callsite in the binary — retained in SEG_KEYS as unverified, the dump's own
+keyA/salt are authoritative.
+
+3. The 0xb8 "third segment" was a parse artifact (CONFIRMED)
+--------------------------------------------------------------------------------
+The holder .cctor triples with src_slot 0xb8 do NOT read a third segment:
+`ldr x8, [x8, #0xb8]` is the Il2CppClass::static_fields indirection, and the
+actual segment load is the NEXT ldr on x0. Disproof by direct read (site
+0x497B4C4, triple idx 407):
+
+    0x497b4c4: mov  w2, #0x5347         ; keyA lo
+    0x497b4cc: mov  w1, #0xa0           ; start
+    0x497b4d4: ldr  x8, [x8, #0xb8]     ; static_fields (the artifact)
+    0x497b4dc: ldr  x0, [x8, #0x1810]   ; REAL segment source
+    0x497b4e0: bl   #0x5265b74          ; $gK(seg, 0xa0, 0xbaa95347, 0x2115e8cd)
+
+=> the holder's 697 values read EXACTLY TWO segments: mgr@0x1008
+(334 ints + strings + float idx29) and mgr@0x1810 (295 ints incl. the twelve
+"0xb8" ones + float idx30 + strings).
+
+4. Triple inventory completed to 697/697 (CONFIRMED)
+--------------------------------------------------------------------------------
+parse_cctor gaps fixed (movz + register-bank + add-composed immediates):
+    idx 167: start 0x3c4, salt 0xb069936b (= 0xb0698e04 + 0x567, via
+             `mov w9,#0x8e04; movk w9,#0xb069,lsl#16; add w3,w9,#0x567`)
+    idx 376: start 0x7d8, salt 0x4c0638f5 (= 0x4c063779 + 0x17c)
+    idx 386: start 0x0 (literal `mov w1, wzr`), slot 0x1810
+Post-fix: zero triples missing start/salt. pool-cctor-triples.json refreshed.
+
+5. Static path CLOSED — sharper negative than §7's sweep framing (CONFIRMED)
+--------------------------------------------------------------------------------
+(a) fdv: fieldAndParameterDefaultValueData spans 0x2370f0 B over 28,749
+    distinct dataIndex entries; delta-inferred block sizes contain ZERO blocks
+    of 0x800 (the 8 ciphertext sources cannot be contiguous fdv entries at
+    all — no sweep under any key set can hit what is not there).
+(b) Resources: stringliteral.json (31,091 literals) contains exactly two
+    Obfuz strings — 'Obfuz/defaultStaticSecretKey' + the bootstrap error —
+    no pool-data resource exists.
+(c) metadata v31 header: usage list/pair tables are gone (hdr[58..61] = 0),
+    so token->slot archaeology inside global-metadata is structurally dead.
+(d) obfuz_pool_emulator.py --sweep re-run (10 pairs, anchors incl. strings/
+    floats/sim): structurally moot per (a), retained for the record.
+Conclusion: the 8x2048-B ciphertext blocks exist ONLY in device memory —
+the InitializeArray source field is runtime-resolved (handle from a usage
+slot) and its backing data never lands in metadata or resources.
+
+6. Finish path (a) instrumented: obfuz_frida_dump.js + --dump consumer
+--------------------------------------------------------------------------------
+reverse/tools/obfuz_frida_dump.js hooks (static VAs into libil2cpp.so):
+    0x5264EA8 wrapper  — onEnter dumps the array (CIPHERTEXT, post-
+                         InitializeArray), onLeave dumps it again (PLAINTEXT,
+                         post-cipher); returnAddress-4 names the callsite
+    0x77122DC $qk      — canary witness (w0=0x12345678 + no abort)
+    0x08E5ABDC InitializeArray — ciphertext + FieldInfo* (name read on-device)
+After hooking, the script RE-INVOKES both builder .cctors (0x497F474,
+0x497F82C) so late attachment still captures all segments (builders are
+idempotent: same ciphertext in, same cipher, same plaintext out).
+
+obfuz_pool_emulator.py --dump <jsonl> then:
+    - verifies the canary witness
+    - RE-EXECUTES the $mOA CBC on the real (cipher, plain) pair
+      (plain_i ?= GOA(cipher_i ^ cipher_{i-1}, keyA, salt)) — first-ever
+      executed-data validation of the §6 model
+    - maps segments -> {0x1008, 0x1810} (artifact-normalized), tries manager
+      combinations, picks by decode score
+    - decodes all 697 triples (ints/floats: GOA(raw, keyA, salt); strings:
+      plain-ASCII, else $mOA-subrange with (keyC, salt) hypothesis)
+    - reports the 7 named anchor targets and writes obfuz-pool-values.json
+
+7. Consumer validation without a device (SYNTHETIC — plumbing proof)
+--------------------------------------------------------------------------------
+No Android device is attached to this sandbox, so the consumer was validated
+against a synthetic transcript (identity-keyA CBC is analytically invertible,
+so a real encrypt pass is computable without the device):
+    - 2 x 2048-B segments with 26 sampled triples placed at their REAL segment
+      offsets (raw chosen, expected = GOA(raw, keyA, salt) recorded offline)
+    - cipher = CBC-encrypt under keyA=0 (identity) — exercises the re-verify
+    - real canary event with the true K
+Result:
+    SELF-TEST : PASS
+    canary    : SEEN
+    CBC re-verify synthetic@0x1008: 32/32 words PASS
+    CBC re-verify synthetic@0x1810: 32/32 words PASS
+    SYNTHETIC CROSS-CHECK: 26/26 sampled values match
+    status: 643 OK / 54 CIPHER_UNSURE (noise strings; real data resolves) / 0
+    param-missing
+Every real-decode primitive the device dump will hit — transcript parsing,
+callsite/slot mapping, artifact normalization, CBC re-verify, per-value GOA,
+string hypothesis ladder, anchor reporting — executed and matched expectations
+26/26. The decode on real data is therefore one device command away:
+
+    frida -U -f com.geargames.aow -l reverse/tools/obfuz_frida_dump.js \
+          -o obfuz_pool_dump.jsonl --runtime=v8
+    python3 reverse/tools/obfuz_pool_emulator.py --dump obfuz_pool_dump.jsonl

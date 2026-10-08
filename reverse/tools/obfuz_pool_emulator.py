@@ -114,19 +114,32 @@ def parse_cctor():
     def imm16(ins):
         return int(ins.op_str.split('#')[1].split(',')[0].strip(), 16)
     vals, cur, last = [], {}, None
+    wregs = {}   # all w-registers -> composed scalar (handles movz + computed salts)
     for ins in ins_list:
         m, ops = ins.mnemonic, ins.op_str
-        if m in ('mov', 'movk') and ops[1] == ',' and ops[0] == 'w' and ops[2] == ',' \
-                and ops[1:3] in ('1,', '2,', '3,', '4,') and '#' in ops:
-            pass
-        if m in ('mov', 'movk') and re.match(r'^w[1-4], ', ops) and '#' in ops:
-            reg = {'1': 'start', '2': 'keyA', '3': 'salt', '4': 'keyC'}[ops[1]]
+        if m in ('mov', 'movz', 'movk') and re.match(r'^w\d+, ', ops) and '#' in ops:
+            reg = ops.split(',')[0]
             v = imm16(ins)
+            if v is None:
+                continue
             sh = int(ops.split('lsl #')[1].split()[0], 0) if ', lsl #' in ops else 0
-            if m == 'mov':
-                cur[reg] = v
+            if m == 'movk':
+                wregs[reg] = (wregs.get(reg, 0) & ~(0xFFFF << sh)) | ((v & 0xFFFF) << sh)
             else:
-                cur[reg] = cur.get(reg, 0) | (v << sh)
+                wregs[reg] = v
+            if reg in ('w1', 'w2', 'w3', 'w4'):
+                role = {'1': 'start', '2': 'keyA', '3': 'salt', '4': 'keyC'}[reg[1]]
+                if m == 'movk':
+                    cur[role] = cur.get(role, 0) | ((v & 0xFFFF) << sh)
+                else:
+                    cur[role] = v
+        elif m == 'mov' and re.match(r'^w[1-4], wzr$', ops):
+            cur[{'1': 'start', '2': 'keyA', '3': 'salt', '4': 'keyC'}[ops[1]]] = 0
+        elif m == 'add' and re.match(r'^w[1-4], w\d+, #(0x[0-9a-f]+|\d+)$', ops):
+            d, n = ops.split(',')[0], ops.split(',')[1].strip()
+            if n in wregs:
+                cur[{'1': 'start', '2': 'keyA', '3': 'salt', '4': 'keyC'}[d[1]]] = \
+                    (wregs[n] + int(ops.split('#')[1], 0)) & 0xFFFFFFFF
         elif m == 'ldr' and re.match(r'^x8, \[x8, #(0x[0-9a-f]+|\d+)\]$', ops):
             cur['src_slot'] = int(ops.split('#')[1].rstrip(']'), 0)
         elif m == 'bl':
@@ -158,9 +171,165 @@ def moa_decrypt(goa, blob, ka, sa, nbytes=None):
     return bytes(out)
 
 
+def load_dump(path):
+    """Parse an obfuz_frida_dump.js JSONL transcript."""
+    import base64
+    segs, qks, initarrs = [], [], []
+    for line in open(path, 'r', encoding='utf-8', errors='replace'):
+        line = line.strip()
+        if not line.startswith('[OBFUZ]'):
+            continue
+        try:
+            ev = json.loads(line[7:])
+        except Exception:
+            continue
+        if ev.get('ev') == 'seg':
+            ev['_cipher'] = base64.b64decode(ev['cipher'])
+            ev['_plain'] = base64.b64decode(ev['plain'])
+            segs.append(ev)
+        elif ev.get('ev') == 'qk':
+            qks.append(ev)
+        elif ev.get('ev') == 'initarr':
+            ev['_data'] = base64.b64decode(ev['data'])
+            initarrs.append(ev)
+    return segs, qks, initarrs
+
+
+def verify_cbc(goa, ev, words=32):
+    """Re-execute the $mOA CBC on REAL device bytes: plain_i ?= GOA(ciph_i ^ ciph_{i-1}, keyA, salt)."""
+    cip, pln, ka, sa = ev['_cipher'], ev['_plain'], int(ev['keyA'], 16), int(ev['salt'], 16)
+    n = min(words, len(cip) // 4, len(pln) // 4)
+    ok = 0
+    prev = 0
+    for i in range(n):
+        cw = struct.unpack_from('<I', cip, 4 * i)[0]
+        pw = struct.unpack_from('<I', pln, 4 * i)[0]
+        if goa(cw ^ prev, ka, sa) == pw:
+            ok += 1
+        prev = cw
+    return ok, n
+
+
+def decode_pool_from_dump(goa, vals, seg_plain):
+    """Decode the 697 holder triples against the dumped PLAINTEXT segments.
+
+    seg_plain: {'0x1008': bytes, '0x1810': bytes} — the two segments the holder
+    reads (Build G2: the parse's 0xb8 src_slot was the Il2CppClass::static_fields
+    indirection; those triples actually read statics+0x1810).
+    """
+    out = []
+    for i, v in enumerate(vals):
+        rec = dict(v)
+        rec['idx'] = i
+        slot = v.get('src_slot')
+        slot = '0x1810' if slot in (0xb8, 6160, '0xb8') else \
+               ('0x1008' if slot in (4104, '0x1008') else '0x1008')
+        rec['seg'] = slot
+        seg = seg_plain.get(slot)
+        if seg is None:
+            rec['status'] = 'NO_SEGMENT'
+            out.append(rec)
+            continue
+        st = v.get('start')
+        if st is None or 'salt' not in v:
+            rec['status'] = 'PARAM_MISSING'   # .cctor parse gap (e.g. idx 386: keyA/salt ok, start unrecovered)
+            out.append(rec)
+            continue
+        if v['thunk'] in ('int', 'float'):
+            if st + 4 > len(seg):
+                rec['status'] = 'OOB'
+                out.append(rec)
+                continue
+            raw = struct.unpack_from('<I', seg, st)[0]
+            d = goa(raw, v['keyA'], v['salt'])
+            rec['raw'] = hex(raw)
+            rec['value'] = d
+            if v['thunk'] == 'float':
+                rec['float'] = struct.unpack('<f', struct.pack('<I', d))[0]
+            rec['status'] = 'OK'
+        else:  # string: keyA holds the length, salt+keyC the per-string cipher
+            ln = v['keyA'] & 0xFFFF
+            if st + ln > len(seg):
+                rec['status'] = 'OOB'
+                out.append(rec)
+                continue
+            raw = seg[st:st + ln]
+            rec['raw'] = raw.hex()
+            if all(0x20 <= c <= 0x7e or c in (9, 10, 13) for c in raw):
+                rec['value'] = raw.decode('ascii', 'replace')
+                rec['via'] = 'plain-ascii'
+                rec['status'] = 'OK'
+            else:
+                dec = moa_decrypt(goa, raw, v.get('keyC', 0) & 0xFFFFFFFF, v['salt'] & 0xFFFFFFFF, ln)
+                if all(0x20 <= c <= 0x7e or c in (9, 10, 13) for c in dec):
+                    rec['value'] = dec.decode('ascii', 'replace')
+                    rec['via'] = 'moa-subrange(keyC,salt)'
+                    rec['status'] = 'OK'
+                else:
+                    rec['status'] = 'CIPHER_UNSURE'
+                    rec['value'] = None
+        out.append(rec)
+    return out
+
+
+ANCHOR_TARGETS = {
+    0x004: 'Build E task-id factor V1 (product indexes the name table)',
+    0x008: 'Build E task-id factor V2',
+    0x014: '$ce task threshold',
+    0x064: 'DontShoot idempotence constant',
+    0x364: 'Build F DEN factor A (DEN = A x B)',
+    0x368: 'Build F DEN factor B',
+    0x374: 'set_FlagShoot value',
+}
+
+
+def dump_mode(goa, path, vals):
+    segs, qks, initarrs = load_dump(path)
+    print(f'dump: {len(segs)} seg / {len(qks)} qk / {len(initarrs)} initarr events')
+    canary = [q for q in qks if int(q['a'], 16) == 0x12345678]
+    print('canary $qk(0x12345678, K):', 'SEEN (VM booted, cipher chain live)' if canary else 'NOT SEEN')
+    for ev in segs:
+        ok, n = verify_cbc(goa, ev)
+        print(f"CBC re-verify {ev['mgr']}@{ev['slot']} (cs {ev['cs']}, keyA {ev['keyA']}, "
+              f"salt {ev['salt']}): {ok}/{n} words {'PASS' if ok == n else 'MISMATCH — cipher model needs review'}")
+    for ia in initarrs:
+        print(f"initarr fi={ia['fi']} name={ia['fname']!r} len={ia['len']}")
+    by_slot = {}
+    for ev in segs:
+        by_slot.setdefault((ev['mgr'], ev['slot']), ev['_plain'])
+    combos = []
+    for m1 in {m for m, s in by_slot if s == '0x1008'}:
+        for m2 in {m for m, s in by_slot if s == '0x1810'}:
+            combos.append((m1, m2))
+    if not combos:
+        print('ERROR: need at least one 0x1008 and one 0x1810 segment to decode the holder pool')
+        return
+    best = None
+    for m1, m2 in combos:
+        seg_plain = {'0x1008': by_slot[(m1, '0x1008')], '0x1810': by_slot[(m2, '0x1810')]}
+        dec = decode_pool_from_dump(goa, vals, seg_plain)
+        okn = sum(1 for d in dec if d['status'] == 'OK')
+        print(f'combo mgr(0x1008)={m1} mgr(0x1810)={m2}: decoded OK {okn}/{len(dec)}')
+        if best is None or okn > best[1]:
+            best = ((m1, m2), okn, dec, seg_plain)
+    (m1, m2), okn, dec, seg_plain = best
+    print(f'chosen: 0x1008={m1} 0x1810={m2}')
+    print('--- anchor cross-check ---')
+    for d in dec:
+        t = d.get('target')
+        if t in ANCHOR_TARGETS:
+            val = d.get('float', d.get('value'))
+            print(f"  statics+{t:#05x}  = {val!r}  [{d['status']}]{'' if d['status']=='OK' else ' (needs real dump)'}"
+                  f"   <- {ANCHOR_TARGETS[t]}")
+    json.dump(dec, open('/home/z/my-project/aow3-work/obfuz-pool-values.json', 'w'), indent=1)
+    print(f'pool values -> obfuz-pool-values.json ({okn}/{len(dec)} OK)')
+    return dec
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--sweep', action='store_true', help='resweep metadata fdv region for segment blobs')
+    ap.add_argument('--dump', metavar='JSONL', help='consume an obfuz_frida_dump.js transcript and decode the pool')
     args = ap.parse_args()
     so, segs = load_so()
     kf, key_blob = load_key()
@@ -175,6 +344,9 @@ def main():
           (QK_TRIPLE[0], QK_TRIPLE[1], QK_TRIPLE[2], K, QK_TRIPLE[3], 'PASS' if ok else 'FAIL'))
     assert ok, 'game integrity check failed'
     vals = parse_cctor()
+    if args.dump:
+        dump_mode(goa, args.dump, vals)
+        return
     import collections
     c = collections.Counter(v['thunk'] for v in vals)
     slots = collections.Counter(v.get('src_slot', 0x1008) for v in vals if v['thunk'] == 'int')

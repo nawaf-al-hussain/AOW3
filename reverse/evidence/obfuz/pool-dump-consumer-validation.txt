@@ -1,0 +1,24 @@
+Task 38 / Build G2 — obfuz_pool_emulator.py --dump consumer validation
+TRANSCRIPT IS SYNTHETIC (no Android device in sandbox); crypto primitives are Build-G-validated.
+Command: python3.13 reverse/tools/obfuz_pool_emulator.py --dump synthetic_pool_dump.jsonl
+
+dump: 2 seg / 1 qk / 0 initarr events
+canary $qk(0x12345678, K): SEEN (VM booted, cipher chain live)
+CBC re-verify synthetic@0x1008 (cs SYNTH, keyA 0x0, salt 0xd9a4beef): 32/32 words PASS
+CBC re-verify synthetic@0x1810 (cs SYNTH, keyA 0x0, salt 0xd9a4beef): 32/32 words PASS
+combo mgr(0x1008)=synthetic mgr(0x1810)=synthetic: decoded OK 643/697
+chosen: 0x1008=synthetic 0x1810=synthetic
+--- anchor cross-check ---
+  statics+0x004  = 3774912598  [OK]   <- Build E task-id factor V1 (product indexes the name table)
+  statics+0x008  = 3976349685  [OK]   <- Build E task-id factor V2
+  statics+0x014  = 255249885  [OK]   <- $ce task threshold
+  statics+0x064  = 403820294  [OK]   <- DontShoot idempotence constant
+  statics+0x364  = 2264513633  [OK]   <- Build F DEN factor A (DEN = A x B)
+  statics+0x368  = 1179127975  [OK]   <- Build F DEN factor B
+  statics+0x374  = 266184150  [OK]   <- set_FlagShoot value
+pool values -> obfuz-pool-values.json (643/697 OK)
+
+--- sampled-value cross-check (26 planted triples at real segment offsets) ---
+SYNTHETIC CROSS-CHECK: 26/26 sampled values match (consumer decode verified)
+decode status over all 697 triples: {'OK': 643, 'CIPHER_UNSURE': 54}
+anchor rows: 7/7 reported (targets 0x4/0x8/0x14/0x64/0x364/0x368/0x374)
