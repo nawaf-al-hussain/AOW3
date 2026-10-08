@@ -35690,34 +35690,13 @@ void main() {
         if (!g)
           return;
         const scene = g.scene;
-        // V4-UV-FLIP (visual-fidelity-audit §5/§22) — Unity V-up -> glTF V-down
-        // compensation for the unit/building GLBs. Provenance: the assembler
-        // (pipeline/assemble_v2.py) writes TEXCOORD_0 straight from Unity
-        // meshes — extract_v3.py unpack_mesh reads UVs raw with no V-flip,
-        // and only the DECOR path remaps (its "undo v-flip" comment), so every
-        // template mesh samples the vertical mirror of its intended atlas
-        // region under GLTFLoader's flipY=false convention. Fatal where the
-        // mirrored quadrant is atlas filler: f1/f2 inf_heavy UVs point at the
-        // page's pure-black bottom-right quadrant -> units rendered as black
-        // silhouettes under ANY light (evidence:
-        // reverse/evidence/visual/probe6-A-baseline.png vs
-        // probe6-B-iheavy-flipped.png, probe_inventory.json,
-        // probe2_texture_uv.json, 2026-10-09; live V-negation restores the
-        // authored blue armor).
-        // Presentation-only: geometry positions/normals/skins untouched; decor
-        // GLBs (own loader, already remapped) are NOT affected. If/when
-        // assemble_v2.py is fixed and these GLBs are regenerated from the
-        // XAPK, DELETE this block (search marker: V4-UV-FLIP) or the two
-        // flips cancel and the defect returns.
-        scene.traverse((o) => {
-          const m = o;
-          if (m.isMesh && m.geometry && m.geometry.attributes && m.geometry.attributes.uv) {
-            const uv = m.geometry.attributes.uv;
-            for (let i = 0; i < uv.array.length; i += 2)
-              uv.array[i + 1] = 1 - uv.array[i + 1];
-            uv.needsUpdate = true;
-          }
-        });
+        // V4 (2026-10-09): template GLBs carry glTF V-down TEXCOORD_0 natively
+        // — the assembler fix (pipeline/assemble_v2.py @7780b3f) is baked into
+        // the regenerated assets and the equivalent V'=1-V transform was baked
+        // in place into the hero GLBs + the 5 roster GLBs whose re-assembly
+        // drifted beyond the UV fix (worklog Task 49). The former runtime
+        // V4-UV-FLIP compensation block was removed here; keeping it would
+        // cancel the baked flip and re-mirror every template mesh.
         scene.updateMatrixWorld(true);
         const box = new Box3().setFromObject(scene);
         const size = box.getSize(new Vector3);
