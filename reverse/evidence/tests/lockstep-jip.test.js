@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-// Lockstep multi-party test — join-in-progress (JIP) + spectator (PROTO 2).
+// Lockstep multi-party test — join-in-progress (JIP) + spectator + N seats
+// + 2v2 team mode (PROTO 4).
 //   baseline 2P lockstep hash agreement,
 //   spectator JIP catch-up (welcome archive replay -> live cf stream),
 //   tampered archive detected via checkpoint hashes,
@@ -43,7 +44,7 @@ vm.createContext(sandbox);
 }
 vm.runInContext(kernel, sandbox, { filename: 'kernel.js' });
 const K = sandbox.__K;
-if (!K.LockstepSession || K.PROTO !== 3) {
+if (!K.LockstepSession || K.PROTO !== 4) {
   console.error('kernel extraction failed (LockstepSession/PROTO missing)');
   process.exit(1);
 }
@@ -82,8 +83,8 @@ function makeEndpoint(name, slot, opts = {}) {
   return ep;
 }
 const NET = [];
-function attachGame(ep, seed, slot, spec, seats = 2) {
-  ep.sim = new Sim(seed >>> 0, seats);
+function attachGame(ep, seed, slot, spec, seats = 2, mode = 'ffa') {
+  ep.sim = new Sim(seed >>> 0, seats, mode);
   ep.sim.spectate = !!spec;
   ep.sim.viewSlot = slot;
   ep.cmds = new Commands(ep.sim);
@@ -582,6 +583,114 @@ console.log('lockstep-jip: PROTO', PROTO);
   for (let f = 0; f < 60; f++) { stepEP(host); stepEP(p2); stepEP(p4); }
   ok(host.sim.tick > h1 + 50, '4P: match continues after vacate (t=' + host.sim.tick + ')');
   ok(!host.sess.desynced && !p2.sess.desynced && !p4.sess.desynced, '4P: remaining seats still desync-free');
+}
+
+// ---- 10. team mode 2v2 (PROTO 4): adjacency spawns, ally hostility rules,
+// team win with both seats alive, full-mesh hash agreement, fed JIP carries
+// the mode ----
+{
+  NET.length = 0; // isolate
+  let startP2 = null;
+  const host = makeEndpoint('host', 1, {
+    seats: 4, mode: '2v2',
+    isLive: () => !!(host.sim && host.sim.tick > 0),
+    snapshot: () => ({
+      seed: host.sim.seed, tick: host.sim.tick,
+      arch: [...host.sess.arch].map(([t, f]) => ({ t, f })),
+      hashes: [...host.sess.hashArch].flatMap(([t, h]) =>
+        Object.keys(h).map((s) => ({ t, h: h[s], s: +s })))
+    })
+  });
+  const p2 = makeEndpoint('p2', 2, { onGuestStart: (m) => { startP2 = m; } });
+  const p3 = makeEndpoint('p3', 3);
+  const p4 = makeEndpoint('p4', 4);
+  attachGame(host, 424242424, 1, false, 4, '2v2');
+  attachGame(p2, 0, 2, false, 4, '2v2');
+  attachGame(p3, 0, 3, false, 4, '2v2');
+  attachGame(p4, 0, 4, false, 4, '2v2');
+  p2.tr.send({ a: 'hello', proto: PROTO, role: 'player' });
+  p3.tr.send({ a: 'hello', proto: PROTO, role: 'player' });
+  p4.tr.send({ a: 'hello', proto: PROTO, role: 'player' });
+  ok(host.sess.helloQueue.length === 3, '2v2: all three pre-game hellos queued');
+  host.sess.beginMatch(777123);
+  ok(!!startP2 && startP2.mode === '2v2' && startP2.slot === 2 && startP2.seats === 4, '2v2: start packet carries slot + seats + mode');
+  attachGame(host, 777123, 1, false, 4, '2v2');
+  attachGame(p2, 777123, 2, false, 4, '2v2');
+  attachGame(p3, 777123, 3, false, 4, '2v2');
+  attachGame(p4, 777123, 4, false, 4, '2v2');
+  const S = host.sim;
+  ok(S.mode === '2v2' && S.teams === true && S.winTeam === null, '2v2: sim is in team mode');
+  ok(S.hq(1).x === 8 && S.hq(2).x === K.MAP_W / 2 && S.hq(3).x === K.MAP_W - 8 && S.hq(4).x === K.MAP_W / 2, '2v2: adjacent-pair spawns (left+top vs right+bottom)');
+  ok(S.teamOf(1) === 1 && S.teamOf(2) === 1 && S.teamOf(3) === 2 && S.teamOf(4) === 2, '2v2: team mapping {1,2} vs {3,4}');
+  ok(!S.hostile(1, 2) && !S.hostile(2, 1) && S.hostile(1, 3) && S.hostile(2, 4) && S.hostile(1, 0), '2v2: allies not hostile, other team + neutral are');
+  const ffa = new Sim(777123, 4);
+  ok(ffa.mode === 'ffa' && ffa.hostile(1, 2) && ffa.hq(2).x === K.MAP_W - 8, 'FFA fallback: 4P spawn table + hostility unchanged');
+  // live 4-way match with orders from every seat
+  for (let f = 0; f < 220; f++) {
+    stepEP(host); stepEP(p2); stepEP(p3); stepEP(p4);
+    const t = host.sim.tick;
+    if (t % 37 === 0) host.cmds.issue({ type: 'produce', defId: 'ilight', owner: 1 });
+    if (t % 41 === 0) { const u = p2.sim.units.find((u) => u.owner === 2 && u.garrison === undefined); if (u) p2.cmds.issue({ type: 'move', ids: [u.id], x: (u.x + 2) | 0, y: (u.y - 3) | 0 }); }
+    if (t % 43 === 0) p3.cmds.issue({ type: 'produce', defId: 'iheavy', owner: 3 });
+    if (t % 47 === 0) { const u = p4.sim.units.find((u) => u.owner === 4 && u.garrison === undefined); if (u) p4.cmds.issue({ type: 'move', ids: [u.id], x: (u.x - 1) | 0, y: (u.y + 3) | 0 }); }
+  }
+  ok(host.sim.tick >= 200 && p4.sim.tick >= 200, '2v2: all four peers advanced (t=' + host.sim.tick + '/' + p4.sim.tick + ')');
+  let agree = true;
+  for (let ct = CHECKPOINT; ct <= 200; ct += CHECKPOINT) {
+    const hs = [host, p2, p3, p4].map((ep) => ep.sess.myHash.get(ct));
+    if (hs[0] !== undefined && hs.some((h) => h !== hs[0])) { agree = false; break; }
+  }
+  ok(agree, '2v2: checkpoint hashes agree across all four seats');
+  ok(!host.sess.desynced && !p2.sess.desynced && !p3.sess.desynced && !p4.sess.desynced, '2v2: no desync');
+  while (host.sim.tick < p4.sim.tick) stepEP(host); // equalize the drive-order skew
+  while (p4.sim.tick < host.sim.tick) stepEP(p4);
+  ok(host.sim.hashState() === p4.sim.hashState(), '2v2: live state hash equal host vs seat 4');
+  // fed JIP into the live 2v2 match: the welcome carries the mode, catch-up
+  // verifies against every seat
+  const spec = makeEndpoint('spec', 2);
+  let specWelcome = null;
+  spec.sess.onWelcome = (m) => { specWelcome = m; };
+  spec.tr.send({ a: 'hello', proto: PROTO, role: 'player' });
+  ok(!!specWelcome && specWelcome.mode === '2v2' && specWelcome.role === 'spec', '2v2: JIP welcome carries the team mode (room full -> spec)');
+  attachGame(spec, specWelcome.seed, 1, true, 4, '2v2');
+  spec.sess.beginFed(specWelcome);
+  for (let f = 0; f < 600 && spec.sim.tick < host.sim.tick; f++) { stepEP(host); stepEP(p2); stepEP(p3); stepEP(p4); stepEP(spec); }
+  ok(!spec.sess.desynced && spec.sim.hashState() === host.sim.hashState(), '2v2: fed spectator caught up, hash == host');
+  // ally hostility micro-vectors (fresh deterministic sims)
+  const S2 = new Sim(999, 4, '2v2');
+  const hunt = S2.spawn('ilight', 1, 40, 40);
+  hunt.order = { kind: 'idle' };
+  const ally = S2.spawn('ilight', 2, 42, 40); // nearer than the foe
+  const foe = S2.spawn('ilight', 3, 44, 40);
+  S2.step(1 / 20);
+  ok(hunt.targetId === foe.id, '2v2: findTarget skips the nearer ally and locks the enemy');
+  const prefBefore = hunt.preferredId;
+  S2.commandAttack([hunt.id], ally.id);
+  ok(hunt.preferredId === prefBefore, '2v2: explicit attack on an ally is a no-op');
+  const v = S2.spawn('ilight', 1, 50, 50);
+  const a2 = S2.spawn('ilight', 2, 51, 50);
+  S2.aggro(a2, v);
+  ok(v.targetId === undefined, '2v2: ally hit does not trigger aggro');
+  S2.aggro(foe, v);
+  ok(v.targetId === foe.id, '2v2: enemy hit triggers aggro');
+  S2.mines.push({ x: 60, y: 60, owner: 1, arm: 0, dead: false });
+  const a3 = S2.spawn('ilight', 2, 60, 60);
+  S2.step(1 / 20);
+  ok(S2.mines.length === 1, '2v2: mine ignores the ally sitting on it');
+  S2.spawn('ilight', 3, 60, 60);
+  S2.step(1 / 20);
+  ok(S2.mines.length === 0, '2v2: mine triggers on an enemy');
+  // team win: both enemy HQs die (identically on every peer) -> team 1 wins
+  // even with BOTH of its seats alive; whole team flagged alive
+  ok(S.winner === null, '2v2: match still live before the kill vector');
+  for (const ep of [host, p2, p3, p4]) {
+    ep.sim.hq(3).hp = 0;
+    ep.sim.hq(4).hp = 0;
+    stepEP(ep);
+  }
+  ok(S.winTeam === 1 && S.winner === 1, '2v2: last team standing wins (both seats alive)');
+  ok(p4.sim.winTeam === 1 && p4.sim.winner === 1, '2v2: all peers agree on the team win');
+  ok(S.players[0].alive === true && S.players[1].alive === true && S.players[2].alive === false && S.players[3].alive === false, '2v2: whole winning team flagged alive, losers not');
 }
 
 console.log('\nlockstep-jip: ' + pass + ' assertions passed, ' + fail + ' failed');

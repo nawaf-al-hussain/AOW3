@@ -436,7 +436,7 @@
     // Phase D: global issue counter shared by every Commands issuer on this sim;
     // replay journals sort by (tick, seq) to reproduce cross-issuer order.
     cmdSeq = 0;
-    constructor(seed = 12345, seatCount = 2) {
+    constructor(seed = 12345, seatCount = 2, mode = "ffa") {
       // Phase 4 determinism: every sim random draw flows through this.rng()
       // (mulberry32 seeded from `seed`); seed/rngState/hashes are inspectable.
       this.seed = seed >>> 0;
@@ -448,6 +448,12 @@
       // mid HQs). Everything downstream (players/visible/stats/economy/winner)
       // is seat-indexed, so the 2P path is bit-identical to the legacy sim.
       this.seatCount = Math.max(2, Math.min(MAX_SEATS, seatCount | 0 || 2));
+      // Team mode 2v2: offered for exactly 4 seats (the MP UI gates this too);
+      // anything else silently falls back to FFA so a stray packet can never
+      // build a lopsided sim.
+      this.mode = mode === "2v2" && this.seatCount === 4 ? "2v2" : "ffa";
+      this.teams = this.mode === "2v2";
+      this.winTeam = null;
       this.visible = [];
       for (let o = 0; o < this.seatCount; o++)
         this.visible.push(new Uint8Array(MAP_W * MAP_H));
@@ -460,9 +466,11 @@
       for (let o = 1; o <= this.seatCount; o++)
         this.players.push(this.newPlayer());
       // HQs + starting force per seat (seats 1/2 reproduce the legacy duel
-      // positions exactly; seats 3/4 mirror the same 3-unit pattern sideways)
+      // positions exactly; seats 3/4 mirror the same 3-unit pattern sideways;
+      // 2v2 re-seats the joiner beside the host)
+      const spawns = this.teams ? SEAT_SPAWN_TEAM : SEAT_SPAWN;
       for (let o = 1; o <= this.seatCount; o++) {
-        const [sx, sy] = SEAT_SPAWN[o];
+        const [sx, sy] = spawns[o];
         const side = o % 2 ? 1 : -1; // seats 1/3 push right, seats 2/4 push left
         this.addBuilding("hq", o, sx, sy);
         this.spawn("ilight", o, sx + side * 4, sy - 2);
@@ -1151,6 +1159,13 @@
     }
     commandAttack(ids, targetId) {
       const t = this.units.find((v) => v.id === targetId);
+      // team modes: an explicit attack on an ally is a no-op (native alliance
+      // rules — friendly-fire orders do not exist); FFA keeps the raw surface
+      if (t && this.teams) {
+        const u0 = this.units.find((v) => v.id === ids[0]);
+        if (u0 && !this.hostile(u0.owner, t.owner))
+          return;
+      }
       for (const id of ids) {
         const u = this.units.find((v) => v.id === id);
         if (!u)
@@ -1243,15 +1258,33 @@
         }
       }
       const aliveSeats = [];
+      const aliveTeams = new Set();
       for (let o = 1; o <= this.seatCount; o++)
-        if (this.buildings.some((b) => b.defId === "hq" && b.owner === o && b.hp > 0))
+        if (this.buildings.some((b) => b.defId === "hq" && b.owner === o && b.hp > 0)) {
           aliveSeats.push(o);
-      if (aliveSeats.length < 2 && this.winner === null) {
-        // last HQ standing wins (FFA); the legacy duel tie-break (both HQs
-        // dead in the same tick -> seat 2) is preserved for seatCount 2
-        this.winner = aliveSeats.length === 1 ? aliveSeats[0] : this.seatCount === 2 ? 2 : null;
-        for (let o = 1; o <= this.seatCount; o++)
-          this.players[o - 1].alive = this.winner === o;
+          if (this.teams)
+            aliveTeams.add(this.teamOf(o));
+        }
+      if (this.winner === null) {
+        if (this.teams) {
+          // 2v2: the last team with an HQ standing wins even while BOTH of
+          // its seats are alive (the FFA seat gate does not apply); winner is
+          // the lowest surviving seat of that team (end-screen representative).
+          // Both last HQs dying in the same tick stays a draw (winner null —
+          // the same no-result the >2P FFA path keeps).
+          if (aliveTeams.size <= 1) {
+            this.winTeam = aliveTeams.size === 1 ? [...aliveTeams][0] : null;
+            this.winner = this.winTeam !== null ? aliveSeats[0] : null;
+            for (let o = 1; o <= this.seatCount; o++)
+              this.players[o - 1].alive = this.winTeam !== null && this.teamOf(o) === this.winTeam;
+          }
+        } else if (aliveSeats.length < 2) {
+          // last HQ standing wins (FFA); the legacy duel tie-break (both HQs
+          // dead in the same tick -> seat 2) is preserved for seatCount 2
+          this.winner = aliveSeats.length === 1 ? aliveSeats[0] : this.seatCount === 2 ? 2 : null;
+          for (let o = 1; o <= this.seatCount; o++)
+            this.players[o - 1].alive = this.winner === o;
+        }
       }
       if (this.tick % 20 === 0) {
         // Phase 4 determinism: 1 Hz state-hash journal (10-minute ring) for
@@ -1330,10 +1363,10 @@
         if (u.def.weapon && u.targetId === undefined && (u.order.kind === "attackMove" || u.order.kind === "idle" || u.order.kind === "patrol" || u.order.kind === "hold" || u.order.kind === "defend" || u.order.kind === "siege" || (u.order.kind === "hide" && u.hiding))) {
           buildingTarget = this.buildings.find((b) => {
             const bd2 = Math.hypot(b.x - u.x, b.y - u.y);
-            return b.hp > 0 && b.owner !== u.owner && b.owner !== 0 && bd2 <= this.siegeRange(u) + b.radius && bd2 >= (u.def.weapon.minRange || 0) + b.radius;
+            return b.hp > 0 && b.owner !== 0 && this.hostile(u.owner, b.owner) && bd2 <= this.siegeRange(u) + b.radius && bd2 >= (u.def.weapon.minRange || 0) + b.radius;
           });
           if (!buildingTarget && (u.order.kind === "attackMove" || u.order.kind === "patrol") && u.order.x !== undefined) {
-            const b2 = this.buildings.find((b) => b.hp > 0 && b.owner !== u.owner && b.owner !== 0 && u.dest && Math.hypot(b.x - u.dest.x, b.y - u.dest.y) < 6);
+            const b2 = this.buildings.find((b) => b.hp > 0 && b.owner !== 0 && this.hostile(u.owner, b.owner) && u.dest && Math.hypot(b.x - u.dest.x, b.y - u.dest.y) < 6);
             if (b2)
               buildingTarget = b2;
           }
@@ -1439,7 +1472,8 @@
           }
         } else if (u.order.kind === "capture" && u.order.depotId !== undefined) {
           const d = this.buildings.find((b) => b.id === u.order.depotId);
-          if (!d || d.owner === u.owner) {
+          // own + ALLY depots cancel the order; neutral/enemy depots capture
+          if (!d || !this.hostile(u.owner, d.owner)) {
             u.order = { kind: "idle" };
             u.captureT = undefined;
           } else {
@@ -1666,7 +1700,7 @@
       let bd = this.siegeRange(u) + 2.5;
       const shooterAir = (u.def.kind === "aircraft" || u.def.aircraft) && !u.grounded;
       for (const t of this.units) {
-        if (t.owner === u.owner || t.hp <= 0)
+        if (!this.hostile(u.owner, t.owner) || t.hp <= 0)
           continue;
         if (t.garrison !== undefined)
           continue; // garrisoned infantry are inside the structure: untargetable
@@ -1845,12 +1879,12 @@
           m.arm -= dt;
           continue;
         }
-        const tgt = this.units.find((v) => v.owner !== m.owner && v.hp > 0 && !v.def.aircraft && Math.hypot(v.x - m.x, v.y - m.y) < 1.4);
+        const tgt = this.units.find((v) => this.hostile(v.owner, m.owner) && v.hp > 0 && !v.def.aircraft && Math.hypot(v.x - m.x, v.y - m.y) < 1.4);
         if (tgt) {
           m.dead = true;
           this.booms.push({ x: m.x, y: m.y, r: 2.2, t: 0, max: 0.5 });
           for (const o of this.units) {
-            if (o.owner === m.owner || o.hp <= 0 || o.def.aircraft)
+            if (!this.hostile(o.owner, m.owner) || o.hp <= 0 || o.def.aircraft)
               continue;
             const d = Math.hypot(o.x - m.x, o.y - m.y);
             if (d <= 2.2)
@@ -1877,7 +1911,7 @@
         this.floats.push({ x: tgt.x, y: tgt.y - 1.6, text: "CRIT " + dmg, color: "#fca5a5", t: 0 });
       if (mw.splash)
         for (const o of this.units) {
-          if (o === tgt || o.owner === u.owner || o.hp <= 0)
+          if (o === tgt || !this.hostile(o.owner, u.owner) || o.hp <= 0)
             continue;
           if (Math.hypot(o.x - tgt.x, o.y - tgt.y) <= mw.splash)
             this.applyHit(u, o.x, o.y, o, Math.round(dmg * 0.6), 1);
@@ -1979,9 +2013,9 @@
     }
     aggro(attacker, victim) {
       // native aggro memory: the struck unit acquires its attacker (Unit.obj);
-      // idle friends within the victim's sight join the fight
+      // idle FRIENDS (same team) within the victim's sight join the fight
       // (UnitStateType.WARNED_BY_NEARBY_FRIENDS = 1).
-      if (!attacker || !victim || attacker.owner === victim.owner || attacker.hp <= 0)
+      if (!attacker || !victim || !this.hostile(attacker.owner, victim.owner) || attacker.hp <= 0)
         return;
       const joins = (w) => {
         if (w.order.kind === "hide")
@@ -2003,7 +2037,7 @@
       joins(victim);
       const vr = victim.def.view ?? 8;
       for (const w of this.units) {
-        if (w === victim || w.owner !== victim.owner || w.hp <= 0)
+        if (w === victim || this.hostile(w.owner, victim.owner) || w.hp <= 0)
           continue;
         if (Math.hypot(w.x - victim.x, w.y - victim.y) <= vr)
           joins(w);
@@ -2029,7 +2063,7 @@
           } else if (p.splash > 0) {
             this.booms.push({ x: p.tx, y: p.ty, r: p.splash, t: 0, max: 0.5 });
             for (const t of this.units) {
-              if (t.owner === p.owner)
+              if (!this.hostile(t.owner, p.owner))
                 continue;
               const dd = Math.hypot(t.x - p.tx, t.y - p.ty);
               if (dd <= p.splash + t.def.radius) {
@@ -2039,7 +2073,7 @@
               }
             }
             for (const b of this.buildings) {
-              if (b.owner === p.owner || b.owner === 0)
+              if (b.owner === 0 || !this.hostile(p.owner, b.owner))
                 continue;
               if (Math.hypot(b.x - p.tx, b.y - p.ty) <= p.splash + b.radius) {
                 b.hp -= p.dmg * 0.6;
@@ -2057,7 +2091,7 @@
               this.floats.push({ x: t.x, y: t.y - 0.8, text: "miss", color: "#999", t: 0 });
             } else {
               for (const b of this.buildings) {
-                if (b.owner === p.owner || b.owner === 0)
+                if (b.owner === 0 || !this.hostile(p.owner, b.owner))
                   continue;
                 if (Math.hypot(b.x - p.tx, b.y - p.ty) < b.radius + 0.8) {
                   b.hp -= p.dmg;
@@ -2091,7 +2125,7 @@
             let best;
             let bd = wdef.range;
             for (const t of this.units) {
-              if (t.owner === b.owner || t.hp <= 0)
+              if (!this.hostile(b.owner, t.owner) || t.hp <= 0)
                 continue;
               if ((t.def.kind === "aircraft" || t.def.aircraft) && !t.grounded && !BLD[b.defId].antiAir)
                 continue;
@@ -2186,12 +2220,33 @@
           if (b.owner === o)
             reveal(b.x, b.y, b.defId === "hq" ? HQ.view : b.defId === "depot" ? DEPOT.view : BLD[b.defId]?.view ?? DEPOT.view);
       }
+      // team shared vision: allies OR their current sight into each other's
+      // mask (view-side only — visible[] feeds renderer/minimap/input scans,
+      // never sim logic, so this cannot desync lockstep peers)
+      if (this.teams)
+        for (let o = 1; o <= this.seatCount; o++)
+          for (let p = 1; p <= this.seatCount; p++)
+            if (p !== o && this.teamOf(p) === this.teamOf(o)) {
+              const a = this.visible[o - 1], vb = this.visible[p - 1];
+              for (let i = 0; i < a.length; i++)
+                if (vb[i])
+                  a[i] = 1;
+            }
     }
     depots() {
       return this.buildings.filter((b) => b.defId === "depot");
     }
     hq(owner) {
       return this.buildings.find((b) => b.defId === "hq" && b.owner === owner);
+    }
+    teamOf(o) {
+      return this.teams ? TEAM_OF[o] || o : o;
+    }
+    // team hostility: enemies are seats of a DIFFERENT team; neutral owner 0
+    // is hostile to everyone; allies (same team, incl. self) never are. With
+    // teams off this collapses to `a !== b` — the pre-team truth table.
+    hostile(a, b) {
+      return a !== b && (!this.teams || this.teamOf(a) !== this.teamOf(b));
     }
   }
   // ---- Phase 4: unified command layer ----
@@ -2409,7 +2464,10 @@
   // PROTO 3: N player seats (2..MAX_SEATS) + spectators. Message deltas vs 2:
   // cf frames carry a per-slot map f instead of f1/f2; start/welcome carry the
   // assigned seat; every 'h' hash is tagged with its sender slot.
-  var PROTO = 3;
+  // PROTO 4: team mode 2v2 — start/welcome carry `mode`; Sim gains seat
+  // hostility rules (allies never targeted / no friendly splash), a team win
+  // condition, ally shared vision and an adjacent-pair 2v2 spawn table.
+  var PROTO = 4;
   var INPUT_DELAY = 3;
   var CHECKPOINT = 20;
   var STALL_VACATE_MS = 6000;
@@ -2420,6 +2478,11 @@
   var SEAT_COLOR = { 1: "#6ab8ff", 2: "#ff8a70", 3: "#f5c04a", 4: "#5fd48a" };
   var SEAT_HEX = { 1: 0x6ab8ff, 2: 0xff8a70, 3: 0xf5c04a, 4: 0x5fd48a };
   var SEAT_SPAWN = { 1: [8, MAP_H / 2], 2: [MAP_W - 8, MAP_H / 2], 3: [MAP_W / 2, 8], 4: [MAP_W / 2, MAP_H - 8] };
+  // Team mode 2v2 (PROTO 4): seats {1,2} vs {3,4}. The four FFA spawn points
+  // are re-seated so team mates start ADJACENT (left+top vs right+bottom —
+  // 180°-symmetric); the FFA table and the 2P/3P layouts are untouched.
+  var TEAM_OF = { 1: 1, 2: 1, 3: 2, 4: 2 };
+  var SEAT_SPAWN_TEAM = { 1: [8, MAP_H / 2], 2: [MAP_W / 2, 8], 3: [MAP_W - 8, MAP_H / 2], 4: [MAP_W / 2, MAP_H - 8] };
   var Net = {
     mode: "local",
     session: null,
@@ -2455,6 +2518,7 @@
       // ---- multi-party (JIP/spectator / N seats) ----
       this.hub = slot === 1;            // host runs the hub
       this.seats = Math.max(2, Math.min(MAX_SEATS, (opts.seats | 0) || 2)); // player seats (hub)
+      this.mode = opts.mode === "2v2" ? "2v2" : "ffa"; // team mode (PROTO 4 start/welcome field)
       this.fed = false;                 // hub-fed client (spectator / JIP player)
       this.role = opts.role || "player";// fed: "spec" | "player" (JIP reclaim)
       this.clients = new Map;           // hub: rid -> {role, slot, seen, live, raw}
@@ -2669,7 +2733,7 @@
       this.clients.set(from, { role, slot, seen: -1, live: false, raw: false });
       const snap = this.opts.snapshot ? this.opts.snapshot() : null;
       this.sendTo(from, {
-        a: "welcome", proto: PROTO, role, slot, seats: this.seats,
+        a: "welcome", proto: PROTO, role, slot, seats: this.seats, mode: this.mode,
         seed: snap.seed, tick: snap.tick, arch: snap.arch, hashes: snap.hashes, gen: this.matchGen
       });
     }
@@ -2684,9 +2748,9 @@
       this.helloQueue = [];
       for (const [rid, cl] of this.clients) {
         if (cl.slot >= 2 && cl.role === "player")
-          this.sendTo(rid, { a: "start", proto: PROTO, seed, gen: this.matchGen, slot: cl.slot, seats: this.seats });
+          this.sendTo(rid, { a: "start", proto: PROTO, seed, gen: this.matchGen, slot: cl.slot, seats: this.seats, mode: this.mode });
         else
-          this.sendTo(rid, { a: "welcome", proto: PROTO, role: "spec", slot: 0, seed, tick: 0, arch: [], hashes: [], seats: this.seats, gen: this.matchGen });
+          this.sendTo(rid, { a: "welcome", proto: PROTO, role: "spec", slot: 0, seed, tick: 0, arch: [], hashes: [], seats: this.seats, mode: this.mode, gen: this.matchGen });
       }
     }
     checkHash(t) {
@@ -2864,6 +2928,7 @@
     beginFed(m) {
       this.role = m.role === "player" ? "player" : "spec";
       this.slot = this.role === "player" ? (m.slot | 0) || 2 : 0;
+      this.mode = m.mode === "2v2" ? "2v2" : "ffa"; // team mode rides every welcome
       this.fed = true;
       // a new match generation invalidates every buffered frame from the old
       // one (rematch / fresh welcome); same-generation raced-ahead frames stay
@@ -36930,7 +36995,7 @@ void main() {
             const shown = underC ? b.buildT / b.buildTotal : frac;
             if (Math.abs(shown - v.lastHp) > 0.01) {
               v.lastHp = shown;
-              this.paintHp(v.hpCanvas, shown, b.owner !== (sim.viewSlot || 1));
+              this.paintHp(v.hpCanvas, shown, sim.hostile(sim.viewSlot || 1, b.owner));
               v.hpTex.needsUpdate = true;
             }
           } else
@@ -37030,7 +37095,7 @@ void main() {
           group.add(hq.group);
           view.glb = hq;
         } else {
-          const isRed = b.owner !== (sim.viewSlot || 1);
+          const isRed = sim.hostile(sim.viewSlot || 1, b.owner);
           const m = new Mesh(new PlaneGeometry(7, 7), new MeshBasicMaterial({ map: isRed ? this.hqRed : this.hqBlue, transparent: true, depthWrite: false }));
           m.position.y = 2.6;
           m.renderOrder = 5;
@@ -37255,7 +37320,7 @@ void main() {
           v.hpSprite.visible = true;
           if (Math.abs(frac - v.lastHp) > 0.01) {
             v.lastHp = frac;
-            this.paintHp(v.hpCanvas, frac, u.owner !== (sim.viewSlot || 1));
+            this.paintHp(v.hpCanvas, frac, sim.hostile(sim.viewSlot || 1, u.owner));
             v.hpTex.needsUpdate = true;
           }
           v.hpSprite.position.y = v.model.height + 0.55;
@@ -37476,7 +37541,7 @@ void main() {
       rankSprite.visible = false;
       rankSprite.renderOrder = 41;
       model.group.add(rankSprite);
-      const selRing = this.texSelRing ? new Mesh(new PlaneGeometry(2, 2), new MeshBasicMaterial({ color: u.owner === (sim.viewSlot || 1) ? 5363281 : (SEAT_HEX[u.owner] || 16728128), map: this.texSelRing, transparent: true, opacity: 0.95, depthWrite: false, side: DoubleSide })) : new Mesh(new RingGeometry(0.82, 1, 26), new MeshBasicMaterial({ color: 9109354, transparent: true, opacity: 0.95, depthWrite: false, side: DoubleSide }));
+      const selRing = this.texSelRing ? new Mesh(new PlaneGeometry(2, 2), new MeshBasicMaterial({ color: sim.hostile(sim.viewSlot || 1, u.owner) ? (SEAT_HEX[u.owner] || 16728128) : 5363281, map: this.texSelRing, transparent: true, opacity: 0.95, depthWrite: false, side: DoubleSide })) : new Mesh(new RingGeometry(0.82, 1, 26), new MeshBasicMaterial({ color: 9109354, transparent: true, opacity: 0.95, depthWrite: false, side: DoubleSide }));
       selRing.rotation.x = -Math.PI / 2;
       selRing.position.y = 0.07;
       selRing.visible = false;
@@ -38161,15 +38226,20 @@ void main() {
             <option value="3">3 players</option>
             <option value="4">4 players</option>
           </select>
+          <select id="mp-mode" title="Team mode (4 players only)">
+            <option value="ffa">FFA · all vs all</option>
+            <option value="2v2">2v2 · teams</option>
+          </select>
           <button id="mp-host" class="mp-btn">HOST</button>
           <span class="mp-sep">or</span>
           <input id="mp-code" maxlength="4" placeholder="CODE" autocomplete="off" spellcheck="false" />
           <button id="mp-join" class="mp-btn">JOIN</button>
         </div>
         <div class="mp-row">
-          <input id="mp-broker" placeholder="own signaling broker: host:port (optional)" autocomplete="off" spellcheck="false" style="flex:1" />
+          <input id="mp-broker" placeholder="own signaling: [wss://]host[:port][/path] (optional)" autocomplete="off" spellcheck="false" style="flex:1" />
         </div>
-        <div id="mp-status">Same browser: host here, then open the site in more tabs and join with the code. Internet: share the code — or self-host signaling (npx peer --port 9000, enter localhost:9000) to leave the public broker.</div>
+        <div id="mp-hint">Same browser: host here, then open the site in more tabs and join with the code. Internet: share the code — or run your own signaling (<code>npx peer --port 9000</code> → <code>localhost:9000</code>). HTTPS pages need a WSS broker (TLS) — <a href="broker.html" target="_blank" rel="noopener">broker guide</a>.</div>
+        <div id="mp-status"></div>
       </div>
       <div id="baking">… LOADING THE REAL MAP</div>
     </div>
@@ -38205,6 +38275,14 @@ void main() {
 </div>
 `;
   var $ = (id) => document.getElementById(id);
+  // 2v2 teams are a 4-seat mode: the select arms only when 4 seats are chosen
+  $("mp-seats").addEventListener("change", () => {
+    const team = $("mp-seats").value === "4";
+    $("mp-mode").disabled = !team;
+    if (!team)
+      $("mp-mode").value = "ffa";
+  });
+  $("mp-mode").disabled = true;
   var cv = $("cv");
   var mini = $("mini");
   var wrap = $("wrap");
@@ -38248,6 +38326,9 @@ button{cursor:pointer;border:0;border-radius:8px}
 #mp-code{width:76px;text-align:center;letter-spacing:3px;font-weight:800;font-size:14px;padding:7px 4px;border-radius:6px;border:1px solid rgba(255,255,255,.35);background:rgba(0,0,0,.4);color:#fcd34d;text-transform:uppercase}
 #mp-xp{background:#0f1a24;color:#e5e7eb;border:1px solid rgba(255,255,255,.3);border-radius:6px;font-size:12px;padding:7px 6px}
 #mp-status{margin-top:8px;font-size:11px;color:rgba(255,255,255,.55);min-height:14px}
+#mp-hint{margin-top:8px;font-size:11px;line-height:1.6;color:rgba(255,255,255,.45)}
+#mp-hint a{color:#93c5fd}
+#mp-hint code{font-size:10px;padding:0 3px}
 #minimap-wrap{left:8px;bottom:8px;padding:6px}
 #mini{display:block;border-radius:3px;cursor:pointer}
 #selinfo{left:8px;bottom:196px;flex-direction:column;align-items:stretch;gap:5px;min-width:180px;font-size:12px}
@@ -38413,10 +38494,11 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
         s += A[Math.floor(Math.random() * A.length)];
       return s;
     },
-    makeSession(slot, seats) {
+    makeSession(slot, seats, mode) {
       const mp = this;
       return new LockstepSession(this.transport, slot, cmd, {
         seats,
+        mode,
         onDesync: (t, mine, theirs) => {
           $("desync").classList.remove("hidden");
           $("mp-dot").classList.add("desync");
@@ -38445,6 +38527,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
           mp.session.reset();
           mp.session.slot = (m.slot | 0) || 2;
           mp.session.seats = (m.seats | 0) || 2;
+          mp.session.mode = m.mode === "2v2" ? "2v2" : "ffa";
           Net.session = mp.session;
           const ok = mp.begin(m.seed | 0, mp.session.slot, mp.session.seats);
           if (!ok) {
@@ -38496,8 +38579,10 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
     host() {
       const xp = $("mp-xp").value;
       const seats = +$("mp-seats").value || 2;
+      // 2v2 teams are a 4-seat mode (the select is disabled otherwise)
+      const mode = $("mp-mode").value === "2v2" && seats === 4 ? "2v2" : "ffa";
       const code = this.genCode();
-      this.st("Opening room " + code + " (" + seats + " player seats)…");
+      this.st("Opening room " + code + " (" + seats + " player seats" + (mode === "2v2" ? " · 2v2" : "") + ")…");
       const tr = xp === "p2p" ? new PeerTransport(this.brokerCfg()) : new BroadcastTransport("aow3-ls-" + code);
       this.transport = tr;
       this.code = code;
@@ -38505,11 +38590,11 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       boot.then(() => {
         if (this.transport !== tr)
           return;
-        this.session = this.makeSession(1, seats);
+        this.session = this.makeSession(1, seats, mode);
         if (xp === "p2p")
-          this.st("ROOM " + code + " (" + seats + " seats) — waiting for players…");
+          this.st("ROOM " + code + " (" + seats + " seats" + (mode === "2v2" ? " · 2v2" : "") + ") — waiting for players…");
         else
-          this.st("CODE " + code + " (" + seats + " seats) — open the site in more tabs and join with this code.");
+          this.st("CODE " + code + " (" + seats + " seats" + (mode === "2v2" ? " · 2v2" : "") + ") — open the site in more tabs and join with this code.");
       }).catch((e) => {
         this.reset("Host failed: " + (e && e.message || e) + " — try 'Same browser' mode.");
       });
@@ -38546,18 +38631,28 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
         this.st("Looking for host in room " + code + "… (host presses START)");
       }
     },
-    // self-hosted PeerJS signaling: "host[:port][/path]" from the optional
-    // broker field (empty = default public cloud). Page-over-https with no
-    // explicit port is treated as a secure 443 endpoint.
+    // self-hosted PeerJS signaling: "[wss://|ws://]host[:port][/path]" from
+    // the optional broker field (empty = default public cloud). An explicit
+    // scheme wins; otherwise an https page infers a secure 443 endpoint (a
+    // page opened over https may not open plaintext ws:// — mixed content).
+    // Signaling only: game traffic is always P2P WebRTC DataChannel.
     brokerCfg() {
       const v = ($("mp-broker").value || "").trim();
       if (!v)
         return null;
-      const m = /^([^:\/]+)(?::(\d+))?(\/.*)?$/.exec(v);
-      if (!m || !m[1])
+      const m = /^(?:(wss|ws|https|http):\/\/)?([^:\/]+)(?::(\d+))?(\/.*)?$/i.exec(v);
+      if (!m || !m[2])
         return null;
-      const port = m[2] ? +m[2] : undefined;
-      return { host: m[1], port, path: m[3] || "/", secure: location.protocol === "https:" && !port };
+      const scheme = (m[1] || "").toLowerCase();
+      const port = m[3] ? +m[3] : undefined;
+      let secure;
+      if (scheme === "wss" || scheme === "https")
+        secure = true;
+      else if (scheme === "ws" || scheme === "http")
+        secure = false;
+      else
+        secure = location.protocol === "https:" && !port;
+      return { host: m[2], port: port ?? (secure ? 443 : 80), path: m[4] || "/", secure };
     },
     launch() {
       // the start packet seats the guests BEFORE the host's own startGame — if
@@ -38607,7 +38702,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       this.session.beginFed(m);
       this.session.seats = (m.seats | 0) || 2;
       Net.session = this.session;
-      const ok = startGame({ seed: m.seed | 0, lockstep: true, slot: seat, seats: m.seats, spec });
+      const ok = startGame({ seed: m.seed | 0, lockstep: true, slot: seat, seats: m.seats, mode: m.mode, spec });
       if (ok) {
         $("menu").classList.add("hidden");
         this.armed = false;
@@ -38630,7 +38725,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
     },
     begin(seed, slot, seats) {
       Net.session = this.session;
-      const ok = startGame({ seed, lockstep: true, slot, seats });
+      const ok = startGame({ seed, lockstep: true, slot, seats, mode: this.session.mode });
       if (ok) {
         $("menu").classList.add("hidden");
         this.armed = false;
@@ -38651,7 +38746,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
     const lockstep = !!opts.lockstep;
     const spec = !!opts.spec;
     const mSeed = lockstep ? 0 : /[#&]seed=(\d+)/.exec(location.hash || "");
-    sim = new Sim(opts.seed ?? (mSeed ? +mSeed[1] >>> 0 : Math.floor(Math.random() * 1e9)), lockstep ? Math.max(2, Math.min(MAX_SEATS, (opts.seats | 0) || 2)) : 2);
+    sim = new Sim(opts.seed ?? (mSeed ? +mSeed[1] >>> 0 : Math.floor(Math.random() * 1e9)), lockstep ? Math.max(2, Math.min(MAX_SEATS, (opts.seats | 0) || 2)) : 2, opts.mode === "2v2" ? "2v2" : "ffa");
     try {
       window.__aow3sim = sim;
     } catch (e) {}
@@ -38679,7 +38774,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
     $("desync").classList.add("hidden");
     ["resbar", "clock", "minimap-wrap", "prodwrap"].forEach((id) => $(id).classList.remove("hidden"));
     if (lockstep) {
-      $("mp-info").textContent = spec ? "SPECTATOR" : "LOCKSTEP P" + sim.viewSlot + (sim.viewSlot === 1 ? " HOST" : "");
+      $("mp-info").textContent = spec ? "SPECTATOR" : "LOCKSTEP P" + sim.viewSlot + (sim.viewSlot === 1 ? " HOST" : "") + (sim.teams ? " · T" + sim.teamOf(sim.viewSlot) : "");
       $("mp-live").classList.remove("hidden");
       $("mp-dot").classList.remove("desync");
     } else
@@ -38883,8 +38978,8 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
     let enemy;
     let bd = 1.6;
     for (const u of sim.units) {
-      if (u.owner === mySlot())
-        continue;
+      if (!sim.hostile(mySlot(), u.owner))
+        continue; // own + allies are never attack targets
       if (!sim.visible[mySlot() - 1][Math.round(u.y) * MAP_W + Math.round(u.x)])
         continue;
       const dist = Math.hypot(u.x - t.x, u.y - t.y);
@@ -38899,7 +38994,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       r3d.mark(enemy.x, enemy.y, "attack");
       return;
     }
-    const depot = sim.buildings.find((b) => b.defId === "depot" && b.owner !== mySlot() && Math.hypot(b.x - t.x, b.y - t.y) < DEPOT.radius + 1);
+    const depot = sim.buildings.find((b) => b.defId === "depot" && sim.hostile(mySlot(), b.owner) && Math.hypot(b.x - t.x, b.y - t.y) < DEPOT.radius + 1);
     if (depot && ids.some((id) => sim.units.find((u) => u.id === id && u.def.captures))) {
       cmd.issue({ type: "capture", ids: ids.filter((id) => sim.units.find((u) => u.id === id && u.def.captures)), buildingId: depot.id });
       r3d.mark(depot.x, depot.y, "capture");
@@ -39153,8 +39248,8 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
         let foe;
         let fd = 34;
         for (const u of sim.units) {
-          if (u.owner === mySlot())
-            continue;
+          if (!sim.hostile(mySlot(), u.owner))
+            continue; // own + allies are never attack targets
           if (!sim.visible[mySlot() - 1][Math.round(u.y) * MAP_W + Math.round(u.x)])
             continue;
           const s = r3d.tileToScreen(u.x, u.y);
@@ -39468,28 +39563,44 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       if (Net.session && Net.session.fed && !Net.session.liveSent)
         $("mp-info").textContent = (Net.session.role === "spec" ? "SPEC CATCH-UP " : "JIP CATCH-UP ") + sim.tick + "/" + Net.session.catchupUntil;
       else if (Net.session && Net.session.fed && Net.session.liveSent && Net.session.role === "player")
-        $("mp-info").textContent = "LOCKSTEP P" + (Net.session.slot || Net.mySlot) + " (JIP)";
+        $("mp-info").textContent = "LOCKSTEP P" + (Net.session.slot || Net.mySlot) + " (JIP)" + (sim.teams ? " · T" + sim.teamOf(Net.session.slot || Net.mySlot) : "");
       else if (Net.spectator && Net.session)
         $("mp-info").textContent = "SPECTATOR (LIVE)";
     }
     if (sim.winner !== null) {
-      const win = sim.winner === mySlot();
+      const ms = mySlot();
+      const teamPlay = sim.teams;
+      const myT = teamPlay ? sim.teamOf(ms) : ms;
+      const win = teamPlay ? sim.winTeam !== null && myT === sim.winTeam : sim.winner === ms;
       const specView = Net.mode === "lockstep" && Net.session && Net.session.fed && Net.session.role === "spec";
       $("verdict").style.color = specView ? (SEAT_COLOR[sim.winner] || "#e8e4d0") : win ? "#34d399" : "#f87171";
-      $("verdict").textContent = specView ? ("PLAYER " + sim.winner + " WINS") : win ? "VICTORY" : "DEFEAT";
+      $("verdict").textContent = specView ? (teamPlay ? "TEAM " + sim.winTeam + " WINS" : "PLAYER " + sim.winner + " WINS") : win ? "VICTORY" : "DEFEAT";
       window.__sfx && window.__sfx.play(specView ? "ann_victory" : win ? "ann_victory" : "ann_defeat", { vol: 0.9 });
-      $("verdict-sub").textContent = specView ? ("Player " + sim.winner + " destroyed the enemy HQ.") : win ? "Enemy HQ destroyed. The region is yours." : "Your HQ has fallen. Regroup and try again.";
+      $("verdict-sub").textContent = specView ? (teamPlay ? "Team " + sim.winTeam + " destroyed every enemy HQ." : "Player " + sim.winner + " destroyed the enemy HQ.") : teamPlay ? (win ? "Your team held the field — every enemy HQ has fallen." : "Your team's HQs have fallen. Regroup with your ally and try again.") : win ? "Enemy HQ destroyed. The region is yours." : "Your HQ has fallen. Regroup and try again.";
       try {
         const st = sim.stats;
         const tt = Math.floor(sim.time);
         const f = (n) => n.toLocaleString();
         const row = (label, a, b) => `<tr><td class="ra">${a}</td><th>${label}</th><td>${b}</td></tr>`;
-        $("report").innerHTML = `<table><thead><tr><th class="ra">YOU</th><th></th><th>ENEMY</th></tr></thead><tbody>` +
-          row("Units fielded", f(st[1].produced), f(st[2].produced)) +
-          row("Enemy kills", f(st[1].kills), f(st[2].kills)) +
-          row("Units lost", f(st[1].losses), f(st[2].losses)) +
-          row("Buildings razed", f(st[1].bldKills), f(st[2].bldKills)) +
-          row("Buildings lost", f(st[1].bldLost), f(st[2].bldLost)) +
+        // side aggregates: own seat (FFA) / own team (2v2) vs everyone hostile
+        // — with 3/4 seats this also fixes the old YOU/ENEMY hardcoding
+        const side = (own) => {
+          const a = { produced: 0, kills: 0, losses: 0, bldKills: 0, bldLost: 0 };
+          for (let s = 1; s <= sim.seatCount; s++) {
+            const onMySide = teamPlay ? sim.teamOf(s) === myT : s === ms;
+            if (onMySide === own)
+              for (const k in a)
+                a[k] += (st[s] && st[s][k]) || 0;
+          }
+          return a;
+        };
+        const A = side(true), E = side(false);
+        $("report").innerHTML = `<table><thead><tr><th class="ra">${teamPlay ? "YOU + ALLY" : "YOU"}</th><th></th><th>${teamPlay ? "ENEMY TEAM" : "ENEMY"}</th></tr></thead><tbody>` +
+          row("Units fielded", f(A.produced), f(E.produced)) +
+          row("Enemy kills", f(A.kills), f(E.kills)) +
+          row("Units lost", f(A.losses), f(E.losses)) +
+          row("Buildings razed", f(A.bldKills), f(E.bldKills)) +
+          row("Buildings lost", f(A.bldLost), f(E.bldLost)) +
           row("Battle time", `${Math.floor(tt / 60)}:${String(tt % 60).padStart(2, "0")}`, "—") +
           `</tbody></table>`;
       } catch (e2) {}

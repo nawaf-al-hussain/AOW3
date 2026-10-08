@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AOW3 · Signaling Broker Guide (WSS for HTTPS)</title>
+<style>
+  html,body{margin:0;background:#0c100c;color:#e5e7eb;font-family:system-ui,Segoe UI,Roboto,sans-serif;line-height:1.65}
+  main{max-width:860px;margin:0 auto;padding:32px 20px 80px}
+  h1{color:#f0d896;font-size:24px;letter-spacing:1px;text-shadow:0 2px 12px #000;margin:0 0 4px}
+  h2{color:#93c5fd;font-size:17px;margin:38px 0 10px;border-bottom:1px solid rgba(110,160,180,.35);padding-bottom:6px}
+  h3{color:#f0d896;font-size:14px;margin:22px 0 6px}
+  p,li{font-size:14px;color:rgba(230,235,240,.85)}
+  .sub{color:rgba(255,255,255,.55);font-size:13px;margin-bottom:26px}
+  code{background:rgba(255,255,255,.09);padding:1px 6px;border-radius:4px;font-size:12.5px;color:#fcd34d}
+  pre{background:rgba(3,8,12,.85);border:1px solid rgba(110,160,180,.4);border-radius:8px;padding:14px 16px;overflow-x:auto;font-size:12.5px;line-height:1.55}
+  pre code{background:none;padding:0;color:#c9e3ff}
+  table{border-collapse:collapse;width:100%;font-size:13px;margin:10px 0}
+  th,td{border:1px solid rgba(110,160,180,.35);padding:7px 10px;text-align:left;vertical-align:top}
+  th{background:rgba(28,40,48,.9);color:#f0d896;font-weight:700}
+  td:first-child code{white-space:nowrap}
+  .note{border-left:3px solid #f0d896;background:rgba(240,216,150,.06);padding:10px 14px;border-radius:0 8px 8px 0;font-size:13px;margin:14px 0}
+  .warn{border-left-color:#f87171;background:rgba(248,113,113,.07)}
+  a{color:#93c5fd}
+  .k{color:#7dd3fc}
+</style>
+</head>
+<body>
+<main>
+<h1>SIGNALING BROKER GUIDE</h1>
+<p class="sub">Self-hosted PeerJS signaling for AOW3 lockstep multiplayer — and why HTTPS pages need <b>WSS</b> (TLS).</p>
+
+<h2>1 · What the broker does (and does not do)</h2>
+<p>AOW3 multiplayer is pure peer-to-peer: once a match is live, every command, input frame and
+state hash flows directly between the browsers over a WebRTC DataChannel. The signaling broker
+is only used <b>while finding each other</b> — it matches the room code to the peers' WebRTC
+connection offers and answers. If the broker goes down mid-match, the match continues; the
+broker is needed again only for new joins (JIP / late spectators).</p>
+<p>By default the game uses the free public PeerJS cloud (<span class="k">0.peerjs.com</span>).
+You can leave that dependency by running your own broker and entering its address in the
+optional broker field of the multiplayer panel.</p>
+
+<h2>2 · The HTTPS rule — why WSS</h2>
+<p>The game is hosted on <b>GitHub Pages over HTTPS</b>. A page opened over HTTPS is only allowed
+to open <b>secure</b> WebSocket connections. If the page at <code>https://…</code> tries to signal
+with a plaintext <code>ws://</code> broker, the browser blocks it as <b>mixed content</b> and the
+console shows:</p>
+<pre><code>Mixed Content: The page at 'https://…' was loaded over HTTPS,
+but requested an insecure WebSocket endpoint 'ws://…'. This request has been blocked.</code></pre>
+<div class="note warn">So: on an HTTPS page (GitHub Pages, any HTTPS mirror) your broker
+<b>must terminate TLS</b> and be reachable as <code>wss://</code>. Plain <code>ws://</code> works
+only from an HTTP page — e.g. <code>http://localhost</code> tests.</div>
+
+<h2>3 · Quick start — same machine / HTTP pages</h2>
+<pre><code># any machine with Node.js 18+
+npx peer --port 9000</code></pre>
+<p>Then enter <code>localhost:9000</code> in the broker field. This plaintext path is fine for
+local testing from an <code>http://</code> origin — it is exactly what the browser blocks from an
+HTTPS origin.</p>
+
+<h2>4 · Production — WSS behind a TLS proxy</h2>
+<p>The <code>peer</code> package (PeerServer) does not speak TLS itself. The standard setup is to
+keep it on localhost and let a reverse proxy own the certificate. WebSocket upgrades are proxied
+transparently by both options below.</p>
+
+<h3>Option A — Caddy (automatic HTTPS, recommended)</h3>
+<pre><code># /etc/caddy/Caddyfile
+broker.example.com {
+    reverse_proxy 127.0.0.1:9000
+}</code></pre>
+<pre><code>sudo systemctl reload caddy   # certificates are issued automatically</code></pre>
+<p>Caddy obtains and renews the Let's Encrypt certificate on its own — no certbot, no manual
+websocket configuration. Enter <code>broker.example.com</code> in the game.</p>
+
+<h3>Option B — nginx + certbot</h3>
+<pre><code>server {
+    listen 443 ssl;
+    server_name broker.example.com;
+    # ssl_certificate /etc/letsencrypt/live/broker.example.com/fullchain.pem;
+    # ssl_certificate_key /etc/letsencrypt/live/broker.example.com/privkey.pem;
+
+    location / {
+        proxy_pass http://127.0.0.1:9000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_read_timeout 300s;
+    }
+}</code></pre>
+<pre><code>sudo certbot --nginx -d broker.example.com
+sudo systemctl reload nginx</code></pre>
+
+<h3>Broker flags</h3>
+<pre><code>npx peer --port 9000               # default path /
+npx peer --port 9000 --path /myws  # custom path (then enter broker.example.com/myws)
+npx peer --port 9000 --key mykey   # custom REST key (rarely needed)</code></pre>
+
+<h2>5 · What to enter in the game</h2>
+<table>
+  <tr><th>Broker field</th><th>Resulting connection</th><th>Use</th></tr>
+  <tr><td><code>(empty)</code></td><td>public PeerJS cloud (<span class="k">0.peerjs.com</span>)</td><td>zero-setup default</td></tr>
+  <tr><td><code>localhost:9000</code></td><td><code>ws://localhost:9000/</code></td><td>local tests from an HTTP page</td></tr>
+  <tr><td><code>broker.example.com</code></td><td><code>wss://broker.example.com:443/</code> (inferred from the HTTPS page)</td><td>typical production entry</td></tr>
+  <tr><td><code>wss://broker.example.com</code></td><td><code>wss://…:443/</code> (explicit scheme always wins)</td><td>unambiguous, works from HTTP pages too</td></tr>
+  <tr><td><code>wss://broker.example.com:8443</code></td><td>explicit secure port</td><td>proxy on a non-443 port</td></tr>
+  <tr><td><code>wss://broker.example.com/myws</code></td><td>custom path</td><td>server run with <code>--path /myws</code></td></tr>
+  <tr><td><code>ws://10.0.0.2:9000</code></td><td>forced plaintext</td><td>HTTP pages / LAN only</td></tr>
+</table>
+<p>Parsing rules: an explicit <code>wss://</code>/<code>ws://</code>/<code>https://</code>/<code>http://</code>
+prefix decides the security mode; without a scheme, an HTTPS page infers <code>wss</code> on port
+443 — unless you typed an explicit port, which keeps plaintext (typo-proof against a
+<code>host:port</code> habit). The path defaults to <code>/</code>.</p>
+
+<h2>6 · Troubleshooting</h2>
+<table>
+  <tr><th>Symptom</th><th>Cause / fix</th></tr>
+  <tr><td>Console: <em>Mixed Content … blocked</em></td><td>HTTPS page → plaintext broker. Terminate TLS (Caddy/nginx) and enter <code>wss://…</code> or the bare domain.</td></tr>
+  <tr><td>Certificate warning / <em>peer-error</em></td><td>The browser must <b>trust</b> the certificate before WebRTC will connect. Use a real CA cert (Let's Encrypt) or <code>mkcert</code> for localhost.</td></tr>
+  <tr><td>Joins time out, broker logs show nothing</td><td>Path mismatch — <code>--path /myws</code> on the server must match the path you enter. Also check the proxy forwards WebSocket <code>Upgrade</code> headers.</td></tr>
+  <tr><td>Still reaching the public cloud</td><td>The broker field is read when the room is created — press HOST again after changing it.</td></tr>
+  <tr><td>Match continues but new joins fail</td><td>Expected — the broker is only needed to <em>find</em> peers. Restart the broker for JIP/spectators.</td></tr>
+  <tr><td>Port already in use</td><td>Another process owns 9000 — pick another port and enter <code>host:port</code>.</td></tr>
+</table>
+
+<h2>7 · Notes</h2>
+<ul>
+  <li>Signaling only — game traffic stays P2P; STUN/ICE defaults (PeerJS default STUN) are unchanged by self-hosting the broker.</li>
+  <li>The room code derives the PeerJS peer id (<code>AOW3LS-&lt;code&gt;</code>); the host id registers on your broker, guests connect to it through your broker, then everything is direct.</li>
+  <li>Game version and broker choice are independent — a v-mismatch is still rejected by the PROTO handshake, not by the broker.</li>
+</ul>
+</main>
+</body>
+</html>
