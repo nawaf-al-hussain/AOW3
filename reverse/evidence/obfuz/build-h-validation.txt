@@ -1,0 +1,59 @@
+Task 39 / Build H — machine-portable decode package: clean-sandbox re-validation
+TRANSCRIPTS ARE SYNTHETIC (no Android device in sandbox); crypto primitives are Build-G-validated.
+Environment: fresh sandbox (python3.13, unicorn 2.1.4, capstone 5.0.7; no frida/adb/device).
+Key artifact committed this build: reverse/tools/obfuz_secret_key.bin (1,024 B,
+  raw m_Script blob, sha256 885f4d0c…1ffe0; source asset sha256 81f07f62…683a4 = Build G pinning).
+
+[1] Post-patch regression — pure auto-discovery, cwd=aow3-work (no flags, no XAPK touched):
+
+so         : /home/z/my-project/aow3-work/native/libil2cpp.so sha256 8ace05bbaa2cdfda …
+key source : file /home/z/my-project/aow3-work/obfuz/obfuz_secret_key.bin (raw m_Script blob)
+key blob   : 1024 B sha256 885f4d0c3ccc13e2cb6f706b32c401adb9db61b909e25373cd58713c72c1ffe0
+key ints   : 256 (u32 LE), u32[0..3] = ['0x597871e2', '0xdc7d5d91', '0x171d80ac', '0x743d49dd']
+SELF-TEST : $GOA(0x720ba23e, 0x545ee170, 0x98705298) = 0x12345678  -> $qk expected 0x12345678 : PASS
+dump: 2 seg / 1 qk / 0 initarr events
+canary $qk(0x12345678, K): SEEN (VM booted, cipher chain live)
+CBC re-verify synthetic@0x1008 (cs SYNTH, keyA 0x0, salt 0xd9a4beef): 32/32 words PASS
+CBC re-verify synthetic@0x1810 (cs SYNTH, keyA 0x0, salt 0xd9a4beef): 32/32 words PASS
+combo mgr(0x1008)=synthetic mgr(0x1810)=synthetic: decoded OK 643/697
+chosen: 0x1008=synthetic 0x1810=synthetic
+--- anchor cross-check ---
+  statics+0x004  = 3774912598  [OK]   <- Build E task-id factor V1 (product indexes the name table)
+  statics+0x008  = 3976349685  [OK]   <- Build E task-id factor V2
+  statics+0x014  = 255249885  [OK]   <- $ce task threshold
+  statics+0x064  = 403820294  [OK]   <- DontShoot idempotence constant
+  statics+0x364  = 2264513633  [OK]   <- Build F DEN factor A (DEN = A x B)
+  statics+0x368  = 1179127975  [OK]   <- Build F DEN factor B
+  statics+0x374  = 266184150  [OK]   <- set_FlagShoot value
+pool values -> obfuz-pool-values.json (643/697 OK)
+
+[2] Fresh-clone simulation — repo layout only (tools + committed key artifact +
+    libil2cpp.so + the JSONL; no XAPK, no /home/z paths), run from the clone root:
+
+so         : /home/z/my-project/tmp-clone-sim/libil2cpp.so sha256 8ace05bbaa2cdfda …
+key source : file /home/z/my-project/tmp-clone-sim/reverse/tools/obfuz_secret_key.bin (raw m_Script blob)
+key blob   : 1024 B sha256 885f4d0c3ccc13e2cb6f706b32c401adb9db61b909e25373cd58713c72c1ffe0
+key ints   : 256 (u32 LE), u32[0..3] = ['0x597871e2', '0xdc7d5d91', '0x171d80ac', '0x743d49dd']
+SELF-TEST : $GOA(0x720ba23e, 0x545ee170, 0x98705298) = 0x12345678  -> $qk expected 0x12345678 : PASS
+dump: 2 seg / 1 qk / 0 initarr events
+canary $qk(0x12345678, K): SEEN (VM booted, cipher chain live)
+CBC re-verify synthetic@0x1008 (cs SYNTH, keyA 0x0, salt 0xd9a4beef): 32/32 words PASS
+CBC re-verify synthetic@0x1810 (cs SYNTH, keyA 0x0, salt 0xd9a4beef): 32/32 words PASS
+combo mgr(0x1008)=synthetic mgr(0x1810)=synthetic: decoded OK 643/697
+chosen: 0x1008=synthetic 0x1810=synthetic
+--- anchor cross-check ---
+  statics+0x004  = 3774912598  [OK]   <- Build E task-id factor V1 (product indexes the name table)
+  statics+0x008  = 3976349685  [OK]   <- Build E task-id factor V2
+  statics+0x014  = 255249885  [OK]   <- $ce task threshold
+  statics+0x064  = 403820294  [OK]   <- DontShoot idempotence constant
+  statics+0x364  = 2264513633  [OK]   <- Build F DEN factor A (DEN = A x B)
+  statics+0x368  = 1179127975  [OK]   <- Build F DEN factor B
+  statics+0x374  = 266184150  [OK]   <- set_FlagShoot value
+pool values -> obfuz-pool-values.json (643/697 OK)
+
+Both runs reproduce the G2 consumer contract exactly: SELF-TEST PASS (the game canary
+$qk(0x12345678,K) against the real native VM + committed key), canary SEEN, CBC re-verify
+32/32 on both segments, 643/697 OK + 54 CIPHER_UNSURE (string hypothesis ladder — the real
+dump decides), 0 param gaps, 7/7 anchor rows. On a real device transcript the segments are
+real ciphertext/plaintext and the anchor rows carry the actual Build E task-id factors,
+$ce threshold, DontShoot constant, Build F DEN factors and set_FlagShoot value.
