@@ -1400,3 +1400,48 @@ Stage Summary:
 - The fold-in task is scoped and registered: next implementation session executes
   W1 (desk RE) then W2-W5 per the scope note; the only evidence-gated behavior change
   candidate is siege preservation under defend/bombard (W1-a/c).
+
+---
+Task ID: 45
+Agent: Super Z (main)
+Task: Fold-in executed — R2-decoded Obfuz constants into the Build E/F browser models (W1-W5)
+
+Work Log:
+- W1 (offline RE, per the Task 44 scope): built tools/ce_constants_decode.py — decrypted the
+  mgr1 segment $Obfuz$RVA$0.$RVA_Value3 (0xDBD3E8, keys 0x354680c3/0xfba322bf per
+  builder-chain-decode.txt) and resolved ALL 21 $ce on-demand $gK accessor callsites;
+  harness cross-checked 631/631 against the R2 697-value decode; canary PASS.
+  W1-a: statics+0x14 = 3 is HOLD_POSITION at an EQUALITY gate (cmp 3, get_Task; b.ne ->
+  state +0x8c8 @0x4750668) — R2's "threshold" reading corrected; the literal 3 is reused
+  as the divisor of a mod-3 phase comparison @0x4751998 ((w22/vt[0xf08]) mod 3 vs
+  (unit+0x10) mod 3). W1-b: the accessor constants are task ids — DEFEND=2 (9 sites),
+  BOMBARD=5 (7), MINE=6 (1), -1 sentinel (3); TickFromSpec gates are equality variant
+  dispatch — the stage bands are runtime-derived FORMULAS, not static N/1000 fractions;
+  SIEGE_BAND1_MILLI=300 kept as the labeled reconstruction. W1-c: writer scan upheld —
+  GAICommandSpecMode never resets the accumulator (instant siege release kept; documented).
+- W2: docs/game.js — decoded-constants block (TASK_DONT_SHOOT/CE_TASK_HOLD/DEFEND/BOMBARD/
+  MINE/FLAG_SHOOT_FREE/SIEGE_DEN), derived nativeTask(u) getter (hold->3, defend->2,
+  bombard->5, fireHold+no-engagement->8, else 0; zero new serialized state), all 5 fire
+  gates now read nativeTask(u) === TASK_DONT_SHOOT, $Hi idempotence in commandDontShoot/
+  commandCanShoot (no re-write, no float). Patch script scripts/patch_foldin.py (asserted
+  anchors; caught + fixed a self-recursive getter rewrite before ship).
+- W3: siege progression integerized — u.siege.tk per-mille accumulator (SIEGE_TICKS 32/24,
+  bands floor(tk*1000/T) vs 300/1000/DEN), boundary-equivalent to the float model
+  (tick 10 -> 312, tick 32 -> 1000); U-line sg token and hashState bytes unchanged.
+- W4: phase5.test.js +3 sections (per-mille boundaries + release timing; DEN + task-id
+  anchors vs the decoded pool JSON incl. Math.imul for the 32-bit product; nativeTask
+  mapping + idempotence + engagement/re-assert) — 213 -> 236. Full suite: 877/877
+  (accuracy 13, commands-det 50, data-model 379, lockstep-jip 88, phase5 236, replay 45,
+  stat-caps 37, unit-fsm 29), all rc=0, replay/lockstep zero divergence (formats untouched).
+- W5: v=47 pushed (0975bd1), Pages verified (game.js?v=47 + 10 fold-in markers), live QA
+  on the deployed site: nativeTask mapping 0/3/2/8, engagement -> 0 + orderedEngagement
+  live, $Hi idempotence (redundant toggle adds no float), siege ladder ticks 9/10/31/32 ->
+  stages 0/1/1/2 with integer tk, release cleared at tick 24, siegeRange +2 at TRANSFORM,
+  fire discipline: 0 shots vs autonomous acquisition in 60 ticks vs 1 shell after
+  commandAttack through discipline; zero console errors; screenshot p15_foldin_live.png.
+
+Stage Summary:
+- Fold-in complete: the Build E/F browser models now carry the R2-decoded native semantics
+  (derived task layer + per-mille accumulator) with zero lockstep-format churn and an
+  honest 877/877 baseline. R1's on-device dictionary dump remains the sole blocked capture.
+  Evidence: reverse/evidence/obfuz/ce-constants-decode.txt + both note addenda (Task 45).
