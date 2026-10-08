@@ -1,0 +1,332 @@
+[
+ {
+  "id": 2,
+  "mesh": "body_mesh",
+  "mapPresent": true,
+  "mapClass": "ImageBitmap",
+  "texMean": [
+   60,
+   71,
+   81,
+   255
+  ],
+  "center": [
+   22,
+   39,
+   56,
+   255
+  ],
+  "corners": [
+   [
+    22,
+    80,
+    130,
+    255
+   ],
+   [
+    124,
+    124,
+    124,
+    255
+   ],
+   [
+    12,
+    12,
+    12,
+    255
+   ],
+   [
+    0,
+    0,
+    0,
+    255
+   ]
+  ],
+  "uvRange": [
+   0,
+   0.49,
+   0,
+   0.49
+  ],
+  "normals": {
+   "total": 240,
+   "degenerate": 0,
+   "upFrac": 0.09
+  }
+ },
+ {
+  "id": 2,
+  "mesh": "body_l_mesh",
+  "mapPresent": true,
+  "mapClass": "ImageBitmap",
+  "texMean": [
+   60,
+   71,
+   81,
+   255
+  ],
+  "center": [
+   22,
+   39,
+   56,
+   255
+  ],
+  "corners": [
+   [
+    22,
+    80,
+    130,
+    255
+   ],
+   [
+    124,
+    124,
+    124,
+    255
+   ],
+   [
+    12,
+    12,
+    12,
+    255
+   ],
+   [
+    0,
+    0,
+    0,
+    255
+   ]
+  ],
+  "uvRange": [
+   0,
+   0.49,
+   0,
+   0.49
+  ],
+  "normals": {
+   "total": 166,
+   "degenerate": 0,
+   "upFrac": 0.14
+  }
+ },
+ {
+  "id": 3,
+  "mesh": "body_mesh",
+  "mapPresent": true,
+  "mapClass": "ImageBitmap",
+  "texMean": [
+   60,
+   71,
+   81,
+   255
+  ],
+  "center": [
+   22,
+   39,
+   56,
+   255
+  ],
+  "corners": [
+   [
+    22,
+    80,
+    130,
+    255
+   ],
+   [
+    124,
+    124,
+    124,
+    255
+   ],
+   [
+    12,
+    12,
+    12,
+    255
+   ],
+   [
+    0,
+    0,
+    0,
+    255
+   ]
+  ],
+  "uvRange": [
+   0,
+   0.49,
+   0,
+   0.49
+  ],
+  "normals": {
+   "total": 240,
+   "degenerate": 0,
+   "upFrac": 0.09
+  }
+ },
+ {
+  "id": 3,
+  "mesh": "body_l_mesh",
+  "mapPresent": true,
+  "mapClass": "ImageBitmap",
+  "texMean": [
+   60,
+   71,
+   81,
+   255
+  ],
+  "center": [
+   22,
+   39,
+   56,
+   255
+  ],
+  "corners": [
+   [
+    22,
+    80,
+    130,
+    255
+   ],
+   [
+    124,
+    124,
+    124,
+    255
+   ],
+   [
+    12,
+    12,
+    12,
+    255
+   ],
+   [
+    0,
+    0,
+    0,
+    255
+   ]
+  ],
+  "uvRange": [
+   0,
+   0.49,
+   0,
+   0.49
+  ],
+  "normals": {
+   "total": 166,
+   "degenerate": 0,
+   "upFrac": 0.14
+  }
+ },
+ {
+  "id": 4,
+  "mesh": "body_mesh",
+  "mapPresent": true,
+  "mapClass": "ImageBitmap",
+  "texMean": [
+   60,
+   71,
+   81,
+   255
+  ],
+  "center": [
+   22,
+   39,
+   56,
+   255
+  ],
+  "corners": [
+   [
+    22,
+    80,
+    130,
+    255
+   ],
+   [
+    124,
+    124,
+    124,
+    255
+   ],
+   [
+    12,
+    12,
+    12,
+    255
+   ],
+   [
+    0,
+    0,
+    0,
+    255
+   ]
+  ],
+  "uvRange": [
+   0.51,
+   1,
+   0.5,
+   1
+  ],
+  "normals": {
+   "total": 236,
+   "degenerate": 0,
+   "upFrac": 0.15
+  }
+ },
+ {
+  "id": 4,
+  "mesh": "body_l_mesh",
+  "mapPresent": true,
+  "mapClass": "ImageBitmap",
+  "texMean": [
+   60,
+   71,
+   81,
+   255
+  ],
+  "center": [
+   22,
+   39,
+   56,
+   255
+  ],
+  "corners": [
+   [
+    22,
+    80,
+    130,
+    255
+   ],
+   [
+    124,
+    124,
+    124,
+    255
+   ],
+   [
+    12,
+    12,
+    12,
+    255
+   ],
+   [
+    0,
+    0,
+    0,
+    255
+   ]
+  ],
+  "uvRange": [
+   0.51,
+   0.99,
+   0.5,
+   1
+  ],
+  "normals": {
+   "total": 149,
+   "degenerate": 0,
+   "upFrac": 0.18
+  }
+ }
+]

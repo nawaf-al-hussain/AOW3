@@ -1,7 +1,7 @@
 {
-  "generated": "2026-10-08T19:50:19.229Z",
-  "git": "bbdfb6b",
-  "gameJsV": "49",
+  "generated": "2026-10-08T20:57:47.716Z",
+  "git": "41220e0",
+  "gameJsV": "50",
   "manifest": "visual-fidelity-audit §21/V8 + reverse/evidence/visual/README.md — fixed-seed browser captures via __DBG probes; device refs from the R1 on-device session use the same ids/viewport so the comparison is one drag-and-drop.",
   "results": [
     {
@@ -15,10 +15,10 @@
         "yaw": 0
       },
       "shot": "shot-overview-far.png",
-      "ahash": "3cf8f8f8f8e04000",
-      "git": "bbdfb6b",
-      "gameJsV": "49",
-      "ts": "2026-10-08T19:46:22.496Z",
+      "ahash": "3cf8f8f8e8e04000",
+      "git": "41220e0",
+      "gameJsV": "50",
+      "ts": "2026-10-08T20:53:52.595Z",
       "ref": null,
       "status": "MISSING-DEVICE-REF"
     },
@@ -33,10 +33,10 @@
         "yaw": 0.75
       },
       "shot": "shot-tactical-mid-yaw.png",
-      "ahash": "9fdfffffff020000",
-      "git": "bbdfb6b",
-      "gameJsV": "49",
-      "ts": "2026-10-08T19:47:08.594Z",
+      "ahash": "9fffffffff020000",
+      "git": "41220e0",
+      "gameJsV": "50",
+      "ts": "2026-10-08T20:54:37.735Z",
       "ref": null,
       "status": "MISSING-DEVICE-REF"
     },
@@ -51,10 +51,10 @@
         "yaw": 0
       },
       "shot": "shot-tactical-close.png",
-      "ahash": "3e4fffffff430100",
-      "git": "bbdfb6b",
-      "gameJsV": "49",
-      "ts": "2026-10-08T19:47:53.538Z",
+      "ahash": "3e3fffffff430100",
+      "git": "41220e0",
+      "gameJsV": "50",
+      "ts": "2026-10-08T20:55:23.845Z",
       "ref": null,
       "status": "MISSING-DEVICE-REF"
     },
@@ -69,10 +69,10 @@
         "yaw": 3.1416
       },
       "shot": "shot-field-north-yaw.png",
-      "ahash": "2fefffffff030100",
-      "git": "bbdfb6b",
-      "gameJsV": "49",
-      "ts": "2026-10-08T19:48:41.024Z",
+      "ahash": "2fefffffffcb0000",
+      "git": "41220e0",
+      "gameJsV": "50",
+      "ts": "2026-10-08T20:56:12.584Z",
       "ref": null,
       "status": "MISSING-DEVICE-REF"
     },
@@ -87,10 +87,10 @@
         "yaw": 0
       },
       "shot": "shot-slope-detail.png",
-      "ahash": "3ff7fffffdc00000",
-      "git": "bbdfb6b",
-      "gameJsV": "49",
-      "ts": "2026-10-08T19:49:29.092Z",
+      "ahash": "bff7fffffde00000",
+      "git": "41220e0",
+      "gameJsV": "50",
+      "ts": "2026-10-08T20:57:00.729Z",
       "ref": null,
       "status": "MISSING-DEVICE-REF"
     },
@@ -105,10 +105,10 @@
         "yaw": 3.1416
       },
       "shot": "shot-slope-detail-cross.png",
-      "ahash": "1f1f7f7fdfc30100",
-      "git": "bbdfb6b",
-      "gameJsV": "49",
-      "ts": "2026-10-08T19:50:19.181Z",
+      "ahash": "1f1f7f5fdfc30100",
+      "git": "41220e0",
+      "gameJsV": "50",
+      "ts": "2026-10-08T20:57:47.647Z",
       "ref": null,
       "status": "MISSING-DEVICE-REF"
     }

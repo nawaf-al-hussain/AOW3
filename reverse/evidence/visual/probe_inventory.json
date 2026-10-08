@@ -1,0 +1,866 @@
+{
+ "renderer": {
+  "toneMapping": 1,
+  "toneMappingExposure": 1.14,
+  "outputColorSpace": "srgb",
+  "shadowMap": {
+   "enabled": true,
+   "type": 1
+  }
+ },
+ "fog": {
+  "color": "#cfc3a2",
+  "near": 170,
+  "far": 560
+ },
+ "cam": {
+  "pos": [
+   -66,
+   5.04,
+   6.21
+  ],
+  "fov": 38
+ },
+ "lights": [
+  {
+   "kind": "HemisphereLight",
+   "name": null,
+   "visible": true,
+   "color": "#e5e5df",
+   "intensity": 1.95,
+   "worldPos": [
+    0,
+    1,
+    0
+   ],
+   "groundColor": "#996373"
+  },
+  {
+   "kind": "DirectionalLight",
+   "name": null,
+   "visible": true,
+   "color": "#fff2d8",
+   "intensity": 2,
+   "worldPos": [
+    -88,
+    68,
+    -15
+   ],
+   "shadow": {
+    "mapSize": [
+     2048,
+     2048
+    ],
+    "l": -46,
+    "r": 46,
+    "t": 46,
+    "b": -46,
+    "near": 5,
+    "far": 180,
+    "bias": -0.0005,
+    "normalBias": 0.03,
+    "type": 1
+   }
+  },
+  {
+   "kind": "PointLight",
+   "name": null,
+   "visible": true,
+   "color": "#ffb060",
+   "intensity": 0,
+   "worldPos": [
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "kind": "DirectionalLight",
+   "name": null,
+   "visible": true,
+   "color": "#cccccc",
+   "intensity": 0.55,
+   "worldPos": [
+    70,
+    62,
+    84
+   ]
+  }
+ ],
+ "units": [
+  {
+   "id": 2,
+   "owner": null,
+   "defId": null,
+   "kind": null,
+   "worldPos": [
+    -68,
+    0.8,
+    -2
+   ],
+   "hp": 1,
+   "meshCount": 2,
+   "meshes": [
+    {
+     "name": "body_mesh",
+     "kind": "SkinnedMesh",
+     "castShadow": true,
+     "receiveShadow": false,
+     "material": {
+      "type": "MeshStandardMaterial",
+      "color": "#ffffff",
+      "roughness": 0.947,
+      "metalness": 0,
+      "emissive": "#000000",
+      "opacity": 1,
+      "transparent": false,
+      "alphaTest": 0.5,
+      "side": 2,
+      "vertexColors": false,
+      "map": {
+       "sized": true,
+       "w": 256,
+       "colorSpace": "srgb",
+       "flipY": false
+      }
+     },
+     "geo": {
+      "hasNormals": true,
+      "hasColor": false,
+      "hasUv": true
+     }
+    },
+    {
+     "name": "body_l_mesh",
+     "kind": "SkinnedMesh",
+     "castShadow": true,
+     "receiveShadow": false,
+     "material": {
+      "type": "MeshStandardMaterial",
+      "color": "#ffffff",
+      "roughness": 0.947,
+      "metalness": 0,
+      "emissive": "#000000",
+      "opacity": 1,
+      "transparent": false,
+      "alphaTest": 0.5,
+      "side": 2,
+      "vertexColors": false,
+      "map": {
+       "sized": true,
+       "w": 256,
+       "colorSpace": "srgb",
+       "flipY": false
+      }
+     },
+     "geo": {
+      "hasNormals": true,
+      "hasColor": false,
+      "hasUv": true
+     }
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "owner": null,
+   "defId": null,
+   "kind": null,
+   "worldPos": [
+    -68,
+    0.3,
+    2
+   ],
+   "hp": 1,
+   "meshCount": 2,
+   "meshes": [
+    {
+     "name": "body_mesh",
+     "kind": "SkinnedMesh",
+     "castShadow": true,
+     "receiveShadow": false,
+     "material": {
+      "type": "MeshStandardMaterial",
+      "color": "#ffffff",
+      "roughness": 0.947,
+      "metalness": 0,
+      "emissive": "#000000",
+      "opacity": 1,
+      "transparent": false,
+      "alphaTest": 0.5,
+      "side": 2,
+      "vertexColors": false,
+      "map": {
+       "sized": true,
+       "w": 256,
+       "colorSpace": "srgb",
+       "flipY": false
+      }
+     },
+     "geo": {
+      "hasNormals": true,
+      "hasColor": false,
+      "hasUv": true
+     }
+    },
+    {
+     "name": "body_l_mesh",
+     "kind": "SkinnedMesh",
+     "castShadow": true,
+     "receiveShadow": false,
+     "material": {
+      "type": "MeshStandardMaterial",
+      "color": "#ffffff",
+      "roughness": 0.947,
+      "metalness": 0,
+      "emissive": "#000000",
+      "opacity": 1,
+      "transparent": false,
+      "alphaTest": 0.5,
+      "side": 2,
+      "vertexColors": false,
+      "map": {
+       "sized": true,
+       "w": 256,
+       "colorSpace": "srgb",
+       "flipY": false
+      }
+     },
+     "geo": {
+      "hasNormals": true,
+      "hasColor": false,
+      "hasUv": true
+     }
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "owner": null,
+   "defId": null,
+   "kind": null,
+   "worldPos": [
+    -67,
+    0.8,
+    0
+   ],
+   "hp": 1,
+   "meshCount": 2,
+   "meshes": [
+    {
+     "name": "body_mesh",
+     "kind": "SkinnedMesh",
+     "castShadow": true,
+     "receiveShadow": false,
+     "material": {
+      "type": "MeshStandardMaterial",
+      "color": "#ffffff",
+      "roughness": 0.934,
+      "metalness": 0,
+      "emissive": "#000000",
+      "opacity": 1,
+      "transparent": false,
+      "alphaTest": 0.5,
+      "side": 2,
+      "vertexColors": false,
+      "map": {
+       "sized": true,
+       "w": 256,
+       "colorSpace": "srgb",
+       "flipY": false
+      }
+     },
+     "geo": {
+      "hasNormals": true,
+      "hasColor": false,
+      "hasUv": true
+     }
+    },
+    {
+     "name": "body_l_mesh",
+     "kind": "SkinnedMesh",
+     "castShadow": true,
+     "receiveShadow": false,
+     "material": {
+      "type": "MeshStandardMaterial",
+      "color": "#ffffff",
+      "roughness": 0.934,
+      "metalness": 0,
+      "emissive": "#000000",
+      "opacity": 1,
+      "transparent": false,
+      "alphaTest": 0.5,
+      "side": 2,
+      "vertexColors": false,
+      "map": {
+       "sized": true,
+       "w": 256,
+       "colorSpace": "srgb",
+       "flipY": false
+      }
+     },
+     "geo": {
+      "hasNormals": true,
+      "hasColor": false,
+      "hasUv": true
+     }
+    }
+   ]
+  }
+ ],
+ "buildings": [
+  {
+   "id": 1,
+   "defId": null,
+   "worldPos": [
+    -72,
+    0.32,
+    0
+   ],
+   "meshCount": 9,
+   "meshes": [
+    {
+     "name": null,
+     "kind": "Mesh",
+     "castShadow": false,
+     "receiveShadow": true,
+     "material": {
+      "type": "MeshStandardMaterial",
+      "color": "#7d776b",
+      "roughness": 1,
+      "metalness": 0.15,
+      "emissive": "#000000",
+      "opacity": 1,
+      "transparent": false,
+      "alphaTest": 0,
+      "side": 0,
+      "vertexColors": false,
+      "map": null
+     },
+     "geo": {
+      "hasNormals": true,
+      "hasColor": false,
+      "hasUv": true
+     }
+    },
+    {
+     "name": "body_mesh",
+     "kind": "SkinnedMesh",
+     "castShadow": true,
+     "receiveShadow": false,
+     "material": {
+      "type": "MeshStandardMaterial",
+      "color": "#ffffff",
+      "roughness": 0.947,
+      "metalness": 0,
+      "emissive": "#000000",
+      "opacity": 1,
+      "transparent": false,
+      "alphaTest": 0.5,
+      "side": 2,
+      "vertexColors": false,
+      "map": {
+       "sized": true,
+       "w": 512,
+       "colorSpace": "srgb",
+       "flipY": false
+      }
+     },
+     "geo": {
+      "hasNormals": true,
+      "hasColor": false,
+      "hasUv": true
+     }
+    },
+    {
+     "name": "body2_mesh",
+     "kind": "SkinnedMesh",
+     "castShadow": true,
+     "receiveShadow": false,
+     "material": {
+      "type": "MeshStandardMaterial",
+      "color": "#ffffff",
+      "roughness": 0.947,
+      "metalness": 0,
+      "emissive": "#000000",
+      "opacity": 1,
+      "transparent": false,
+      "alphaTest": 0.5,
+      "side": 2,
+      "vertexColors": false,
+      "map": {
+       "sized": true,
+       "w": 512,
+       "colorSpace": "srgb",
+       "flipY": false
+      }
+     },
+     "geo": {
+      "hasNormals": true,
+      "hasColor": false,
+      "hasUv": true
+     }
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "defId": null,
+   "worldPos": [
+    72,
+    0,
+    0
+   ],
+   "meshCount": 9,
+   "meshes": [
+    {
+     "name": null,
+     "kind": "Mesh",
+     "castShadow": false,
+     "receiveShadow": true,
+     "material": {
+      "type": "MeshStandardMaterial",
+      "color": "#7d776b",
+      "roughness": 1,
+      "metalness": 0.15,
+      "emissive": "#000000",
+      "opacity": 1,
+      "transparent": false,
+      "alphaTest": 0,
+      "side": 0,
+      "vertexColors": false,
+      "map": null
+     },
+     "geo": {
+      "hasNormals": true,
+      "hasColor": false,
+      "hasUv": true
+     }
+    },
+    {
+     "name": "body_mesh",
+     "kind": "SkinnedMesh",
+     "castShadow": true,
+     "receiveShadow": false,
+     "material": {
+      "type": "MeshStandardMaterial",
+      "color": "#ffcec4",
+      "roughness": 0.972,
+      "metalness": 0,
+      "emissive": "#000000",
+      "opacity": 1,
+      "transparent": false,
+      "alphaTest": 0.5,
+      "side": 2,
+      "vertexColors": false,
+      "map": {
+       "sized": true,
+       "w": 512,
+       "colorSpace": "srgb",
+       "flipY": false
+      }
+     },
+     "geo": {
+      "hasNormals": true,
+      "hasColor": false,
+      "hasUv": true
+     }
+    },
+    {
+     "name": "body2_mesh",
+     "kind": "SkinnedMesh",
+     "castShadow": true,
+     "receiveShadow": false,
+     "material": {
+      "type": "MeshStandardMaterial",
+      "color": "#ffcec4",
+      "roughness": 0.972,
+      "metalness": 0,
+      "emissive": "#000000",
+      "opacity": 1,
+      "transparent": false,
+      "alphaTest": 0.5,
+      "side": 2,
+      "vertexColors": false,
+      "map": {
+       "sized": true,
+       "w": 512,
+       "colorSpace": "srgb",
+       "flipY": false
+      }
+     },
+     "geo": {
+      "hasNormals": true,
+      "hasColor": false,
+      "hasUv": true
+     }
+    }
+   ]
+  },
+  {
+   "id": 9,
+   "defId": "depot",
+   "worldPos": [
+    0,
+    0,
+    -66
+   ],
+   "meshCount": 4,
+   "meshes": [
+    {
+     "name": null,
+     "kind": "Mesh",
+     "castShadow": false,
+     "receiveShadow": true,
+     "material": {
+      "type": "MeshStandardMaterial",
+      "color": "#7d776b",
+      "roughness": 1,
+      "metalness": 0.15,
+      "emissive": "#000000",
+      "opacity": 1,
+      "transparent": false,
+      "alphaTest": 0,
+      "side": 0,
+      "vertexColors": false,
+      "map": null
+     },
+     "geo": {
+      "hasNormals": true,
+      "hasColor": false,
+      "hasUv": true
+     }
+    },
+    {
+     "name": "body_mesh",
+     "kind": "SkinnedMesh",
+     "castShadow": true,
+     "receiveShadow": false,
+     "material": {
+      "type": "MeshStandardMaterial",
+      "color": "#ffffff",
+      "roughness": 0.91,
+      "metalness": 0,
+      "emissive": "#000000",
+      "opacity": 1,
+      "transparent": false,
+      "alphaTest": 0.5,
+      "side": 2,
+      "vertexColors": false,
+      "map": {
+       "sized": true,
+       "w": 512,
+       "colorSpace": "srgb",
+       "flipY": false
+      }
+     },
+     "geo": {
+      "hasNormals": true,
+      "hasColor": false,
+      "hasUv": true
+     }
+    },
+    {
+     "name": null,
+     "kind": "Mesh",
+     "castShadow": false,
+     "receiveShadow": false,
+     "material": {
+      "type": "MeshBasicMaterial",
+      "color": "#ffffff",
+      "roughness": null,
+      "metalness": null,
+      "emissive": null,
+      "opacity": 0.9,
+      "transparent": true,
+      "alphaTest": 0,
+      "side": 2,
+      "vertexColors": false,
+      "map": null
+     },
+     "geo": {
+      "hasNormals": true,
+      "hasColor": false,
+      "hasUv": true
+     }
+    }
+   ]
+  },
+  {
+   "id": 10,
+   "defId": "depot",
+   "worldPos": [
+    0,
+    0,
+    66
+   ],
+   "meshCount": 4,
+   "meshes": [
+    {
+     "name": null,
+     "kind": "Mesh",
+     "castShadow": false,
+     "receiveShadow": true,
+     "material": {
+      "type": "MeshStandardMaterial",
+      "color": "#7d776b",
+      "roughness": 1,
+      "metalness": 0.15,
+      "emissive": "#000000",
+      "opacity": 1,
+      "transparent": false,
+      "alphaTest": 0,
+      "side": 0,
+      "vertexColors": false,
+      "map": null
+     },
+     "geo": {
+      "hasNormals": true,
+      "hasColor": false,
+      "hasUv": true
+     }
+    },
+    {
+     "name": "body_mesh",
+     "kind": "SkinnedMesh",
+     "castShadow": true,
+     "receiveShadow": false,
+     "material": {
+      "type": "MeshStandardMaterial",
+      "color": "#ffffff",
+      "roughness": 0.919,
+      "metalness": 0,
+      "emissive": "#000000",
+      "opacity": 1,
+      "transparent": false,
+      "alphaTest": 0.5,
+      "side": 2,
+      "vertexColors": false,
+      "map": {
+       "sized": true,
+       "w": 512,
+       "colorSpace": "srgb",
+       "flipY": false
+      }
+     },
+     "geo": {
+      "hasNormals": true,
+      "hasColor": false,
+      "hasUv": true
+     }
+    },
+    {
+     "name": null,
+     "kind": "Mesh",
+     "castShadow": false,
+     "receiveShadow": false,
+     "material": {
+      "type": "MeshBasicMaterial",
+      "color": "#ffffff",
+      "roughness": null,
+      "metalness": null,
+      "emissive": null,
+      "opacity": 0.9,
+      "transparent": true,
+      "alphaTest": 0,
+      "side": 2,
+      "vertexColors": false,
+      "map": null
+     },
+     "geo": {
+      "hasNormals": true,
+      "hasColor": false,
+      "hasUv": true
+     }
+    }
+   ]
+  },
+  {
+   "id": 11,
+   "defId": "depot",
+   "worldPos": [
+    0,
+    0,
+    0
+   ],
+   "meshCount": 4,
+   "meshes": [
+    {
+     "name": null,
+     "kind": "Mesh",
+     "castShadow": false,
+     "receiveShadow": true,
+     "material": {
+      "type": "MeshStandardMaterial",
+      "color": "#7d776b",
+      "roughness": 1,
+      "metalness": 0.15,
+      "emissive": "#000000",
+      "opacity": 1,
+      "transparent": false,
+      "alphaTest": 0,
+      "side": 0,
+      "vertexColors": false,
+      "map": null
+     },
+     "geo": {
+      "hasNormals": true,
+      "hasColor": false,
+      "hasUv": true
+     }
+    },
+    {
+     "name": "body_mesh",
+     "kind": "SkinnedMesh",
+     "castShadow": true,
+     "receiveShadow": false,
+     "material": {
+      "type": "MeshStandardMaterial",
+      "color": "#ffffff",
+      "roughness": 0.927,
+      "metalness": 0,
+      "emissive": "#000000",
+      "opacity": 1,
+      "transparent": false,
+      "alphaTest": 0.5,
+      "side": 2,
+      "vertexColors": false,
+      "map": {
+       "sized": true,
+       "w": 512,
+       "colorSpace": "srgb",
+       "flipY": false
+      }
+     },
+     "geo": {
+      "hasNormals": true,
+      "hasColor": false,
+      "hasUv": true
+     }
+    },
+    {
+     "name": null,
+     "kind": "Mesh",
+     "castShadow": false,
+     "receiveShadow": false,
+     "material": {
+      "type": "MeshBasicMaterial",
+      "color": "#ffffff",
+      "roughness": null,
+      "metalness": null,
+      "emissive": null,
+      "opacity": 0.9,
+      "transparent": true,
+      "alphaTest": 0,
+      "side": 2,
+      "vertexColors": false,
+      "map": null
+     },
+     "geo": {
+      "hasNormals": true,
+      "hasColor": false,
+      "hasUv": true
+     }
+    }
+   ]
+  },
+  {
+   "id": 12,
+   "defId": "barracks",
+   "worldPos": [
+    68.72,
+    0,
+    6.22
+   ],
+   "meshCount": 7,
+   "meshes": [
+    {
+     "name": null,
+     "kind": "Mesh",
+     "castShadow": false,
+     "receiveShadow": true,
+     "material": {
+      "type": "MeshStandardMaterial",
+      "color": "#7d776b",
+      "roughness": 1,
+      "metalness": 0.15,
+      "emissive": "#000000",
+      "opacity": 1,
+      "transparent": false,
+      "alphaTest": 0,
+      "side": 0,
+      "vertexColors": false,
+      "map": null
+     },
+     "geo": {
+      "hasNormals": true,
+      "hasColor": false,
+      "hasUv": true
+     }
+    },
+    {
+     "name": "body_mesh",
+     "kind": "SkinnedMesh",
+     "castShadow": true,
+     "receiveShadow": false,
+     "material": {
+      "type": "MeshStandardMaterial",
+      "color": "#ffcec4",
+      "roughness": 0.927,
+      "metalness": 0,
+      "emissive": "#000000",
+      "opacity": 1,
+      "transparent": false,
+      "alphaTest": 0.5,
+      "side": 2,
+      "vertexColors": false,
+      "map": {
+       "sized": true,
+       "w": 512,
+       "colorSpace": "srgb",
+       "flipY": false
+      }
+     },
+     "geo": {
+      "hasNormals": true,
+      "hasColor": false,
+      "hasUv": true
+     }
+    },
+    {
+     "name": "body2_mesh",
+     "kind": "SkinnedMesh",
+     "castShadow": true,
+     "receiveShadow": false,
+     "material": {
+      "type": "MeshStandardMaterial",
+      "color": "#ffcec4",
+      "roughness": 0.927,
+      "metalness": 0,
+      "emissive": "#000000",
+      "opacity": 1,
+      "transparent": false,
+      "alphaTest": 0.5,
+      "side": 2,
+      "vertexColors": false,
+      "map": {
+       "sized": true,
+       "w": 512,
+       "colorSpace": "srgb",
+       "flipY": false
+      }
+     },
+     "geo": {
+      "hasNormals": true,
+      "hasColor": false,
+      "hasUv": true
+     }
+    }
+   ]
+  }
+ ],
+ "counts": {
+  "units": 3,
+  "buildings": 6
+ }
+}
