@@ -5,9 +5,11 @@
 # the 0xb8 third-segment hypothesis resolved as a parse artifact (§3/§6), the
 # triple inventory completed to 697/697, and finish path (a) instrumented +
 # validated end-to-end — one on-device Frida run from full decode (§7).
-# Companion evidence: builder-chain-decode.txt, builder-slot-keys.json,
-# pool-dump-consumer-validation.txt. Tools: obfuz_pool_emulator.py (--dump),
-# obfuz_frida_dump.js.
+# BUILD H (Task 39) UPDATE: the two-command decode is machine-portable (path
+# flags + auto-discovery + committed key artifact) and re-validated end-to-end
+# from a clean sandbox — runbook §7a. Companion evidence: builder-chain-decode.txt,
+# builder-slot-keys.json, pool-dump-consumer-validation.txt, build-h-validation.txt,
+# on-device-run.md. Tools: obfuz_pool_emulator.py (--dump), obfuz_frida_dump.js.
 
 Game: AOW3 6.9.18 (libil2cpp.so sha256 8ace05bb…, dump.cs sha256 0050e67d…,
 global-metadata.dat sha256 d2e8dd0d…, metadata v31).
@@ -146,6 +148,26 @@ On-device run:
           -o obfuz_pool_dump.jsonl --runtime=v8
     python3 reverse/tools/obfuz_pool_emulator.py --dump obfuz_pool_dump.jsonl
 
+### §7a. Build H — the one-command package (portable + re-validated, Task 39)
+
+The two commands above previously only ran inside the analysis sandbox (the
+emulator hardcoded sandbox paths for libil2cpp.so and the 259-MB XAPK). Build H
+closes that gap: `obfuz_pool_emulator.py` now resolves every input as
+flag > env (AOW3_SO/AOW3_KEY/AOW3_XAPK/AOW3_METADATA) > cwd walk (up/down,
+incl. ./native) > committed artifact, and the extracted secret key is COMMITTED
+as `reverse/tools/obfuz_secret_key.bin` (1,024-B raw m_Script blob, sha256
+885f4d0c…1ffe0; source asset sha256 81f07f62…683a4 = the §3 pinning) — the host
+decode needs only the repo clone + libil2cpp.so + the JSONL; the XAPK is a
+legacy fallback only (--xapk). Clean-sandbox re-validation (fresh environment,
+unicorn 2.1.4/capstone 5.0.7, no device): the G2 consumer contract reproduced
+exactly — SELF-TEST PASS (game canary vs the real native VM + committed key),
+canary SEEN, CBC re-verify 32/32 on both segments, 643/697 OK + 54
+CIPHER_UNSURE, 0 param gaps, 7/7 anchor rows — both as a no-flag auto-discovery
+run AND as a fresh-clone simulation (repo layout + committed key + .so only, no
+XAPK, no absolute paths). Transcripts: build-h-validation.txt; the full on-device
+procedure, output contract and troubleshooting ladder: on-device-run.md. The
+remaining decode is exactly the §7 two-command pair, runnable on any machine.
+
 Finish paths (b)/(c) from Build G are retired as structurally dead / moot
 per (a)–(c) above. Note: the two large arrays adjacent to the holder in
 dump.cs (472,129/293,863 B @ metadata 0xD00BA0/0xD73FE8) are MonoScript path
@@ -174,7 +196,11 @@ correctness of the emulated decryptor.
 - CONFIRMED (G2): the static hunt for the ciphertext is structurally closed
   (zero 0x800 fdv blocks, no Obfuz data resources, v31 usage tables absent);
   the Frida dump pipeline (hook script + `--dump` consumer) is instrumented
-  and validated 26/26 on a synthetic transcript — the full 697-value decode
-  is one on-device run away, at which point every remaining MEDIUM/UNRESOLVED
+  and validated 26/26 on a synthetic transcript.
+- CONFIRMED (H): the two-command decode is machine-portable (flags +
+  auto-discovery + the committed key artifact, no XAPK dependency) and
+  re-validated end-to-end from a clean environment — fresh-clone simulation
+  included. The full 697-value decode is one on-device run away
+  (on-device-run.md), at which point every remaining MEDIUM/UNRESOLVED
   pool-dependent constant (Build E task ids, $ce threshold, Build F stage
   fractions, flag_shoot, DEN) converts to CONFIRMED in a single step.
