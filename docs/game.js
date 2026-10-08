@@ -36998,6 +36998,10 @@ void main() {
         fixS(t);
         this.texExpl = t;
       });
+      tl.load(`${base}fx/part.png`, (t) => {
+        fixS(t);
+        this.texPart = t;
+      });
       tl.load(`${base}ui/sel-ring.png`, (t) => {
         this.texSelRing = t;
       });
@@ -37702,6 +37706,9 @@ void main() {
         m.getWorldPosition(wp);
         this.addFx(this.texFlash, wp.x, wp.y, wp.z, 0.55, 0.06, 1.4, true).vfx = fireCls;
         this.addFx(this.texSmoke, wp.x, wp.y, wp.z, 0.3, 0.5, 0.9, false, -0.6);
+        if (this.texPart)
+          for (let si = 0; si < 2; si++)
+            this.addFx(this.texPart, wp.x, wp.y, wp.z, 0.16 + Math.random() * 0.1, 0.18 + Math.random() * 0.1, 0.7, true, 1.3).vfx = fireCls;
       } else {
         this.flash(px, py);
       }
@@ -37905,6 +37912,9 @@ void main() {
         const hy = heightAtWorld(wx2, wz2) + 1.7 + Math.random() * 0.9;
         this.addFx(this.texFlash, wx2, hy, wz2, 0.9, 0.12, 1.8, true).vfx = "impact";
         this.addFx(this.texSmoke, wx2, hy + 0.2, wz2, 0.75, 0.9, 1.6, false, -0.7, 0x26251f);
+        if (this.texPart)
+          for (let si = 0; si < 2; si++)
+            this.addFx(this.texPart, wx2, hy + 0.1, wz2, 0.2 + Math.random() * 0.12, 0.22 + Math.random() * 0.12, 0.8, true, 1.6).vfx = "impact";
         window.__sfx?.play("b_med3", { pos: [wx2, wz2], vol: 0.34, rate: 1.35 });
       }
       if (this.handledBooms.size > 500)
@@ -38162,6 +38172,8 @@ void main() {
         if (b.acc > 0.3) {
           b.acc = 0;
           this.addFx(this.texSmoke, b.x + (Math.random() - 0.5) * 0.5, 0.5, b.z + (Math.random() - 0.5) * 0.5, 0.8, 1.6, 2.2, false, 1.6);
+          if (this.texFlame)
+            this.addFx(this.texFlame, b.x + (Math.random() - 0.5) * 0.4, 0.55, b.z + (Math.random() - 0.5) * 0.4, 0.9 + Math.random() * 0.4, 0.5, 1.4, true, 1.6, 0xff8a3d);
         }
       }
       this.boomLight.intensity *= Math.pow(0.0001, dt);
