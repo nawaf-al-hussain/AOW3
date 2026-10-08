@@ -36299,9 +36299,15 @@ void main() {
                 m.map.colorSpace = SRGBColorSpace;
               m.color.setScalar(e.cat === "ground" ? 1.2 : 1.3);
               if (e.cat === "ground") {
-                m.transparent = true;
-                m.opacity = 0.62;
-                m.depthWrite = false;
+                // V2 (visual-fidelity-audit §5/§6): render terrain decals opaque —
+                // they ARE the authentic ground art (mat_terrain_jungle pieces).
+                // polygonOffset biases them over the heightmapped terrain mesh.
+                m.transparent = false;
+                m.opacity = 1;
+                m.depthWrite = true;
+                m.polygonOffset = true;
+                m.polygonOffsetFactor = -2;
+                m.polygonOffsetUnits = -2;
               }
               parts.push({ geometry: geo, material: m });
             });
@@ -36762,6 +36768,34 @@ void main() {
     hqRed;
     scatterMeshes = [];
     scatterGeo = null;
+    realTerrain = null;
+    buildRealTerrain() {
+      // V2 (visual-fidelity-audit §6/§21): heightmapped terrain surface.
+      // Height data [EXT]: models/heightmap.json + heightmap.png (256², x -84..86,
+      // z -85..55, hscale 1.0) via the existing heightAtWorld() bilinear sampler.
+      // Texture [BROWSER]: the bakeGround canvas (procedural sand + extracted
+      // ground-jungle.png decal stamps) already authored for the MAP_W x MAP_H
+      // world area — reused here so the conforming mesh matches the decal palette;
+      // the authentic terrain art itself arrives as the opaque land_chunk decals
+      // placed on top (applyRealMap). Renderer-only; sim state untouched.
+      if (this.realTerrain || !RMAP.data || !this.groundCanvas)
+        return;
+      const segs = 128;
+      const geo = new PlaneGeometry(MAP_W, MAP_H, segs, segs);
+      geo.rotateX(-Math.PI / 2);
+      const pos = geo.attributes.position;
+      for (let i = 0; i < pos.count; i++)
+        pos.setY(i, heightAtWorld(pos.getX(i), pos.getZ(i)));
+      geo.computeVertexNormals();
+      const tex = new CanvasTexture(this.groundCanvas || this.fogCanvas);
+      tex.colorSpace = SRGBColorSpace;
+      tex.anisotropy = 8;
+      const mesh = new Mesh(geo, new MeshStandardMaterial({ map: tex, roughness: 1, metalness: 0 }));
+      mesh.receiveShadow = true;
+      mesh.renderOrder = 0;
+      this.scene.add(mesh);
+      this.realTerrain = mesh;
+    }
     applyRealMap() {
       const temps = decorTemplates();
       const byName = new Map;
@@ -36799,7 +36833,11 @@ void main() {
             const e = arr[i];
             const wx2 = e.p[0] + RMAP.shx, wz2 = e.p[2] + RMAP.shz;
             const gy2 = heightAtWorld(wx2, wz2);
-            dummy.position.set(wx2, t.cat === "ground" ? gy2 : Math.max(e.p[1] - 0.05, gy2), wz2);
+            // V2 (visual-fidelity-audit §6/§21): ground decals sit on the heightmapped
+            // terrain mesh (buildRealTerrain) — small lift + polygonOffset instead of
+            // the previous 0.62-opacity wash (which also made the culling rule below
+            // hide every large land_chunk: the real terrain texture never rendered).
+            dummy.position.set(wx2, t.cat === "ground" ? gy2 + 0.03 : Math.max(e.p[1] - 0.05, gy2), wz2);
             // map.json quats are authored-space (Unity): they include the Z-up->Y-up
             // +90degX correction for source art. GLBs that already baked that same
             // correction into their root node must NOT get it twice — strip exactly
@@ -36819,6 +36857,17 @@ void main() {
       }
       if (this.groundMesh)
         this.groundMesh.visible = false;
+      // V3: the real map supplies its own prop placements — remove the [SPEC]
+      // procedural base props (see placeBaseProps note).
+      if (this.baseProps) {
+        this.scene.remove(this.baseProps);
+        this.baseProps = null;
+      }
+      // V2 (visual-fidelity-audit §6/§21): real terrain = heightmapped mesh from the
+      // extracted heightmap (256², bilinear heightAtWorld) textured with the baked
+      // ground canvas. Replaces the previous presentation where the flat ground was
+      // hidden and large terrain decal chunks were culled away entirely.
+      this.buildRealTerrain();
       for (const im of this.scatterMeshes) {
         const mm = Array.isArray(im.material) ? im.material : [im.material];
         if (!mm.length || !mm[0].transparent || mm[0].opacity > 0.9)
@@ -36897,6 +36946,10 @@ void main() {
           RMAP.z0 = m.z0;
           RMAP.z1 = m.z1;
           RMAP.res = m.res;
+          // V2: heightmap may finish loading after the real map was applied —
+          // build the heightmapped terrain then (guarded, idempotent).
+          if (this.groundMesh && !this.groundMesh.visible)
+            this.buildRealTerrain();
         };
         img.src = `${base}models/heightmap.png`;
       }).catch(() => {});
@@ -36961,6 +37014,11 @@ void main() {
         }
       }
       this.scene.add(props);
+      // V3 (visual-fidelity-audit §13/§21): these containers/sandbags/barrels are
+      // [SPEC] invented props with no extraction source. The authentic map places
+      // its own props (91 'prop' placements on the jungle map) — drop this group
+      // when the real map is applied. Kept for no-map fallback mode.
+      this.baseProps = props;
     }
     render(dt, sim, cam, sel) {
       setDt(dt);
@@ -39348,7 +39406,10 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
   cv.addEventListener("contextmenu", (e) => e.preventDefault());
   cv.addEventListener("wheel", (e) => {
     e.preventDefault();
-    cam.dist = Math.min(64, Math.max(9, cam.dist * (e.deltaY > 0 ? 1.09 : 0.92)));
+    // V1-a (visual-fidelity-audit §8): wheel and pinch now share one clamp range
+    // (6.5..46) — the previous wheel-only 9..64 max disagreed with the pinch path.
+    // Browser consistency fix; original DistanceMin/Max are [NOT FOUND LOCALLY].
+    cam.dist = Math.min(46, Math.max(6.5, cam.dist * (e.deltaY > 0 ? 1.09 : 0.92)));
   }, { passive: false });
   window.addEventListener("keydown", (e) => {
     keys.add(e.key.toLowerCase());
