@@ -567,3 +567,35 @@ fully executable without a device, and de-risks V4's calibration pass.
   side-by-side composition ready for the R1 device references (protocol in
   `reverse/evidence/visual/README.md`). Browser side of all 6 manifest
   scenarios captured at v=49; device refs [AWAITING R1].
+- **V4 (2026-10-09)**: the §22/V1-b filing "sun-away unit sides read near-black"
+  is ROOT-CAUSED and it was never the §9 lighting rig — it is a texture-UV
+  convention defect in the assembler's unit path. `unpack_mesh` reads Unity
+  TEXCOORD_0 raw (V-up) and `assemble_v2.py` wrote it unconverted, while
+  GLTFLoader samples V-down (`flipY=false`); every unit/building template
+  therefore sampled the vertical MIRROR of its atlas region. Usually masked
+  (mirrored content is still panel art), fatal for f1/f2 `inf_heavy`, whose UVs
+  sit in one quadrant: the mirror lands on the page's pure-black filler —
+  black silhouette under ANY light (per-light ablation probe). Evidence chain
+  in `reverse/evidence/visual/`: `probe_inventory.json` (materials were white
+  diffuse M=0 — metalness hypothesis ruled out via the §5 GLB PBR audit:
+  30/30 authored metallic 0.0), `probe2_texture_uv.json` (UV quadrant ranges +
+  texture black-corner stats), `probe6-A-baseline.png` vs
+  `probe6-B-iheavy-flipped.png` (live V-negation restores the authored blue
+  armor). Fixes: (a) runtime compensation in `preloadGlbModels` (marker
+  `V4-UV-FLIP`; template path only — decor GLBs already remap); (b) assembler
+  source fix in `assemble_v2.py` `get_mesh` (`V_gltf = 1 − V_unity`) so future
+  regenerations are correct — **regenerating the GLBs requires deleting the
+  runtime block or the two flips cancel**. §9 sun-azimuth cross-check EXECUTED
+  with a negative result: Lambert fit of minimap luminance vs heightfield
+  normals gives R²=0.001 (equal to the shuffled-target control) — the extracted
+  minimap carries no measurable directional shading; azimuth stays [SPEC] and
+  re-anchors from device reference frames at the R1 pass. §5 decor brightness
+  multipliers ×1.3/×1.2 REMOVED (they compensated the pre-V2 0.62-opacity
+  wash); measured post-V2 effect negligible (tonemap clamp absorbs it — kept
+  on provenance grounds, not for a visible win). Rendered-vs-minimap luma
+  ratio 1.267 and B-chroma excess +0.31 are recorded but NOT corrected: the
+  minimap's saturation grade is unverified, and the rig (hemi/sun/fill/
+  exposure) is UNCHANGED pending device refs. PCFSoft considered and HELD —
+  no local evidence of the original's shadow softness. Tests 8/8 suites green;
+  v=50; all six V8 aHashes shift (units now render authored colors — explained
+  shift, expected per the README interpretation rules).
