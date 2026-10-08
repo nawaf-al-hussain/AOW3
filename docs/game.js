@@ -38793,7 +38793,11 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
     return true;
   }
   function start() {
-    if (Mp.armed && Mp.session) {
+    // any live room routes through Mp.launch: the HOST owns the launch (with
+    // seat gating) and guests/waiting joiners get a wait message instead of
+    // a rogue solo match or a silent join abandonment (live QA finding — a
+    // pre-game guest could previously start a local P1 game on itself)
+    if (Mp.session) {
       Mp.launch();
       return;
     }
