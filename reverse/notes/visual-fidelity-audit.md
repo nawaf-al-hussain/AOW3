@@ -599,3 +599,25 @@ fully executable without a device, and de-risks V4's calibration pass.
   no local evidence of the original's shadow softness. Tests 8/8 suites green;
   v=50; all six V8 aHashes shift (units now render authored colors — explained
   shift, expected per the README interpretation rules).
+- **V4 closure (2026-10-09, later)**: the GLB regeneration + runtime-block
+  removal pair EXECUTED. (1) Template GLBs (30) now carry glTF V-down
+  TEXCOORD_0 natively: 22 roster units re-exported by the fixed assembler;
+  the remaining 8 (`f1_bld_bunker`, `f1_bld_power`, `f1_veh_hammer`,
+  `f1_veh_zeus`, `f2_avia_helicopter`, `f1_hero_cerber`,
+  `f1_hero_seraphim`, `f1_bld_hero`) received the mathematically identical
+  in-place `V'=1−V` bake instead — for the first five the current assembler
+  output drifted beyond the UV fix (extra skins/nodes vs the committed
+  post-processed files; the `fix_empty_skins.py` pass was never folded into
+  `assemble_v2.py` — flagged for future pipeline alignment), and the hero
+  GLBs' Task-16 assembly script was never committed. Verification
+  (accessor-level, all 30): TEXCOORD_0 is the ONLY differing attribute
+  (`committed_v == 1 − new_v` elementwise), every other accessor
+  byte-identical, JSON semantically equal (modulo UV min/max). (2) The
+  runtime `V4-UV-FLIP` block is DELETED from `preloadGlbModels`; v=51.
+  (3) V8 harness re-capture: all six scenario aHashes IDENTICAL to the v=50
+  baseline — the baked flip and the removed block cancel exactly, i.e. zero
+  visual drift from the whole operation. Sandbox for this pass rebuilt the
+  extraction chain from the LFS XAPK (sha256 `1a41e033…` re-verified);
+  device pass attempted first per plan but no device/frida exists in the
+  sandbox — R1 remains BLOCKED-DEVICE-REQUIRED with the S1–S4 runbook
+  verified ready (both hook scripts `node --check` clean).

@@ -1694,3 +1694,60 @@ Stage Summary:
 - Known remaining: GLB regeneration from the XAPK with the fixed assembler
   (then delete the V4-UV-FLIP block), [SPEC] labels until the device pass,
   V5 flags/rank icons, V6 VFX depth, V7 UI font/metrics.
+
+---
+Task ID: 49
+Agent: Super Z (main)
+Task: V4 finish — GLB regeneration with the fixed assembler + V4-UV-FLIP block
+  removal; device pass attempted first (runbook ready) — no device in sandbox,
+  BLOCKED recorded
+
+Work Log:
+- Device pass first per plan: runbook S1–S4 (single consolidated R1 pass)
+  verified ready; r1_camera_angulation_dump.js + r1_dictionary_dump.js both
+  node --check clean. Sandbox has no adb, no frida (host or python), no
+  device — the pass is operator-run by design; recorded BLOCKED-DEVICE-
+  REQUIRED. Nothing in the runbook needed changing.
+- Rebuilt the extraction chain wiped with the old sandbox: fetched the XAPK
+  via the anonymous LFS batch API (public repo; sha256 1a41e033… re-verified
+  against the committed pointer), unpacked bundles_all (5502 bin/Data files +
+  asset-pack bundles + decor aliases), python3.13 + UnityPy 1.25.4.
+- Ran the FIXED assembler (assemble_v2.py @7780b3f): 27/27 roster units OK
+  (meshes/skins/anims) + decor. Found the committed decor set comes from the
+  later fix_decor.py rebuild (813 GLBs, merged RGBA atlases) — assemble_v2's
+  decor output is the older style; decor left UNTOUCHED (out of scope: the
+  V4 defect and the runtime block never touched the decor path).
+- Verified each regenerated unit against the committed GLB at accessor level:
+  TEXCOORD_0 differs by exactly committed_v == 1 - regen_v on every
+  primitive; 21/27 JSON-identical. 6 GLBs drifted beyond the UV fix — the
+  current assembler emits skins/nodes the committed files do not carry
+  (f1_bld_bunker, f1_bld_power, f1_veh_hammer, f1_veh_zeus, f2_avia_
+  helicopter; fix_empty_skins.py post-processing never folded back into
+  assemble_v2.py). Decision (minimal delta, no smuggled changes): 22 units
+  replaced from the fixed assembler; 5 drifted units + 3 hero GLBs (Task-16
+  assembly script never committed) got the mathematically identical in-place
+  V'=1-V bake (scripts/bake_uv_flip.py, UV accessor min/max updated).
+  Final verifier (scripts/verify_glb_final.py): all 30 PASS — UV is the only
+  differing attribute, geometry/skins/anims/materials byte-identical.
+- Removed the V4-UV-FLIP runtime block from preloadGlbModels (replacement
+  comment points at Task 49); cache-bump v=50 -> v=51 (§35.1 +1).
+- Tests: 8/8 suites, 877/877 assertions (accuracy 13, commands-determinism
+  50, data-model 379, lockstep-jip 88, phase5 236, replay 45, stat-caps 37,
+  unit-fsm 29) — real run, all green.
+- V8 harness re-capture at v=51: all six scenario aHashes IDENTICAL to the
+  v=50 baseline — baked flip + removed block cancel exactly; zero visual
+  drift (results.json/REPORT.md/shots updated, no ref-*.png yet).
+- Audit visual-fidelity-audit.md §22: V4 closure entry added (regeneration +
+  block removal + harness parity + pipeline-drift flag).
+- Commits: assets (30 GLBs), renderer (game.js block removal + v=51),
+  evidence (V8 re-capture), docs (audit + worklog).
+
+Stage Summary:
+- V4 is now structurally closed at the asset level: every template GLB ships
+  glTF V-down UVs natively, no runtime compensation remains, and the harness
+  proves pixel-parity with the compensated build. R1 stays the only blocked
+  capture; when the operator runs S1–S4, its refs slot straight into the
+  untouched V8 device-ref side and the [SPEC] camera/sun labels get replaced.
+- Flagged for a future task: fold fix_empty_skins.py semantics into
+  assemble_v2.py (vehicle/building skins) and commit a hero GLB assembly
+  script so future regenerations stay one-command reproducible.
