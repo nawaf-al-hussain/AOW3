@@ -38661,6 +38661,13 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
         this.st("Still loading — the match can start once the map is ready.");
         return;
       }
+      // a guest pressing START must not launch a rogue local P1 match (found
+      // in live QA: the joiner's start button is armed pre-game) — the HOST
+      // owns the launch; a guest that misses it is covered by JIP
+      if (this.session && !this.session.hub) {
+        this.st("Waiting for the host to launch…");
+        return;
+      }
       if (this.session && this.session.hub) {
         const seats = this.session.seats;
         // queued pre-game hellos + already-seated clients (rematch keeps the
