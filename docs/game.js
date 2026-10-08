@@ -184,6 +184,28 @@
   const SIEGE_TICK_TO = 1.6;
   const SIEGE_TICK_FROM = 1.2;
   const SIEGE_FIRE_RADIUS_INC = 2;
+  // ---- R2-decoded native constants (fold-in, Task 45) — every value below is
+  // statically recovered from the Obfuz pool: .cctor anchors in
+  // reverse/evidence/obfuz/obfuz-pool-values.json (Task 42), the $ce on-demand
+  // accessors in reverse/evidence/obfuz/ce-constants-decode.txt (Task 45, mgr1
+  // segment RVA$0.Value3, harness cross-checked 631/631 against the R2 decode).
+  const TASK_DONT_SHOOT = 8; // ConstFieldHolder Value24 (statics+0x64) = 8 = UnitTaskType.DONT_SHOOT
+  const CE_TASK_HOLD = 3; // Value5 (statics+0x14) = 3 = HOLD_POSITION; $ce get_Task
+                          // EQUALITY gate @0x4750668 (cmp 3,task; b.ne skip) — R2's
+                          // "threshold" reading corrected by the Task 45 decode
+  const CE_TASK_DEFEND = 2; // $ce accessor (keyA 0x3d, salt 0x27428cbf, start 0x748) = DEFEND
+  const CE_TASK_BOMBARD = 5; // $ce accessor (keyA 0x11, salt 0x2927ab7e, start 0x708) = BOMBARD
+  const CE_TASK_MINE = 6; // $ce accessor (keyA 0xb0, salt 0xfa9eb6cb, start 0x710) = MINE
+  const FLAG_SHOOT_FREE = -1; // Value221 (statics+0x374) = -1 — set_FlagShoot value on
+                              // order application (UnitsMove $CMA @0x490C610)
+  const SIEGE_DEN = 1000; // pool[0x364] x pool[0x368] mod 2^32 = 1000 — the per-mille
+                          // fixed point of the native siege_stage accumulator
+  const SIEGE_TICKS_TO = 32; // = SIEGE_TICK_TO x 20 Hz — integer per-mille window
+  const SIEGE_TICKS_FROM = 24; // = SIEGE_TICK_FROM x 20 Hz
+  const SIEGE_BAND1_MILLI = 300; // band-1 numerator over DEN — reconstruction (W1-b:
+                                 // the native bands are runtime-derived formulas —
+                                 // mod-3 phase + TickFromSpec equality — not static
+                                 // N/1000 fractions; siege note R2 addendum)
   const FSM_DEFAULTS = {
     // hull turn rate rad/s (native UnitStateType.rotate)
     rotate: { infantry: 10, vehicle: 3.2, aircraft: 4.5 },
@@ -872,7 +894,7 @@
         u.sameSpeed = undefined;
         u.hiding = undefined;
         u.guard = { x: u.x, y: u.y };
-        u.siege = { dir: on ? 1 : -1, t: 0, stage: on ? 0 : 2 };
+        u.siege = { dir: on ? 1 : -1, tk: 0, stage: on ? 0 : 2 };
         this.floats.push({ x: u.x, y: u.y - 1.8, text: on ? "SIEGE" : "UN-SIEGE", color: "#fbbf24", t: 0 });
       }
     }
@@ -980,6 +1002,9 @@
         const u = this.units.find((v) => v.id === id);
         if (!u)
           continue;
+        if (u.fireHold)
+          continue; // $Hi idempotence: the native set-task helper checks the current
+                    // task against statics+0x64 = 8 (DONT_SHOOT) BEFORE the write
         u.fireHold = true;
         this.floats.push({ x: u.x, y: u.y - 1.8, text: "HOLD FIRE", color: '#e2e8f0', t: 0 });
       }
@@ -992,6 +1017,9 @@
         const u = this.units.find((v) => v.id === id);
         if (!u)
           continue;
+        if (!u.fireHold)
+          continue; // $Hi idempotence (CanShoot arm): no re-write, no float when
+                    // the unit already has weapons free
         u.fireHold = false;
         this.floats.push({ x: u.x, y: u.y - 1.8, text: "WEAPONS FREE", color: '#a3e635', t: 0 });
       }
@@ -1346,13 +1374,21 @@
         if (u.siege && u.order.kind !== "siege")
           u.siege = undefined;
         if (u.siege) {
-          u.siege.t += dt;
-          const T = u.siege.dir > 0 ? SIEGE_TICK_TO : SIEGE_TICK_FROM;
-          const f = u.siege.t / T;
-          const st = f >= 1 ? 2 : f >= 0.3 ? 1 : 0;
+          // per-mille accumulator, native shape (siege note §2 + R2 addendum):
+          // siege_stage is a fixed-point fractional-tick accumulator; DEN =
+          // SIEGE_DEN = 1000 (pool[0x364]xpool[0x368] mod 2^32). Each fixed
+          // 20 Hz step integrates one tick; bands compare at N/1000 of the
+          // window; the native mode-8 carry rolls whole ticks into siegeTick
+          // while the browser keeps the rolled-up window form (boundary-
+          // equivalent: floor(tk*1000/32) crosses 300/1000 at the same ticks
+          // as the former float model — provable at 10->312/281, 32->1000).
+          u.siege.tk += 1;
+          const T = u.siege.dir > 0 ? SIEGE_TICKS_TO : SIEGE_TICKS_FROM;
+          const milli = Math.min(Math.floor(u.siege.tk * SIEGE_DEN / T), SIEGE_DEN);
+          const st = milli >= SIEGE_DEN ? 2 : milli >= SIEGE_BAND1_MILLI ? 1 : 0;
           if (st !== u.siege.stage)
             u.siege.stage = st;
-          if (u.siege.t >= T && u.siege.dir < 0)
+          if (u.siege.tk >= T && u.siege.dir < 0)
             u.siege = undefined;
         }
         // native orient -> orient_dest at UnitStateType.rotate (hull rotation)
@@ -1775,6 +1811,29 @@
       u.x = nx;
       u.y = ny;
     }
+    nativeTask(u) {
+      // Derived fire-discipline task — the R2-decoded native task semantics
+      // folded in WITHOUT new serialized state (Task 44 scope, decision of
+      // record): a pure function of already-serialized state (fireHold,
+      // order.kind, targetId, preferredId), so the lockstep U-line and
+      // hashState bytes are unchanged. Native mapping (UnitTaskType,
+      // dump.cs:395395-395410): DontShoot is task 8 driven by the persistent
+      // spec bit 20 (attack-path note §2; pool statics+0x64 = 8); an explicit
+      // attack order REPLACES the task with NONE = 0 (UnitsMove $Hi write,
+      // (V1*V2) mod 2^32 = 0 — both factors decoded) and rewrites flag_shoot
+      // to -1 (statics+0x374, set at 0x490C610) while the ordered target
+      // lives; the surviving spec re-asserts task 8 afterwards (§5).
+      if (u.fireHold && !this.orderedEngagement(u))
+        return TASK_DONT_SHOOT;
+      const k = u.order.kind;
+      if (k === "hold")
+        return CE_TASK_HOLD; // HOLD_POSITION — the $ce get_Task equality gate
+      if (k === "defend")
+        return CE_TASK_DEFEND; // DEFEND — $ce accessor arm (Task 45 decode)
+      if (k === "bombard")
+        return CE_TASK_BOMBARD; // BOMBARD — $ce accessor arm
+      return 0; // NONE — the attack-order task write / default combat task
+    }
     orderedEngagement(u) {
       // Build-E fireHold fidelity fix. Native semantics: an explicit player
       // attack order = AICommUnitsMove message with targetId != 0
@@ -1795,11 +1854,14 @@
       // order has a live ordered target (preferredId — native objPreferred, a
       // player order); autonomous acquisitions set targetId only and stay
       // suppressed (native spec bit re-asserts task 8 after the engagement).
+      // R2 (Task 42) confirms the written task = NONE = (V1*V2) mod 2^32 = 0
+      // and the flag_shoot rewrite value = -1 (statics+0x374); see the R2
+      // addendum in attack-path-fire-discipline.md.
       return u.order.kind === "attackMove" && u.order.x === undefined
         && u.preferredId !== undefined && u.targetId === u.preferredId;
     }
     shoot(u, tx, ty, tgt, d) {
-      if (u.cd > 0 || (u.fireHold && !this.orderedEngagement(u)))
+      if (u.cd > 0 || (this.nativeTask(u) === TASK_DONT_SHOOT))
         return;
       if (u.hiding)
         u.hiding = false; // firing reveals the ambush (native flag_shoot)
@@ -1820,7 +1882,7 @@
       }
     }
     fireShell(u, tx, ty, tgt, d) {
-      if (u.fireHold && !this.orderedEngagement(u))
+      if (this.nativeTask(u) === TASK_DONT_SHOOT)
         return;
       const acc = hitChance(u.def.weapon, u.path.length > 0, d);
       const dmg = Math.round(effectiveDamage(u.def.weapon.damage, tgt.def.armor, tgt.def.armorClass) * (1 + 0.08 * rankTier(u)) * (1 - 0.05 * rankTier(tgt)) * (u.grounded ? 1.25 : 1));
@@ -1851,7 +1913,7 @@
       // projectile branch applies area damage at (tx,ty) and needs no targetId).
       // Accuracy uses the static curve at the point distance (native accuracy
       // dispatch: SHELL_TYPE percent branches, weapon-type note §3.1).
-      if (u.cd > 0 || (u.fireHold && !this.orderedEngagement(u)))
+      if (u.cd > 0 || (this.nativeTask(u) === TASK_DONT_SHOOT))
         return;
       if (u.hiding)
         u.hiding = false; // firing reveals
@@ -1895,7 +1957,7 @@
       this.mines = this.mines.filter((m) => !m.dead);
     }
     meleeStrike(u, tgt, d) {
-      if (u.cd > 0 || (u.fireHold && !this.orderedEngagement(u)))
+      if (u.cd > 0 || (this.nativeTask(u) === TASK_DONT_SHOOT))
         return;
       if (u.hiding)
         u.hiding = false; // striking reveals
@@ -1930,7 +1992,7 @@
       }
     }
     shootBuilding(u, b, d) {
-      if (u.cd > 0 || (u.fireHold && !this.orderedEngagement(u)))
+      if (u.cd > 0 || (this.nativeTask(u) === TASK_DONT_SHOOT))
         return;
       if (u.hiding)
         u.hiding = false; // firing reveals

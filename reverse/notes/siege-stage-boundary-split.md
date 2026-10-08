@@ -112,3 +112,29 @@ driver pass adds its fraction in milli-ticks and the mode-8 carry rolls whole ti
 into siegeTick. The "30%-boundary analog" bands are comparisons at N/1000 of a tick
 window. Build E's multiplier pattern at mode 10 (pool[4]*pool[8]) evaluates to 0
 (constant-zero obfuscation).
+
+## Task 45 addendum — W1 decode lands; band numerators stay reconstruction (precisely bounded)
+
+The $ce on-demand accessor layer is now decoded too (`ce-constants-decode.txt`; mgr1
+segment `$Obfuz$RVA$0.$RVA_Value3` @0xDBD3E8, keys per builder-chain-decode.txt;
+harness cross-checked 631/631 against the R2 697-value decode). Outcomes:
+
+1. **The $ce accessor constants are task ids, not band fractions**: (keyA 0x3d,
+   salt 0x27428cbf) -> **2 = DEFEND**; (0x11, 0x2927ab7e) -> **5 = BOMBARD**;
+   (0xb0, 0xfa9eb6cb) -> **6 = MINE**; (0x2, 0x359e6cf8) -> **-1** (sentinel, the
+   flag_shoot-free value). The TickFromSpec gates compare == these constants —
+   weapon-variant dispatch, not N/1000 thresholds.
+2. **statics+0x14 = 3 is HOLD_POSITION** (equality gate at the get_Task compare
+   @0x4750668: `cmp 3, task; b.ne -> state +0x8c8`) and is REUSED as a literal 3
+   divisor in the mod-3 phase comparison @0x4751998
+   (`sdiv w9, w22, sxtb(vt[0xf08]()); ... msub -> (X/3)%3 vs (unit[0x10])%3; b.eq`).
+   The stage bands are therefore runtime-derived formulas (getter quotients + mod-3
+   phase + TickFromSpec equality), NOT statically stored N/1000 fractions.
+3. **Browser fold-in**: the accumulator is now integer per-mille in the shipped
+   kernel (`SIEGE_DEN = 1000`, `tk` tick counter, bands at
+   `floor(tk*1000/T)` vs 300/1000) — boundary-equivalent to the former float model
+   at the current durations (tick 10 -> 312, tick 32 -> 1000; vectors in
+   phase5.test.js). `SIEGE_BAND1_MILLI = 300` remains the reconstruction numerator,
+   now labeled with the precise reason: the native band shape is formula-derived
+   (item 2), and its parameters are TickFromSpec-dependent (R1-adjacent runtime
+   data), not static pool values.

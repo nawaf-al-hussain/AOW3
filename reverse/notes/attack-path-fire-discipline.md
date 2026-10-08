@@ -69,3 +69,25 @@ left UNRESOLVED resolve to:
 
 The four numeric rows above upgrade MEDIUM/UNRESOLVED -> CONFIRMED (semantic cross-
 checks pass natively: task-id ranges and the DEN product, see the R2 note).
+
+## Task 45 addendum — $ce task arms decoded; fold-in landed (no behavior change in the gates)
+
+The $ce on-demand constants decode as task ids (`ce-constants-decode.txt`): the
+driver holds dedicated arms for **DEFEND = 2** (9 sites, e.g. 0x4750600
+`cmp 2, vt[0xba8]; b.eq`), **BOMBARD = 5** (7 sites, one a `b.ge` threshold),
+**MINE = 6** (1 site), and the **-1** flag_shoot-free sentinel (3 sites). The
+statics+0x14 = 3 constant is **HOLD_POSITION** at the get_Task equality gate
+(@0x4750668) — R2's "$ce task threshold" label is corrected to an equality match;
+the same literal 3 also serves as the mod-3 divisor in the phase comparison
+@0x4751998. `$se` (0x475757C) is CONFIRMED as the flag_shoot EVALUATOR: its return
+value is written straight back by set_FlagShoot @0x4751008 — the native shape of
+the browser's `nativeTask() === TASK_DONT_SHOOT` fire gates.
+
+Fold-in (Task 45, no gate behavior change): the shipped kernel now carries
+`nativeTask(u)` (derived, unserialized — hold->3, defend->2, bombard->5,
+fireHold+no-engagement->8, else 0), the decoded constants block
+(TASK_DONT_SHOOT/CE_TASK_*/FLAG_SHOOT_FREE/SIEGE_DEN), and $Hi idempotence in
+commandDontShoot/commandCanShoot. All five fire gates read the derived task;
+`fireHold` remains the only serialized state (U-line/hash bytes unchanged —
+replay 45/45 + lockstep-jip 88/88 green). Vectors: phase5.test.js sections
+"per-mille accumulator", "DEN + task-id anchors", "nativeTask fold-in" (+23).

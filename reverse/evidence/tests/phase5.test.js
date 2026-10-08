@@ -1140,5 +1140,83 @@ section('takepos: native formation algorithm — nearest-unit matching + categor
   check('Commands surface unchanged', ok === true, true);
 }
 
+section('siege: per-mille accumulator (R2 DEN=1000 fold-in) — boundary + release timing');
+{
+  const { sim } = loadKernel(9107);
+  clearInitial(sim);
+  const ty = sim.spawn('fortress', 1, 20, 80);
+  sim.commandSiege([ty.id], true);
+  run(sim, 9);
+  check('tick 9 -> 281/1000 milli < 300: band still SEIZE_FIRE (0)', ty.siege.stage, 0);
+  run(sim, 1);
+  check('tick 10 -> 312/1000 >= 300: ROTATE_WEAPONS (1) at the same tick as the float model', ty.siege.stage, 1);
+  run(sim, 21);
+  check('tick 31 -> 968/1000: still band 1', ty.siege.stage, 1);
+  run(sim, 1);
+  check('tick 32 -> 1000/1000 = DEN: TRANSFORM (2)', ty.siege.stage, 2);
+  sim.commandSiege([ty.id], false);
+  run(sim, 23);
+  check('release: tick 23/24 -> 958/1000 < DEN, handle still live', ty.siege !== undefined, true);
+  run(sim, 1);
+  check('release completes exactly at integer window tick 24', ty.siege === undefined, true);
+}
+
+section('siege: DEN + task-id anchors — decoded pool evidence vs kernel constants');
+{
+  // every constant the fold-in pinned must equal the R2/Task-45 decoded values
+  const pool = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'obfuz', 'obfuz-pool-values.json'), 'utf8'));
+  const g = {};
+  for (const e of pool)
+    if (e.thunk === 'int') g[e.target] = e.value;
+  // Math.imul: the 32-bit product is exactly what the native UMUL does; plain
+  // JS multiply would exceed 2^53 and lose the low bits (Python bignum != JS)
+  check('pool[0x364] x pool[0x368] mod 2^32 = 1000 (per-mille DEN)', Math.imul(g[0x364], g[0x368]) >>> 0, 1000);
+  check('kernel pins SIEGE_DEN = 1000', /const SIEGE_DEN = 1000;/.test(src), true);
+  check('statics+0x64 = 8 = DONT_SHOOT (TASK_DONT_SHOOT)', g[0x64], 8);
+  check('statics+0x14 = 3 = HOLD_POSITION (CE_TASK_HOLD, $ce equality gate)', g[0x14], 3);
+  check('statics+0x374 = -1 = set_FlagShoot value (FLAG_SHOOT_FREE)', g[0x374] >> 0, -1);
+  check('kernel pins the $ce accessor arms (DEFEND=2/BOMBARD=5/MINE=6)',
+    /const CE_TASK_DEFEND = 2;/.test(src) && /const CE_TASK_BOMBARD = 5;/.test(src)
+    && /const CE_TASK_MINE = 6;/.test(src), true);
+}
+
+section('fire discipline: nativeTask fold-in — derived task semantics + $Hi idempotence');
+{
+  const { sim } = loadKernel(9108);
+  clearInitial(sim);
+  const inf = sim.spawn('ilight', 1, 20, 80);
+  const foe = sim.spawn('ilight', 2, 24, 80);
+  sim.commandHold([foe.id]); // pin the probe
+  check('default combat task = NONE (0)', sim.nativeTask(inf), 0);
+  sim.commandHold([inf.id]);
+  check('hold order -> HOLD_POSITION (3 = statics+0x14)', sim.nativeTask(inf), 3);
+  sim.commandDefend([inf.id]);
+  check('defend order -> DEFEND (2 = $ce accessor arm)', sim.nativeTask(inf), 2);
+  sim.commandDontShoot([inf.id]);
+  check('dontShoot spec -> DONT_SHOOT (8 = statics+0x64)', sim.nativeTask(inf), 8);
+  const holds = () => sim.floats.filter((f) => f.text === 'HOLD FIRE').length;
+  const holds0 = holds();
+  sim.commandDontShoot([inf.id]);
+  check('$Hi idempotence: re-issuing DontShoot on a task-8 unit is a no-op', holds(), holds0);
+  sim.commandCanShoot([inf.id]);
+  const frees = () => sim.floats.filter((f) => f.text === 'WEAPONS FREE').length;
+  const frees0 = frees();
+  sim.commandCanShoot([inf.id]);
+  check('$Hi idempotence: re-issuing CanShoot is a no-op', frees(), frees0);
+  // ordered engagement: task 8 replaced by NONE while the ordered target lives
+  sim.commandDontShoot([inf.id]);
+  sim.commandAttack([inf.id], foe.id);
+  check('explicit attack order replaces task 8 with NONE (V1*V2 = 0) during engagement', sim.nativeTask(inf), 0);
+  check('ordered engagement predicate live', sim.orderedEngagement(inf), true);
+  foe.hp = 0;
+  run(sim, 1); // purge -> updateTargeting clears targetId/preferredId
+  check('spec re-asserts DONT_SHOOT after the ordered target dies (8)', sim.nativeTask(inf), 8);
+  const arty = sim.spawn('fortress', 1, 22, 80);
+  sim.commandBombard([arty.id], 30, 80);
+  check('bombard order -> BOMBARD (5 = $ce accessor arm)', sim.nativeTask(arty), 5);
+  sim.commandSiege([arty.id], true);
+  check('siege is not a task: accumulator stance maps to NONE (0)', sim.nativeTask(arty), 0);
+}
+
 console.log(`\nphase5: ${total - fail}/${total} PASS${fail ? ` — ${fail} FAILED` : ''}`);
 process.exit(fail ? 1 : 0);

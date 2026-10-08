@@ -1,6 +1,13 @@
 # Fold-In Task Scope — R2-decoded Obfuz constants into the Build E/F browser models
 
-Created: 2026-10-09 (Task 44, scoping only — no code change). Owner directive
+Created: 2026-10-09 (Task 44, scoping only — no code change).
+**STATUS: EXECUTED as Task 45 (2026-10-09)** — W1 outcomes: (a) statics+0x14 = 3 is
+HOLD_POSITION at an EQUALITY gate (R2 "threshold" label corrected), plus DEFEND=2 /
+BOMBARD=5 / MINE=6 accessor arms and the mod-3 phase comparison; (b) band numerators
+are runtime-derived formulas, NOT static fractions — 300/1000 stays as the labeled
+reconstruction; (c) no browser behavior change was evidence-gated (instant siege
+release kept, now precisely documented). Evidence: `ce-constants-decode.txt`;
+kernel fold-in: `nativeTask` + constants + per-mille accumulator; 877/877 tests. Owner directive
 (2026-10-09, post-R2): fold the decoded constants into the Build E/F-derived browser
 models (fire-discipline task semantics, per-mille siege accumulator) in a **future
 implementation task**; R1's on-device dictionary dump remains the sole blocked capture

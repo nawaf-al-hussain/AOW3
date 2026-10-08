@@ -1,0 +1,246 @@
+## W1 — $ce runtime-constant decode (Task 45)
+so sha 8ace05bb…  md sha d2e8dd0d…
+canary $GOA(0x720ba23e,0x545ee170,0x98705298) = 0x12345678 PASS
+harness cross-check vs obfuz-pool-values.json: 631/631 int+float triples reproduce PASS
+
+## A. statics+0x14 direct-read sites (task gate / threshold)
+
+--- site 0x4750664 ---
+  0x475062c: ldr      x0, [sp, #0x108]
+  0x4750630: cbz      x0, #0x47553bc   ; BR
+  0x4750634: ldr      x8, [x0]
+  0x4750638: ldr      x9, [x8, #0x1008]   ; VT.get_Task
+  0x475063c: ldr      x1, [x8, #0x1010]
+  0x4750640: blr      x9
+  0x4750644: ldr      x8, [x19]
+  0x4750648: mov      w21, w0
+  0x475064c: ldr      w9, [x8, #0xe4]   ; UNIT.walk_state
+  0x4750650: cbnz     w9, #0x4750660   ; BR
+  0x4750654: mov      x0, x8
+  0x4750658: bl       #0x3cc7ac8
+  0x475065c: ldr      x8, [x19]
+  0x4750660: ldr      x9, [x8, #0xb8]   ; UNIT.forced
+  0x4750664: ldr      w10, [x9, #0x14]
+  0x4750668: cmp      w10, w21, sxtb   ; BR
+  0x475066c: b.ne     #0x4755098
+  0x4750670: ldr      w10, [x8, #0xe4]   ; UNIT.walk_state
+  0x4750674: cbnz     w10, #0x4750688   ; BR
+  0x4750678: mov      x0, x8
+  0x475067c: bl       #0x3cc7ac8
+  0x4750680: ldr      x8, [x19]
+
+--- site 0x4750f48 ---
+  0x4750f10: ldr      x0, [sp, #0x108]
+  0x4750f14: cbz      x0, #0x47553bc   ; BR
+  0x4750f18: ldr      x8, [x0]
+  0x4750f1c: ldr      x9, [x8, #0x788]
+  0x4750f20: ldr      x1, [x8, #0x790]
+  0x4750f24: blr      x9
+  0x4750f28: ldr      x8, [x19]
+  0x4750f2c: mov      w21, w0
+  0x4750f30: ldr      w9, [x8, #0xe4]   ; UNIT.walk_state
+  0x4750f34: cbnz     w9, #0x4750f44   ; BR
+  0x4750f38: mov      x0, x8
+  0x4750f3c: bl       #0x3cc7ac8
+  0x4750f40: ldr      x8, [x19]
+  0x4750f44: ldr      x9, [x8, #0xb8]   ; UNIT.forced
+  0x4750f48: ldr      w9, [x9, #0x14]
+  0x4750f4c: cmp      w9, w21, sxtb   ; BR
+  0x4750f50: b.ge     #0x4752e0c
+  0x4750f54: b        #0x4754a70
+  0x4750f58: ldr      x0, [sp, #0x108]
+  0x4750f5c: cbz      x0, #0x47553bc   ; BR
+  0x4750f60: ldr      x8, [x0]
+  0x4750f64: ldr      x9, [x8, #0x368]
+
+--- site 0x4751998 ---
+  0x4751960: ldr      x9, [x8, #0xf08]
+  0x4751964: ldr      x1, [x8, #0xf10]
+  0x4751968: blr      x9
+  0x475196c: ldr      x8, [x19]
+  0x4751970: mov      w21, w0
+  0x4751974: ldr      w9, [x8, #0xe4]   ; UNIT.walk_state
+  0x4751978: cbnz     w9, #0x4751988   ; BR
+  0x475197c: mov      x0, x8
+  0x4751980: bl       #0x3cc7ac8
+  0x4751984: ldr      x8, [x19]
+  0x4751988: sxtb     w9, w21   ; BR
+  0x475198c: ldr      x10, [x8, #0xb8]   ; UNIT.forced
+  0x4751990: ldr      x12, [sp, #0x108]
+  0x4751994: sdiv     w9, w22, w9   ; BR
+  0x4751998: ldr      w10, [x10, #0x14]
+  0x475199c: ldr      w12, [x12, #0x10]
+  0x47519a0: sdiv     w11, w9, w10   ; BR
+  0x47519a4: sdiv     w13, w12, w10   ; BR
+  0x47519a8: msub     w9, w11, w10, w9   ; BR
+  0x47519ac: msub     w10, w13, w10, w12   ; BR
+  0x47519b0: cmp      w9, w10   ; BR
+  0x47519b4: b.eq     #0x4752e0c
+
+--- site 0x4752940 ---
+  0x4752908: mov      x0, x8
+  0x475290c: bl       #0x3cc7ac8
+  0x4752910: ldr      x8, [x19]
+  0x4752914: ldr      x9, [x8, #0xb8]   ; UNIT.forced
+  0x4752918: add      x8, x9, #0x950
+  0x475291c: b        #0x47502fc
+  0x4752920: ldr      x0, [x19]
+  0x4752924: ldr      w8, [x0, #0xe4]   ; UNIT.walk_state
+  0x4752928: cbnz     w8, #0x4752934   ; BR
+  0x475292c: bl       #0x3cc7ac8
+  0x4752930: ldr      x0, [x19]
+  0x4752934: ldr      x8, [x0, #0xb8]   ; UNIT.forced
+  0x4752938: ldr      x11, [sp, #0xd8]
+  0x475293c: ldr      w9, [x0, #0xe4]   ; UNIT.walk_state
+  0x4752940: ldr      w10, [x8, #0x14]
+  0x4752944: cmp      w10, w11, sxtb   ; BR
+  0x4752948: b.le     #0x4754b4c
+  0x475294c: cbnz     w9, #0x475295c   ; BR
+  0x4752950: bl       #0x3cc7ac8
+  0x4752954: ldr      x8, [x19]
+  0x4752958: ldr      x8, [x8, #0xb8]   ; UNIT.forced
+  0x475295c: add      x8, x8, #0x9c4
+
+--- site 0x47535c8 ---
+  0x4753590: blr      x9
+  0x4753594: cbz      x0, #0x47553bc   ; BR
+  0x4753598: ldr      x8, [x0]
+  0x475359c: ldr      x9, [x8, #0x418]   ; VT.get_TickFromSpec
+  0x47535a0: ldr      x1, [x8, #0x420]
+  0x47535a4: blr      x9
+  0x47535a8: ldr      x8, [x19]
+  0x47535ac: mov      w21, w0
+  0x47535b0: ldr      w9, [x8, #0xe4]   ; UNIT.walk_state
+  0x47535b4: cbnz     w9, #0x47535c4   ; BR
+  0x47535b8: mov      x0, x8
+  0x47535bc: bl       #0x3cc7ac8
+  0x47535c0: ldr      x8, [x19]
+  0x47535c4: ldr      x9, [x8, #0xb8]   ; UNIT.forced
+  0x47535c8: ldr      w10, [x9, #0x14]
+  0x47535cc: cmp      w10, w21, sxtb   ; BR
+  0x47535d0: b.eq     #0x4753fa0
+  0x47535d4: ldr      w10, [x8, #0xe4]   ; UNIT.walk_state
+  0x47535d8: cbnz     w10, #0x47535ec   ; BR
+  0x47535dc: mov      x0, x8
+  0x47535e0: bl       #0x3cc7ac8
+  0x47535e4: ldr      x8, [x19]
+
+--- site 0x4754274 ---
+  0x475423c: ldr      w9, [x8, #0xe4]   ; UNIT.walk_state
+  0x4754240: cbnz     w9, #0x4754250   ; BR
+  0x4754244: mov      x0, x8
+  0x4754248: bl       #0x3cc7ac8
+  0x475424c: ldr      x8, [x19]
+  0x4754250: ldr      x8, [x8, #0xb8]   ; UNIT.forced
+  0x4754254: add      x8, x8, #0x12c
+  0x4754258: b        #0x47502fc
+  0x475425c: ldr      x0, [x19]
+  0x4754260: ldr      w8, [x0, #0xe4]   ; UNIT.walk_state
+  0x4754264: cbnz     w8, #0x4754270   ; BR
+  0x4754268: bl       #0x3cc7ac8
+  0x475426c: ldr      x0, [x19]
+  0x4754270: ldr      x8, [x0, #0xb8]   ; UNIT.forced
+  0x4754274: ldr      w9, [x8, #0x14]
+  0x4754278: cmp      w9, w29, sxtb   ; BR
+  0x475427c: b.le     #0x4754b64
+  0x4754280: ldr      w9, [x0, #0xe4]   ; UNIT.walk_state
+  0x4754284: cbnz     w9, #0x4754294   ; BR
+  0x4754288: bl       #0x3cc7ac8
+  0x475428c: ldr      x8, [x19]
+  0x4754290: ldr      x8, [x8, #0xb8]   ; UNIT.forced
+
+## B. statics+0x374 direct-read sites (flag_shoot value -1)
+
+--- site 0x47519d8 ---
+  0x47519a0: sdiv     w11, w9, w10   ; BR
+  0x47519a4: sdiv     w13, w12, w10   ; BR
+  0x47519a8: msub     w9, w11, w10, w9   ; BR
+  0x47519ac: msub     w10, w13, w10, w12   ; BR
+  0x47519b0: cmp      w9, w10   ; BR
+  0x47519b4: b.eq     #0x4752e0c
+  0x47519b8: b        #0x4755290
+  0x47519bc: ldr      x0, [x19]
+  0x47519c0: ldr      w8, [x0, #0xe4]   ; UNIT.walk_state
+  0x47519c4: cbnz     w8, #0x47519d0   ; BR
+  0x47519c8: bl       #0x3cc7ac8
+  0x47519cc: ldr      x0, [x19]
+  0x47519d0: ldr      x8, [x0, #0xb8]   ; UNIT.forced
+  0x47519d4: ldp      w9, w10, [x8, #4]
+  0x47519d8: ldr      w11, [x8, #0x374]
+  0x47519dc: mul      w29, w10, w9   ; BR
+  0x47519e0: mov      w8, w11
+  0x47519e4: stp      w11, w11, [sp, #0x80]
+  0x47519e8: str      x11, [sp, #0xe0]
+  0x47519ec: ldr      w8, [x0, #0xe4]   ; UNIT.walk_state
+  0x47519f0: cbnz     w8, #0x47519fc   ; BR
+  0x47519f4: bl       #0x3cc7ac8
+
+--- site 0x4754798 ---
+  0x4754760: cbnz     w9, #0x4754770   ; BR
+  0x4754764: mov      x0, x8
+  0x4754768: bl       #0x3cc7ac8
+  0x475476c: ldr      x8, [x19]
+  0x4754770: ldr      x8, [x8, #0xb8]   ; UNIT.forced
+  0x4754774: add      x8, x8, #0xa30
+  0x4754778: b        #0x47502fc
+  0x475477c: ldr      x0, [x19]
+  0x4754780: ldr      w8, [x0, #0xe4]   ; UNIT.walk_state
+  0x4754784: cbnz     w8, #0x4754790   ; BR
+  0x4754788: bl       #0x3cc7ac8
+  0x475478c: ldr      x0, [x19]
+  0x4754790: ldr      x8, [x0, #0xb8]   ; UNIT.forced
+  0x4754794: ldr      x10, [sp, #0xe0]
+  0x4754798: ldr      w9, [x8, #0x374]
+  0x475479c: cmp      w9, w10, sxtb   ; BR
+  0x47547a0: b.ne     #0x4754b88
+  0x47547a4: ldr      w8, [x0, #0xe4]   ; UNIT.walk_state
+  0x47547a8: cbnz     w8, #0x47547b4   ; BR
+  0x47547ac: bl       #0x3cc7ac8
+  0x47547b0: ldr      x0, [x19]
+  0x47547b4: ldr      x8, [x0, #0xb8]   ; UNIT.forced
+
+## C. $gK accessor callsites -> decoded values
+@0x4750600 slot=0x2018 start=0x748 keyA=0x3d salt=0x27428cbf raw=0xa3af9c8d -> value=2 (signed 2)
+   flow: 0x4750604: cmp      w0, w21, sxtb | 0x4750608: b.eq     #0x47512d8
+@0x4750a74 slot=0x2018 start=0x738 keyA=0x3d salt=0x27428cbf raw=0xa3af9c8d -> value=2 (signed 2)
+   flow: 0x4750a80: cbz      x0, #0x47553bc
+@0x4750fbc slot=0x2018 start=0x714 keyA=0x3d salt=0x27428cbf raw=0xa3af9c8d -> value=2 (signed 2)
+   flow: 0x4750fc0: cmp      w0, w21, sxtb | 0x4750fc4: b.ne     #0x47545e0
+@0x475124c slot=0x2018 start=0x708 keyA=0x11 salt=0x2927ab7e raw=0xf9832032 -> value=5 (signed 5)
+   flow: 0x4751254: cmp      w0, w21, sxtb | 0x4751258: b.ge     #0x4754c28
+@0x47512cc slot=0x2018 start=0x74c keyA=0x11 salt=0x2927ab7e raw=0xf9832032 -> value=5 (signed 5)
+   flow: 0x47512d0: cmp      w0, w21, sxtb | 0x47512d4: b.ne     #0x4755290
+@0x4751844 slot=0x2018 start=0x72c keyA=0x11 salt=0x2927ab7e raw=0xf9832032 -> value=5 (signed 5)
+   flow: 0x4751848: cmp      w0, w21, sxtb | 0x475184c: b.eq     #0x4754eec
+@0x4751b58 slot=0x2018 start=0x734 keyA=0x3d salt=0x27428cbf raw=0xa3af9c8d -> value=2 (signed 2)
+   flow: 0x4751b5c: cmp      w0, w21, sxtb | 0x4751b60: b.ne     #0x4752300
+@0x4751bb4 slot=0x2018 start=0x744 keyA=0x2 salt=0x359e6cf8 raw=0x1c9d678d -> value=4294967295 (signed -1)
+   flow: 0x4751bc8: cbz      x0, #0x47553bc
+@0x4751e94 slot=0x2018 start=0x730 keyA=0x3d salt=0x27428cbf raw=0xa3af9c8d -> value=2 (signed 2)
+   flow: 0x4751e9c: cbz      x11, #0x47553bc
+@0x47520ec slot=0x2018 start=0x750 keyA=0x3d salt=0x27428cbf raw=0xa3af9c8d -> value=2 (signed 2)
+   flow: 0x47520f4: cmp      w0, w8, sxtb | 0x47520f8: b.eq     #0x4755290
+@0x475216c slot=0x2018 start=0x740 keyA=0x3d salt=0x27428cbf raw=0xa3af9c8d -> value=2 (signed 2)
+   flow: 0x4752170: cmp      w0, w21, sxtb | 0x4752174: b.eq     #0x475465c
+@0x4752220 slot=0x2018 start=0x70c keyA=0x11 salt=0x2927ab7e raw=0xf9832032 -> value=5 (signed 5)
+   flow: 0x4752228: cmp      w0, w21, sxtb | 0x475222c: b.ne     #0x4755098
+@0x4752560 slot=0x2018 start=0x754 keyA=0x11 salt=0x2927ab7e raw=0xf9832032 -> value=5 (signed 5)
+   flow: 0x4752568: cmp      w0, w8, sxtb | 0x475256c: b.eq     #0x4755290
+@0x4752834 slot=0x2018 start=0x71c keyA=0x3d salt=0x27428cbf raw=0xa3af9c8d -> value=2 (signed 2)
+   flow: 0x4752838: cmp      w0, w21, sxtb | 0x475283c: b.ne     #0x4754c6c
+@0x4752ee0 slot=0x2018 start=0x710 keyA=0xb0 salt=0xfa9eb6cb raw=0x534e3dd6 -> value=6 (signed 6)
+   flow: 0x4752ee4: cmp      w0, w21, sxtb | 0x4752ee8: b.eq     #0x4753fa0
+@0x4753020 slot=0x2018 start=0x718 keyA=0x11 salt=0x2927ab7e raw=0xf9832032 -> value=5 (signed 5)
+   flow: 0x4753028: cmp      w0, w21, sxtb | 0x475302c: b.ne     #0x4753050
+@0x47538d4 slot=0x2018 start=0x720 keyA=0x2 salt=0x359e6cf8 raw=0x1c9d678d -> value=4294967295 (signed -1)
+   flow: -
+@0x4753910 slot=0x2018 start=0x724 keyA=0x2 salt=0x359e6cf8 raw=0x1c9d678d -> value=4294967295 (signed -1)
+   flow: -
+@0x475394c slot=0x2018 start=0x728 keyA=0x2 salt=0x359e6cf8 raw=0x1c9d678d -> value=4294967295 (signed -1)
+   flow: -
+@0x4754650 slot=0x2018 start=0x73c keyA=0x11 salt=0x2927ab7e raw=0xf9832032 -> value=5 (signed 5)
+   flow: 0x4754654: cmp      w0, w21, sxtb | 0x4754658: b.ne     #0x4754d10
+@0x47552e0 slot=0x2018 start=0x758 keyA=0x3d salt=0x27428cbf raw=0xa3af9c8d -> value=2 (signed 2)
+   flow: 0x47552e8: cbz      x19, #0x47553bc
+
+resolved 21 accessor sites

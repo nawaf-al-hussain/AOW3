@@ -1450,7 +1450,10 @@ DontShoot=8 idempotence constant, $ce=3 task threshold, attack-order task=NONE
 write, set_FlagShoot=-1; per-mille siege accumulator per
 `siege-stage-boundary-split.md` §R2 — DEN=1000 milli-tick fixed point) in a
 **future implementation task**, with its own evidence-diff, QA, and test-vector
-delta — R2 completion alone does not authorize immediate browser changes. R1's
+delta — R2 completion alone does not authorize immediate browser changes.
+(Executed as Task 45 the same day: scoped per
+`reverse/notes/obfuz-constants-foldin-scope.md`, W1 decode committed, fold-in
+shipped with tests 854 -> 877; no serialized-state or gate-behavior change.) R1's
 on-device dictionary dump (Task 41 runbook, `BLOCKED — DEVICE REQUIRED`) remains
 the **sole** blocked capture for 1:1 balance values; every other capture is either
 resolved statically or optional verification.
