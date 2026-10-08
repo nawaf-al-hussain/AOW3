@@ -1269,3 +1269,20 @@ Stage Summary:
 - Audit baseline established at v=46: structural reproduction is far ahead of numeric reproduction; schema/taxonomy layer fully recovered and test-locked (EStat 78/78, weapon fields 27/27, ids 43, heroes 12) while every gameplay number remains a documented tuned approximation because native balance is server-delivered (provable, not an excuse).
 - Highest-leverage next actions recorded: R1 on-device prototype-table capture (Frida), R2 Obfuz pool dump (pipeline ready, one command), R3 native tick rate; quick browser fixes queued for later tasks: mines/_chain hash coverage, salamander GLB mapping, invention removal (crit/falloff/veterancy), announcer wiring.
 - No code changes shipped; only reverse/notes/1-to-1-fidelity-audit.md + this worklog. All suites green at audit time.
+
+---
+Task ID: 41
+Agent: Super Z (main)
+Task: R1 — prototype/balance data capture: reconstruct the pipeline, prove the source, prepare the device run (evidence-only; no browser changes)
+
+Work Log:
+- Read Task 40 audit R1/B1 findings + all core RE notes; verified binary chain (libil2cpp 8ace05bb…, dump.cs 0050e67d…, XAPK 1a41e033…).
+- Reconstructed the live data pipeline natively: logon states 17→19-21 negotiate dictionary versions (ClientResourceConfiguration Type 22/req 20) then load dictionaries via ResourceRequest 110 → ResourceAnswer 111 {ResourceInfo{path,zipped,crc}, sbyte[] Data}; load order cache(CRC)→network→web→built-in; ingestion CSMainBattleBaseDictionaryReceiver.DoResourceLoaded 0x7DBA3B4 → BattleBaseDictionaryDataSource.SetData 0x7D24844; DES/RSA transport (PROTOCOL_VERSION 235); cache = ST-serialized '<persistentDataPath>/rbi' (GetFilename 0x7D76F44 disassembled).
+- Proved APK non-embedding by full byte scan (5,502 bin/Data entries + 863 Addressables ids + 870 Resources keys): dictionary markers only in global-metadata.dat; built-in TextAssets = gs.xml (login 31.41.157.154:10398), dev gs.louken, remoteconfig test stub — zero balance payload.
+- Extracted the live capture surface to reverse/evidence/prototype-data/schema.json (20 classes): BattleBaseDictionary containers + UnitType 46 fields, UnitStateType 46, WeaponType 63, BuildingType+Level 48, Fraction 82 (economy), MineType 18, HeroParam 38, Boost/Troop 21, protocol DTOs.
+- Wrote inventory.md + inventory.json (A–H classification with evidence, EStat map, hook table), browser-comparison.md (scaffold, all Original-runtime cells NOT CAPTURED), on-device-run.md runbook + reverse/tools/r1_dictionary_dump.js (hooks pinned to the same binary: DeserializeMessage, TryLoadResourceFromByteBuffer, DoResourceLoaded quick-table, resource-config, ResourceInfo getters, cache save; DES flag-gated).
+- R2 boundary respected: dictionary payload is ST-binary, not Obfuz; one shared Frida session possible, pipelines separate.
+- No device/emulator/frida/adb in this environment → ZERO values captured. Ran all 8 suites: 88+45+213+50+379+37+13+29 = 854/854 green (baseline reproduced, unchanged). Pushed 05fc2b3.
+
+Stage Summary:
+- R1 status: BLOCKED — DEVICE REQUIRED. The static half is complete and evidence-backed: the authoritative source is conclusively the developer backend via the login socket (ST dictionaries + rbi cache), not the APK; one device session (runbook, 2 commands) captures everything. Next device actions: run reverse/tools/r1_dictionary_dump.js per on-device-run.md; then decode→EStat-map→browser comparison→(separate implementation task) re-import with fixture/hash re-baselining.
