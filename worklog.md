@@ -1496,3 +1496,77 @@ Stage Summary:
   (V7), reference-validation harness (V8, shares the R1 device run).
 - Commits: 07c5c18 (audit), e6eed81 (renderer), this worklog commit. v=47.
 
+
+---
+Task ID: 47
+Agent: Super Z (main)
+Task: V2 follow-up (decal-seam reduction on slopes) + V1-b camera angulation/yaw
+  ([SPEC]-calibrated) + V8 reference-validation harness (device-ref slot shared
+  with the R1 run)
+
+Work Log:
+- Housekeeping/repair note: the visual-fidelity phase entry near the tail of this
+  worklog lost its "Task ID:" line during the Task-45-era rebase — its ID is 46,
+  and its cited commits (07c5c18/e6eed81) are pre-rebase hashes; the landed
+  hashes are d21da2e (audit), f6af63→f6aef63 (renderer V2/V3/V1-a), 3cca1cc
+  (worklog), bbdfb6b (cache-bust v=48). Recorded here for the audit trail; the
+  old entry is left untouched (append-only).
+- Baseline re-verified before changes: fetch showed origin/main == local
+  bbdfb6b; all 8 suites re-run = 8/8 files, 0 fail (877 assertions, fold-in
+  baseline preserved).
+- V2 follow-up (docs/game.js applyRealMap): ground-category decal chunks no
+  longer render as flat InstancedMesh planes pinned at center height. Each
+  ground placement now gets a per-placement geometry clone baked to world
+  space (position + raw quat + scale via Matrix4.compose), then every vertex
+  is displaced by heightAtWorld(x,z) − heightAtWorld(center) — the SAME
+  bilinear sampler the terrain mesh uses, so chunk borders meet at identical
+  heights and slope seams/steps close. Relative displacement preserves any
+  baked relief in the decal art; the +0.03 lift and polygonOffset(−2,−2) stay
+  as the coplanarity guard vs buildRealTerrain. Plain-Mesh dispose shim added
+  for the scatterMeshes teardown; grass cast-shadow exclusion preserved on the
+  (now non-ground-only) instanced path; non-ground placements byte-identical.
+- V1-b (docs/game.js): cam gains yaw; syncCamera now orbits — offset =
+  dist·(sinYaw·cosPitch, sinPitch, cosYaw·cosPitch) with pitch from a new
+  camAngulation(dist) linear ramp 38°..66° over dist 6.5..46. Evidence labels
+  in code: [DECOMP] dump.cs:326030 AbstractBattlefieldCamera
+  m_angulationMin/Max + RotationY field model; band + ramp + Q/E 2.2 rad/s
+  binding are [SPEC] (serialized values [NOT FOUND LOCALLY] — R1 run
+  calibrates; max pitch ≈ old fixed 65.8° keeps far-zoom framing continuous).
+  WASD pan made yaw-relative (right=(cosY,−sinY), forward=(−sinY,−cosY);
+  yaw 0 == previous mapping); minimap pans clamp at source (the old per-frame
+  clamp moved into the WASD path); yaw wrapped to [0,2π). screenToTile paths
+  (edge-drag/drag-pan/picking) are raycast-based and view-correct without
+  changes; HP bars/floats/shadows are Sprites (yaw-safe, verified).
+- V8 (new files, no game.js change): reverse/tools/visual_harness.mjs —
+  playwright headless: serves docs/ on loopback, loads #seed=12345, clicks
+  battle start, waits for realTerrain + real-map decals + tick>90, drives
+  __DBG.cam poses from reverse/evidence/visual/manifest.json, screenshots,
+  computes 8×8 average hashes; auto-composes labeled side-by-side + Hamming
+  distance when ref-<id>.png device captures exist (else [MISSING-DEVICE-REF]).
+  reverse/evidence/visual/README.md documents the R1 shared-cost device-ref
+  capture protocol (same ids/viewport, landmark alignment, raw provenance).
+- Determinism proof: slope-detail captured twice across stash/pop cycles →
+  identical ahash 3ff7fffffdc00000.
+- QA before/after (pre-change build captured via stash at identical poses):
+  slope-detail (steepest interior gradient, grad 0.151 @ world −58.1,−38.1):
+  the floating grass-chunk rectangle + cliff-terrace rectangular steps in the
+  before shot are gone in the after shot; chunks flow continuously.
+  tactical-close: units viewed from the sun-away side read near-black at low
+  pitch — CONFIRMED IDENTICAL on the pre-change build at the same pose
+  (pre-existing rig characteristic, NOT a V1-b regression) → filed for V4
+  lighting calibration; also recorded in audit §22 addendum.
+- Tests after changes: 8/8 suites, 0 fail (877). node --check clean. v=48→49
+  cache-bust (§35.1).
+- Commits: 724f46d (renderer: V2 follow-up + V1-b, v=49), 9603fb7 (evidence: V8
+  harness + visual/ baseline + audit §22 addendum), this worklog commit.
+
+Stage Summary:
+- The two largest self-inflicted terrain deviations from the extracted data are
+  now closed (V2 surface + decal conforming); camera exposes the [DECOMP]
+  angulation/yaw model with all guessed numbers explicitly [SPEC]-labeled for
+  the R1 calibration pass; V8 gives every future renderer change a repeatable
+  visual-regression signal and a one-drag device-ref comparison path.
+- Highest-value next task: V4 lighting/material calibration ([SPEC] pass —
+  fill/hemisphere revisit for low-pitch shadow-side readability, tone-mapping
+  re-check on the conformed terrain, sun azimuth cross-check), then R1 device
+  session (balance dump + angulation numbers + device refs in ONE pass).
