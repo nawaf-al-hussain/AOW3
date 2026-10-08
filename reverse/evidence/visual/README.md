@@ -30,6 +30,10 @@ the camera to the manifest pose, and screenshots after settle.
 
 ## Device-reference capture spec (R1 session, shared cost)
 
+Executed as steps S2–S3 of the consolidated single device pass in
+`reverse/evidence/prototype-data/on-device-run.md` (§ "Single-pass consolidation") —
+one session also produces the R1 balance dump and the V1-b camera angulation numbers.
+
 Same ids, same 1280×720 landscape viewport, same seed/scenario semantics:
 
 1. On the device, reach the same jungle map at the same in-battle moment class

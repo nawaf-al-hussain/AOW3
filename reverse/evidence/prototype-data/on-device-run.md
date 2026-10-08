@@ -129,3 +129,80 @@ Both captures can share **one** Frida spawn session: run
 command line, comma- or double-`-l` per frida version), one transcript per tool. The
 pipelines stay separate: Obfuz = code constants; R1 = ST dictionary payloads. Do not
 decode one with the other's tooling.
+
+## Single-pass consolidation: R1 balance + V1-b camera + V8 device refs (one session)
+
+The visual work (visual-fidelity-audit §21 V1-b/V4/V8) and the balance capture share
+their largest cost — the device session itself. This section merges all three capture
+streams into ONE pass. Prerequisites and version pinning above apply unchanged
+(`libil2cpp.so` sha256 `8ace05bb…`; the camera RVAs below are pinned to the same
+build — any other version → STOP and re-pin everything together).
+
+**One command (from the repo root):**
+
+    frida -U -f com.geargames.aow \
+      -l reverse/tools/r1_dictionary_dump.js \
+      -l reverse/tools/r1_camera_angulation_dump.js \
+      -o r1_session.jsonl --runtime=v8
+
+Events interleave in one transcript: `[R1]{...}` = balance/dictionary stream,
+`[R1-CAM]{...}` = camera stream (`grep '\[R1-CAM\]'` separates them; the pipelines
+stay separate downstream — decode each with its own tooling).
+
+**Order of operations (S1–S4):**
+
+- **S1 — balance at login (existing runbook flow).** Spawn with the command above,
+  stay on the main menu until the `rescfg` / `msg111` / `setdata` events fire
+  (§Expected output contract). Do not Ctrl-C yet.
+- **S2 — camera stream (new).** Enter **one battle on the jungle map** (the browser
+  scenarios are jungle — same lighting/terrain family as the reference frames).
+  The camera hook self-arms on the first frame (`instance` event). Then:
+  1. zoom OUT to max, zoom IN to min, twice — the 500 ms poller records
+     (distance, angulation band, rotationY) across the full range;
+  2. drag-orbit the camera through a full circle — `roty_clamp` events bound the
+     yaw range the browser wraps to [0, 2π);
+  3. optionally produce/fire one known unit for the §12-D/E experiments.
+  Success for this stream: an `instance` event + ≥ 20 `cam` snapshots spanning
+  DistanceMin..DistanceMax, and the `cam_first` snapshot showing non-null
+  `angulationMin/Max` and a full `distance` table. Units of the angulation band
+  are disambiguated in-script (raw + both interpretations — radians if > 2.0).
+- **S3 — device reference frames (V8 protocol).** In the same battle (or re-enter
+  it), capture the six reference frames listed in
+  `reverse/evidence/visual/README.md` ("Device-reference capture spec"): same ids
+  (`overview-far`, `tactical-mid-yaw`, `tactical-close`, `field-north-yaw`,
+  `slope-detail`, `slope-detail-cross`), 1280×720 landscape, landmark alignment to
+  the browser shots, raw provenance. Pull and name them `ref-<id>.png`.
+  These frames also double as the **shadow-direction / pitch verification** for the
+  §9 sun azimuth and the V1-b pitch ramp (the two items the local evidence could
+  not calibrate — see audit §22 V4 entry).
+- **S4 — pull + sanitize.** As below (§Where output is stored) — plus the
+  `ref-*.png` files and the full `r1_session.jsonl` (both `[R1]` and `[R1-CAM]`
+  lines pass the same §Sanitizing review; camera events carry no personal data,
+  but the review stays whole-transcript).
+
+**Artifact manifest of the single pass:**
+
+| artifact | feeds | destination |
+|---|---|---|
+| `r1_session.jsonl` (`[R1]` lines) | balance dictionary decode → `prototype-data/` | scratch → sanitize → repo decode |
+| `rbi` cache pull (fallback) | same as above | scratch → sanitize |
+| `r1_session.jsonl` (`[R1-CAM]` lines) | V1-b angulation/distance calibration | `reverse/notes/` camera-calibration note |
+| `ref-<id>.png` ×6 | V8 side-by-sides + Hamming; §9 sun azimuth; V1-b pitch shape | `reverse/evidence/visual/` |
+| battle/device metadata (§Verifying success #5) | provenance for all of the above | worklog + notes |
+
+**Repo-side after the pass (one commit each):**
+
+1. Dictionary decode → `reverse/evidence/prototype-data/` (existing pipeline,
+   inventory.md §5).
+2. Camera calibration note in `reverse/notes/` — replace the browser's [SPEC]
+   camera numbers: `CAM_DIST_MIN / CAM_DIST_MAX / CAM_ANG_MIN / CAM_ANG_MAX` and
+   the `[SPEC]` comment block at the `camAngulation()` definition in `docs/game.js`
+   (search: `V1-b`), relabeling them `[DECOMP]` with the recovered values; if the
+   yaw clamp events show a different wrap range, update the yaw wrap too. Re-run
+   the visual harness; every aHash shift must be explainable (units/camera pose
+   change → expected).
+3. Drop `ref-<id>.png` into `reverse/evidence/visual/`, re-run
+   `reverse/tools/visual_harness.mjs` — it composes the side-by-sides and records
+   Hamming distances (README interpretation rules apply: no percentages).
+4. Record the §9 sun-azimuth decision (keep or rotate the browser sun) from the
+   shadow directions visible in the refs; update audit §22.
