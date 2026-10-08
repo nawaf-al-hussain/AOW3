@@ -375,9 +375,25 @@ def assemble_v2(name, hash_prefix):
             m = unpack_mesh(d)
             if m["v"] is None or len(m["v"]) < 12:
                 return None
+            # glTF V-down convention fix (V4, 2026-10-09): Unity UVs are V-up
+            # but GLTFLoader samples with flipY=false (V-down). Writing the raw
+            # Unity UVs makes every mesh sample the vertical mirror of its
+            # atlas region — f1/f2 inf_heavy landed on the page's pure-black
+            # filler quadrant and rendered as black silhouettes under any
+            # light. Evidence: reverse/evidence/visual/probe_inventory.json +
+            # probe6-*.png; visual-fidelity-audit §5/§22. The decor path
+            # (assemble_decor) already handles this in its own remap.
+            # NOTE: docs/game.js preloadGlbModels carries a matching runtime
+            # compensation (search marker "V4-UV-FLIP") for the GLBs already
+            # committed; when GLBs are REGENERATED with this fix, remove that
+            # block or the two flips cancel and the defect returns.
+            uvf = (m["uv"].astype(np.float32) if m["uv"] is not None and m["uv"].size else np.zeros(0, np.float32))
+            if uvf.size:
+                uvf = uvf.copy()
+                uvf[:, 1] = 1.0 - uvf[:, 1]
             mesh_cache[pid] = {"v": m["v"].astype(np.float32),
                                "n": (m["n"].astype(np.float32) if m["n"] is not None and m["n"].size else np.zeros(0, np.float32)),
-                               "uv": (m["uv"].astype(np.float32) if m["uv"] is not None and m["uv"].size else np.zeros(0, np.float32)),
+                               "uv": uvf,
                                "idx": m["idx"].astype(np.uint32), "sub": m["sub"], "name": d.m_Name,
                                "bidx": m.get("bidx", np.zeros(0, np.uint32)),
                                "w": m.get("w", np.zeros(0, np.float32)),
