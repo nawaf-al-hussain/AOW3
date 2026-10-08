@@ -1594,3 +1594,103 @@ Stage Summary:
 - V3 confirmed done and honest end-to-end (code + live). Next cheapest per §21:
   V6 (wire extracted flame/part sprites — evidence-anchored, no device) or V4
   (materials/lighting calibration after V2 settles).
+
+---
+Task ID: 48b
+Agent: Super Z (main)
+Task: V4 lighting/material calibration, then the single R1 device pass
+  (balance + angulation numbers + device refs together)
+  (ID 48b: origin's 95a32ca already holds a different "Task ID: 48" — the
+  V3 truth-out verification; append-only order preserved, no entry edited)
+
+Work Log:
+- Baseline re-sync first: HEAD 41220e0, tree clean; 8/8 suites re-run green
+  (877-assertion baseline family); v=49 confirmed live. Audit §9/§10/§5/§21-V4
+  + the Task-47 QA filing ("units read near-black at low pitch") reviewed.
+- V4 evidence chain (scripts under /home/z/my-project/scripts/, probes in
+  reverse/tools/v4_*.mjs, artifacts in reverse/evidence/visual/):
+  1) GLB PBR audit (glb_material_audit.py): 30/30 unit/building materials
+     authored metallic 0.0 / roughness 0.90 — metalness hypothesis RULED OUT.
+  2) Per-light ablation (v4_light_probe.mjs): the black unit stays black under
+     hemisphere-only AND sun-only AND fill-only — not a rig-intensity issue.
+  3) Live material truth (probe_inventory.json): unit materials are white
+     diffuse M=0 with a loaded 256px map — material state clean.
+  4) Texture/UV ground truth (v4_swap_probe/v4_uv_probe + probe2_texture_uv.json):
+     swapping map=null brightens the unit ~2x in the same run; solid-red map
+     shows through -> sampling reaches the shader; the f1_inf_heavy/iheavy UV
+     quadrant [0.51..1]x[0.5..1] lands on the page's PURE-BLACK filler
+     (per-quadrant means: q11=(2,2,3)); f1_inf_light.glb and f1_inf_heavy.glb
+     embed byte-identical atlas pages (sha d5189cc6...) — shared page, two
+     quadrants; the page's top-right quadrant holds the missing heavy-infantry
+     panel art.
+  5) ROOT CAUSE: assemble_v2.py's unit path writes Unity V-up TEXCOORD_0 raw
+     (extract_v3.py unpack_mesh reads UVs unflipped; only the decor path
+     compensates — its "undo v-flip" comment), while GLTFLoader samples
+     V-down. Every unit/building template samples its atlas V-MIRRORED;
+     usually masked (mirrored content is still panels), fatal for iheavy.
+  6) Fix validated LIVE before commit (v4_flip_probe.mjs / probe6-A vs
+     probe6-B): V-negation restores the authored blue armor.
+- V4 fixes (two commits + evidence commit + audit commit):
+  - docs/game.js preloadGlbModels: runtime V-compensation (marker V4-UV-FLIP),
+    template path only (decor GLBs untouched — their path already remaps);
+    loud cross-reference: DELETE when GLBs are regenerated or flips cancel.
+  - pipeline/assemble_v2.py get_mesh: source fix — V_gltf = 1 - V_unity for
+    future regenerations.
+  - Removed the decor brightness multipliers x1.3/x1.2 (game.js): they
+    compensated the pre-V2 0.62-opacity wash. Measured effect after V2 is
+    NEGLIGIBLE (tonemap clamp absorbs it: 12,367 shadow-side px changed,
+    medY 83.8 -> 83.4) — removal is a provenance win, not a visual one.
+  - Measured and RECORDED, not corrected: rendered-vs-minimap luma ratio
+    1.267 and B-chroma excess +0.31 (v4_exposure_capture.mjs +
+    v4_exposure_analysis.py, fog ruled out by re-measuring at dist 14).
+    The extracted minimap's saturation grade is unverified — a tint/rig
+    invention would violate the evidence rule. Rig (hemi/sun/fill/exposure)
+    and PCFShadowMap UNCHANGED.
+  - §9 sun-azimuth cross-check EXECUTED with a NEGATIVE result
+    (v4_sun_azimuth_fit.py): Lambert fit of minimap luminance vs heightfield
+    normals gives R^2 = 0.001, equal to the shuffled-target control — the
+    minimap carries no measurable directional shading. Azimuth stays [SPEC];
+    re-anchors from device refs.
+- V8 re-run at v=50: all 6 scenarios re-captured; aHash shifts are the
+  EXPECTED, explainable consequence (units now render authored colors).
+  Verified visually: tactical-close + tactical-mid-yaw show the heavy
+  infantry/HQ/units with authored blue/gray art instead of black blobs.
+- Tests after changes: 8/8 suites, 0 fail (accuracy, commands-determinism
+  50, data-model 379, lockstep-jip 88, phase5 236, replay 45, stat-caps 37,
+  unit-fsm 29). node --check clean (game.js + frida script). v=49 -> v=50.
+- Single R1 device pass consolidated (r1 commit):
+  - NEW reverse/tools/r1_camera_angulation_dump.js — [R1-CAM] stream: hooks
+    get_CurrentDistance (0x8279A2C, instance capture), InternalApply
+    (0x8279754, applied-state markers), EnsureRangeRotationY (0x8279F90,
+    yaw-clamp bounds); 500ms poller emits cam snapshots with
+    m_angulationMin/Max (0x38/0x3C, raw + radians/degrees both
+    interpretations) and the full CameraDistanceData table (0x40 ->
+    DistanceMin/Max 0x2C/0x30, DefaultDistanceMax 0x34, StartDistance 0x38,
+    tablet/spectator/overscroll factors). RVAs pinned to the same
+    libil2cpp.so sha (8ace05bb) as r1_dictionary_dump.js.
+  - on-device-run.md: new section "Single-pass consolidation" — ONE frida
+    spawn with both -l scripts; S1 balance at login -> S2 camera stream in a
+    jungle-map battle (zoom sweep x2 + full yaw orbit; success = instance +
+    >=20 cam snapshots spanning the distance range) -> S3 the six V8
+    ref-<id>.png captures (same ids/viewport; double as shadow-direction +
+    pitch-shape verification) -> S4 pull + whole-transcript sanitize.
+    Artifact manifest table + repo-side steps (decode; replace
+    CAM_ANG_MIN/MAX + CAM_DIST_MIN/MAX [SPEC] band at camAngulation() —
+    search V1-b; drop refs, re-run harness; record the §9 azimuth decision).
+  - visual/README.md device-ref section now points at the consolidated flow.
+- Commits: b2b33b0 (renderer V4 + v=50), 7780b3f (pipeline source fix),
+  9219803 (audit §22 V4 addendum), r1-consolidation commit, this worklog.
+
+Stage Summary:
+- The flagship V4 finding: the "lighting" defect was never lighting — it was
+  a UV V-convention bug in the assembler's unit path, proven by a 6-step
+  evidence chain and fixed at BOTH levels (runtime compensation + assembler
+  source fix) with an explicit de-duplication marker for asset regeneration.
+- Everything the local evidence could not calibrate is now explicitly parked
+  on the device session: sun azimuth (fit attempted, negative, control-equal),
+  rig brightness/tint (minimap stylization unverifiable), shadow softness,
+  and the angulation band units/ramp — all feed from the single R1 pass,
+  whose runbook now produces balance + camera + reference frames in one go.
+- Known remaining: GLB regeneration from the XAPK with the fixed assembler
+  (then delete the V4-UV-FLIP block), [SPEC] labels until the device pass,
+  V5 flags/rank icons, V6 VFX depth, V7 UI font/metrics.
