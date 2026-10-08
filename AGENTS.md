@@ -1439,6 +1439,22 @@ The goal is not to make the browser version "feel like" AOW3.
 
 The goal is to make the browser version **behave like AOW3**.
 
+**Owner disposition (2026-10-09, post-R2):** R2 (Task 42) closed the Obfuz question
+without a device — pool decoded statically 697/697 (`reverse/evidence/obfuz/`,
+`reverse/tools/obfuz_static_decode.py`): Obfuz protects code-level behavior/AI/
+verification constants (task ids, thresholds, flags, fixed-point factors, log
+formats), NOT balance, and is NOT part of the R1 resource pipeline. The owner
+directed that the decoded constants be folded into the Build E/F-derived browser
+models (fire-discipline task semantics per `attack-path-fire-discipline.md` §R2 —
+DontShoot=8 idempotence constant, $ce=3 task threshold, attack-order task=NONE
+write, set_FlagShoot=-1; per-mille siege accumulator per
+`siege-stage-boundary-split.md` §R2 — DEN=1000 milli-tick fixed point) in a
+**future implementation task**, with its own evidence-diff, QA, and test-vector
+delta — R2 completion alone does not authorize immediate browser changes. R1's
+on-device dictionary dump (Task 41 runbook, `BLOCKED — DEVICE REQUIRED`) remains
+the **sole** blocked capture for 1:1 balance values; every other capture is either
+resolved statically or optional verification.
+
 ---
 
 # 35. Deploy & Verify Workflow [NOW]

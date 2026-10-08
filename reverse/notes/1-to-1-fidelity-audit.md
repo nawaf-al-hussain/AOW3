@@ -729,7 +729,7 @@ P4 = future/platform work.
 | R2 | Obfuz pool plaintext values (task ids, `$ce` threshold, siege DEN/stage fractions, `set_FlagShoot` value) | Converts last MEDIUM pool-dependent decodes to CONFIRMED | Pool ciphertext exists only in device memory | `$GOA/$mOA`, builders 0x497F474/0x497F82C, wrapper 0x5264EA8 | VM+key cracked; 697/697 triples; **Build H (Task 39): portable two-command decode — committed key `reverse/tools/obfuz_secret_key.bin`, runbook `reverse/evidence/obfuz/on-device-run.md`, clean-sandbox re-validated** | ~~the one device run~~ **RESOLVED by R2 (Task 42): static decode complete — 697/697 values, 0 device** — `reverse/tools/obfuz_static_decode.py` -> `reverse/evidence/obfuz/obfuz-pool-values.json` (DEN=1000, DontShoot=8, $ce=3, set_FlagShoot=-1; see obfuz-pool-emulation.md §9) |
 | R3 | What is the native tick rate? | Anchors all timing (B6); validates 20 Hz | Client tick pacing / network cadence | `FIRE_TICK_LENGTH=4`, `shot_tick[]`, `senderTick` | tick-grid existence | rate + phase | on-device frame/tick instrumentation; or statistical analysis of native match network traffic |
 | R4 | How is damage applied per hit (cadence, ordering, rounding)? | Validates `applyHit` reconstruction (B4) | live-sim events (server) | damage pipeline consumers | pipeline ends at UI (§3.5) | application semantics | controlled device experiments (Phase 24 scenarios A/B), frame-stepped video vs browser replay |
-| R5 | `$Pg` per-branch micro-logic (44,684 B) | Exact leash/defend/return behavior | full disasm exists | `$Pg`, UnitAct statics +0xC/+0x10 | 9 cmp-immediates; data-not-literal finding | branch-by-branch semantics | continue Capstone branch enumeration (Obfuz pool values needed first → R2) |
+| R5 | `$Pg` per-branch micro-logic (44,684 B) | Exact leash/defend/return behavior | full disasm exists | `$Pg`, UnitAct statics +0xC/+0x10 | 9 cmp-immediates; data-not-literal finding | branch-by-branch semantics | continue Capstone branch enumeration (Obfuz pool values now available — Task 42 — use them to pin branch constants) |
 | R6 | TakePositions 15-bit cell-class per-bit semantics | Exact formation/placement rules | `UnitTakePositionsManager` decode | occupancy masks 0x215F/0xFEE0/0xFEFD | masks + category rules CONFIRMED | per-bit cell meanings | targeted disasm + on-device observation of placement orders |
 | R7 | Native visibility/sight rules | Fog 1:1 (H4); matters for MP | `UnitStateType.sight/sight_curr` consumers | sight fields, spectator/observation code | fields exist | rule set | client-side observation code disasm + runtime experiments |
 | R8 | `m_bulletTrajectoryType` / `m_gravity` semantics | Real projectile arcs (G10) | weapon schema consumers | `WeaponType` fields 0x3C/0x3E | schema extracted | consumer logic | xref scan of field offsets in weapon/spawn code |
@@ -799,16 +799,25 @@ original's parameters are simply not in the APK.
 
 Adjusted from the charter's default sequence; the evidence justifies three changes:
 (a) the deterministic regression suite already exists (step 11) — it must simply be kept
-green and extended with each change; (b) runtime capture (R1/R2) must precede any combat
-"value verification", because static RE is exhausted; (c) the simulation-boundary extraction
+green and extended with each change; (b) runtime capture (R1) must precede combat
+"value verification" that depends on balance values — R2 is no longer a runtime
+dependency (resolved statically, Task 42: Obfuz pool 697/697 values, behavior
+constants only, no device); (c) the simulation-boundary extraction
 (12) is cheap and should precede the Rust PoC rather than follow UI polish.
 
 1. **Fix/verify simulation architecture** — done and proven (§5.A); keep the accumulator,
    hash, and replay invariants under test with every change.
-2. **Close critical reverse-engineering gaps** — R1 (runtime balance capture), R2 (Obfuz
-   pool, one device run), R3 (tick rate).
+2. **Close critical reverse-engineering gaps** — R1 (runtime balance capture — the sole
+   remaining device-blocked capture), R2 (Obfuz pool) DONE statically (Task 42: 697/697
+   values, no device — behavior constants, NOT balance, NOT in the R1 pipeline),
+   R3 (tick rate).
 3. **Verify combat** — re-import native values when R1 lands; remove inventions (I1);
-   validate application against device footage (R4).
+   validate application against device footage (R4). Owner-directed follow-up
+   (2026-10-09): fold the R2-decoded constants into the Build E/F-derived browser models
+   in a **future implementation task** — fire-discipline task semantics (DontShoot=8
+   idempotence constant, $ce=3 task threshold, attack-order task=NONE write,
+   set_FlagShoot=-1) and the per-mille siege accumulator (DEN=1000 milli-tick fixed
+   point) — each fold-in carrying its own evidence diff, QA and test-vector delta.
 4. **Verify unit/building state machines** — R5/R6 decodes → phase5-style vectors.
 5. **Verify movement/pathfinding** — slot/collision system (I6), water (I5).
 6. **Verify economy/production** — cancel/refunds/rally/repair/upgrade (I4), EnergyNeed (I8).

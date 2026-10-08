@@ -1336,3 +1336,35 @@ Stage Summary:
   R1 resource pipeline. The 697-value plaintext, the cipher chain, the key and the
   reproducible decoder are committed. R1's device run remains the only blocked
   capture; the Obfuz device run is now optional cross-checking only.
+
+---
+Task ID: 43
+Agent: Super Z (main)
+Task: R2 closure — owner disposition registered (fold-in deferred; R1 sole blocked capture)
+
+Work Log:
+- Synced the wiped sandbox back to origin/main (fast-forward a45b93d -> d7d4050); the R2
+  commit (Task 42) was already pushed from the prior session. Verified all 10 R2 deliverables
+  present and intact: evidence-matrix.md (12 anchored rows + Q1-Q7 answers), inventory.md,
+  obfuz-pool-values.json (697 triples), obfuz_static_decode.py, both Build E/F addenda,
+  audit R2-row update, worklog entry.
+- Re-ran the full regression baseline honestly (no faking): accuracy 13 + commands-determinism
+  50 + data-model 379 + lockstep-jip 88 + phase5 213 + replay 45 + stat-caps 37 + unit-fsm 29
+  = 854/854 assertions, all 8 suites rc=0, zero fail marks — matches the R2 commit claim.
+- Registered the owner disposition (2026-10-09):
+  (1) The decoded Obfuz constants are to be folded into the Build E/F-derived browser models
+      (fire-discipline task semantics: DontShoot=8 idempotence, $ce=3 threshold, attack-order
+      task=NONE write, set_FlagShoot=-1; per-mille siege accumulator: DEN=1000 milli-tick
+      fixed point) in a FUTURE implementation task with its own evidence diff, QA and
+      test-vector delta — R2 completion does not authorize immediate browser changes.
+  (2) R1's on-device dictionary dump (Task 41 runbook, BLOCKED — DEVICE REQUIRED) remains
+      the SOLE blocked capture for 1:1 balance.
+- Updated AGENTS.md Current Phase Note (dated disposition paragraph) and the audit
+  (1-to-1-fidelity-audit.md) §10: R2 removed as a runtime dependency, step 2 marks R2 done
+  statically + step 3 carries the fold-in follow-up, R5 row notes pool values now available.
+- No browser changes (docs/ untouched); no reverse-tooling changes.
+
+Stage Summary:
+- R2 formally closed per owner disposition: decoded constants registered as a future
+  implementation task (audit §10 step 3), R1 re-affirmed as the sole device-blocked
+  capture, 854/854 baseline re-verified on the synced tree. HEAD d7d4050 + this doc commit.
