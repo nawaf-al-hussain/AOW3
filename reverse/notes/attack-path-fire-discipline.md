@@ -52,3 +52,20 @@ The UnitsMove application inventory contains NO spec-stream writes: `AICommUnits
 - `orderedEngagement(u)` predicate: `order.kind === "attackMove" && order.x === undefined && targetId !== undefined` — uniquely identifies commandAttack-issued orders with a live ordered target (commandAttack @game.js sets `{kind:"attackMove", x:undefined, y:undefined}` + targetId + preferredId; commandMove attackMove always carries x/y; updateTargeting clears targetId/preferredId when the target dies).
 - All five fire gates (`shoot`, `fireShell`, bombard shell, `meleeStrike`, `shootBuilding`) now read `u.fireHold && !this.orderedEngagement(u)` — an explicit attack order fires through hold-fire; every other path stays suppressed; stickiness is preserved after the target dies.
 - Determinism: all three predicate inputs are already lockstep-serialized state (order.kind, order.x, targetId in the U-line); no new state introduced.
+
+## R2 addendum (Task 42) — the pool residuals are CONFIRMED
+
+The Obfuz pool is now decoded statically (697/697 — `reverse/evidence/obfuz/
+obfuz-pool-values.json`, note `obfuz-pool-emulation.md` §9). The constants this note
+left UNRESOLVED resolve to:
+
+- pool statics +0x04 = 2603447459, +0x08 = 0 — the `mul w2, w8, w9` task argument at
+  0x490DC48 evaluates to (V1*V2) mod 2^32 = **0 = UnitTaskType.NONE** (valid task id;
+  the multiplier pair is the obfuscation of a constant task write).
+- pool statics +0x14 = **3** — the `$ce` task threshold.
+- pool statics +0x64 = **8** — the DontShoot idempotence constant = DONT_SHOOT task id
+  (matches the `UnitTaskType` enum and the get_Task compare at 0x490AC5C/0x490CB04).
+- pool statics +0x374 = **-1 (0xFFFFFFFF)** — the `set_FlagShoot` value.
+
+The four numeric rows above upgrade MEDIUM/UNRESOLVED -> CONFIRMED (semantic cross-
+checks pass natively: task-id ranges and the DEN product, see the R2 note).

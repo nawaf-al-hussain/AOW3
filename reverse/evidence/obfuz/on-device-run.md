@@ -1,5 +1,10 @@
 # Obfuz pool — the on-device run (Build H runbook)
 
+> **R2 status (Task 42): OPTIONAL VERIFICATION ONLY.** The pool is decoded statically
+> (697/697 — `obfuz_static_decode.py` -> `obfuz-pool-values.json`; note §9). This runbook
+> remains useful as an independent cross-check: the device (cipher, plain) segment pairs
+> re-verify the CBC model on real device bytes, and the canary witnesses the VM boot.
+
 One capture command on the device + one decode command on the host decode all 697
 `$Obfuz$ConstFieldHolder$0` pool values and convert the remaining pool-dependent
 constants to CONFIRMED: the Build E task-id factors (statics+0x004/0x008), the

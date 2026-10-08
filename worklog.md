@@ -1286,3 +1286,53 @@ Work Log:
 
 Stage Summary:
 - R1 status: BLOCKED — DEVICE REQUIRED. The static half is complete and evidence-backed: the authoritative source is conclusively the developer backend via the login socket (ST dictionaries + rbi cache), not the APK; one device session (runbook, 2 commands) captures everything. Next device actions: run reverse/tools/r1_dictionary_dump.js per on-device-run.md; then decode→EStat-map→browser comparison→(separate implementation task) re-import with fixture/hash re-baselining.
+
+---
+Task ID: 42
+Agent: Super Z (main)
+Task: R2 — Obfuz pool investigation (evidence-only): what Obfuz protects, whether it
+contains gameplay/balance data, and whether the plaintext is statically recoverable
+
+Work Log:
+- Read all prior Obfuz evidence (Builds G/G2/H), R1 note §8 boundary, audit R2/R5 rows;
+  re-verified version pins (libil2cpp 8ace05bb…, dump.cs 0050e67d…) and re-extracted
+  global-metadata.dat (d2e8dd0d…) + the secret-key asset from the XAPK (LFS fetch,
+  sha 1a41e033… matches the pointer; key blob 885f4d0c… byte-identical to the
+  committed artifact).
+- Traced the InitializeArray RuntimeFieldHandle chain end-to-end in native code:
+  usage slots (.rela.dyn -> token cells 0x9931050+) -> FieldInfo usages (type 4,
+  fieldRefs hdr[46]) -> $Obfuz$RVA$0/$Obfuz$RVA$1 data fields -> fdv (hdr[16]) ->
+  dataIndex -> data blob (hdr[18]) -> the 8-10 2048-B ciphertext blocks (abs offsets
+  0xDBBBD0+0x808*N / 0xDBF408+0x808*N; dump.cs "Metadata offset" annotations agree;
+  Roslyn content-SHA names verify the mechanism 3/3 on sibling fields).
+- Corrected Build G2: (1) the ciphertext was NEVER device-only — the fdv delta
+  inference missed 2048-B blocks due to 8-byte alignment padding (spans 2056);
+  (2) the holder reads $Obfuz$RVA$1 (mgr2) segments, not mgr1's; (3) accessor
+  semantics disassembled: $gK -> BitConverter.ToInt32 -> $GOA (no CBC), $FK string
+  subrange with $GOA(keyA=salt, salt=keyC), $iOA float mantissa mask,
+  $mOA/$MOA encrypt/decrypt pair.
+- Re-validated $GOA twice: game canary in Unicorn + hand-decode of the canary's 4
+  opcode cases (key[219/58/176/2]); encrypt/decrypt round-trip; ExecuteDecrypt
+  touches only [VM+0x10] (no hidden state).
+- Wrote reverse/tools/obfuz_static_decode.py (per-callsite segment tracking, floats
+  via $iOA, strings via $FK): decodes 697/697 (629 int / 66 string / 2 float),
+  0 CIPHER_UNSURE -> reverse/evidence/obfuz/obfuz-pool-values.json.
+- Semantic proofs: pool[0x364]*pool[0x368] mod 2^32 = 1000 (siege DEN, per-mille
+  fixed point), statics+0x64 = 8 = DONT_SHOOT, statics+0x14 = 3 = $ce threshold,
+  set_FlagShoot = -1, task = (V1*V2) = 0; 66 coherent log strings ('PathSchedError:',
+  'SId ', 'income ', " doesn't exist on client, ").
+- Consumer census: 3,163 accessor sites / 120 classes (UnitAct 487, BattleAchievements
+  141, PathAct 140, FlightAct 119, BattleAct 114, ShotAct 102, BuildingAct 93,
+  CheckAndCalc 81, AIComm* ~150) — behavior constants, NOT balance.
+- R1 boundary proven by scan: DoResourceLoaded/ProcessDictionary/SetData/
+  ResourceAnswer/LoadSerializableResourceAsync contain ZERO accessor calls.
+- Deliverables: inventory.md, evidence-matrix.md, note §9, Build E/F CONFIRMED
+  addenda, audit R2 row update, on-device-run.md demoted to optional verification.
+  No browser changes. Tests: 854/854 (8 suites, real run).
+
+Stage Summary:
+- R2 = COMPLETE (static): Obfuz protects code-level constants of behavior/AI/
+  verification systems; it contains NO balance data and does NOT participate in the
+  R1 resource pipeline. The 697-value plaintext, the cipher chain, the key and the
+  reproducible decoder are committed. R1's device run remains the only blocked
+  capture; the Obfuz device run is now optional cross-checking only.

@@ -204,3 +204,63 @@ correctness of the emulated decryptor.
   (on-device-run.md), at which point every remaining MEDIUM/UNRESOLVED
   pool-dependent constant (Build E task ids, $ce threshold, Build F stage
   fractions, flag_shoot, DEN) converts to CONFIRMED in a single step.
+
+## 9. R2 RESOLUTION (Task 42) — the pool is decoded STATICALLY, 697/697
+
+R2 re-opened §7's "static path CLOSED" and closed it the other way. The G2 negative was
+a false negative; every step below is disassembly-verified against the pinned binary.
+
+- **The ciphertext was on disk all along.** The InitializeArray RuntimeFieldHandles
+  resolve through statically readable data: usage slot (VA 0x9691FC8.., .rela.dyn
+  R_AARCH64_RELATIVE addend -> token cell 0x9931050+, raw content) -> encoded
+  `(type<<29)|(index<<1)|1`, type 4 = FieldInfo -> `fieldRefs[index] = {typeIndex,
+  perTypeFieldIndex}` (metadata hdr[46], 8 B) -> type via byvalTypeIndex ->
+  typeDef.fieldStart + perType -> global fieldIndex -> fdv (hdr[16], 12 B) -> dataIndex
+  -> data blob (hdr[18]) -> the 2,048-byte block. The blocks sit at absolute metadata
+  offsets **0xDBBBD0 + N*0x808** (`$Obfuz$RVA$0.$RVA_Data0..6`) and **0xDBF408 +
+  N*0x808** (`$Obfuz$RVA$1.$RVA_Data0..2`) — matching dump.cs "Metadata offset"
+  annotations exactly. G2 §7(a)'s delta-inference missed them because fdv blocks carry
+  8-byte alignment padding (spans are 2056, not 2048). The same mechanism is pinned
+  content-wise by the Roslyn content-SHA field names of the sibling
+  `<PrivateImplementationDetails>` 2048-B fields (sha256(block) == field name, 3/3).
+- **The holder reads `$Obfuz$RVA$1` (mgr2), not mgr1** — correction to §6: segment
+  0x1008 = RVA1.Data1 @0xDBFC10 (keyA 0x5B300BF1, salt 0x8952D5F4), segment 0x1810 =
+  RVA1.Data2 @0xDC0418 (keyA 0xF91F0C58, salt 0x9A457001 — the legacy 'b2@0x1810'
+  SEG_KEYS pair, now verified). mgr2's builder builds THREE segments (0x800/0x1008/
+  0x1810), not two.
+- **Accessor semantics, disassembled**: `$gK` @0x5265B74 -> 0x8EA82F8 =
+  bounds-checked `BitConverter.ToInt32(seg, start)` -> `$GOA(raw, keyA, salt)` — no CBC
+  at the accessor. `$FK(data, start, len, salt, keyC)` -> `$kK` subrange with
+  `$GOA(keyA=salt, salt=keyC)`. `$iOA` @0x7712728: mantissa ^=
+  `$GOA(0xABCD, keyA, salt) & 0x7FFFFF` (exp>=0xFE unchanged). `$mOA`/`$MOA` = the
+  in-place ENCRYPT/DECRYPT pair (`$mOA` -> `$gOA` vtable 0x288, `$MOA` -> `$kK` ->
+  `$GOA` vtable 0x298); the wrapper 0x5264EA8 resolves $E interface slot 2 = `$MOA`
+  (decrypt) — the builder therefore CBC-DECRYPTS the fdv block into the statics at
+  class-init, and the accessors apply the per-value layer on top.
+- **`$GOA` re-validated twice**: (1) the game canary in Unicorn (Build G, re-run);
+  (2) hand-decode of the canary's 4 opcode cases (0x70/0xE1/0x5E/0x54 -> key[219/58/
+  176/2], ALU chains read instruction-by-instruction) reproduces 0x12345678. The
+  encrypt/decrypt inverse pair was additionally round-trip-checked
+  (ENC(0xDEADBEEF) -> DEC = 0xDEADBEEF). ExecuteDecrypt touches ONLY [VM+0x10]
+  (255 refs) — no other VM state exists (dump.cs: sole field `_secretKey`).
+- **Result**: `reverse/tools/obfuz_static_decode.py` decodes **697/697 (629 int /
+  66 string / 2 float), 0 CIPHER_UNSURE** -> `reverse/evidence/obfuz/obfuz-pool-values.json`.
+  Semantic proofs embedded as self-checks: statics+0x64 = 8 (DONT_SHOOT task id),
+  statics+0x14 = 3 ($ce threshold), statics+0x374 = -1 (set_FlagShoot),
+  pool[0x364]*pool[0x368] mod 2^32 = **1000** (the siege fixed-point DEN — Build F's
+  fractions are per-mille), (pool[4]*pool[8]) mod 2^32 = 0 (valid task id), and 66
+  coherent log-format strings ('PathSchedError: version=', 'SId ', 'income ',
+  " doesn't exist on client, ", 'gaiCommandExecute' debug tag, quest-markup strings).
+- **Consumer census** (whole-binary BL scan -> dump.cs method index): 3,163 accessor
+  call sites / 120 classes — UnitAct 487, BattleAchievements 141, PathAct 140,
+  FlightAct 119, BattleAct 114, ShotAct 102, BuildingAct 93, CheckAndCalc 81, GAIAct 55,
+  AICommVerify 47, SideAct 45, Battle 43, BattleSide 34, AICommCRCAnswer 28 …
+- **R1 relationship**: Obfuz is NOT part of the prototype-data pipeline — BL scan of
+  DoResourceLoaded/ProcessDictionary/SetData/ResourceAnswer.get_Type/
+  LoadSerializableResourceAsync finds ZERO accessor calls; the pool contains no
+  stat-shaped data. R1 note §8 boundary upheld with direct evidence.
+- Build E/F residuals flip to CONFIRMED (see the addenda in their notes). No browser
+  change. The device run (§7a) is now an optional cross-check, not a requirement.
+
+Verdict delta vs §"Verdict": the G2 line "the full 697-value decode is one on-device
+run away" is superseded — **the decode is complete, offline and committed**.

@@ -102,3 +102,13 @@ the corrected native model is recorded for the Obfuz-value follow-up.
   accessors; writer/reader inventory; $ce as the TickFromSpec-bound behaviour driver.
 - MEDIUM (unchanged): the numeric stage-band fractions — Obfuz-encrypted pool values,
   precisely bounded residual (§4).
+
+## R2 addendum (Task 42) — DEN is CONFIRMED = 1000 (per-mille fixed point)
+
+pool[0x364] = 654786763, pool[0x368] = 2863142584 (decoded statically —
+`reverse/evidence/obfuz/obfuz-pool-values.json`): **DEN = (A x B) mod 2^32 = 1000**.
+siege_stage is a per-mille fractional-tick accumulator (1/1000 tick units); each
+driver pass adds its fraction in milli-ticks and the mode-8 carry rolls whole ticks
+into siegeTick. The "30%-boundary analog" bands are comparisons at N/1000 of a tick
+window. Build E's multiplier pattern at mode 10 (pool[4]*pool[8]) evaluates to 0
+(constant-zero obfuscation).
