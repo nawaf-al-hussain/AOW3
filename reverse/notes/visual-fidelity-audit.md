@@ -403,6 +403,17 @@ audit proposes **no** regeneration of these files. `[EXT]`
 
 - Textures: extracted `fx/*` wired over procedural gradients at load
   (glow→flash+glow, smoke, flame, expl). `[EXT]`
+  **ATLAS CORRECTION (V6b, 2026-10-09)**: `flame.png` is the original game's
+  **1024×1024 FX particle ATLAS** (hundreds of per-frame shapes — explosions,
+  smoke, rings, bolts, tracers; this is how the original's particle prefabs
+  sampled frames), not a single sprite. Rendering it whole stretched the entire
+  sheet — caught in V6 live visual QA; the pre-existing siege-burn consumer had
+  the same defect since its introduction. `part.png` (64×64) is a genuine
+  single soft particle. Fix: derived single-frame `fx/flame-l.png` (48×80 flame
+  tongue cropped from the extracted atlas, black bg + additive blending =
+  fx pipeline convention); point-emitter flame consumers use `texFlameL`; the
+  atlas stays loaded (`texFlame`) with zero whole-render consumers for future
+  per-frame work.
 - Emitters (all sprite-quads with additive/normal blending) `[BROWSER]` `[SPEC]`
   structure with `[EXT]` textures:
   - muzzle flash at the unit's `muzzle*` bone world position, class token from
@@ -621,3 +632,18 @@ fully executable without a device, and de-risks V4's calibration pass.
   device pass attempted first per plan but no device/frida exists in the
   sandbox — R1 remains BLOCKED-DEVICE-REQUIRED with the S1–S4 runbook
   verified ready (both hook scripts `node --check` clean).
+- **V6 (2026-10-09)**: `part.png`/`flame.png` wired into muzzle/burning VFX —
+  `texPart` loader added (part.png was extracted-but-never-loaded): 2 additive
+  muzzle sparks per shot at the muzzle bone (fireCls token kept), 2 impact
+  sparks per sim-pop event (impact token kept), flame licks on burning wrecks
+  alongside smoke puffs (same 0.3s cadence, warm tint). All emitters guarded on
+  async texture arrival; family-token tagging unchanged; renderer-only.
+  Live QA caught that `flame.png` is the per-frame FX ATLAS → **V6b** derived
+  `flame-l.png` single-frame flame (also fixing the pre-existing siege-burn
+  whole-atlas render, §17). Natural-path verification: vehicle combat death →
+  `finishDeath → spawnWreck → burners.push` → flame licks emitting continuously
+  (scene census flame:1–2 across 24s of polls); texPart sparks rendered and
+  verified live; textures byte-verified on the CDN. Tests 877/877 at v=52 and
+  v=53; visual evidence `scripts/p16_v6b_flame_final.png`,
+  `scripts/p16_v6b_flame_clean.png` (atlas-grid defect + fix chain:
+  p16_v6_flame_framed2.png shows the pre-fix grid).

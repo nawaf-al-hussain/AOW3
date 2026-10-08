@@ -1751,3 +1751,39 @@ Stage Summary:
 - Flagged for a future task: fold fix_empty_skins.py semantics into
   assemble_v2.py (vehicle/building skins) and commit a hero GLB assembly
   script so future regenerations stay one-command reproducible.
+
+---
+Task ID: 50
+Agent: Super Z (main)
+Task: V6 — wire extracted flame.png/part.png sprites into muzzle/burning VFX (+ V6b atlas fix)
+
+Work Log:
+- Evidence pass: part.png had ZERO loaders (extracted-but-never-loaded); texFlame
+  had exactly 1 consumer (siege burning). Wired per §21 V6: texPart loader, 2
+  muzzle sparks per shot (fireCls token), 2 impact sparks per sim-pop (impact
+  token), flame licks on burning wrecks (texFlame 2nd consumer, 0.3s cadence).
+  Asserted patch scripts/patch_v6.py; 877/877 green; v=52 (rebased over the
+  concurrent V4/UV-fix line, own +1 over 51).
+- Live QA (v=52): texPart/texFlame loaded + byte-verified on CDN; natural-path
+  catch is timing-hostile (muzzle ttl 0.06-0.28s; units stalled at pathfinding
+  dead-end d=46; sim.pops are mine-set/capture events, NOT death pops). Breakthrough:
+  burnT/burnDps ignition → natural vehicle death → finishDeath → spawnWreck →
+  burners.push observed live (burners:1, flame licks flame:1-2 across 24s polls).
+  VISUAL catch exposed a real bug: flame.png renders as a giant white grid.
+- V6b root cause: flame.png is the original 1024x1024 per-frame FX ATLAS (the
+  mechanism behind [PROVEN MISSING] particle prefabs); part.png (64x64) is a true
+  single particle. The pre-existing siege-burn consumer rendered the atlas whole
+  since its introduction. Fix: derived fx/flame-l.png (48x80 flame tongue, crop
+  of the extracted atlas; black bg + additive = pipeline convention); wreck licks
+  + siege burn -> texFlameL; atlas loaded but never rendered whole. v=53,
+  877/877 green (asserted patch scripts/patch_v6b.py).
+- Final visual verification on deployed v=53 (browser HTML cache needed a
+  cache-busted page URL — Pages max-age=600): flame tongues render as elongated
+  licks, sparks as soft round particles; atlas grid gone. Evidence screenshots:
+  p16_v6b_flame_final.png / p16_v6b_flame_clean.png (post-fix),
+  p16_v6_flame_framed2.png (pre-fix grid).
+
+Stage Summary:
+- V6 complete with an unplanned correctness win: the atlas discovery fixes
+  siege-burn rendering everywhere. Remaining §21: V5 (units/buildings
+  presentation), V7 (UI font/HUD metrics), V8 device refs + R1 device session.
