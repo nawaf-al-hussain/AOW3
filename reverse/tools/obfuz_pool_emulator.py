@@ -22,17 +22,57 @@ End-to-end tooling for the $Obfuz$ConstFieldHolder$0 pool:
                     (residual: the InitializeArray source blocks are runtime-
                     resolved usage slots; not present in global-metadata fdv)
 
-Usage: python3.13 reverse/tools/obfuz_pool_emulator.py [--sweep]
+Usage:
+  python3.13 reverse/tools/obfuz_pool_emulator.py                  # self-test + triple inventory
+  python3.13 reverse/tools/obfuz_pool_emulator.py --dump <jsonl>   # decode all 697 pool values
+  python3.13 reverse/tools/obfuz_pool_emulator.py --sweep          # legacy metadata fdv resweep
+
+Input paths resolve as: CLI flag > env (AOW3_SO/AOW3_KEY/AOW3_XAPK/AOW3_METADATA)
+> cwd walk (up/down, incl. ./native) > committed key artifact obfuz_secret_key.bin
+> XAPK asset extraction. The host decode needs only: this repo + libil2cpp.so + the
+dump JSONL (the secret key is committed; the XAPK is only a legacy fallback).
 """
-import struct, io, re, json, zipfile, argparse
+import struct, io, os, re, json, hashlib, zipfile, argparse
 from unicorn import Uc, UC_ARCH_ARM64, UC_MODE_ARM, UC_PROT_ALL
 from unicorn.arm64_const import (UC_ARM64_REG_X0, UC_ARM64_REG_X1, UC_ARM64_REG_X2,
                                  UC_ARM64_REG_X3, UC_ARM64_REG_X30, UC_ARM64_REG_SP)
 from capstone import Cs, CS_ARCH_ARM64, CS_MODE_LITTLE_ENDIAN
 
-BASE = '/home/z/my-project/aow3-work/native/'
-XAPK = '/home/z/my-project/aow3-work/aow3.xapk'
+DEFAULT_SO = '/home/z/my-project/aow3-work/native/libil2cpp.so'
+DEFAULT_XAPK = '/home/z/my-project/aow3-work/aow3.xapk'
+DEFAULT_MD = '/home/z/my-project/aow3-work/native/global-metadata.dat'
 KEY_ENTRY = 'assets/bin/Data/0f159d0d59e64604b196175cc4fd2f85'
+KEY_ARTIFACT = 'obfuz_secret_key.bin'   # 1,024-B raw m_Script blob, committed (Build H)
+
+_SKIP_DIRS = {'.git', 'node_modules', '__pycache__', 'proc', 'sys', 'dev', 'run',
+              'tool-results', 'download', 'skills'}
+
+
+def _find(name, start):
+    """File lookup: start, start/native, walk-up (<=6), then walk-down (depth<=3)."""
+    start = os.path.abspath(start or '.')
+    d = start
+    for _ in range(6):
+        for c in (os.path.join(d, name), os.path.join(d, 'native', name)):
+            if os.path.isfile(c):
+                return c
+        if d == '/':
+            break
+        d = os.path.dirname(d)
+    if start == '/' or not os.path.isdir(start):
+        return None
+    for root, dirs, files in os.walk(start):
+        base = root.rsplit(os.sep, 1)[-1]
+        if base in _SKIP_DIRS or base.startswith('.'):
+            dirs[:] = []
+            continue
+        dirs[:] = [x for x in dirs if not x.startswith('.') and x not in _SKIP_DIRS]
+        if os.path.relpath(root, start).count(os.sep) >= 3:
+            dirs[:] = []
+            continue
+        if name in files:
+            return os.path.join(root, name)
+    return None
 
 CCTOR_VA, CCTOR_SIZE = 0x4975844, 39984
 GOA_VA = 0x3DCF784
@@ -48,8 +88,8 @@ SEG_KEYS = {   # pool-manager statics slot -> (keyA, salt) of the byte cipher
 }
 
 
-def load_so():
-    so = open(BASE + 'libil2cpp.so', 'rb').read()
+def load_so(path):
+    so = open(path, 'rb').read()
     (e_phoff,) = struct.unpack_from('<Q', so, 0x20)
     (e_ps, e_pn) = struct.unpack_from('<HH', so, 0x36)
     segs = []
@@ -95,16 +135,38 @@ def make_uc(so, segs, key_blob):
     return goa
 
 
-def load_key():
-    z1 = zipfile.ZipFile(XAPK)
+def load_key(args):
+    """Secret key from --key / AOW3_KEY / committed artifact / cwd walk, else --xapk/AOW3_XAPK asset.
+
+    Accepts the 1,200-B TextAsset (m_Script @0xB0) or the raw 1,024-B blob.
+    Returns (source description, key file bytes, 1024-B key blob).
+    """
+    kp = args.key or os.environ.get('AOW3_KEY') \
+        or _find(KEY_ARTIFACT, os.path.dirname(os.path.abspath(__file__))) \
+        or _find(KEY_ARTIFACT, os.getcwd())
+    if kp:
+        kf = open(kp, 'rb').read()
+        if len(kf) == 1200:
+            assert kf[0xAC:0xB0] == struct.pack('<I', 1024), 'unexpected m_Script size'
+            return 'file %s (TextAsset)' % kp, kf, kf[0xB0:0xB0 + 1024]
+        assert len(kf) == 1024, ('key file %s: expected 1024-B raw blob or '
+                                 '1200-B TextAsset, got %d B' % (kp, len(kf)))
+        return 'file %s (raw m_Script blob)' % kp, kf, kf
+    xp = args.xapk or os.environ.get('AOW3_XAPK') or _find('aow3.xapk', os.getcwd()) \
+        or (DEFAULT_XAPK if os.path.isfile(DEFAULT_XAPK) else None)
+    if not xp:
+        raise SystemExit('secret key not found: pass --key (1024-B raw blob or 1200-B '
+                         'TextAsset) or --xapk; the extracted key is committed as '
+                         'reverse/tools/obfuz_secret_key.bin')
+    z1 = zipfile.ZipFile(xp)
     apk = zipfile.ZipFile(io.BytesIO(z1.read('com.geargames.aow.apk')))
     kf = apk.read(KEY_ENTRY)
     assert kf[0xAC:0xB0] == struct.pack('<I', 1024), 'unexpected m_Script size'
-    return kf, kf[0xB0:0xB0 + 1024]
+    return 'xapk %s entry %s' % (xp, KEY_ENTRY), kf, kf[0xB0:0xB0 + 1024]
 
 
-def parse_cctor():
-    so, segs = load_so()
+def parse_cctor(so_path):
+    so, segs = load_so(so_path)
     def va2off(va):
         for po, pv, fs in segs:
             if pv <= va < pv + fs:
@@ -283,7 +345,7 @@ ANCHOR_TARGETS = {
 }
 
 
-def dump_mode(goa, path, vals):
+def dump_mode(goa, path, vals, out_path):
     segs, qks, initarrs = load_dump(path)
     print(f'dump: {len(segs)} seg / {len(qks)} qk / {len(initarrs)} initarr events')
     canary = [q for q in qks if int(q['a'], 16) == 0x12345678]
@@ -321,21 +383,38 @@ def dump_mode(goa, path, vals):
             val = d.get('float', d.get('value'))
             print(f"  statics+{t:#05x}  = {val!r}  [{d['status']}]{'' if d['status']=='OK' else ' (needs real dump)'}"
                   f"   <- {ANCHOR_TARGETS[t]}")
-    json.dump(dec, open('/home/z/my-project/aow3-work/obfuz-pool-values.json', 'w'), indent=1)
-    print(f'pool values -> obfuz-pool-values.json ({okn}/{len(dec)} OK)')
+    json.dump(dec, open(out_path, 'w'), indent=1)
+    print(f'pool values -> {out_path} ({okn}/{len(dec)} OK)')
     return dec
 
 
 def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument('--sweep', action='store_true', help='resweep metadata fdv region for segment blobs')
+    ap = argparse.ArgumentParser(
+        description='Obfuz const-pool emulator (AOW3 6.9.18, arm64) — '
+                    'native $GOA re-executed in Unicorn; see module docstring.')
     ap.add_argument('--dump', metavar='JSONL', help='consume an obfuz_frida_dump.js transcript and decode the pool')
+    ap.add_argument('--out', metavar='PATH', default='obfuz-pool-values.json',
+                    help='--dump decoded-pool output path (default: ./obfuz-pool-values.json)')
+    ap.add_argument('--triples-out', metavar='PATH', default='obfuz-cctor-triples.json',
+                    help='triple-inventory output path (default: ./obfuz-cctor-triples.json)')
+    ap.add_argument('--so', metavar='PATH', help='libil2cpp.so 6.9.18 (flag > env AOW3_SO > cwd walk)')
+    ap.add_argument('--key', metavar='PATH', help='secret key: 1024-B raw blob or 1200-B TextAsset '
+                                                  '(flag > env AOW3_KEY > committed obfuz_secret_key.bin)')
+    ap.add_argument('--xapk', metavar='PATH', help='XAPK/APK legacy fallback for the secret-key asset')
+    ap.add_argument('--metadata', metavar='PATH', help='global-metadata.dat (--sweep only)')
+    ap.add_argument('--sweep', action='store_true', help='resweep metadata fdv region for segment blobs')
     args = ap.parse_args()
-    so, segs = load_so()
-    kf, key_blob = load_key()
-    import hashlib
-    print('key entry :', KEY_ENTRY, len(kf), 'B sha256', hashlib.sha256(kf).hexdigest())
-    print('key ints  : 256 (u32 LE), u32[0..3] =', [hex(x) for x in struct.unpack_from('<4I', key_blob)])
+    so_path = args.so or os.environ.get('AOW3_SO') or _find('libil2cpp.so', os.getcwd()) \
+        or (DEFAULT_SO if os.path.isfile(DEFAULT_SO) else None)
+    if not so_path:
+        raise SystemExit('libil2cpp.so not found: pass --so (the 6.9.18 build, sha256 8ace05bb…) '
+                         'or set AOW3_SO, or run from a directory containing it')
+    so, segs = load_so(so_path)
+    src, kf, key_blob = load_key(args)
+    print('so         :', so_path, 'sha256', hashlib.sha256(open(so_path, 'rb').read()).hexdigest()[:16], '…')
+    print('key source :', src)
+    print('key blob   :', len(kf), 'B sha256', hashlib.sha256(kf).hexdigest())
+    print('key ints   : 256 (u32 LE), u32[0..3] =', [hex(x) for x in struct.unpack_from('<4I', key_blob)])
     goa = make_uc(so, segs, key_blob)
     assert goa(0x12345678, 0, 0xDEADBEEF) == 0x12345678, 'identity'
     K = goa(*QK_TRIPLE[:3])
@@ -343,20 +422,26 @@ def main():
     print('SELF-TEST : $GOA(%#x, %#x, %#x) = %#x  -> $qk expected %#x : %s' %
           (QK_TRIPLE[0], QK_TRIPLE[1], QK_TRIPLE[2], K, QK_TRIPLE[3], 'PASS' if ok else 'FAIL'))
     assert ok, 'game integrity check failed'
-    vals = parse_cctor()
+    vals = parse_cctor(so_path)
     if args.dump:
-        dump_mode(goa, args.dump, vals)
+        dump_mode(goa, args.dump, vals, args.out)
         return
     import collections
     c = collections.Counter(v['thunk'] for v in vals)
     slots = collections.Counter(v.get('src_slot', 0x1008) for v in vals if v['thunk'] == 'int')
     print('cctor pool values: %d (%s); int src slots: %s' %
           (len(vals), dict(c), {hex(k): v for k, v in slots.items()}))
-    json.dump(vals, open('/home/z/my-project/aow3-work/obfuz_cctor_triples.json', 'w'))
-    print('triples -> obfuz_cctor_triples.json')
+    json.dump(vals, open(args.triples_out, 'w'))
+    print('triples ->', args.triples_out)
     print('segment key pairs:', {k: (hex(a), hex(b)) for k, (a, b) in SEG_KEYS.items()})
     if args.sweep:
-        md_dat = open(BASE + 'global-metadata.dat', 'rb').read()
+        md_path = args.metadata or os.environ.get('AOW3_METADATA') \
+            or _find('global-metadata.dat', os.getcwd()) \
+            or (DEFAULT_MD if os.path.isfile(DEFAULT_MD) else None)
+        if not md_path:
+            raise SystemExit('global-metadata.dat not found: pass --metadata or set AOW3_METADATA')
+        print('metadata  :', md_path)
+        md_dat = open(md_path, 'rb').read()
         hdr = struct.unpack_from('<64I', md_dat, 0)
         fdv_off, fdv_bytes, dat_off = hdr[16], hdr[17], hdr[18]
         n = fdv_bytes // 12
