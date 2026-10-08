@@ -1445,3 +1445,54 @@ Stage Summary:
   (derived task layer + per-mille accumulator) with zero lockstep-format churn and an
   honest 877/877 baseline. R1's on-device dictionary dump remains the sole blocked capture.
   Evidence: reverse/evidence/obfuz/ce-constants-decode.txt + both note addenda (Task 45).
+
+---
+Task: Visual-fidelity reconstruction phase — Phase 0 repo verification, Phase 1 visual
+inventory, Phase 2 visual-fidelity audit (reverse/notes/visual-fidelity-audit.md), and the
+first implementation slice (V2 terrain surface + V3 props truth-out + V1-a zoom clamp)
+
+Work Log:
+- Verified the baseline honestly before any change: all 8 suites re-run locally =
+  854/854 (accuracy 13, commands-determinism 50, data-model 379, lockstep-jip 88,
+  phase5 213, replay 45, stat-caps 37, unit-fsm 29). HEAD 92f7a15 at start.
+- Inventory (all counts re-verified from the tree, not from prior summaries): 30
+  unit/building GLBs, 812 decor GLBs (+index.json), 6,371 map.json placements
+  resolving 6,360/6,371 (99.8%) to shipped templates (392 unique names); 7 merged
+  atlases; heightmap 256² (x −84..86, z −85..55, shift −1.58/+14.75); 16 UI
+  sprites, 6 FX sprites, 44 SFX; GLB clip set verified (idle1/idle2/move/
+  move_shoot/w1_round/w2_round/die_bullet/die_explosion).
+- Camera [DECOMP] evidence extracted from dump.cs (326030–326900):
+  AbstractBattlefieldCamera (m_position/m_rotationY/m_angulationMin/Max/
+  m_distanceData), CameraDistanceData (start/min/max/tablet/spectator/overscroll),
+  CameraMovementDispatcher (Lerp/Friction/Route engines, 400 ms), CameraShakeController;
+  serialized camera numbers [NOT FOUND LOCALLY] (Addressables content).
+- Renderer deep-read (game.js 34000–39913): Renderer3D rig, three decor paths,
+  water, fog, VFX emitters + AOW3_VFX_TAXONOMY, unit/building views, HUD.
+- Defect discovered: the oversized-transparent-decor culling (bb.max.y<1.2 ∧
+  width>9 ∧ opacity≤0.9) hid ALL 26 large land_chunk terrain pieces, and ground
+  decals rendered at 0.62 opacity — the authentic terrain art (mat_terrain_jungle)
+  was mostly absent from the real-map presentation (audit §6).
+- Wrote reverse/notes/visual-fidelity-audit.md (21 sections, evidence labels,
+  no-percentage rule, V1–V8 order).
+- Implemented (renderer-only, docs/game.js): V2 buildRealTerrain() — heightmapped
+  128×128 plane displaced via heightAtWorld, textured with the existing baked
+  ground canvas, built in applyRealMap and on heightmap-async arrival (idempotent);
+  land_chunk decals opaque + polygonOffset(−2,−2) + y+0.03; V3 — baseProps group
+  ([SPEC] invented containers/sandbags/barrels) removed in real-map mode; V1-a —
+  wheel zoom clamp unified with pinch (6.5..46). v=46 → v=47 cache-bust.
+- QA: node --check clean; local server + headless Chromium — boot menu OK, live
+  probes {realTerrain: true, 16,641 verts, groundVisible: false, baseProps: false,
+  scatter 359, realMap 6371}; screenshots confirm authentic terrain art (jungle
+  chunks, dirt patches, cliffs, shoreline) with units/HUD/minimap unaffected;
+  zero page errors (only the pre-existing skinning warning).
+- Tests after changes: 854/854, all 8 suites rc=0.
+
+Stage Summary:
+- The visual-fidelity audit is the Phase 2 record of reference; V2 is the highest-
+  value fix landed (renderer was suppressing its own authentic terrain data).
+- Known remaining (documented, not hidden): flat-decal seams on steep slopes
+  (V2 follow-up), camera angulation/yaw model gap vs [DECOMP] (V1-b), lighting/
+  tone-mapping calibration [SPEC] (V4), procedural flags/rank icons (V5), font
+  (V7), reference-validation harness (V8, shares the R1 device run).
+- Commits: 07c5c18 (audit), e6eed81 (renderer), this worklog commit. v=47.
+
