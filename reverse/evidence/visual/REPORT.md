@@ -1,7 +1,7 @@
 # V8 reference-validation report
 
-- Generated: 2026-10-08T20:57:47.716Z
-- Build: HEAD 41220e0, `game.js?v=50`
+- Generated: 2026-10-08T21:53:08.526Z
+- Build: HEAD 1eb1934, `game.js?v=51`
 - Protocol: `reverse/evidence/visual/README.md` — screenshots + 8×8 average
   hashes only; no percentage claims, judgment deferred to the device session.
 

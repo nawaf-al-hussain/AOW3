@@ -1,7 +1,7 @@
 {
-  "generated": "2026-10-08T20:57:47.716Z",
-  "git": "41220e0",
-  "gameJsV": "50",
+  "generated": "2026-10-08T21:53:08.526Z",
+  "git": "1eb1934",
+  "gameJsV": "51",
   "manifest": "visual-fidelity-audit §21/V8 + reverse/evidence/visual/README.md — fixed-seed browser captures via __DBG probes; device refs from the R1 on-device session use the same ids/viewport so the comparison is one drag-and-drop.",
   "results": [
     {
@@ -16,9 +16,9 @@
       },
       "shot": "shot-overview-far.png",
       "ahash": "3cf8f8f8e8e04000",
-      "git": "41220e0",
-      "gameJsV": "50",
-      "ts": "2026-10-08T20:53:52.595Z",
+      "git": "1eb1934",
+      "gameJsV": "51",
+      "ts": "2026-10-08T21:49:17.817Z",
       "ref": null,
       "status": "MISSING-DEVICE-REF"
     },
@@ -34,9 +34,9 @@
       },
       "shot": "shot-tactical-mid-yaw.png",
       "ahash": "9fffffffff020000",
-      "git": "41220e0",
-      "gameJsV": "50",
-      "ts": "2026-10-08T20:54:37.735Z",
+      "git": "1eb1934",
+      "gameJsV": "51",
+      "ts": "2026-10-08T21:50:03.919Z",
       "ref": null,
       "status": "MISSING-DEVICE-REF"
     },
@@ -52,9 +52,9 @@
       },
       "shot": "shot-tactical-close.png",
       "ahash": "3e3fffffff430100",
-      "git": "41220e0",
-      "gameJsV": "50",
-      "ts": "2026-10-08T20:55:23.845Z",
+      "git": "1eb1934",
+      "gameJsV": "51",
+      "ts": "2026-10-08T21:50:49.188Z",
       "ref": null,
       "status": "MISSING-DEVICE-REF"
     },
@@ -70,9 +70,9 @@
       },
       "shot": "shot-field-north-yaw.png",
       "ahash": "2fefffffffcb0000",
-      "git": "41220e0",
-      "gameJsV": "50",
-      "ts": "2026-10-08T20:56:12.584Z",
+      "git": "1eb1934",
+      "gameJsV": "51",
+      "ts": "2026-10-08T21:51:33.732Z",
       "ref": null,
       "status": "MISSING-DEVICE-REF"
     },
@@ -88,9 +88,9 @@
       },
       "shot": "shot-slope-detail.png",
       "ahash": "bff7fffffde00000",
-      "git": "41220e0",
-      "gameJsV": "50",
-      "ts": "2026-10-08T20:57:00.729Z",
+      "git": "1eb1934",
+      "gameJsV": "51",
+      "ts": "2026-10-08T21:52:22.308Z",
       "ref": null,
       "status": "MISSING-DEVICE-REF"
     },
@@ -106,9 +106,9 @@
       },
       "shot": "shot-slope-detail-cross.png",
       "ahash": "1f1f7f5fdfc30100",
-      "git": "41220e0",
-      "gameJsV": "50",
-      "ts": "2026-10-08T20:57:47.647Z",
+      "git": "1eb1934",
+      "gameJsV": "51",
+      "ts": "2026-10-08T21:53:08.444Z",
       "ref": null,
       "status": "MISSING-DEVICE-REF"
     }
