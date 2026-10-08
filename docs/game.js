@@ -36994,6 +36994,13 @@ void main() {
         fixS(t);
         this.texFlame = t;
       });
+      // flame.png is the original FX atlas (1024x1024, hundreds of per-frame
+      // particle shapes) — never render it whole. flame-l.png is a single
+      // flame tongue cropped from it (48x80) for point-emitter use.
+      tl.load(`${base}fx/flame-l.png`, (t) => {
+        fixS(t);
+        this.texFlameL = t;
+      });
       tl.load(`${base}fx/expl.png`, (t) => {
         fixS(t);
         this.texExpl = t;
@@ -37246,14 +37253,14 @@ void main() {
               const rr = R * (0.35 + Math.random() * 0.6);
               this.addFx(this.texSmoke, v.group.position.x + Math.cos(ang) * rr, 0.9 + Math.random() * 1.1, v.group.position.z + Math.sin(ang) * rr, 1.1, 2.2, 2.6, false, -1.4, 0x2e2e2e);
             }
-            if (stage === 2 && this.texFlame) {
+            if (stage === 2 && this.texFlameL) {
               v.fireAcc = (v.fireAcc ?? 0) + dt();
               if (v.fireAcc > 0.05) {
                 v.fireAcc = 0;
                 const ang = Math.random() * Math.PI * 2;
                 const rr = R * 0.75 * Math.random();
                 const fy = (v.glbH ?? 2.4) * (0.92 + Math.random() * 0.35);
-                this.addFx(this.texFlame, v.group.position.x + Math.cos(ang) * rr, fy, v.group.position.z + Math.sin(ang) * rr, 1.25 + Math.random() * 0.7, 0.46, 1.9, true, 1.9, 0xffa14d);
+                this.addFx(this.texFlameL, v.group.position.x + Math.cos(ang) * rr, fy, v.group.position.z + Math.sin(ang) * rr, 1.25 + Math.random() * 0.7, 0.46, 1.9, true, 1.9, 0xffa14d);
                 this.addFx(this.texFlash, v.group.position.x + Math.cos(ang) * rr * 0.6, fy + 0.1, v.group.position.z + Math.sin(ang) * rr * 0.6, 0.5 + Math.random() * 0.4, 0.08, 1.5, true);
                 if (Math.random() < 0.35)
                   this.addFx(this.texGlow, v.group.position.x + (Math.random() - 0.5) * R, 1.0, v.group.position.z + (Math.random() - 0.5) * R, 1.3, 0.34, 2.0, true);
@@ -38172,8 +38179,8 @@ void main() {
         if (b.acc > 0.3) {
           b.acc = 0;
           this.addFx(this.texSmoke, b.x + (Math.random() - 0.5) * 0.5, 0.5, b.z + (Math.random() - 0.5) * 0.5, 0.8, 1.6, 2.2, false, 1.6);
-          if (this.texFlame)
-            this.addFx(this.texFlame, b.x + (Math.random() - 0.5) * 0.4, 0.55, b.z + (Math.random() - 0.5) * 0.4, 0.9 + Math.random() * 0.4, 0.5, 1.4, true, 1.6, 0xff8a3d);
+          if (this.texFlameL)
+            this.addFx(this.texFlameL, b.x + (Math.random() - 0.5) * 0.4, 0.55, b.z + (Math.random() - 0.5) * 0.4, 0.9 + Math.random() * 0.4, 0.5, 1.4, true, 1.6, 0xff8a3d);
         }
       }
       this.boomLight.intensity *= Math.pow(0.0001, dt);
