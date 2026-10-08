@@ -36418,6 +36418,22 @@ void main() {
   }
   var w2t = (x, z) => [x + MAP2, z + MAP2];
 
+  // V1-b (visual-fidelity-audit §8/§21) — distance-dependent camera angulation.
+  // [DECOMP] dump.cs:326030 AbstractBattlefieldCamera exposes m_angulationMin /
+  // m_angulationMax pitch clamps alongside CurrentDistance — the original camera
+  // pitches with zoom distance ([INFER]: closer = lower tactical angle). The
+  // serialized numbers live in Addressables scene content [NOT FOUND LOCALLY];
+  // until the R1 device run recovers them this band is [SPEC]-calibrated:
+  // MAX_DIST pitch ≈ the previously shipped fixed 65.8° overview (framing
+  // continuity at far zoom), MIN_DIST gives the close tactical angle. Linear
+  // ramp [SPEC]. Presentation only — never read as sim state.
+  var CAM_DIST_MIN = 6.5, CAM_DIST_MAX = 46;
+  var CAM_ANG_MIN = 38 * Math.PI / 180, CAM_ANG_MAX = 66 * Math.PI / 180;
+  function camAngulation(dist) {
+    const t = Math.min(1, Math.max(0, (dist - CAM_DIST_MIN) / (CAM_DIST_MAX - CAM_DIST_MIN)));
+    return CAM_ANG_MIN + (CAM_ANG_MAX - CAM_ANG_MIN) * t;
+  }
+
   // AOW3_VFX_TAXONOMY — authentic 6.9.18 VFX naming, folded into the tribute's FX emitters.
   // Source: the game's own Addressables catalog (assets/aa/catalog.json inside the 6.9.18
   // XAPK, 832 asset addresses) — see reverse/notes/vfx-asset-prefix-check.md and
@@ -36824,9 +36840,55 @@ void main() {
         arr.push(e);
       }
       for (const [t, arr] of byT) {
+        // V2 follow-up (visual-fidelity-audit §6/§21): ground decal chunks are no
+        // longer flat instances pinned at center height. Each ground placement
+        // gets a per-placement geometry clone baked to world space, then every
+        // vertex is displaced by (heightAtWorld(x,z) − heightAtWorld(center)) —
+        // the SAME heightfield the terrain mesh (buildRealTerrain) samples — so
+        // chunk edges meet at identical heights (the sampler is continuous) and
+        // the border seams/steps on slopes disappear. Relative displacement
+        // preserves any baked relief in the decal art; the +0.03 lift and the
+        // polygonOffset stay as the coplanarity guard against the terrain mesh.
+        // [EXT] decal geometry + heightfield; [BROWSER] conforming presentation.
+        if (t.cat === "ground") {
+          for (const e of arr) {
+            const wx2 = e.p[0] + RMAP.shx, wz2 = e.p[2] + RMAP.shz;
+            const gy2 = heightAtWorld(wx2, wz2);
+            dummy.position.set(wx2, gy2 + 0.03, wz2);
+            // map.json quats are authored-space (Unity): see the note below —
+            // ground decals keep the raw quat (their templates are un-baked).
+            dummy.quaternion.set(e.q[0], e.q[1], e.q[2], e.q[3]);
+            if (t.qfix)
+              dummy.quaternion.multiply(t.qfix);
+            dummy.scale.set(e.s[0], e.s[1], e.s[2]);
+            dummy.updateMatrix();
+            const bake = new Matrix4().compose(dummy.position, dummy.quaternion, dummy.scale);
+            for (const part of t.parts) {
+              const g = part.geometry.clone().applyMatrix4(bake);
+              const pos = g.attributes.position;
+              for (let i = 0; i < pos.count; i++)
+                pos.setY(i, pos.getY(i) + (heightAtWorld(pos.getX(i), pos.getZ(i)) - gy2));
+              pos.needsUpdate = true;
+              g.computeVertexNormals();
+              g.computeBoundingSphere();
+              const mesh = new Mesh(g, part.material);
+              mesh.castShadow = false;
+              mesh.receiveShadow = true;
+              // scatterMeshes teardown (applyTerrainGrid) calls dispose() —
+              // plain Mesh has none, so hand it one that frees the clone.
+              // Material is shared with the template and is NOT disposed here.
+              mesh.dispose = () => g.dispose();
+              this.scene.add(mesh);
+              this.scatterMeshes.push(mesh);
+            }
+          }
+          continue;
+        }
         for (const part of t.parts) {
           const im = new InstancedMesh(part.geometry, part.material, arr.length);
-          im.castShadow = t.cat !== "ground" && t.cat !== "grass";
+          // ground handled above; grass must not cast shadows (was
+          // cat !== "ground" && cat !== "grass" before the ground split)
+          im.castShadow = t.cat !== "grass";
           im.receiveShadow = true;
           im.frustumCulled = false;
           for (let i = 0; i < arr.length; i++) {
@@ -36837,7 +36899,7 @@ void main() {
             // terrain mesh (buildRealTerrain) — small lift + polygonOffset instead of
             // the previous 0.62-opacity wash (which also made the culling rule below
             // hide every large land_chunk: the real terrain texture never rendered).
-            dummy.position.set(wx2, t.cat === "ground" ? gy2 + 0.03 : Math.max(e.p[1] - 0.05, gy2), wz2);
+            dummy.position.set(wx2, Math.max(e.p[1] - 0.05, gy2), wz2);
             // map.json quats are authored-space (Unity): they include the Z-up->Y-up
             // +90degX correction for source art. GLBs that already baked that same
             // correction into their root node must NOT get it twice — strip exactly
@@ -37046,7 +37108,21 @@ void main() {
     }
     syncCamera(cam, sim) {
       const [fx, fz] = t2w(cam.x, cam.y);
-      this.camera.position.set(fx, cam.dist * 0.98, fz + cam.dist * 0.44);
+      // V1-b (visual-fidelity-audit §8/§21): distance-dependent angulation + yaw
+      // orbit — replaces the fixed 65.82° / yaw-0 rig. Orbit model: offset =
+      // dist * (sinYaw·cosPitch, sinPitch, cosYaw·cosPitch), matching the
+      // [DECOMP] AbstractBattlefieldCamera RotationY + m_angulationMin/Max field
+      // model; pitch comes from camAngulation() ([SPEC] band, see note there).
+      // The sun stays world-fixed — yaw must not rotate lighting. Presentation
+      // only: cam is UI state (window.__DBG.cam probe, AGENTS.md §35.3).
+      const pitch = camAngulation(cam.dist);
+      const yaw = cam.yaw || 0;
+      const cp = Math.cos(pitch), sp = Math.sin(pitch);
+      this.camera.position.set(
+        fx + cam.dist * cp * Math.sin(yaw),
+        cam.dist * sp,
+        fz + cam.dist * cp * Math.cos(yaw)
+      );
       this.camera.lookAt(fx, 0, fz);
       this.sun.position.set(fx - 22, 68, fz - 15);
       this.sun.target.position.set(fx, 0, fz);
@@ -38511,7 +38587,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
   var ai = null;
   var r3d = null;
   var ready = false;
-  var cam = { x: MAP_W / 2, y: MAP_H / 2, dist: 12.5 };
+  var cam = { x: MAP_W / 2, y: MAP_H / 2, dist: 12.5, yaw: 0 };
   var sel = new Set;
   var cmd = new Commands(null, sel);
   var keys = new Set;
@@ -39531,8 +39607,10 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
         cmd.issue({ type: "move", ids: [...sel], x: Math.max(1, Math.min(MAP_W - 2, mx)), y: Math.max(1, Math.min(MAP_H - 2, my)) });
       return;
     }
-    cam.x = mx;
-    cam.y = my;
+    // V1-b: clamped here (was per-frame before the yaw-relative pan rewrite —
+    // the WASD path now clamps on input, minimap pans clamp at the source).
+    cam.x = Math.max(3, Math.min(MAP_W - 3, mx));
+    cam.y = Math.max(3, Math.min(MAP_H - 3, my));
   });
   mini.addEventListener("contextmenu", (e) => e.preventDefault());
   function refreshHud() {
@@ -39672,16 +39750,34 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       steps++;
     }
     const panSpeed = cam.dist * 0.85 * dt2;
+    // V1-b: pan is screen-relative, so the world-axis WASD vector rotates with
+    // yaw — right = (cos yaw, −sin yaw), forward = (−sin yaw, −cos yaw) on the
+    // x/z ground plane. At yaw 0 this is byte-for-byte the previous mapping
+    // (W: cam.y −=, D: cam.x +=). Edge-drag/minimap pans go through
+    // screenToTile raycasts and are view-correct without help.
+    let pf = 0, pr = 0;
     if (keys.has("w") || keys.has("arrowup"))
-      cam.y -= panSpeed;
+      pf += 1;
     if (keys.has("s") || keys.has("arrowdown"))
-      cam.y += panSpeed;
-    if (keys.has("a") || keys.has("arrowleft"))
-      cam.x -= panSpeed;
+      pf -= 1;
     if (keys.has("d") || keys.has("arrowright"))
-      cam.x += panSpeed;
-    cam.x = Math.max(3, Math.min(MAP_W - 3, cam.x));
-    cam.y = Math.max(3, Math.min(MAP_H - 3, cam.y));
+      pr += 1;
+    if (keys.has("a") || keys.has("arrowleft"))
+      pr -= 1;
+    if (pf || pr) {
+      const ry = cam.yaw || 0, rc = Math.cos(ry), rs = Math.sin(ry);
+      cam.x = Math.max(3, Math.min(MAP_W - 3, cam.x + (pr * rc - pf * rs) * panSpeed));
+      cam.y = Math.max(3, Math.min(MAP_H - 3, cam.y + (-pr * rs - pf * rc) * panSpeed));
+    }
+    // V1-b: camera yaw orbit — Q/E rotate the view ([SPEC] input binding: the
+    // [DECOMP] RotationY field proves the feature, the original's on-screen
+    // rotate control + rate are not recovered — R1 device observation will
+    // calibrate; two-finger twist intentionally NOT bound yet).
+    if (keys.has("q"))
+      cam.yaw += 2.2 * dt2;
+    if (keys.has("e"))
+      cam.yaw -= 2.2 * dt2;
+    cam.yaw = ((cam.yaw % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
     const dpr = Math.min(2, window.devicePixelRatio || 1);
     const { clientWidth: w, clientHeight: h } = wrap;
     if (r3d.canvasW !== w || r3d.canvasH !== h)
