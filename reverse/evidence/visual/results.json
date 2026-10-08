@@ -1,0 +1,116 @@
+{
+  "generated": "2026-10-08T19:50:19.229Z",
+  "git": "bbdfb6b",
+  "gameJsV": "49",
+  "manifest": "visual-fidelity-audit §21/V8 + reverse/evidence/visual/README.md — fixed-seed browser captures via __DBG probes; device refs from the R1 on-device session use the same ids/viewport so the comparison is one drag-and-drop.",
+  "results": [
+    {
+      "id": "overview-far",
+      "label": "far overview — angulation top band (dist 46), full terrain + decal sweep",
+      "pose": {
+        "focus": "hq-blue",
+        "dx": 6,
+        "dy": 0,
+        "dist": 46,
+        "yaw": 0
+      },
+      "shot": "shot-overview-far.png",
+      "ahash": "3cf8f8f8f8e04000",
+      "git": "bbdfb6b",
+      "gameJsV": "49",
+      "ts": "2026-10-08T19:46:22.496Z",
+      "ref": null,
+      "status": "MISSING-DEVICE-REF"
+    },
+    {
+      "id": "tactical-mid-yaw",
+      "label": "mid zoom with yaw orbit 0.75 rad — V1-b RotationY + mid angulation band",
+      "pose": {
+        "focus": "hq-blue",
+        "dx": 6,
+        "dy": 0,
+        "dist": 18,
+        "yaw": 0.75
+      },
+      "shot": "shot-tactical-mid-yaw.png",
+      "ahash": "9fdfffffff020000",
+      "git": "bbdfb6b",
+      "gameJsV": "49",
+      "ts": "2026-10-08T19:47:08.594Z",
+      "ref": null,
+      "status": "MISSING-DEVICE-REF"
+    },
+    {
+      "id": "tactical-close",
+      "label": "close tactical — angulation lower band (dist 8), slope/decal-seam probe",
+      "pose": {
+        "focus": "hq-blue",
+        "dx": 6,
+        "dy": 0,
+        "dist": 8,
+        "yaw": 0
+      },
+      "shot": "shot-tactical-close.png",
+      "ahash": "3e4fffffff430100",
+      "git": "bbdfb6b",
+      "gameJsV": "49",
+      "ts": "2026-10-08T19:47:53.538Z",
+      "ref": null,
+      "status": "MISSING-DEVICE-REF"
+    },
+    {
+      "id": "field-north-yaw",
+      "label": "open field from map center, yaw π — opposite-orbit sanity + hill slopes",
+      "pose": {
+        "focus": "center",
+        "dx": 0,
+        "dy": -6,
+        "dist": 30,
+        "yaw": 3.1416
+      },
+      "shot": "shot-field-north-yaw.png",
+      "ahash": "2fefffffff030100",
+      "git": "bbdfb6b",
+      "gameJsV": "49",
+      "ts": "2026-10-08T19:48:41.024Z",
+      "ref": null,
+      "status": "MISSING-DEVICE-REF"
+    },
+    {
+      "id": "slope-detail",
+      "label": "steepest heightfield area (grad 0.151 at world -58.1,-38.1) — decal-seam probe, V2 follow-up verification pose",
+      "pose": {
+        "focus": "center",
+        "dx": -58.1,
+        "dy": -38.1,
+        "dist": 10,
+        "yaw": 0
+      },
+      "shot": "shot-slope-detail.png",
+      "ahash": "3ff7fffffdc00000",
+      "git": "bbdfb6b",
+      "gameJsV": "49",
+      "ts": "2026-10-08T19:49:29.092Z",
+      "ref": null,
+      "status": "MISSING-DEVICE-REF"
+    },
+    {
+      "id": "slope-detail-cross",
+      "label": "same slope from the opposite side (yaw π) — seam check across the ridge line",
+      "pose": {
+        "focus": "center",
+        "dx": -58.1,
+        "dy": -38.1,
+        "dist": 10,
+        "yaw": 3.1416
+      },
+      "shot": "shot-slope-detail-cross.png",
+      "ahash": "1f1f7f7fdfc30100",
+      "git": "bbdfb6b",
+      "gameJsV": "49",
+      "ts": "2026-10-08T19:50:19.181Z",
+      "ref": null,
+      "status": "MISSING-DEVICE-REF"
+    }
+  ]
+}

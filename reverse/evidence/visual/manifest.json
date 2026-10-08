@@ -1,0 +1,38 @@
+{
+  "protocol": "visual-fidelity-audit §21/V8 + reverse/evidence/visual/README.md — fixed-seed browser captures via __DBG probes; device refs from the R1 on-device session use the same ids/viewport so the comparison is one drag-and-drop.",
+  "viewport": [1280, 720],
+  "seed": 12345,
+  "notes": "focus 'hq-blue'/'hq-red' resolves the seat HQ from the sim (deterministic under seed); dx/dy are tile offsets. dist is the orbit distance (clamped 6.5..46). yaw radians; 0 = original browser rig orientation.",
+  "scenarios": [
+    {
+      "id": "overview-far",
+      "label": "far overview — angulation top band (dist 46), full terrain + decal sweep",
+      "pose": { "focus": "hq-blue", "dx": 6, "dy": 0, "dist": 46, "yaw": 0 }
+    },
+    {
+      "id": "tactical-mid-yaw",
+      "label": "mid zoom with yaw orbit 0.75 rad — V1-b RotationY + mid angulation band",
+      "pose": { "focus": "hq-blue", "dx": 6, "dy": 0, "dist": 18, "yaw": 0.75 }
+    },
+    {
+      "id": "tactical-close",
+      "label": "close tactical — angulation lower band (dist 8), slope/decal-seam probe",
+      "pose": { "focus": "hq-blue", "dx": 6, "dy": 0, "dist": 8, "yaw": 0 }
+    },
+    {
+      "id": "field-north-yaw",
+      "label": "open field from map center, yaw π — opposite-orbit sanity + hill slopes",
+      "pose": { "focus": "center", "dx": 0, "dy": -6, "dist": 30, "yaw": 3.1416 }
+    },
+    {
+      "id": "slope-detail",
+      "label": "steepest heightfield area (grad 0.151 at world -58.1,-38.1) — decal-seam probe, V2 follow-up verification pose",
+      "pose": { "focus": "center", "dx": -58.1, "dy": -38.1, "dist": 10, "yaw": 0 }
+    },
+    {
+      "id": "slope-detail-cross",
+      "label": "same slope from the opposite side (yaw π) — seam check across the ridge line",
+      "pose": { "focus": "center", "dx": -58.1, "dy": -38.1, "dist": 10, "yaw": 3.1416 }
+    }
+  ]
+}

@@ -532,3 +532,30 @@ fully executable without a device, and de-risks V4's calibration pass.
 
 *Verification note: this audit introduced no code changes. Test baseline
 854/854 recorded before and unchanged after (docs-only commit).*
+
+## 22. Status addendum (execution log — sections above stay point-in-time)
+
+- **V2 follow-up (2026-10-09)**: ground decal chunks now vertex-conform to the
+  heightfield — per-placement geometry clones baked to world space, each vertex
+  displaced by `heightAtWorld(x,z) − heightAtWorld(center)` (same sampler as
+  `buildRealTerrain`), so chunk borders meet at identical heights and the
+  §6 seam/step defect is closed. Relative displacement preserves baked decal
+  relief; +0.03 lift + polygonOffset remain the coplanarity guard. Verified
+  before/after at the steepest interior slope (grad 0.151 @ world −58.1,−38.1,
+  `reverse/evidence/visual/` scenarios `slope-detail*`): floating grass-chunk
+  rectangle and cliff-terrace steps eliminated. `[EXT]`+`[BROWSER]`.
+- **V1-b (2026-10-09)**: distance-dependent angulation + yaw orbit implemented
+  per the §8 [DECOMP] field model. Angulation band 38°..66° linear over dist
+  6.5..46 is **[SPEC]** (serialized values still [NOT FOUND LOCALLY]; max pitch
+  ≈ old fixed 65.8° for framing continuity). Yaw via Q/E at 2.2 rad/s is
+  **[SPEC]** binding (original control unrecovered); WASD pan made
+  yaw-relative; minimap pans clamp at source. Known interaction filed for V4:
+  at low pitch the sun-away unit sides read near-black (pre-existing rig
+  behavior, confirmed identical on the pre-change build at the same pose —
+  `tactical-close` scenario).
+- **V8 (2026-10-09)**: reference-validation harness shipped
+  (`reverse/tools/visual_harness.mjs` + `reverse/evidence/visual/`) — fixed-seed
+  headless captures driven through the §35.3 probes, 8×8 average hashes,
+  side-by-side composition ready for the R1 device references (protocol in
+  `reverse/evidence/visual/README.md`). Browser side of all 6 manifest
+  scenarios captured at v=49; device refs [AWAITING R1].
