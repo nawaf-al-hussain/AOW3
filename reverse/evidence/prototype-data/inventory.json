@@ -1,0 +1,100 @@
+{
+ "meta": {
+  "task": "R1 - prototype/balance data inventory (Task 41)",
+  "game_version": "6.9.18 (com.geargames.aow)",
+  "protocol_version": 235,
+  "dump_cs_sha256": "0050e67d23f898588f0771c69ba7f30f9122cd6eccd66674c0f7c87b7f24714b",
+  "libil2cpp_sha256": "8ace05bbaa2cdfda156e377cfbcb0c0a6fb223fa68188fa3df49f677f10e90c5",
+  "xapk_sha256": "1a41e033cce3f7e8595a0aa1dac07e90799d21a92793faaebbc13d3378b32c3e",
+  "captured_values": 0,
+  "status": "BLOCKED - DEVICE REQUIRED",
+  "evidence_note": "schema counts are the capture surface, not captured data"
+ },
+ "pipeline": {
+  "authoritative_source": "developer backend (not in APK)",
+  "transport": "raw TCP to login server; RsaDesPacketRequest/Answer -> DES session key; DESNetworkCryptoProvider per packet",
+  "builtin_login_address": {"ip": "31.41.157.154", "port": 10398, "source": "APK TextAsset config/gs (103 bytes)"},
+  "messages": {
+   "ClientResourceConfiguration": {"type": 22, "request_type": 20, "rva_get_type": "0x4953FB4"},
+   "ResourceRequest": {"type": 110, "rva_get_type": "0x4973CB8"},
+   "ResourceAnswer": {"type": 111, "request_type": 110, "fields": {"Resource": "ResourceInfo", "Data": "sbyte[]"}, "rva_get_type": "0x4973AEC"}
+  },
+  "resource_info": {"fields": ["path", "zipped", "crc", "computeLocalCrc", "type"]},
+  "resource_categories": {"GsXml": 0, "BattleBaseDictionary": 1, "SharedBaseDictionary": 2, "BaseDictionary": 3, "LocalizationDictionary": 4, "ResourceManifest": 5, "AssetBundle": 6, "Replay": 7, "MissionDictionary": 17, "Catalog": 18},
+  "load_sources": {"Web": 1, "Cache": 2, "BuiltIn": 3, "Test": 4},
+  "logon_states": {"ReceiveClientResourceConfiguration": 17, "LoadBattleBaseDictionary": 19, "LoadSharedBaseDictionary": 20, "LoadBaseDictionary": 21, "LoadDictionaries": 22, "LoadRemoteCatalog": 31},
+  "load_order": ["cache (CRC compare)", "network ResourceAnswer inline Data", "web repositories (zipped, CRC)", "built-in (empty for dictionaries - proven)"],
+  "cache_file": {"name": "rbi", "path": "<persistentDataPath>/rbi (Android: /data/data/com.geargames.aow/files/rbi)", "format": "ST-serialized store: {int -> byte[]} messages + {string -> byte[]} dictionary resources", "evidence": "AuthorizationCache.GetFilename 0x7D76F44 = FileUtils.CombinePaths(GetPersistentDataPath(), 'rbi')"},
+  "serialization": {
+   "name": "GearGames ST binary",
+   "buffer": "GearGamesByteBuffer",
+   "registry": "class-name-keyed objectDeserializers/objectSerializers (generated *STSerializer/*STDeserializer in ConvertedAssembly)",
+   "manager": "ThreadSafeSerializationManager (0x7920FAC..)",
+   "deserialize_message_rva": "0x79209D0"
+  },
+  "ingestion": "CSMainBattleBaseDictionaryReceiver.DoResourceLoaded 0x7DBA3B4 -> ProcessDictionary 0x7DBA420 -> BattleBaseDictionaryDataSource.SetData 0x7D24844 (+ AuthorizationCache.SerializeDictionary)",
+  "key_methods": {
+   "ResourceManager.LoadSerializableResourceAsync_4arg": "0x5047E48",
+   "ResourceManager.LoadSerializableResourceAsync_5arg": "0x5047EB4",
+   "CSMainLogonManager.LoadBattleBaseDictionary": "0x7DC3C90",
+   "CSMainClientResourceConfigurationReceiver.ProcessMessage": "0x7DBAA58",
+   "DESNetworkCryptoProvider.Decrypt": "0x79875FC",
+   "DESNetworkCryptoProvider.Encrypt": "0x798720C",
+   "AuthorizationCache.Save": "0x7D76FE4",
+   "AuthorizationCache.Load": "0x7D7785C"
+  }
+ },
+ "classification": {
+  "unit_weapon_building_mine_faction_hero_values": "F (server, first login) / E (rbi cache, later launches)",
+  "stat_display_caps_72_entries": "A (native code, already extracted - estat-tiers.txt)",
+  "combat_formulas": "A (native code - armor/accuracy/weapon-type notes)",
+  "login_address": "A (built-in config/gs) + F (web gs*.xml refresh)",
+  "remote_params": "F (built-in xml/remoteconfig is a test stub)",
+  "visual_audio_assets": "D (Addressables APK bundles + CDN catalog_{major}_{minor}.json)",
+  "obfuz_pools": "B (APK-embedded, Obfuz-encrypted) - R2 scope, not R1"
+ },
+ "apk_non_embedding_proof": {
+  "scan_scope": "all 5502 assets/bin/Data entries (base APK, XAPK sha 1a41e033...)",
+  "markers": ["weaponTypes", "unitTypes", "com.geargames.aow.entities.BuildingType"],
+  "result": "only global-metadata.dat (IL2CPP names/log strings); zero hits in Unity data/bundles",
+  "addressables_catalog": "863 internal ids; only config-ish entry Assets/Design/Configs/ButtonColors.asset",
+  "unity_resources_data_assets": ["config/gs (login server xml)", "config/gs.louken (dev leftover)", "xml/remoteconfig (test stub)", "walkablemap textures", "datacolors/*", "questbuildings/*"],
+  "conclusion": "no balance/dictionary payload ships in the APK (positive full-scan result)"
+ },
+ "containers": {
+  "BattleBaseDictionary": ["weaponTypes:List<WeaponType>", "unitTypes:List<UnitType>", "buildingTypes:List<BuildingType>", "mineTypes:List<MineType>", "fractions:List<Fraction>", "boosts:List<BoostType>", "troops:List<TroopType>", "heroParam:HeroParam"],
+  "SharedBaseDictionary": ["persons", "ranks", "medals", "skillPoints", "levels", "profileRanks", "goods", "regions", "achievements", "countries", "crates", "tutorials", "supplyBoxes", "leagues", "heroCards", "unitModificationTypes", "batteries", "battleTemplates", "gameMechanics"],
+  "BaseDictionary": ["upgradeUnits", "upgradeBuildings", "upgradeLevels", "fractionGoods", "quests", "episodes", "careerStones", "gameMechanics"]
+ },
+ "estat_map": [
+  {"estat": "Health/1", "runtime_source": "UnitType.life/lifeInt; BuildingLevelType.life", "captured": null, "browser": "tuned (ilight 120)", "status": "values UNKNOWN"},
+  {"estat": "Price/2", "runtime_source": "UnitType.price", "captured": null, "browser": "tuned (120)", "status": "values UNKNOWN"},
+  {"estat": "CommandPoints/4", "runtime_source": "UnitType.cp", "captured": null, "browser": "tuned (1)", "status": "values UNKNOWN"},
+  {"estat": "TrainTime/5", "runtime_source": "UnitType.time_train(_init)", "captured": null, "browser": "tuned (4)", "status": "values UNKNOWN"},
+  {"estat": "Speed/6", "runtime_source": "UnitStateType.speed(_init)", "captured": null, "browser": "tuned (3.4)", "status": "values UNKNOWN"},
+  {"estat": "ArmorLight-Medium-Heavy/7-9", "runtime_source": "UnitStateType.armor + armor_type (+armor_bonus)", "captured": null, "browser": "tuned triads", "status": "values UNKNOWN"},
+  {"estat": "View/10", "runtime_source": "UnitStateType.sight(_init)/radar", "captured": null, "browser": "tuned (9)", "status": "values UNKNOWN"},
+  {"estat": "SupplyIncome/14", "runtime_source": "Fraction.income_hq_base/inc, income_sc_base", "captured": null, "browser": "baseIncome 14/depot 11", "status": "values UNKNOWN"},
+  {"estat": "HealthRegeneration/18", "runtime_source": "UnitStateType.regen(_init)", "captured": null, "browser": "tuned (0.6)", "status": "values UNKNOWN"},
+  {"estat": "WeaponDistance/58", "runtime_source": "WeaponType.distance(_original/_init), distance_min", "captured": null, "browser": "tuned (6.5..)", "status": "values UNKNOWN"},
+  {"estat": "WeaponAccuracy/59", "runtime_source": "WeaponType.accuracy_static/dynamic/walk", "captured": null, "browser": "tuned (72..)", "status": "values UNKNOWN"},
+  {"estat": "WeaponFireRate/60", "runtime_source": "WeaponType.shot_int/round_len/shot_count/shot_tick[] (tick domain)", "captured": null, "browser": "cooldown seconds (1.1)", "status": "values UNKNOWN"},
+  {"estat": "WeaponArmorLight-Medium-Heavy/61-63", "runtime_source": "WeaponType.damage_light/medium/heavy(_init)", "captured": null, "browser": "tuned triads", "status": "values UNKNOWN"},
+  {"estat": "WeaponExplosionRadius/64", "runtime_source": "WeaponType.explosion_radius(_init)/explosion_decr", "captured": null, "browser": "tuned", "status": "values UNKNOWN"}
+ ],
+ "hook_targets": [
+  {"rank": 1, "class": "ThreadSafeSerializationManager", "method": "DeserializeMessage(int messageType, GearGamesByteBuffer buffer)", "rva": "0x79209D0", "why": "top-level post-crypto hook; messageType==111 => ResourceAnswer.Data payload (complete dictionary bytes)", "expected": "raw ST payload of BattleBaseDictionary/SharedBaseDictionary/BaseDictionary"},
+  {"rank": 2, "class": "CSMainBattleBaseDictionaryReceiver", "method": "DoResourceLoaded / ProcessDictionary", "rva": "0x7DBA3B4 / 0x7DBA420", "why": "deserialized object graph available (highest structured point)", "expected": "BattleBaseDictionary instance fields"},
+  {"rank": 3, "class": "BattleBaseDictionaryDataSource", "method": "SetData(BattleBaseDictionary)", "rva": "0x7D24844", "why": "ingestion point; object readable via IL2CPP reflection", "expected": "UnitType/WeaponType/... lists"},
+  {"rank": 4, "class": "DESNetworkCryptoProvider", "method": "Encrypt/Decrypt", "rva": "0x798720C / 0x79875FC", "why": "plaintext frame stream (fallback if per-message hook misses)", "expected": "full socket plaintext"},
+  {"rank": 5, "class": "AuthorizationCache", "method": "Save/Load/SerializeDictionary<T>", "rva": "0x7D76FE4 / 0x7D7785C / 0x4DB9C94", "why": "cache write/read -> grab 'rbi' file directly", "expected": "cached dictionary payloads"},
+  {"rank": 6, "class": "CSMainClientResourceConfigurationReceiver", "method": "ProcessMessage(ClientResourceConfiguration)", "rva": "0x7DBAA58", "why": "server ResourceInfos (path/zipped/crc) + version minors = config versioning metadata", "expected": "ResourceInfo set + ClientResourceVersion minors"}
+ ],
+ "validation_plan": {
+  "A_runtime_direct": "hook rank-1/2/3 captures",
+  "B_ingame_behavior_match": "controlled experiments (produce unit X, fire weapon Y) vs captured numbers",
+  "C_native_provider_match": "values equal those returned by WeaponStatsFactory/MineStatsFactory stat models",
+  "D_repeat_consistency": "two clean-cache runs + one warm run: byte-identical ResourceAnswer payloads / rbi dictionaries"
+ },
+ "r2_boundary": "dictionary payload is ST-binary, NOT Obfuz-encrypted; share one Frida session with obfuz_frida_dump.js but keep the pipelines separate; unexpected payload transform -> hand off to R2 with provenance"
+}

@@ -1,0 +1,4365 @@
+{
+ "BoostType": {
+  "decl_line": 376964,
+  "fields": [
+   {
+    "type": "string",
+    "name": "name",
+    "offset": "0x18"
+   },
+   {
+    "type": "string",
+    "name": "desc",
+    "offset": "0x20"
+   },
+   {
+    "type": "sbyte",
+    "name": "type",
+    "offset": "0x28"
+   },
+   {
+    "type": "sbyte",
+    "name": "target",
+    "offset": "0x29"
+   },
+   {
+    "type": "sbyte",
+    "name": "category",
+    "offset": "0x2A"
+   },
+   {
+    "type": "sbyte",
+    "name": "level",
+    "offset": "0x2B"
+   },
+   {
+    "type": "sbyte",
+    "name": "rank",
+    "offset": "0x2C"
+   },
+   {
+    "type": "sbyte[]",
+    "name": "act",
+    "offset": "0x30"
+   },
+   {
+    "type": "short[]",
+    "name": "effect",
+    "offset": "0x38"
+   },
+   {
+    "type": "short",
+    "name": "time",
+    "offset": "0x40"
+   },
+   {
+    "type": "string",
+    "name": "icon",
+    "offset": "0x48"
+   },
+   {
+    "type": "sbyte",
+    "name": "atlas",
+    "offset": "0x50"
+   }
+  ],
+  "consts": [
+   {
+    "type": "sbyte",
+    "name": "CATEGORY_BLUE",
+    "value": "0"
+   },
+   {
+    "type": "sbyte",
+    "name": "CATEGORY_RED",
+    "value": "1"
+   },
+   {
+    "type": "sbyte",
+    "name": "CATEGORY_GOLD",
+    "value": "2"
+   },
+   {
+    "type": "int",
+    "name": "ID_SCOUTING_INF",
+    "value": "15"
+   },
+   {
+    "type": "int",
+    "name": "ID_ATTACK_ALL",
+    "value": "80"
+   },
+   {
+    "type": "int",
+    "name": "ID_DEFENSE",
+    "value": "85"
+   },
+   {
+    "type": "int",
+    "name": "ID_TRAINING_ALL",
+    "value": "90"
+   },
+   {
+    "type": "int",
+    "name": "ID_SUPPLY",
+    "value": "100"
+   },
+   {
+    "type": "sbyte",
+    "name": "ACT_ATTACK",
+    "value": "0"
+   },
+   {
+    "type": "sbyte",
+    "name": "ACT_ARMOR",
+    "value": "1"
+   },
+   {
+    "type": "sbyte",
+    "name": "ACT_SPEED",
+    "value": "2"
+   },
+   {
+    "type": "sbyte",
+    "name": "ACT_SIGHT",
+    "value": "3"
+   },
+   {
+    "type": "sbyte",
+    "name": "ACT_RANGE",
+    "value": "4"
+   },
+   {
+    "type": "sbyte",
+    "name": "ACT_REGEN",
+    "value": "5"
+   },
+   {
+    "type": "sbyte",
+    "name": "ACT_TRAIN",
+    "value": "6"
+   },
+   {
+    "type": "sbyte",
+    "name": "ACT_ENERGY_REGEN",
+    "value": "7"
+   },
+   {
+    "type": "sbyte",
+    "name": "ACT_SPEED_AIR",
+    "value": "8"
+   },
+   {
+    "type": "sbyte",
+    "name": "ACT_CONTAINER_CAPTURE",
+    "value": "9"
+   },
+   {
+    "type": "sbyte",
+    "name": "ACT_ATTACK_BU",
+    "value": "10"
+   },
+   {
+    "type": "sbyte",
+    "name": "ACT_ARMOR_BU",
+    "value": "11"
+   },
+   {
+    "type": "sbyte",
+    "name": "ACT_SIGHT_BU",
+    "value": "13"
+   },
+   {
+    "type": "sbyte",
+    "name": "ACT_RANGE_BU",
+    "value": "14"
+   },
+   {
+    "type": "sbyte",
+    "name": "ACT_REPAIR",
+    "value": "15"
+   },
+   {
+    "type": "sbyte",
+    "name": "ACT_CONSTRUCTION",
+    "value": "16"
+   },
+   {
+    "type": "sbyte",
+    "name": "ACT_ANTIAVIA_INC",
+    "value": "17"
+   },
+   {
+    "type": "sbyte",
+    "name": "ACT_AVIA_DECR",
+    "value": "18"
+   },
+   {
+    "type": "sbyte",
+    "name": "ACT_ANTIAVIA_RANGE",
+    "value": "19"
+   },
+   {
+    "type": "sbyte",
+    "name": "ACT_GOLD",
+    "value": "20"
+   },
+   {
+    "type": "sbyte",
+    "name": "ACT_ENERGY_GEN",
+    "value": "21"
+   },
+   {
+    "type": "sbyte",
+    "name": "ACT_XP",
+    "value": "22"
+   },
+   {
+    "type": "sbyte",
+    "name": "ACT_REDEPLOY_HQ",
+    "value": "30"
+   },
+   {
+    "type": "sbyte",
+    "name": "ACT_REDEPLOY_SUPPLY",
+    "value": "31"
+   },
+   {
+    "type": "sbyte",
+    "name": "ACT_REDEPLOY_ACCELERATE",
+    "value": "32"
+   },
+   {
+    "type": "int",
+    "name": "CONVERT_BLUE_TO_RED_PRICE",
+    "value": "20"
+   },
+   {
+    "type": "int",
+    "name": "CONVERT_RED_TO_GOLD_PRICE",
+    "value": "20"
+   }
+  ]
+ },
+ "BuildingLevelType": {
+  "decl_line": 377885,
+  "fields": [
+   {
+    "type": "List<WeaponType>",
+    "name": "weapons",
+    "offset": "0x18"
+   },
+   {
+    "type": "List<UnitType>",
+    "name": "barracks",
+    "offset": "0x20"
+   },
+   {
+    "type": "sbyte",
+    "name": "available",
+    "offset": "0x28"
+   },
+   {
+    "type": "int",
+    "name": "rank_pvp",
+    "offset": "0x2C"
+   },
+   {
+    "type": "short",
+    "name": "life",
+    "offset": "0x30"
+   },
+   {
+    "type": "int",
+    "name": "lifeInt",
+    "offset": "0x34"
+   },
+   {
+    "type": "short",
+    "name": "armor",
+    "offset": "0x38"
+   },
+   {
+    "type": "short",
+    "name": "armor_bonus",
+    "offset": "0x3A"
+   },
+   {
+    "type": "sbyte",
+    "name": "armor_type",
+    "offset": "0x3C"
+   },
+   {
+    "type": "int",
+    "name": "sight",
+    "offset": "0x40"
+   },
+   {
+    "type": "int",
+    "name": "sight_init",
+    "offset": "0x44"
+   },
+   {
+    "type": "int",
+    "name": "radar",
+    "offset": "0x48"
+   },
+   {
+    "type": "short",
+    "name": "regen",
+    "offset": "0x4C"
+   },
+   {
+    "type": "short",
+    "name": "regen_init",
+    "offset": "0x4E"
+   },
+   {
+    "type": "sbyte",
+    "name": "open_ground",
+    "offset": "0x50"
+   },
+   {
+    "type": "sbyte",
+    "name": "open_water",
+    "offset": "0x51"
+   },
+   {
+    "type": "sbyte",
+    "name": "open_air",
+    "offset": "0x52"
+   },
+   {
+    "type": "sbyte[]",
+    "name": "opens",
+    "offset": "0x58"
+   },
+   {
+    "type": "short",
+    "name": "energy",
+    "offset": "0x60"
+   },
+   {
+    "type": "short",
+    "name": "energy_init",
+    "offset": "0x62"
+   },
+   {
+    "type": "int",
+    "name": "time_constr",
+    "offset": "0x64"
+   },
+   {
+    "type": "int",
+    "name": "time_constr_init",
+    "offset": "0x68"
+   },
+   {
+    "type": "int",
+    "name": "price",
+    "offset": "0x6C"
+   },
+   {
+    "type": "int",
+    "name": "score",
+    "offset": "0x70"
+   },
+   {
+    "type": "string",
+    "name": "contrib",
+    "offset": "0x78"
+   },
+   {
+    "type": "short",
+    "name": "repair_price",
+    "offset": "0x80"
+   },
+   {
+    "type": "int",
+    "name": "repair_pause",
+    "offset": "0x84"
+   },
+   {
+    "type": "int[]",
+    "name": "hq_count",
+    "offset": "0x88"
+   },
+   {
+    "type": "UpgradeLevel",
+    "name": "upg_lvl",
+    "offset": "0x90"
+   },
+   {
+    "type": "List<Contribution>",
+    "name": "parsed_contribs",
+    "offset": "0x98"
+   },
+   {
+    "type": "string[]",
+    "name": "mesh",
+    "offset": "0xA0"
+   }
+  ],
+  "consts": [
+   {
+    "type": "sbyte",
+    "name": "NOT_AVAILABLE",
+    "value": "0"
+   },
+   {
+    "type": "sbyte",
+    "name": "AVAILABLE",
+    "value": "1"
+   },
+   {
+    "type": "sbyte",
+    "name": "RESEARCHED",
+    "value": "2"
+   },
+   {
+    "type": "sbyte",
+    "name": "ARMOR_TYPE_LIGHT",
+    "value": "0"
+   },
+   {
+    "type": "sbyte",
+    "name": "ARMOR_TYPE_MEDIUM",
+    "value": "1"
+   },
+   {
+    "type": "sbyte",
+    "name": "ARMOR_TYPE_HEAVY",
+    "value": "2"
+   }
+  ]
+ },
+ "BuildingType": {
+  "decl_line": 378200,
+  "fields": [
+   {
+    "type": "List<BuildingLevelType>",
+    "name": "levels",
+    "offset": "0x18"
+   },
+   {
+    "type": "Fraction",
+    "name": "fraction",
+    "offset": "0x20"
+   },
+   {
+    "type": "sbyte",
+    "name": "category",
+    "offset": "0x28"
+   },
+   {
+    "type": "sbyte",
+    "name": "w",
+    "offset": "0x29"
+   },
+   {
+    "type": "sbyte",
+    "name": "h",
+    "offset": "0x2A"
+   },
+   {
+    "type": "short",
+    "name": "w_collider",
+    "offset": "0x2C"
+   },
+   {
+    "type": "short",
+    "name": "h_collider",
+    "offset": "0x2E"
+   },
+   {
+    "type": "sbyte",
+    "name": "type",
+    "offset": "0x30"
+   },
+   {
+    "type": "sbyte",
+    "name": "train_acc",
+    "offset": "0x31"
+   },
+   {
+    "type": "int",
+    "name": "train_delay",
+    "offset": "0x34"
+   },
+   {
+    "type": "string",
+    "name": "model_name",
+    "offset": "0x38"
+   },
+   {
+    "type": "sbyte[]",
+    "name": "exit",
+    "offset": "0x40"
+   },
+   {
+    "type": "short",
+    "name": "desc",
+    "offset": "0x48"
+   },
+   {
+    "type": "short",
+    "name": "name",
+    "offset": "0x4A"
+   },
+   {
+    "type": "sbyte",
+    "name": "order",
+    "offset": "0x4C"
+   },
+   {
+    "type": "int",
+    "name": "quest",
+    "offset": "0x50"
+   },
+   {
+    "type": "sbyte",
+    "name": "flags",
+    "offset": "0x54"
+   }
+  ],
+  "consts": [
+   {
+    "type": "sbyte",
+    "name": "BU_CATEGORY_FACTORY",
+    "value": "2"
+   },
+   {
+    "type": "sbyte",
+    "name": "BU_CATEGORY_BUNKER",
+    "value": "3"
+   },
+   {
+    "type": "sbyte",
+    "name": "BU_CATEGORY_QUEST",
+    "value": "9"
+   },
+   {
+    "type": "sbyte",
+    "name": "BU_TYPE_HQ",
+    "value": "1"
+   },
+   {
+    "type": "sbyte",
+    "name": "BU_TYPE_POWER_STATION",
+    "value": "2"
+   },
+   {
+    "type": "sbyte",
+    "name": "BU_TYPE_SUPPLY_DEPOT",
+    "value": "3"
+   },
+   {
+    "type": "sbyte",
+    "name": "BU_TYPE_CONSTR_YARD",
+    "value": "4"
+   },
+   {
+    "type": "sbyte",
+    "name": "BU_TYPE_BARRACKS",
+    "value": "5"
+   },
+   {
+    "type": "sbyte",
+    "name": "BU_TYPE_SPECIAL_BARRACKS",
+    "value": "6"
+   },
+   {
+    "type": "sbyte",
+    "name": "BU_TYPE_ASSAULT_FACTORY",
+    "value": "7"
+   },
+   {
+    "type": "sbyte",
+    "name": "BU_TYPE_ADVANCED_FACTORY",
+    "value": "8"
+   },
+   {
+    "type": "sbyte",
+    "name": "BU_TYPE_AIR_FACTORY",
+    "value": "9"
+   },
+   {
+    "type": "sbyte",
+    "name": "BU_TYPE_AIRPORT",
+    "value": "10"
+   },
+   {
+    "type": "sbyte",
+    "name": "BU_TYPE_SHIPYARD",
+    "value": "11"
+   },
+   {
+    "type": "sbyte",
+    "name": "BU_TYPE_NUCLEAR_SILO",
+    "value": "12"
+   },
+   {
+    "type": "sbyte",
+    "name": "BU_TYPE_WALL",
+    "value": "13"
+   },
+   {
+    "type": "sbyte",
+    "name": "BU_TYPE_BUNKER",
+    "value": "14"
+   },
+   {
+    "type": "sbyte",
+    "name": "BU_TYPE_TOWER",
+    "value": "15"
+   },
+   {
+    "type": "sbyte",
+    "name": "BU_TYPE_AIR_DEFENCE",
+    "value": "16"
+   },
+   {
+    "type": "sbyte",
+    "name": "BU_TYPE_NAVAL_TURRET",
+    "value": "17"
+   },
+   {
+    "type": "sbyte",
+    "name": "BU_TYPE_HERO",
+    "value": "18"
+   },
+   {
+    "type": "sbyte",
+    "name": "BU_TYPE_QUEST",
+    "value": "80"
+   },
+   {
+    "type": "sbyte",
+    "name": "BU_ID_WALL",
+    "value": "15"
+   },
+   {
+    "type": "sbyte",
+    "name": "CONSTR_ARMOR_DIVIDER",
+    "value": "4"
+   },
+   {
+    "type": "sbyte",
+    "name": "BU_CONSTR_INSTANTLY",
+    "value": "0"
+   },
+   {
+    "type": "sbyte",
+    "name": "BU_CONSTR_DEPLOY",
+    "value": "1"
+   },
+   {
+    "type": "sbyte",
+    "name": "BU_CONSTR_NORMAL",
+    "value": "2"
+   },
+   {
+    "type": "int",
+    "name": "FLAGS_VISIBLE_IN_WORKSHOP",
+    "value": "1"
+   }
+  ]
+ },
+ "Fraction": {
+  "decl_line": 382658,
+  "fields": [
+   {
+    "type": "string",
+    "name": "name",
+    "offset": "0x18"
+   },
+   {
+    "type": "int",
+    "name": "income_sc_base",
+    "offset": "0x20"
+   },
+   {
+    "type": "sbyte",
+    "name": "income_sc_decr",
+    "offset": "0x24"
+   },
+   {
+    "type": "int",
+    "name": "income_hq_base",
+    "offset": "0x28"
+   },
+   {
+    "type": "int",
+    "name": "income_hq_inc",
+    "offset": "0x2C"
+   },
+   {
+    "type": "int",
+    "name": "supply_limit",
+    "offset": "0x30"
+   },
+   {
+    "type": "int",
+    "name": "hq_radius",
+    "offset": "0x34"
+   },
+   {
+    "type": "sbyte",
+    "name": "hq_units_base",
+    "offset": "0x38"
+   },
+   {
+    "type": "sbyte",
+    "name": "hq_units_inc",
+    "offset": "0x39"
+   },
+   {
+    "type": "int",
+    "name": "constr_radius",
+    "offset": "0x3C"
+   },
+   {
+    "type": "int",
+    "name": "regeneration_delay",
+    "offset": "0x40"
+   },
+   {
+    "type": "int",
+    "name": "shield_fog_radius",
+    "offset": "0x44"
+   },
+   {
+    "type": "int",
+    "name": "shield_fog_bonus",
+    "offset": "0x48"
+   },
+   {
+    "type": "short",
+    "name": "shield_fog_act_energy",
+    "offset": "0x4C"
+   },
+   {
+    "type": "int",
+    "name": "gai_interval",
+    "offset": "0x50"
+   },
+   {
+    "type": "int",
+    "name": "repair_hp_per_tick",
+    "offset": "0x54"
+   },
+   {
+    "type": "sbyte",
+    "name": "flight_accelerate_len",
+    "offset": "0x58"
+   },
+   {
+    "type": "sbyte",
+    "name": "jump_velocity",
+    "offset": "0x59"
+   },
+   {
+    "type": "int",
+    "name": "airfield_dx0",
+    "offset": "0x5C"
+   },
+   {
+    "type": "int",
+    "name": "airfield_dy0",
+    "offset": "0x60"
+   },
+   {
+    "type": "int",
+    "name": "airfield_rot0",
+    "offset": "0x64"
+   },
+   {
+    "type": "int",
+    "name": "airfield_dx1",
+    "offset": "0x68"
+   },
+   {
+    "type": "int",
+    "name": "airfield_dy1",
+    "offset": "0x6C"
+   },
+   {
+    "type": "int",
+    "name": "airfield_rot1",
+    "offset": "0x70"
+   },
+   {
+    "type": "int",
+    "name": "airfield_dx2",
+    "offset": "0x74"
+   },
+   {
+    "type": "int",
+    "name": "airfield_dy2",
+    "offset": "0x78"
+   },
+   {
+    "type": "int",
+    "name": "airfield_rot2",
+    "offset": "0x7C"
+   },
+   {
+    "type": "int",
+    "name": "airfield_dx3",
+    "offset": "0x80"
+   },
+   {
+    "type": "int",
+    "name": "airfield_dy3",
+    "offset": "0x84"
+   },
+   {
+    "type": "int",
+    "name": "airfield_rot3",
+    "offset": "0x88"
+   },
+   {
+    "type": "sbyte",
+    "name": "rocket_life",
+    "offset": "0x8C"
+   },
+   {
+    "type": "sbyte",
+    "name": "bomber_mult",
+    "offset": "0x8D"
+   },
+   {
+    "type": "sbyte",
+    "name": "bomber_straight",
+    "offset": "0x8E"
+   },
+   {
+    "type": "sbyte",
+    "name": "fighter_straight",
+    "offset": "0x8F"
+   },
+   {
+    "type": "int",
+    "name": "fighterStraightNewBehindTarget",
+    "offset": "0x90"
+   },
+   {
+    "type": "int",
+    "name": "fighterStraightNewBackwards",
+    "offset": "0x94"
+   },
+   {
+    "type": "int",
+    "name": "fighterNewDistTargetMin",
+    "offset": "0x98"
+   },
+   {
+    "type": "int",
+    "name": "fighterNewTargetAwayInTicks",
+    "offset": "0x9C"
+   },
+   {
+    "type": "int",
+    "name": "fighter_boom_dist",
+    "offset": "0xA0"
+   },
+   {
+    "type": "int",
+    "name": "siege_hp",
+    "offset": "0xA4"
+   },
+   {
+    "type": "sbyte",
+    "name": "psionic_attack_energy",
+    "offset": "0xA8"
+   },
+   {
+    "type": "short",
+    "name": "repair_delay",
+    "offset": "0xAA"
+   },
+   {
+    "type": "sbyte",
+    "name": "fighter_min_energy",
+    "offset": "0xAC"
+   },
+   {
+    "type": "sbyte",
+    "name": "jump_delay",
+    "offset": "0xAD"
+   },
+   {
+    "type": "sbyte",
+    "name": "chest_radius",
+    "offset": "0xAE"
+   },
+   {
+    "type": "sbyte",
+    "name": "constr_acc",
+    "offset": "0xAF"
+   },
+   {
+    "type": "short",
+    "name": "repair_acc",
+    "offset": "0xB0"
+   },
+   {
+    "type": "int",
+    "name": "deploy_points",
+    "offset": "0xB4"
+   },
+   {
+    "type": "int",
+    "name": "deploy_constr_time",
+    "offset": "0xB8"
+   },
+   {
+    "type": "int",
+    "name": "deploy_active_time",
+    "offset": "0xBC"
+   },
+   {
+    "type": "int",
+    "name": "deployConstrPerc",
+    "offset": "0xC0"
+   },
+   {
+    "type": "sbyte",
+    "name": "blind_effect",
+    "offset": "0xC4"
+   },
+   {
+    "type": "short",
+    "name": "blind_time",
+    "offset": "0xC6"
+   },
+   {
+    "type": "short",
+    "name": "forest_fire_dist_drop",
+    "offset": "0xC8"
+   },
+   {
+    "type": "sbyte",
+    "name": "forest_sight_drop",
+    "offset": "0xCA"
+   },
+   {
+    "type": "short",
+    "name": "underwater_dmg",
+    "offset": "0xCC"
+   },
+   {
+    "type": "short",
+    "name": "flag_attack_radius",
+    "offset": "0xCE"
+   },
+   {
+    "type": "short",
+    "name": "flag_attack_bonus",
+    "offset": "0xD0"
+   },
+   {
+    "type": "short",
+    "name": "flagCaptureRadius",
+    "offset": "0xD2"
+   },
+   {
+    "type": "short",
+    "name": "nuclear_detect_delay",
+    "offset": "0xD4"
+   },
+   {
+    "type": "short",
+    "name": "nuclear_flight_time",
+    "offset": "0xD6"
+   },
+   {
+    "type": "sbyte",
+    "name": "warn_radius",
+    "offset": "0xD8"
+   },
+   {
+    "type": "short",
+    "name": "upg_inf_count",
+    "offset": "0xDA"
+   },
+   {
+    "type": "short",
+    "name": "upg_veh1_count",
+    "offset": "0xDC"
+   },
+   {
+    "type": "short",
+    "name": "upg_veh2_count",
+    "offset": "0xDE"
+   },
+   {
+    "type": "short",
+    "name": "upg_avia_count",
+    "offset": "0xE0"
+   },
+   {
+    "type": "short",
+    "name": "upg_nav_count",
+    "offset": "0xE2"
+   },
+   {
+    "type": "short",
+    "name": "upg_bld1_count",
+    "offset": "0xE4"
+   },
+   {
+    "type": "short",
+    "name": "upg_bld2_count",
+    "offset": "0xE6"
+   },
+   {
+    "type": "short",
+    "name": "upg_bld3_count",
+    "offset": "0xE8"
+   },
+   {
+    "type": "short",
+    "name": "deploy_res",
+    "offset": "0xEA"
+   },
+   {
+    "type": "short",
+    "name": "container_capture_time",
+    "offset": "0xEC"
+   },
+   {
+    "type": "sbyte",
+    "name": "forest_speed_decr",
+    "offset": "0xEE"
+   },
+   {
+    "type": "sbyte",
+    "name": "bomberEnergyPercForTakeOff",
+    "offset": "0xEF"
+   },
+   {
+    "type": "sbyte",
+    "name": "planeNoEnergyFlightDecrPerc",
+    "offset": "0xF0"
+   },
+   {
+    "type": "sbyte",
+    "name": "dispersalTick",
+    "offset": "0xF1"
+   },
+   {
+    "type": "sbyte",
+    "name": "approachGroupAmount",
+    "offset": "0xF2"
+   },
+   {
+    "type": "short",
+    "name": "autoSiegeDelay",
+    "offset": "0xF4"
+   },
+   {
+    "type": "short",
+    "name": "fireRadiusInc",
+    "offset": "0xF6"
+   },
+   {
+    "type": "List<FireType>",
+    "name": "fires",
+    "offset": "0xF8"
+   },
+   {
+    "type": "QuestDescription",
+    "name": "root_quest",
+    "offset": "0x100"
+   },
+   {
+    "type": "int",
+    "name": "root_quest_id",
+    "offset": "0x108"
+   }
+  ],
+  "consts": [
+   {
+    "type": "int",
+    "name": "CONFEDERATION_ID",
+    "value": "1"
+   },
+   {
+    "type": "int",
+    "name": "RESISTANCE_ID",
+    "value": "2"
+   }
+  ]
+ },
+ "Goods": {
+  "decl_line": 383428,
+  "fields": [
+   {
+    "type": "string",
+    "name": "name",
+    "offset": "0x18"
+   },
+   {
+    "type": "string",
+    "name": "yookassaName",
+    "offset": "0x20"
+   },
+   {
+    "type": "string",
+    "name": "desc",
+    "offset": "0x28"
+   },
+   {
+    "type": "string",
+    "name": "info",
+    "offset": "0x30"
+   },
+   {
+    "type": "string",
+    "name": "icon",
+    "offset": "0x38"
+   },
+   {
+    "type": "int",
+    "name": "protocol",
+    "offset": "0x40"
+   },
+   {
+    "type": "int",
+    "name": "order",
+    "offset": "0x44"
+   },
+   {
+    "type": "int",
+    "name": "xp",
+    "offset": "0x48"
+   },
+   {
+    "type": "int",
+    "name": "type",
+    "offset": "0x4C"
+   },
+   {
+    "type": "string",
+    "name": "sku",
+    "offset": "0x50"
+   },
+   {
+    "type": "int",
+    "name": "fract",
+    "offset": "0x58"
+   },
+   {
+    "type": "int",
+    "name": "abGroup",
+    "offset": "0x5C"
+   },
+   {
+    "type": "int",
+    "name": "cost_g",
+    "offset": "0x60"
+   },
+   {
+    "type": "int",
+    "name": "cost_c",
+    "offset": "0x64"
+   },
+   {
+    "type": "int",
+    "name": "cost_t",
+    "offset": "0x68"
+   },
+   {
+    "type": "string",
+    "name": "cost_real",
+    "offset": "0x70"
+   },
+   {
+    "type": "int",
+    "name": "give_g",
+    "offset": "0x78"
+   },
+   {
+    "type": "int",
+    "name": "give_c",
+    "offset": "0x7C"
+   },
+   {
+    "type": "int",
+    "name": "give_t",
+    "offset": "0x80"
+   },
+   {
+    "type": "int",
+    "name": "give_premium",
+    "offset": "0x84"
+   },
+   {
+    "type": "int",
+    "name": "profit",
+    "offset": "0x88"
+   },
+   {
+    "type": "List<Entity>",
+    "name": "give_items",
+    "offset": "0x90"
+   },
+   {
+    "type": "List<BoostType>",
+    "name": "give_boosts",
+    "offset": "0x98"
+   },
+   {
+    "type": "List<TroopType>",
+    "name": "give_troops",
+    "offset": "0xA0"
+   },
+   {
+    "type": "List<AvatarElement>",
+    "name": "give_avatars",
+    "offset": "0xA8"
+   },
+   {
+    "type": "List<UpgradeLevel>",
+    "name": "give_upgrades",
+    "offset": "0xB0"
+   },
+   {
+    "type": "List<SupplyBox>",
+    "name": "giveBoxes",
+    "offset": "0xB8"
+   },
+   {
+    "type": "List<HeroCard>",
+    "name": "giveHeroCards",
+    "offset": "0xC0"
+   },
+   {
+    "type": "List<Battery>",
+    "name": "giveBatteries",
+    "offset": "0xC8"
+   },
+   {
+    "type": "List<CompetitionTicket>",
+    "name": "giveTickets",
+    "offset": "0xD0"
+   },
+   {
+    "type": "int",
+    "name": "give_skill_points",
+    "offset": "0xD8"
+   },
+   {
+    "type": "List<SpeedUp>",
+    "name": "give_speed_ups",
+    "offset": "0xE0"
+   },
+   {
+    "type": "List<SkillCard>",
+    "name": "give_skill_cards",
+    "offset": "0xE8"
+   },
+   {
+    "type": "List<UnitModificationType>",
+    "name": "giveUnitModificationType",
+    "offset": "0xF0"
+   },
+   {
+    "type": "List<UnitModificationFractPair>",
+    "name": "giveUnitModificationFractPair",
+    "offset": "0xF8"
+   },
+   {
+    "type": "int",
+    "name": "giveRerollKeys",
+    "offset": "0x100"
+   },
+   {
+    "type": "int",
+    "name": "flags",
+    "offset": "0x104"
+   },
+   {
+    "type": "bool",
+    "name": "currencySubscription",
+    "offset": "0x108"
+   },
+   {
+    "type": "sbyte",
+    "name": "invisible",
+    "offset": "0x109"
+   },
+   {
+    "type": "int",
+    "name": "clan_g",
+    "offset": "0x10C"
+   },
+   {
+    "type": "int",
+    "name": "clan_c",
+    "offset": "0x110"
+   },
+   {
+    "type": "int",
+    "name": "clan_t",
+    "offset": "0x114"
+   }
+  ],
+  "consts": [
+   {
+    "type": "int",
+    "name": "TYPE_MONEY",
+    "value": "1"
+   },
+   {
+    "type": "int",
+    "name": "TYPE_BOOSTS",
+    "value": "2"
+   },
+   {
+    "type": "int",
+    "name": "TYPE_PREMIUM",
+    "value": "5"
+   },
+   {
+    "type": "int",
+    "name": "TYPE_CLAN",
+    "value": "7"
+   },
+   {
+    "type": "int",
+    "name": "TYPE_AVATAR",
+    "value": "8"
+   },
+   {
+    "type": "int",
+    "name": "TYPE_URANUM",
+    "value": "12"
+   },
+   {
+    "type": "int",
+    "name": "TYPE_BLACK_MARKET",
+    "value": "13"
+   },
+   {
+    "type": "int",
+    "name": "TYPE_BOOSTS_MINIPROMO",
+    "value": "20"
+   },
+   {
+    "type": "int",
+    "name": "TYPE_CASH_MINIPROMO",
+    "value": "21"
+   },
+   {
+    "type": "int",
+    "name": "TYPE_SPEEDUP_MINIPROMO",
+    "value": "22"
+   },
+   {
+    "type": "int",
+    "name": "TYPE_SKILL_CARD_MINIPROMO",
+    "value": "23"
+   },
+   {
+    "type": "int",
+    "name": "TYPE_HERO_CARD_MINIPROMO",
+    "value": "24"
+   },
+   {
+    "type": "int",
+    "name": "TYPE_BATTERY_MINIPROMO",
+    "value": "25"
+   },
+   {
+    "type": "int",
+    "name": "TYPE_HERO_BOX_MINIPROMO",
+    "value": "26"
+   },
+   {
+    "type": "int",
+    "name": "TYPE_BATTLE_PASS_PREMIUM_UNLOCK",
+    "value": "27"
+   },
+   {
+    "type": "int",
+    "name": "TYPE_COMPETITION_RESTART",
+    "value": "28"
+   },
+   {
+    "type": "int",
+    "name": "TYPE_UNIT_MODIFICATION_MINIPROMO",
+    "value": "29"
+   },
+   {
+    "type": "int",
+    "name": "ID_PREMIUM_1_DAY",
+    "value": "500"
+   },
+   {
+    "type": "int",
+    "name": "ID_PREMIUM_3_DAYS",
+    "value": "501"
+   },
+   {
+    "type": "int",
+    "name": "ID_PREMIUM_7_DAYS",
+    "value": "502"
+   },
+   {
+    "type": "int",
+    "name": "ID_PREMIUM_30_DAYS",
+    "value": "503"
+   },
+   {
+    "type": "int",
+    "name": "ID_PREMIUM_180_DAYS",
+    "value": "504"
+   },
+   {
+    "type": "int",
+    "name": "ID_PREMIUM_360_DAYS",
+    "value": "505"
+   },
+   {
+    "type": "int",
+    "name": "ID_PREMIUM_7_DAY_NEW",
+    "value": "506"
+   },
+   {
+    "type": "int",
+    "name": "ID_PREMIUM_30_DAY_NEW",
+    "value": "507"
+   },
+   {
+    "type": "int",
+    "name": "ID_PREMIUM_90_DAY_NEW",
+    "value": "508"
+   },
+   {
+    "type": "int",
+    "name": "ID_PREMIUM_1_DAY_NEW",
+    "value": "509"
+   },
+   {
+    "type": "int",
+    "name": "ID_FIRST_PACK_NEW",
+    "value": "900"
+   },
+   {
+    "type": "int",
+    "name": "ID_SECOND_PACK_NEW",
+    "value": "901"
+   },
+   {
+    "type": "int",
+    "name": "ID_PROVIDENT_PACK_NEW",
+    "value": "910"
+   },
+   {
+    "type": "int",
+    "name": "ID_SPECIAL15_PACK",
+    "value": "911"
+   },
+   {
+    "type": "int",
+    "name": "ID_SPECIAL30_PACK",
+    "value": "912"
+   },
+   {
+    "type": "int",
+    "name": "ID_SPECIAL50_PACK",
+    "value": "913"
+   },
+   {
+    "type": "int",
+    "name": "ID_QUICK_START_PACK",
+    "value": "914"
+   },
+   {
+    "type": "int",
+    "name": "ID_LUCKY30_PACK",
+    "value": "915"
+   },
+   {
+    "type": "int",
+    "name": "ID_LUCKY50_PACK",
+    "value": "916"
+   },
+   {
+    "type": "int",
+    "name": "ID_ECONOMY_PACK",
+    "value": "917"
+   },
+   {
+    "type": "int",
+    "name": "ID_SPECIAL100_PACK",
+    "value": "920"
+   },
+   {
+    "type": "int",
+    "name": "ID_LUCKY100_PACK",
+    "value": "921"
+   },
+   {
+    "type": "int",
+    "name": "ID_FIRST_PACK_INSTANT",
+    "value": "922"
+   },
+   {
+    "type": "int",
+    "name": "ID_HERO30_PACK",
+    "value": "923"
+   },
+   {
+    "type": "int",
+    "name": "ID_HERO50_PACK",
+    "value": "924"
+   },
+   {
+    "type": "int",
+    "name": "ID_HERO100_PACK",
+    "value": "925"
+   },
+   {
+    "type": "int",
+    "name": "ID_QUICK_START_PACK_EXTENDED",
+    "value": "930"
+   },
+   {
+    "type": "int",
+    "name": "ID_FIRST_PACK",
+    "value": "997"
+   },
+   {
+    "type": "int",
+    "name": "ID_SECOND_PACK",
+    "value": "998"
+   },
+   {
+    "type": "int",
+    "name": "ID_PROVIDENT_PACK",
+    "value": "999"
+   },
+   {
+    "type": "int",
+    "name": "ID_CRATE_GREEN",
+    "value": "1300"
+   },
+   {
+    "type": "int",
+    "name": "ID_CRATE_BLUE",
+    "value": "1301"
+   },
+   {
+    "type": "int",
+    "name": "ID_CRATE_RED",
+    "value": "1302"
+   },
+   {
+    "type": "int",
+    "name": "ID_CRATE_GOLD",
+    "value": "1303"
+   },
+   {
+    "type": "int",
+    "name": "ID_CRATE_EPIC",
+    "value": "1304"
+   },
+   {
+    "type": "int",
+    "name": "ID_CRATE_BONUS_BLUE",
+    "value": "1305"
+   },
+   {
+    "type": "int",
+    "name": "ID_CRATE_BONUS_RED",
+    "value": "1306"
+   },
+   {
+    "type": "int",
+    "name": "ID_CRATE_BONUS_GOLD",
+    "value": "1307"
+   },
+   {
+    "type": "int",
+    "name": "ID_CRATE_EVENT_MEDIUM",
+    "value": "1308"
+   },
+   {
+    "type": "int",
+    "name": "ID_CRATE_EVENT_BIG",
+    "value": "1309"
+   },
+   {
+    "type": "int",
+    "name": "ID_CRATE_EVENT_EPIC",
+    "value": "1310"
+   },
+   {
+    "type": "int",
+    "name": "ID_MINIMUM_GOLD",
+    "value": "1400"
+   },
+   {
+    "type": "int",
+    "name": "ID_MINIMUM_CREDITS",
+    "value": "1401"
+   },
+   {
+    "type": "int",
+    "name": "ID_MINIMUM_TOKENS",
+    "value": "1402"
+   },
+   {
+    "type": "int",
+    "name": "ID_FIRST_AND_SECOND",
+    "value": "1473"
+   },
+   {
+    "type": "int",
+    "name": "ID_PROVIDENT_AND_CONQUEROR",
+    "value": "1470"
+   },
+   {
+    "type": "int",
+    "name": "ID_PROVIDENT_AND_GOLD",
+    "value": "1471"
+   },
+   {
+    "type": "int",
+    "name": "ID_PROVIDENT_AND_LUCKY50",
+    "value": "1472"
+   },
+   {
+    "type": "int",
+    "name": "ID_FIRST_INSTANT_AND_SECOND",
+    "value": "1480"
+   },
+   {
+    "type": "int",
+    "name": "ID_FIRST_AND_HELICOPTER",
+    "value": "1600"
+   },
+   {
+    "type": "int",
+    "name": "ID_FIRST_AND_ZEUS",
+    "value": "1601"
+   },
+   {
+    "type": "int",
+    "name": "ID_ZEUS_HAM_FORT",
+    "value": "1602"
+   },
+   {
+    "type": "int",
+    "name": "ID_FIGHTER_HELI",
+    "value": "1603"
+   },
+   {
+    "type": "int",
+    "name": "ID_FIGHTER",
+    "value": "1604"
+   },
+   {
+    "type": "int",
+    "name": "ID_FIGHTER_ART_ZEUS",
+    "value": "1605"
+   },
+   {
+    "type": "int",
+    "name": "ID_ARTILLERY",
+    "value": "1606"
+   },
+   {
+    "type": "int",
+    "name": "ID_VIKING",
+    "value": "1607"
+   },
+   {
+    "type": "int",
+    "name": "ID_BOMBER",
+    "value": "1608"
+   },
+   {
+    "type": "int",
+    "name": "ID_SHIELD",
+    "value": "1609"
+   },
+   {
+    "type": "int",
+    "name": "ID_POSEIDON",
+    "value": "1610"
+   },
+   {
+    "type": "int",
+    "name": "ID_ZEUS",
+    "value": "1611"
+   },
+   {
+    "type": "int",
+    "name": "ID_FIRST_PACK_5_BOXES",
+    "value": "1620"
+   },
+   {
+    "type": "int",
+    "name": "ID_FIRST_PACK_5_BOXES_PREM",
+    "value": "1621"
+   },
+   {
+    "type": "int",
+    "name": "ID_BLACK_FRIDAY_SPEEDUPS_BLUE",
+    "value": "1622"
+   },
+   {
+    "type": "int",
+    "name": "ID_BLACK_FRIDAY_SPEEDUPS_RED",
+    "value": "1623"
+   },
+   {
+    "type": "int",
+    "name": "ID_BLACK_FRIDAY_SPEEDUPS_GOLD",
+    "value": "1624"
+   },
+   {
+    "type": "int",
+    "name": "ID_FIRST_PURCHASE_BONUS",
+    "value": "1625"
+   },
+   {
+    "type": "int",
+    "name": "ID_ANNIVERSARY_CARDS_SMALL",
+    "value": "1626"
+   },
+   {
+    "type": "int",
+    "name": "ID_ANNIVERSARY_CARDS_MEDIUM",
+    "value": "1627"
+   },
+   {
+    "type": "int",
+    "name": "ID_ANNIVERSARY_CARDS_LARGE",
+    "value": "1628"
+   },
+   {
+    "type": "int",
+    "name": "ID_LUCKY200_PACK",
+    "value": "1629"
+   },
+   {
+    "type": "int",
+    "name": "ID_LUCKY300_PACK",
+    "value": "1630"
+   },
+   {
+    "type": "int",
+    "name": "ID_LUCKY400_PACK",
+    "value": "1631"
+   },
+   {
+    "type": "int",
+    "name": "ID_30DAYS_GOLD_10_USD",
+    "value": "1632"
+   },
+   {
+    "type": "int",
+    "name": "ID_30DAYS_GOLD_20_USD",
+    "value": "1633"
+   },
+   {
+    "type": "int",
+    "name": "ID_30DAYS_GOLD_5_USD",
+    "value": "1634"
+   },
+   {
+    "type": "int",
+    "name": "ID_SUMMER_1",
+    "value": "1635"
+   },
+   {
+    "type": "int",
+    "name": "ID_SUMMER_2",
+    "value": "1636"
+   },
+   {
+    "type": "int",
+    "name": "ID_SUMMER_3",
+    "value": "1637"
+   },
+   {
+    "type": "int",
+    "name": "ID_SUMMER_4",
+    "value": "1638"
+   },
+   {
+    "type": "int",
+    "name": "ID_SUMMER_5",
+    "value": "1639"
+   },
+   {
+    "type": "int",
+    "name": "ID_SUMMER_6",
+    "value": "1640"
+   },
+   {
+    "type": "int",
+    "name": "ID_HALLOWEEN_LUCK_1",
+    "value": "1641"
+   },
+   {
+    "type": "int",
+    "name": "ID_HALLOWEEN_LUCK_2",
+    "value": "1642"
+   },
+   {
+    "type": "int",
+    "name": "ID_HALLOWEEN_LUCK_3",
+    "value": "1643"
+   },
+   {
+    "type": "int",
+    "name": "ID_HALLOWEEN_LUCK_4",
+    "value": "1644"
+   },
+   {
+    "type": "int",
+    "name": "ID_HALLOWEEN_LUCK_5",
+    "value": "1645"
+   },
+   {
+    "type": "int",
+    "name": "ID_HALLOWEEN_LUCK_6",
+    "value": "1646"
+   },
+   {
+    "type": "int",
+    "name": "ID_HALLOWEEN_PROVIDENCE_1",
+    "value": "1647"
+   },
+   {
+    "type": "int",
+    "name": "ID_HALLOWEEN_PROVIDENCE_2",
+    "value": "1648"
+   },
+   {
+    "type": "int",
+    "name": "ID_HALLOWEEN_PROVIDENCE_3",
+    "value": "1649"
+   },
+   {
+    "type": "int",
+    "name": "ID_HALLOWEEN_PROVIDENCE_4",
+    "value": "1650"
+   },
+   {
+    "type": "int",
+    "name": "ID_HALLOWEEN_PROVIDENCE_5",
+    "value": "1651"
+   },
+   {
+    "type": "int",
+    "name": "ID_HALLOWEEN_PROVIDENCE_6",
+    "value": "1652"
+   },
+   {
+    "type": "int",
+    "name": "ID_ANNIVERSARY_5_UPG_1",
+    "value": "1658"
+   },
+   {
+    "type": "int",
+    "name": "ID_ANNIVERSARY_5_UPG_2",
+    "value": "1659"
+   },
+   {
+    "type": "int",
+    "name": "ID_ANNIVERSARY_5_UPG_3",
+    "value": "1660"
+   },
+   {
+    "type": "int",
+    "name": "ID_ANNIVERSARY_5_UPG_4",
+    "value": "1661"
+   },
+   {
+    "type": "int",
+    "name": "ID_ANNIVERSARY_5_UPG_5",
+    "value": "1662"
+   },
+   {
+    "type": "int",
+    "name": "ID_ANNIVERSARY_5_UPG_6",
+    "value": "1663"
+   },
+   {
+    "type": "int",
+    "name": "ID_ANNIVERSARY_5_SKILLS_1",
+    "value": "1664"
+   },
+   {
+    "type": "int",
+    "name": "ID_ANNIVERSARY_5_SKILLS_2",
+    "value": "1665"
+   },
+   {
+    "type": "int",
+    "name": "ID_ANNIVERSARY_5_SKILLS_3",
+    "value": "1666"
+   },
+   {
+    "type": "int",
+    "name": "ID_ANNIVERSARY_5_SKILLS_4",
+    "value": "1667"
+   },
+   {
+    "type": "int",
+    "name": "ID_ANNIVERSARY_5_SKILLS_5",
+    "value": "1668"
+   },
+   {
+    "type": "int",
+    "name": "ID_ANNIVERSARY_5_SKILLS_6",
+    "value": "1669"
+   },
+   {
+    "type": "int",
+    "name": "ID_SPECIAL200_PACK",
+    "value": "1670"
+   },
+   {
+    "type": "int",
+    "name": "ID_CHRISTMAS_1_1",
+    "value": "1671"
+   },
+   {
+    "type": "int",
+    "name": "ID_ANNIVERSARY_6_UPG_1",
+    "value": "1684"
+   },
+   {
+    "type": "int",
+    "name": "ID_ANNIVERSARY_6_UPG_2",
+    "value": "1685"
+   },
+   {
+    "type": "int",
+    "name": "ID_ANNIVERSARY_6_UPG_3",
+    "value": "1686"
+   },
+   {
+    "type": "int",
+    "name": "ID_ANNIVERSARY_6_UPG_4",
+    "value": "1687"
+   },
+   {
+    "type": "int",
+    "name": "ID_ANNIVERSARY_6_UPG_5",
+    "value": "1688"
+   },
+   {
+    "type": "int",
+    "name": "ID_ANNIVERSARY_6_UPG_6",
+    "value": "1689"
+   },
+   {
+    "type": "int",
+    "name": "ID_ANNIVERSARY_6_SKILLS_1",
+    "value": "1690"
+   },
+   {
+    "type": "int",
+    "name": "ID_ANNIVERSARY_6_SKILLS_2",
+    "value": "1691"
+   },
+   {
+    "type": "int",
+    "name": "ID_ANNIVERSARY_6_SKILLS_3",
+    "value": "1692"
+   },
+   {
+    "type": "int",
+    "name": "ID_ANNIVERSARY_6_SKILLS_4",
+    "value": "1693"
+   },
+   {
+    "type": "int",
+    "name": "ID_ANNIVERSARY_6_SKILLS_5",
+    "value": "1694"
+   },
+   {
+    "type": "int",
+    "name": "ID_ANNIVERSARY_6_SKILLS_6",
+    "value": "1695"
+   },
+   {
+    "type": "int",
+    "name": "ID_HEROES",
+    "value": "1696"
+   },
+   {
+    "type": "int",
+    "name": "ID_HEROES_200",
+    "value": "1705"
+   },
+   {
+    "type": "int",
+    "name": "ID_BATTERY_SMALL",
+    "value": "12000"
+   },
+   {
+    "type": "int",
+    "name": "ID_BATTERY_MEDIUM",
+    "value": "12001"
+   },
+   {
+    "type": "int",
+    "name": "ID_BATTERY_LARGE",
+    "value": "12002"
+   },
+   {
+    "type": "int",
+    "name": "FLAG_NON_PURCHASABLE",
+    "value": "1"
+   },
+   {
+    "type": "int",
+    "name": "FLAG_GIFT",
+    "value": "2"
+   },
+   {
+    "type": "int",
+    "name": "FLAG_REPEAT_ON_COMMON_SALE",
+    "value": "4"
+   },
+   {
+    "type": "int",
+    "name": "FLAG_REWARD",
+    "value": "8"
+   }
+  ]
+ },
+ "HeroParam": {
+  "decl_line": 384485,
+  "fields": [
+   {
+    "type": "int",
+    "name": "solarisA1UnitCheckRadius",
+    "offset": "0x14"
+   },
+   {
+    "type": "int",
+    "name": "solarisA1UnitCheckCount",
+    "offset": "0x18"
+   },
+   {
+    "type": "int",
+    "name": "solarisA1JumpCount",
+    "offset": "0x1C"
+   },
+   {
+    "type": "int",
+    "name": "solarisA1JumpDistance",
+    "offset": "0x20"
+   },
+   {
+    "type": "int",
+    "name": "solarisA1JumpDistanceMin",
+    "offset": "0x24"
+   },
+   {
+    "type": "int",
+    "name": "solarisA1JumpDmgDecr",
+    "offset": "0x28"
+   },
+   {
+    "type": "int",
+    "name": "solarisA1ActiveAbilityShotLength",
+    "offset": "0x2C"
+   },
+   {
+    "type": "int",
+    "name": "kodomashShotLength",
+    "offset": "0x30"
+   },
+   {
+    "type": "int",
+    "name": "kodomashTowerTargetRadius",
+    "offset": "0x34"
+   },
+   {
+    "type": "int",
+    "name": "kodomashAssaultStopRadius",
+    "offset": "0x38"
+   },
+   {
+    "type": "int",
+    "name": "commandoJumpDelayBefore",
+    "offset": "0x3C"
+   },
+   {
+    "type": "int",
+    "name": "commandoJumpDelayAfter",
+    "offset": "0x40"
+   },
+   {
+    "type": "int",
+    "name": "commandoJumpRadiusCheckedByDamage",
+    "offset": "0x44"
+   },
+   {
+    "type": "int",
+    "name": "commandoJumpDeviationMax",
+    "offset": "0x48"
+   },
+   {
+    "type": "int",
+    "name": "beholderSightInterval",
+    "offset": "0x4C"
+   },
+   {
+    "type": "int",
+    "name": "beholderSightMax",
+    "offset": "0x50"
+   },
+   {
+    "type": "int",
+    "name": "beholderSightDamageDelay",
+    "offset": "0x54"
+   },
+   {
+    "type": "int",
+    "name": "gatlingShootIncInterval",
+    "offset": "0x58"
+   },
+   {
+    "type": "int",
+    "name": "gatlingShootDecrInterval",
+    "offset": "0x5C"
+   },
+   {
+    "type": "int",
+    "name": "gatlingActiveInterval",
+    "offset": "0x60"
+   },
+   {
+    "type": "int",
+    "name": "gatlingActiveDistance",
+    "offset": "0x64"
+   },
+   {
+    "type": "int",
+    "name": "gatlingPassiveIntervalRadiusPerc",
+    "offset": "0x68"
+   },
+   {
+    "type": "int",
+    "name": "gatlingPassiveAngleAdd",
+    "offset": "0x6C"
+   },
+   {
+    "type": "int",
+    "name": "gatlingPassiveEffectDuration",
+    "offset": "0x70"
+   },
+   {
+    "type": "int",
+    "name": "salamanderPassiveSpeedInc",
+    "offset": "0x74"
+   },
+   {
+    "type": "int",
+    "name": "salamanderActiveBulletDurationMin",
+    "offset": "0x78"
+   },
+   {
+    "type": "int",
+    "name": "salamanderActiveBulletUpHeight",
+    "offset": "0x7C"
+   },
+   {
+    "type": "int",
+    "name": "berserkEngageRadius",
+    "offset": "0x80"
+   },
+   {
+    "type": "int",
+    "name": "coilTankFrontalArmorBonus",
+    "offset": "0x84"
+   },
+   {
+    "type": "int",
+    "name": "coilTankFrontalArmorAngle",
+    "offset": "0x88"
+   },
+   {
+    "type": "int",
+    "name": "coilTankActiveExplosionRadius",
+    "offset": "0x8C"
+   },
+   {
+    "type": "int[]",
+    "name": "atlasActiveCoords",
+    "offset": "0x90"
+   },
+   {
+    "type": "int[]",
+    "name": "cryoTankPassiveCoords",
+    "offset": "0x98"
+   },
+   {
+    "type": "int",
+    "name": "railgunArmorPiercing",
+    "offset": "0xA0"
+   },
+   {
+    "type": "int",
+    "name": "heroSlotCooldown",
+    "offset": "0xA4"
+   },
+   {
+    "type": "int",
+    "name": "heroAviaDamageDecr",
+    "offset": "0xA8"
+   },
+   {
+    "type": "int",
+    "name": "uraniumMax",
+    "offset": "0xAC"
+   },
+   {
+    "type": "int",
+    "name": "uraniumRegen",
+    "offset": "0xB0"
+   }
+  ],
+  "consts": []
+ },
+ "MineType": {
+  "decl_line": 386012,
+  "fields": [
+   {
+    "type": "short",
+    "name": "name",
+    "offset": "0x14"
+   },
+   {
+    "type": "short",
+    "name": "desc",
+    "offset": "0x16"
+   },
+   {
+    "type": "sbyte",
+    "name": "available",
+    "offset": "0x18"
+   },
+   {
+    "type": "sbyte",
+    "name": "category",
+    "offset": "0x19"
+   },
+   {
+    "type": "sbyte",
+    "name": "detonate",
+    "offset": "0x1A"
+   },
+   {
+    "type": "int",
+    "name": "damage_light",
+    "offset": "0x1C"
+   },
+   {
+    "type": "int",
+    "name": "damage_medium",
+    "offset": "0x20"
+   },
+   {
+    "type": "int",
+    "name": "damage_heavy",
+    "offset": "0x24"
+   },
+   {
+    "type": "int",
+    "name": "explosion_radius",
+    "offset": "0x28"
+   },
+   {
+    "type": "sbyte",
+    "name": "explosion_decr",
+    "offset": "0x2C"
+   },
+   {
+    "type": "int",
+    "name": "price",
+    "offset": "0x30"
+   },
+   {
+    "type": "int",
+    "name": "set_time",
+    "offset": "0x34"
+   },
+   {
+    "type": "short",
+    "name": "life",
+    "offset": "0x38"
+   },
+   {
+    "type": "string",
+    "name": "icon",
+    "offset": "0x40"
+   },
+   {
+    "type": "string",
+    "name": "prefab",
+    "offset": "0x48"
+   },
+   {
+    "type": "string",
+    "name": "pref_placing",
+    "offset": "0x50"
+   },
+   {
+    "type": "string",
+    "name": "pref_boom",
+    "offset": "0x58"
+   },
+   {
+    "type": "string",
+    "name": "pref_funnel",
+    "offset": "0x60"
+   }
+  ],
+  "consts": [
+   {
+    "type": "sbyte",
+    "name": "MINE_TYPE_SCORPIO",
+    "value": "0"
+   },
+   {
+    "type": "sbyte",
+    "name": "MINE_TYPE_FROG",
+    "value": "2"
+   },
+   {
+    "type": "sbyte",
+    "name": "MINE_TYPE_LIZARD",
+    "value": "4"
+   },
+   {
+    "type": "sbyte",
+    "name": "MINE_TYPE_WATER",
+    "value": "6"
+   }
+  ]
+ },
+ "Prototype": {
+  "decl_line": 387981,
+  "fields": [],
+  "consts": []
+ },
+ "ResourceInfo": {
+  "decl_line": 389675,
+  "fields": [
+   {
+    "type": "string",
+    "name": "path",
+    "offset": "0x10"
+   },
+   {
+    "type": "bool",
+    "name": "zipped",
+    "offset": "0x18"
+   },
+   {
+    "type": "string",
+    "name": "crc",
+    "offset": "0x20"
+   },
+   {
+    "type": "bool",
+    "name": "computeLocalCrc",
+    "offset": "0x28"
+   },
+   {
+    "type": "string",
+    "name": "type",
+    "offset": "0x30"
+   }
+  ],
+  "consts": []
+ },
+ "TroopType": {
+  "decl_line": 393039,
+  "fields": [
+   {
+    "type": "string",
+    "name": "name",
+    "offset": "0x18"
+   },
+   {
+    "type": "string",
+    "name": "desc",
+    "offset": "0x20"
+   },
+   {
+    "type": "short",
+    "name": "power",
+    "offset": "0x28"
+   },
+   {
+    "type": "sbyte",
+    "name": "level",
+    "offset": "0x2A"
+   },
+   {
+    "type": "sbyte",
+    "name": "rank",
+    "offset": "0x2B"
+   },
+   {
+    "type": "string",
+    "name": "contrib",
+    "offset": "0x30"
+   },
+   {
+    "type": "string",
+    "name": "units",
+    "offset": "0x38"
+   },
+   {
+    "type": "short",
+    "name": "pause_time",
+    "offset": "0x40"
+   },
+   {
+    "type": "string",
+    "name": "icon",
+    "offset": "0x48"
+   }
+  ],
+  "consts": []
+ },
+ "UnitStateType": {
+  "decl_line": 394983,
+  "fields": [
+   {
+    "type": "List<WeaponType>",
+    "name": "weapons",
+    "offset": "0x18"
+   },
+   {
+    "type": "sbyte",
+    "name": "pass",
+    "offset": "0x20"
+   },
+   {
+    "type": "short",
+    "name": "armor",
+    "offset": "0x22"
+   },
+   {
+    "type": "short",
+    "name": "armor_bonus",
+    "offset": "0x24"
+   },
+   {
+    "type": "sbyte",
+    "name": "armor_type",
+    "offset": "0x26"
+   },
+   {
+    "type": "bool",
+    "name": "armed",
+    "offset": "0x27"
+   },
+   {
+    "type": "int[]",
+    "name": "undergo",
+    "offset": "0x28"
+   },
+   {
+    "type": "int[]",
+    "name": "undergo_original",
+    "offset": "0x30"
+   },
+   {
+    "type": "int[]",
+    "name": "undergo_original_init",
+    "offset": "0x38"
+   },
+   {
+    "type": "sbyte[]",
+    "name": "damage_priority",
+    "offset": "0x40"
+   },
+   {
+    "type": "int",
+    "name": "approach",
+    "offset": "0x48"
+   },
+   {
+    "type": "int",
+    "name": "sight",
+    "offset": "0x4C"
+   },
+   {
+    "type": "int",
+    "name": "sight_init",
+    "offset": "0x50"
+   },
+   {
+    "type": "int",
+    "name": "min_undergo",
+    "offset": "0x54"
+   },
+   {
+    "type": "sbyte",
+    "name": "speed",
+    "offset": "0x58"
+   },
+   {
+    "type": "sbyte",
+    "name": "speed_init",
+    "offset": "0x59"
+   },
+   {
+    "type": "short",
+    "name": "rotate",
+    "offset": "0x5A"
+   },
+   {
+    "type": "int",
+    "name": "radar",
+    "offset": "0x5C"
+   },
+   {
+    "type": "sbyte",
+    "name": "occupation",
+    "offset": "0x60"
+   },
+   {
+    "type": "sbyte",
+    "name": "aiming",
+    "offset": "0x61"
+   },
+   {
+    "type": "sbyte",
+    "name": "weapon_immobile",
+    "offset": "0x62"
+   },
+   {
+    "type": "bool",
+    "name": "area_cover",
+    "offset": "0x63"
+   },
+   {
+    "type": "bool",
+    "name": "moving",
+    "offset": "0x64"
+   },
+   {
+    "type": "sbyte",
+    "name": "open_ground",
+    "offset": "0x65"
+   },
+   {
+    "type": "sbyte",
+    "name": "open_water",
+    "offset": "0x66"
+   },
+   {
+    "type": "sbyte",
+    "name": "open_air",
+    "offset": "0x67"
+   },
+   {
+    "type": "sbyte[]",
+    "name": "opens",
+    "offset": "0x68"
+   },
+   {
+    "type": "sbyte",
+    "name": "invisible",
+    "offset": "0x70"
+   },
+   {
+    "type": "short",
+    "name": "regen",
+    "offset": "0x72"
+   },
+   {
+    "type": "short",
+    "name": "regen_init",
+    "offset": "0x74"
+   },
+   {
+    "type": "sbyte",
+    "name": "accelerate",
+    "offset": "0x76"
+   },
+   {
+    "type": "sbyte",
+    "name": "jump_dist",
+    "offset": "0x77"
+   },
+   {
+    "type": "short",
+    "name": "flight",
+    "offset": "0x78"
+   },
+   {
+    "type": "short",
+    "name": "flight_init",
+    "offset": "0x7A"
+   },
+   {
+    "type": "short",
+    "name": "flight_radius",
+    "offset": "0x7C"
+   },
+   {
+    "type": "short",
+    "name": "altitude",
+    "offset": "0x7E"
+   },
+   {
+    "type": "int",
+    "name": "spec",
+    "offset": "0x80"
+   },
+   {
+    "type": "short",
+    "name": "size",
+    "offset": "0x84"
+   },
+   {
+    "type": "sbyte",
+    "name": "flags",
+    "offset": "0x86"
+   },
+   {
+    "type": "short",
+    "name": "en_max",
+    "offset": "0x88"
+   },
+   {
+    "type": "short",
+    "name": "en_waste",
+    "offset": "0x8A"
+   },
+   {
+    "type": "short",
+    "name": "en_regen",
+    "offset": "0x8C"
+   },
+   {
+    "type": "short",
+    "name": "en_regen_init",
+    "offset": "0x8E"
+   },
+   {
+    "type": "sbyte",
+    "name": "die_time",
+    "offset": "0x90"
+   },
+   {
+    "type": "string[]",
+    "name": "mesh",
+    "offset": "0x98"
+   },
+   {
+    "type": "sbyte",
+    "name": "vertical",
+    "offset": "0xA0"
+   }
+  ],
+  "consts": [
+   {
+    "type": "sbyte",
+    "name": "WARNED_BY_NEARBY_FRIENDS",
+    "value": "1"
+   },
+   {
+    "type": "sbyte",
+    "name": "FLAG_GROUND_RADIUS",
+    "value": "2"
+   }
+  ]
+ },
+ "UnitType": {
+  "decl_line": 395418,
+  "fields": [
+   {
+    "type": "List<UnitStateType>",
+    "name": "states",
+    "offset": "0x18"
+   },
+   {
+    "type": "Fraction",
+    "name": "fraction",
+    "offset": "0x20"
+   },
+   {
+    "type": "int",
+    "name": "featureToggle",
+    "offset": "0x28"
+   },
+   {
+    "type": "int",
+    "name": "rank_pvp",
+    "offset": "0x2C"
+   },
+   {
+    "type": "sbyte",
+    "name": "category",
+    "offset": "0x30"
+   },
+   {
+    "type": "sbyte",
+    "name": "type",
+    "offset": "0x31"
+   },
+   {
+    "type": "short",
+    "name": "life",
+    "offset": "0x32"
+   },
+   {
+    "type": "int",
+    "name": "lifeInt",
+    "offset": "0x34"
+   },
+   {
+    "type": "int",
+    "name": "time_train",
+    "offset": "0x38"
+   },
+   {
+    "type": "int",
+    "name": "time_train_init",
+    "offset": "0x3C"
+   },
+   {
+    "type": "int",
+    "name": "upkeep",
+    "offset": "0x40"
+   },
+   {
+    "type": "sbyte",
+    "name": "cp",
+    "offset": "0x44"
+   },
+   {
+    "type": "int",
+    "name": "price",
+    "offset": "0x48"
+   },
+   {
+    "type": "sbyte",
+    "name": "spec",
+    "offset": "0x4C"
+   },
+   {
+    "type": "sbyte",
+    "name": "tick_to_spec",
+    "offset": "0x4D"
+   },
+   {
+    "type": "sbyte",
+    "name": "tick_from_spec",
+    "offset": "0x4E"
+   },
+   {
+    "type": "short",
+    "name": "barracks",
+    "offset": "0x50"
+   },
+   {
+    "type": "sbyte",
+    "name": "weapon_priority",
+    "offset": "0x52"
+   },
+   {
+    "type": "int",
+    "name": "score",
+    "offset": "0x54"
+   },
+   {
+    "type": "sbyte",
+    "name": "flags",
+    "offset": "0x58"
+   },
+   {
+    "type": "bool",
+    "name": "torpedo",
+    "offset": "0x59"
+   },
+   {
+    "type": "string",
+    "name": "model_name",
+    "offset": "0x60"
+   },
+   {
+    "type": "string",
+    "name": "visualId",
+    "offset": "0x68"
+   },
+   {
+    "type": "short",
+    "name": "desc",
+    "offset": "0x70"
+   },
+   {
+    "type": "short",
+    "name": "name",
+    "offset": "0x72"
+   },
+   {
+    "type": "short",
+    "name": "name_long",
+    "offset": "0x74"
+   },
+   {
+    "type": "sbyte",
+    "name": "order",
+    "offset": "0x76"
+   },
+   {
+    "type": "sbyte",
+    "name": "demine_radius",
+    "offset": "0x77"
+   },
+   {
+    "type": "sbyte",
+    "name": "demine_speed_reduce",
+    "offset": "0x78"
+   },
+   {
+    "type": "short",
+    "name": "demine_time",
+    "offset": "0x7A"
+   },
+   {
+    "type": "int",
+    "name": "quest",
+    "offset": "0x7C"
+   },
+   {
+    "type": "sbyte",
+    "name": "cross",
+    "offset": "0x80"
+   },
+   {
+    "type": "bool",
+    "name": "bulletShooter",
+    "offset": "0x81"
+   },
+   {
+    "type": "bool",
+    "name": "antiAir",
+    "offset": "0x82"
+   },
+   {
+    "type": "int[]",
+    "name": "botHireProb",
+    "offset": "0x88"
+   },
+   {
+    "type": "int",
+    "name": "botHireCategory",
+    "offset": "0x90"
+   },
+   {
+    "type": "List<AbilityType>",
+    "name": "ability",
+    "offset": "0x98"
+   },
+   {
+    "type": "int",
+    "name": "heroClass",
+    "offset": "0xA0"
+   },
+   {
+    "type": "int",
+    "name": "upgCount",
+    "offset": "0xA4"
+   },
+   {
+    "type": "int",
+    "name": "uraniumToActivate",
+    "offset": "0xA8"
+   },
+   {
+    "type": "int",
+    "name": "heroSlot",
+    "offset": "0xAC"
+   },
+   {
+    "type": "int",
+    "name": "tier",
+    "offset": "0xB0"
+   },
+   {
+    "type": "TransportType",
+    "name": "transport",
+    "offset": "0xB8"
+   },
+   {
+    "type": "int",
+    "name": "transportSize",
+    "offset": "0xC0"
+   },
+   {
+    "type": "Nullable<TemporaryMetaFeatureToggles>",
+    "name": "temporaryMetaFeatureToggles",
+    "offset": "0xC4"
+   },
+   {
+    "type": "Nullable<BattleFeatureToggles>",
+    "name": "battleFeatureToggles",
+    "offset": "0xCC"
+   }
+  ],
+  "consts": [
+   {
+    "type": "sbyte",
+    "name": "ARMOR_TYPE_LIGHT",
+    "value": "0"
+   },
+   {
+    "type": "sbyte",
+    "name": "ARMOR_TYPE_MEDIUM",
+    "value": "1"
+   },
+   {
+    "type": "sbyte",
+    "name": "ARMOR_TYPE_HEAVY",
+    "value": "2"
+   },
+   {
+    "type": "sbyte",
+    "name": "ARMOR_TYPE_COUNT",
+    "value": "3"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_MARINE",
+    "value": "10"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_INFANTRY",
+    "value": "11"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_FIREBAT",
+    "value": "12"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_SNIPER",
+    "value": "13"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_SABOTEUR",
+    "value": "14"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_PSIONIC",
+    "value": "15"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_ZOMBIE",
+    "value": "16"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_UFO",
+    "value": "17"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_VEHICLE",
+    "value": "20"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_MINE_LAYER",
+    "value": "21"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_SHIELD",
+    "value": "22"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_FOG",
+    "value": "23"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_FORTRESS",
+    "value": "24"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_ARTILLERY",
+    "value": "25"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_TRANSPORT_LAND",
+    "value": "26"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_SCIENCE",
+    "value": "27"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_HELICOPTER",
+    "value": "30"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_FIGHTER",
+    "value": "31"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_BOMBER",
+    "value": "32"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_SHIP",
+    "value": "40"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_SKIRTED",
+    "value": "41"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_AMPHIBIAN",
+    "value": "42"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_TRANSPORT_WATER",
+    "value": "43"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_NUCLEAR_MISSILE",
+    "value": "50"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_COMMANDO",
+    "value": "60"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_SERAPHIM",
+    "value": "61"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_SOLARIS",
+    "value": "62"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_BEHOLDER",
+    "value": "63"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_PSI_TANK",
+    "value": "64"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_ATLAS",
+    "value": "65"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_CRYOTANK",
+    "value": "66"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_WASP",
+    "value": "70"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_KODOMASH",
+    "value": "71"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_LEVIATHAN",
+    "value": "72"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_GATLING",
+    "value": "73"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_SALAMANDER",
+    "value": "74"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_COIL_TANK",
+    "value": "75"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_RAILGUN",
+    "value": "76"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_TYPE_KODOMASH_TOWER",
+    "value": "90"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_ILIGHT_CONF",
+    "value": "0"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_IHEAVY_CONF",
+    "value": "1"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_FIREBAT",
+    "value": "2"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_FORTRESS",
+    "value": "10"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_HAMMER",
+    "value": "11"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_TYPHOON",
+    "value": "12"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_ZEUS",
+    "value": "15"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_TORRENT",
+    "value": "16"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_SHIELD",
+    "value": "17"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_CYCLONE",
+    "value": "20"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_FIGHTER",
+    "value": "21"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_BOMBER",
+    "value": "22"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_AMPHIBIAN",
+    "value": "25"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_DESTROYER",
+    "value": "26"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_CRUISER",
+    "value": "27"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_NUCLEAR",
+    "value": "50"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_COMMANDO",
+    "value": "70"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_SERAPHIM",
+    "value": "71"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_SOLARIS",
+    "value": "72"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_BEHOLDER",
+    "value": "73"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_PSI_TANK",
+    "value": "74"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_ATLAS",
+    "value": "75"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_ILIGHT_RES",
+    "value": "100"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_IHEAVY_RES",
+    "value": "101"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_SNIPER",
+    "value": "102"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_COYOTE",
+    "value": "110"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_ARMADILLO",
+    "value": "111"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_PORCUPINE",
+    "value": "112"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_JAGUAR",
+    "value": "115"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_MAMMOTH",
+    "value": "116"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_FOG",
+    "value": "117"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_DRAGONFLY",
+    "value": "120"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_HAWK",
+    "value": "121"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_ALBATROSS",
+    "value": "122"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_CAYMAN",
+    "value": "125"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_ALLIGATOR",
+    "value": "126"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_SUBMARINE",
+    "value": "127"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_WASP",
+    "value": "170"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_KODOMASH",
+    "value": "171"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_LEVIATHAN",
+    "value": "172"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_GATLING",
+    "value": "173"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_SALAMANDER",
+    "value": "174"
+   },
+   {
+    "type": "int",
+    "name": "UNIT_ID_COIL_TANK",
+    "value": "175"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_CATEGORY_INFANTRY",
+    "value": "1"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_CATEGORY_VEHICLE",
+    "value": "2"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_CATEGORY_AIRCRAFT",
+    "value": "3"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_CATEGORY_SHIP",
+    "value": "4"
+   },
+   {
+    "type": "sbyte",
+    "name": "UNIT_CATEGORY_VEHICLE_SPEC",
+    "value": "6"
+   },
+   {
+    "type": "sbyte",
+    "name": "SPEC_NOTHING",
+    "value": "0"
+   },
+   {
+    "type": "sbyte",
+    "name": "SPEC_SIEGE",
+    "value": "1"
+   },
+   {
+    "type": "sbyte",
+    "name": "SPEC_SNIPER",
+    "value": "2"
+   },
+   {
+    "type": "sbyte",
+    "name": "SPEC_GRENADEER",
+    "value": "3"
+   },
+   {
+    "type": "sbyte",
+    "name": "SPEC_SUBMARINE",
+    "value": "4"
+   },
+   {
+    "type": "sbyte",
+    "name": "SPEC_KODOMASH",
+    "value": "5"
+   },
+   {
+    "type": "sbyte",
+    "name": "SPEC_COMMANDO",
+    "value": "6"
+   },
+   {
+    "type": "sbyte",
+    "name": "CROSS_UNKNOWN",
+    "value": "0"
+   },
+   {
+    "type": "sbyte",
+    "name": "CROSS_NO",
+    "value": "1"
+   },
+   {
+    "type": "sbyte",
+    "name": "CROSS_YES",
+    "value": "2"
+   },
+   {
+    "type": "int",
+    "name": "FLAGS_SUPPORT_UNIT",
+    "value": "1"
+   },
+   {
+    "type": "int",
+    "name": "FLAGS_STRAFE_AVAILABLE",
+    "value": "2"
+   },
+   {
+    "type": "int",
+    "name": "FLAGS_CANT_AUTOATTACK_WALL",
+    "value": "4"
+   },
+   {
+    "type": "int",
+    "name": "FLAGS_AUTOSTOP_ON_ENEMY_NEARBY",
+    "value": "8"
+   },
+   {
+    "type": "int",
+    "name": "FLAGS_PSI_TANK_BERSERK",
+    "value": "16"
+   },
+   {
+    "type": "int",
+    "name": "FLAGS_VISIBLE_IN_WORKSHOP",
+    "value": "32"
+   }
+  ]
+ },
+ "UpgradeBuilding": {
+  "decl_line": 396036,
+  "fields": [
+   {
+    "type": "BuildingType",
+    "name": "owner",
+    "offset": "0x48"
+   }
+  ],
+  "consts": []
+ },
+ "UpgradeLevel": {
+  "decl_line": 396156,
+  "fields": [
+   {
+    "type": "string",
+    "name": "desc",
+    "offset": "0x18"
+   },
+   {
+    "type": "int",
+    "name": "cost_c",
+    "offset": "0x20"
+   },
+   {
+    "type": "int",
+    "name": "time",
+    "offset": "0x24"
+   },
+   {
+    "type": "int",
+    "name": "xp",
+    "offset": "0x28"
+   },
+   {
+    "type": "int",
+    "name": "coef_rush",
+    "offset": "0x2C"
+   },
+   {
+    "type": "UpgradeLevel[]",
+    "name": "contrib_upl",
+    "offset": "0x30"
+   },
+   {
+    "type": "int",
+    "name": "contrib_level",
+    "offset": "0x38"
+   },
+   {
+    "type": "ProfileRank",
+    "name": "contrib_rank",
+    "offset": "0x40"
+   },
+   {
+    "type": "Upgrade",
+    "name": "owner",
+    "offset": "0x48"
+   },
+   {
+    "type": "int",
+    "name": "cardId",
+    "offset": "0x50"
+   },
+   {
+    "type": "int",
+    "name": "cardAmount",
+    "offset": "0x54"
+   },
+   {
+    "type": "int",
+    "name": "upgCountContrib",
+    "offset": "0x58"
+   }
+  ],
+  "consts": []
+ },
+ "UpgradeUnit": {
+  "decl_line": 396312,
+  "fields": [
+   {
+    "type": "UnitType",
+    "name": "owner",
+    "offset": "0x48"
+   }
+  ],
+  "consts": []
+ },
+ "WeaponType": {
+  "decl_line": 396871,
+  "fields": [
+   {
+    "type": "bool",
+    "name": "inited",
+    "offset": "0x14"
+   },
+   {
+    "type": "AuraType",
+    "name": "aura",
+    "offset": "0x18"
+   },
+   {
+    "type": "short",
+    "name": "name",
+    "offset": "0x20"
+   },
+   {
+    "type": "short",
+    "name": "name_add",
+    "offset": "0x22"
+   },
+   {
+    "type": "short",
+    "name": "type",
+    "offset": "0x24"
+   },
+   {
+    "type": "sbyte",
+    "name": "category",
+    "offset": "0x26"
+   },
+   {
+    "type": "int",
+    "name": "damage_light",
+    "offset": "0x28"
+   },
+   {
+    "type": "int",
+    "name": "damage_medium",
+    "offset": "0x2C"
+   },
+   {
+    "type": "int",
+    "name": "damage_heavy",
+    "offset": "0x30"
+   },
+   {
+    "type": "int",
+    "name": "damage_light_init",
+    "offset": "0x34"
+   },
+   {
+    "type": "int",
+    "name": "damage_medium_init",
+    "offset": "0x38"
+   },
+   {
+    "type": "int",
+    "name": "damage_heavy_init",
+    "offset": "0x3C"
+   },
+   {
+    "type": "sbyte[]",
+    "name": "damage_priority",
+    "offset": "0x40"
+   },
+   {
+    "type": "sbyte",
+    "name": "hit_bonus",
+    "offset": "0x48"
+   },
+   {
+    "type": "int",
+    "name": "distance",
+    "offset": "0x4C"
+   },
+   {
+    "type": "int",
+    "name": "distance_original",
+    "offset": "0x50"
+   },
+   {
+    "type": "int",
+    "name": "distance_original_init",
+    "offset": "0x54"
+   },
+   {
+    "type": "int",
+    "name": "distance_min",
+    "offset": "0x58"
+   },
+   {
+    "type": "int",
+    "name": "velocity",
+    "offset": "0x5C"
+   },
+   {
+    "type": "short",
+    "name": "shot_start",
+    "offset": "0x60"
+   },
+   {
+    "type": "short",
+    "name": "flarePrepare",
+    "offset": "0x62"
+   },
+   {
+    "type": "short",
+    "name": "shot_int",
+    "offset": "0x64"
+   },
+   {
+    "type": "short",
+    "name": "round_len",
+    "offset": "0x66"
+   },
+   {
+    "type": "short",
+    "name": "shot_length",
+    "offset": "0x68"
+   },
+   {
+    "type": "sbyte",
+    "name": "shot_count",
+    "offset": "0x6A"
+   },
+   {
+    "type": "short[]",
+    "name": "shot_tick",
+    "offset": "0x70"
+   },
+   {
+    "type": "sbyte",
+    "name": "shell_type",
+    "offset": "0x78"
+   },
+   {
+    "type": "int",
+    "name": "explosion_radius",
+    "offset": "0x7C"
+   },
+   {
+    "type": "int",
+    "name": "explosionRadiusInit",
+    "offset": "0x80"
+   },
+   {
+    "type": "sbyte",
+    "name": "explosion_decr",
+    "offset": "0x84"
+   },
+   {
+    "type": "short",
+    "name": "rotate_diap",
+    "offset": "0x86"
+   },
+   {
+    "type": "short",
+    "name": "rotate_speed",
+    "offset": "0x88"
+   },
+   {
+    "type": "sbyte",
+    "name": "walking_shot",
+    "offset": "0x8A"
+   },
+   {
+    "type": "sbyte",
+    "name": "aiming",
+    "offset": "0x8B"
+   },
+   {
+    "type": "bool",
+    "name": "air_aiming",
+    "offset": "0x8C"
+   },
+   {
+    "type": "sbyte",
+    "name": "priority",
+    "offset": "0x8D"
+   },
+   {
+    "type": "short",
+    "name": "accuracy_static",
+    "offset": "0x8E"
+   },
+   {
+    "type": "short",
+    "name": "accuracy_dynamic",
+    "offset": "0x90"
+   },
+   {
+    "type": "short",
+    "name": "accuracy_walk",
+    "offset": "0x92"
+   },
+   {
+    "type": "sbyte",
+    "name": "guided",
+    "offset": "0x94"
+   },
+   {
+    "type": "sbyte",
+    "name": "guided_rotate_speed",
+    "offset": "0x95"
+   },
+   {
+    "type": "short",
+    "name": "guided_rocket_life",
+    "offset": "0x96"
+   },
+   {
+    "type": "short",
+    "name": "coneAngle",
+    "offset": "0x98"
+   },
+   {
+    "type": "short",
+    "name": "coneDuration",
+    "offset": "0x9A"
+   },
+   {
+    "type": "short",
+    "name": "coneBaseLine",
+    "offset": "0x9C"
+   },
+   {
+    "type": "sbyte",
+    "name": "bulletTrajectoryType",
+    "offset": "0x9E"
+   },
+   {
+    "type": "short",
+    "name": "gravity",
+    "offset": "0xA0"
+   },
+   {
+    "type": "bool",
+    "name": "accelerating",
+    "offset": "0xA2"
+   },
+   {
+    "type": "int",
+    "name": "bul_type",
+    "offset": "0xA4"
+   },
+   {
+    "type": "int",
+    "name": "boom_type",
+    "offset": "0xA8"
+   },
+   {
+    "type": "int",
+    "name": "pvp_bld_points",
+    "offset": "0xAC"
+   },
+   {
+    "type": "int[]",
+    "name": "dmg_un_modificator",
+    "offset": "0xB0"
+   },
+   {
+    "type": "int[]",
+    "name": "dmg_bld_modificator",
+    "offset": "0xB8"
+   },
+   {
+    "type": "string",
+    "name": "icon",
+    "offset": "0xC0"
+   },
+   {
+    "type": "FireType",
+    "name": "visual",
+    "offset": "0xC8"
+   },
+   {
+    "type": "int[]",
+    "name": "rounds_made",
+    "offset": "0xD0"
+   },
+   {
+    "type": "int[]",
+    "name": "shots_made",
+    "offset": "0xD8"
+   },
+   {
+    "type": "int[]",
+    "name": "target_impacts",
+    "offset": "0xE0"
+   },
+   {
+    "type": "int[]",
+    "name": "target_impacts_precise",
+    "offset": "0xE8"
+   },
+   {
+    "type": "int[]",
+    "name": "target_damage",
+    "offset": "0xF0"
+   },
+   {
+    "type": "int[]",
+    "name": "off_target_impacts",
+    "offset": "0xF8"
+   },
+   {
+    "type": "int[]",
+    "name": "off_target_impacts_precise",
+    "offset": "0x100"
+   },
+   {
+    "type": "int[]",
+    "name": "off_target_damage",
+    "offset": "0x108"
+   }
+  ],
+  "consts": [
+   {
+    "type": "sbyte",
+    "name": "ACCURACY_DISTANCE_BASE",
+    "value": "10"
+   },
+   {
+    "type": "sbyte",
+    "name": "FIRE_TICK_LENGTH",
+    "value": "4"
+   },
+   {
+    "type": "sbyte",
+    "name": "FIRE_RADIUS_INC",
+    "value": "10"
+   },
+   {
+    "type": "sbyte",
+    "name": "SHELL_ID_GRENADE_SMOKE",
+    "value": "101"
+   },
+   {
+    "type": "int",
+    "name": "SHELL_ID_CERBER_KNIFE",
+    "value": "502"
+   },
+   {
+    "type": "int",
+    "name": "SHELL_ID_CERBER_ABILITY_1",
+    "value": "503"
+   },
+   {
+    "type": "int",
+    "name": "SHELL_ID_CERBER_ABILITY_2",
+    "value": "504"
+   },
+   {
+    "type": "int",
+    "name": "SHELL_ID_SERAPHIM_ABILITY",
+    "value": "508"
+   },
+   {
+    "type": "int",
+    "name": "SHELL_ID_SOLARIS_ABILITY",
+    "value": "511"
+   },
+   {
+    "type": "int",
+    "name": "SHELL_ID_BEHOLDER_SCANNER",
+    "value": "516"
+   },
+   {
+    "type": "int",
+    "name": "SHELL_ID_PSI_TANK_AUTO",
+    "value": "520"
+   },
+   {
+    "type": "int",
+    "name": "SHELL_ID_PSI_TANK_ACTIVE",
+    "value": "521"
+   },
+   {
+    "type": "int",
+    "name": "SHELL_ID_PSI_TANK_PASSIVE",
+    "value": "522"
+   },
+   {
+    "type": "int",
+    "name": "SHELL_ID_CRYOTANK_AUTO",
+    "value": "526"
+   },
+   {
+    "type": "int",
+    "name": "SHELL_ID_CRYOTANK_ACTIVE",
+    "value": "527"
+   },
+   {
+    "type": "int",
+    "name": "SHELL_ID_CRYOTANK_PASSIVE",
+    "value": "528"
+   },
+   {
+    "type": "int",
+    "name": "SHELL_ID_CRYOTANK_AURA",
+    "value": "529"
+   },
+   {
+    "type": "int",
+    "name": "SHELL_ID_WASP_TOXIC_CLOUD",
+    "value": "601"
+   },
+   {
+    "type": "int",
+    "name": "SHELL_ID_LEVIATHAN_ABILITY_MISSILE",
+    "value": "607"
+   },
+   {
+    "type": "int",
+    "name": "SHELL_ID_GATLING_ABILITY_ACTIVE",
+    "value": "611"
+   },
+   {
+    "type": "int",
+    "name": "SHELL_ID_GATLING_ABILITY_PASSIVE",
+    "value": "612"
+   },
+   {
+    "type": "int",
+    "name": "SHELL_ID_SALAMANDER_AUTO",
+    "value": "615"
+   },
+   {
+    "type": "int",
+    "name": "SHELL_ID_SALAMANDER_ABILITY_ACTIVE",
+    "value": "616"
+   },
+   {
+    "type": "int",
+    "name": "SHELL_ID_COIL_TANK_AUTO",
+    "value": "617"
+   },
+   {
+    "type": "int",
+    "name": "SHELL_ID_COIL_TANK_PASSIVE",
+    "value": "619"
+   },
+   {
+    "type": "int",
+    "name": "SHELL_ID_COIL_TANK_AURA",
+    "value": "620"
+   },
+   {
+    "type": "int",
+    "name": "SHELL_ID_RAILGUN_SIEGE_AUTO",
+    "value": "622"
+   },
+   {
+    "type": "int",
+    "name": "SHELL_ID_RAILGUN_ACTIVE",
+    "value": "623"
+   },
+   {
+    "type": "sbyte",
+    "name": "SHELL_TYPE_BULLET",
+    "value": "10"
+   },
+   {
+    "type": "sbyte",
+    "name": "SHELL_TYPE_BALL",
+    "value": "20"
+   },
+   {
+    "type": "sbyte",
+    "name": "SHELL_TYPE_BALL_BOMBARD",
+    "value": "21"
+   },
+   {
+    "type": "sbyte",
+    "name": "SHELL_TYPE_BALL_BOMBARD_PARABOLIC",
+    "value": "23"
+   },
+   {
+    "type": "sbyte",
+    "name": "SHELL_TYPE_NUCLEAR_MISSILE",
+    "value": "27"
+   },
+   {
+    "type": "sbyte",
+    "name": "SHELL_TYPE_ROCKET",
+    "value": "30"
+   },
+   {
+    "type": "sbyte",
+    "name": "SHELL_TYPE_ROCKET_BOMBARD",
+    "value": "31"
+   },
+   {
+    "type": "sbyte",
+    "name": "SHELL_TYPE_ROCKET_TORPEDO",
+    "value": "34"
+   },
+   {
+    "type": "sbyte",
+    "name": "SHELL_TYPE_FIRE",
+    "value": "40"
+   },
+   {
+    "type": "sbyte",
+    "name": "SHELL_TYPE_SOLARIS_ACTIVE",
+    "value": "42"
+   },
+   {
+    "type": "sbyte",
+    "name": "SHELL_TYPE_KODOMASH",
+    "value": "44"
+   },
+   {
+    "type": "sbyte",
+    "name": "SHELL_TYPE_COIL_TANK_ACTIVE",
+    "value": "46"
+   },
+   {
+    "type": "sbyte",
+    "name": "SHELL_TYPE_PSIONIC",
+    "value": "50"
+   },
+   {
+    "type": "sbyte",
+    "name": "SHELL_TYPE_MINE",
+    "value": "60"
+   },
+   {
+    "type": "sbyte",
+    "name": "SHELL_TYPE_LIGHTNING_CHAIN",
+    "value": "70"
+   },
+   {
+    "type": "sbyte",
+    "name": "SHELL_CATEGORY_EVACUATE",
+    "value": "-1"
+   },
+   {
+    "type": "sbyte",
+    "name": "SHELL_CATEGORY_BULLET",
+    "value": "1"
+   },
+   {
+    "type": "sbyte",
+    "name": "SHELL_CATEGORY_BALL",
+    "value": "2"
+   },
+   {
+    "type": "sbyte",
+    "name": "SHELL_CATEGORY_ROCKET",
+    "value": "3"
+   },
+   {
+    "type": "sbyte",
+    "name": "SHELL_CATEGORY_FIRE",
+    "value": "4"
+   },
+   {
+    "type": "sbyte",
+    "name": "SHELL_CATEGORY_PSIONIC",
+    "value": "5"
+   },
+   {
+    "type": "sbyte",
+    "name": "SHELL_CATEGORY_MINE",
+    "value": "6"
+   },
+   {
+    "type": "sbyte",
+    "name": "SHELL_TRAJECTORY_MELEE",
+    "value": "5"
+   },
+   {
+    "type": "sbyte",
+    "name": "SHELL_TRAJECTORY_ACCELERATE_AND_GUIDE",
+    "value": "6"
+   }
+  ]
+ },
+ "ClientResourceVersion": {
+  "decl_line": 447276,
+  "fields": [
+   {
+    "type": "int",
+    "name": "minor",
+    "offset": "0x10"
+   },
+   {
+    "type": "string",
+    "name": "path",
+    "offset": "0x18"
+   }
+  ],
+  "consts": []
+ },
+ "BaseDictionary": {
+  "decl_line": 461609,
+  "fields": [
+   {
+    "type": "List<UpgradeUnit>",
+    "name": "upgradeUnits",
+    "offset": "0x10"
+   },
+   {
+    "type": "List<UpgradeBuilding>",
+    "name": "upgradeBuildings",
+    "offset": "0x18"
+   },
+   {
+    "type": "List<UpgradeLevel>",
+    "name": "upgradeLevels",
+    "offset": "0x20"
+   },
+   {
+    "type": "List<Goods>",
+    "name": "fractionGoods",
+    "offset": "0x28"
+   },
+   {
+    "type": "List<QuestDescription>",
+    "name": "quests",
+    "offset": "0x30"
+   },
+   {
+    "type": "List<MissionDescription>",
+    "name": "missions",
+    "offset": "0x38"
+   },
+   {
+    "type": "List<Episode>",
+    "name": "episodes",
+    "offset": "0x40"
+   },
+   {
+    "type": "List<CareerStone>",
+    "name": "careerStones",
+    "offset": "0x48"
+   },
+   {
+    "type": "List<GameMechanicType>",
+    "name": "gameMechanics",
+    "offset": "0x50"
+   }
+  ],
+  "consts": []
+ },
+ "BattleBaseDictionary": {
+  "decl_line": 461699,
+  "fields": [
+   {
+    "type": "List<WeaponType>",
+    "name": "weaponTypes",
+    "offset": "0x10"
+   },
+   {
+    "type": "List<UnitType>",
+    "name": "unitTypes",
+    "offset": "0x18"
+   },
+   {
+    "type": "List<BuildingType>",
+    "name": "buildingTypes",
+    "offset": "0x20"
+   },
+   {
+    "type": "List<MineType>",
+    "name": "mineTypes",
+    "offset": "0x28"
+   },
+   {
+    "type": "List<Fraction>",
+    "name": "fractions",
+    "offset": "0x30"
+   },
+   {
+    "type": "List<BoostType>",
+    "name": "boosts",
+    "offset": "0x38"
+   },
+   {
+    "type": "List<TroopType>",
+    "name": "troops",
+    "offset": "0x40"
+   },
+   {
+    "type": "HeroParam",
+    "name": "heroParam",
+    "offset": "0x48"
+   }
+  ],
+  "consts": []
+ },
+ "SharedBaseDictionary": {
+  "decl_line": 462603,
+  "fields": [
+   {
+    "type": "List<Person>",
+    "name": "persons",
+    "offset": "0x10"
+   },
+   {
+    "type": "List<Rank>",
+    "name": "ranks",
+    "offset": "0x18"
+   },
+   {
+    "type": "List<MedalType>",
+    "name": "medals",
+    "offset": "0x20"
+   },
+   {
+    "type": "List<SkillPointType>",
+    "name": "skillPoints",
+    "offset": "0x28"
+   },
+   {
+    "type": "List<ProfileLevel>",
+    "name": "levels",
+    "offset": "0x30"
+   },
+   {
+    "type": "List<ProfileRank>",
+    "name": "profileRanks",
+    "offset": "0x38"
+   },
+   {
+    "type": "List<MapDescription>",
+    "name": "maps",
+    "offset": "0x40"
+   },
+   {
+    "type": "List<MissionDescription>",
+    "name": "missions",
+    "offset": "0x48"
+   },
+   {
+    "type": "List<Goods>",
+    "name": "goods",
+    "offset": "0x50"
+   },
+   {
+    "type": "List<Region>",
+    "name": "regions",
+    "offset": "0x58"
+   },
+   {
+    "type": "List<Achievement>",
+    "name": "achievements",
+    "offset": "0x60"
+   },
+   {
+    "type": "List<Country>",
+    "name": "countries",
+    "offset": "0x68"
+   },
+   {
+    "type": "List<WarPointsInfo>",
+    "name": "warPointsInfo",
+    "offset": "0xB0"
+   },
+   {
+    "type": "List<Milestone>",
+    "name": "milestones",
+    "offset": "0xB8"
+   },
+   {
+    "type": "List<string>",
+    "name": "missionTutorialUrls",
+    "offset": "0xE8"
+   },
+   {
+    "type": "List<Entrance14Item>",
+    "name": "entrance14Items",
+    "offset": "0xF0"
+   },
+   {
+    "type": "List<AvatarElement>",
+    "name": "avatarElements",
+    "offset": "0xF8"
+   },
+   {
+    "type": "List<HeroCard>",
+    "name": "heroCards",
+    "offset": "0x108"
+   },
+   {
+    "type": "List<UnitModificationType>",
+    "name": "unitModificationTypes",
+    "offset": "0x110"
+   },
+   {
+    "type": "List<UnitModificationFractPair>",
+    "name": "unitModificationFractPairs",
+    "offset": "0x118"
+   },
+   {
+    "type": "List<Battery>",
+    "name": "batteries",
+    "offset": "0x120"
+   },
+   {
+    "type": "List<BattleTemplate>",
+    "name": "battleTemplates",
+    "offset": "0x128"
+   },
+   {
+    "type": "List<GameMechanicType>",
+    "name": "gameMechanics",
+    "offset": "0x138"
+   }
+  ],
+  "consts": []
+ }
+}
