@@ -818,6 +818,9 @@ constants only, no device); (c) the simulation-boundary extraction
    idempotence constant, $ce=3 task threshold, attack-order task=NONE write,
    set_FlagShoot=-1) and the per-mille siege accumulator (DEN=1000 milli-tick fixed
    point) — each fold-in carrying its own evidence diff, QA and test-vector delta.
+   **Scoped (Task 44)**: full work breakdown, W1 bounded RE pre-step (task-gate
+   polarity, band numerators, spec-applier interaction), determinism/serialization
+   review and DoD in `reverse/notes/obfuz-constants-foldin-scope.md`.
 4. **Verify unit/building state machines** — R5/R6 decodes → phase5-style vectors.
 5. **Verify movement/pathfinding** — slot/collision system (I6), water (I5).
 6. **Verify economy/production** — cancel/refunds/rally/repair/upgrade (I4), EnergyNeed (I8).

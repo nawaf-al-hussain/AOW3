@@ -1368,3 +1368,35 @@ Stage Summary:
 - R2 formally closed per owner disposition: decoded constants registered as a future
   implementation task (audit §10 step 3), R1 re-affirmed as the sole device-blocked
   capture, 854/854 baseline re-verified on the synced tree. HEAD d7d4050 + this doc commit.
+
+---
+Task ID: 44
+Agent: Super Z (main)
+Task: Scope the R2 fold-in task (decoded Obfuz constants -> Build E/F browser models)
+
+Work Log:
+- Verified the current browser surfaces at v=46: fireHold boolean + orderedEngagement
+  predicate gating 5 fire gates (game.js 1778/1802/1823/1854/1898/1933), commandDontShoot
+  unconditional write, siege float ladder f=t/T with 0.3/1.0 bands (1349-1354),
+  SIEGE_TICK_TO/FROM 1.6/1.2 reconstruction constants, sg{dir}.{stage} U-line token,
+  instant siege release on any non-siege order (1347-1348).
+- Cross-checked against the R2-confirmed semantics (DEN=1000 per-mille accumulator with
+  mode-8 carry; bands at N/1000; DontShoot=8 idempotence; $ce threshold 3; task=NONE +
+  FlagShoot(-1) on attack-order application; spec bit persists; mode-10 pool[4]*pool[8]=0
+  no browser impact) and the existing phase5 siege vectors.
+- Wrote reverse/notes/obfuz-constants-foldin-scope.md — the task's scope of record:
+  W1 bounded offline RE pre-step (three precisely-bounded questions from committed
+  evidence: $ce task-gate polarity, stage-band numerators from the decoded pool,
+  spec-applier vs siege state); W2 fire-discipline task semantics folded as DERIVED
+  state (nativeTask getter + constants + $Hi idempotence — decision of record: NO new
+  serialized task field, zero U-line/hash churn); W3 per-mille integer accumulator
+  (tk tick counter, SIEGE_DEN=1000, SIEGE_BAND1_MILLI from W1-b, boundary-equivalence
+  fixture); W4 test plan (phase5 + unit-fsm vectors, replay/lockstep zero-divergence
+  assertion); W5 §35 QA/deploy; risks; DoD; one-session estimate.
+- Registered the scope in the audit §10 step 3 ("Scoped (Task 44)" pointer). No browser
+  changes; no test runs needed (docs-only commit).
+
+Stage Summary:
+- The fold-in task is scoped and registered: next implementation session executes
+  W1 (desk RE) then W2-W5 per the scope note; the only evidence-gated behavior change
+  candidate is siege preservation under defend/bombard (W1-a/c).
