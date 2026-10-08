@@ -332,6 +332,13 @@ audit proposes **no** regeneration of these files. `[EXT]`
   at four fixed map spots** — invented content with no extraction source. `[SPEC]`
   — flagged: either evidence-justify (they exist on the real map as props within
   the 6,371 placements, making this pass redundant) or remove in a visual pass.
+  **RESOLVED (V3 landed, f6aef63; post-merge live-verified on v=48/bbdfb6b)**:
+  `applyTerrainGrid` drops `this.baseProps` when the real map applies — invented
+  props survive only behind the pre-battle menu overlay and are removed before the
+  battle scene renders; no-map fallback keeps them by design. Live check (skirmish
+  on the jungle map): `__realMap=true`, `baseProps=null`, decor = 1177 authentic
+  `InstancedMesh` from `__realMap` placements (`applyRealMap`), 0 primitive-fallback
+  geometries. Evidence: `scripts/p16_v3_realmap_verified.png`.
 - Procedural fallbacks (only when map.json/decor fetch fails): `applyDecorScatter`
   (random category-weighted scatter on walkability==1 tiles) and primitive-geometry
   scatter (cylinder/cone/dodecahedron trees/rocks) (game.js:36516-36698). `[BROWSER]`
@@ -502,6 +509,7 @@ values; UI layout metrics (measure from screenshots per Phase 24 of the dev plan
 - **V3 — Environment truth-out.** Remove/replace `placeBaseProps` invented
   props (§13) — the real map already places its own props; add nothing
   procedural in real-map mode. Keep fallback scatter paths for no-map mode only.
+  **DONE** (f6aef63; verified §13, live on v=48).
 - **V4 — Materials + lighting calibration pass.** Decal opacity, ground color
   multiplier ×1.2/×1.3 review (likely compensating for the transparency wash —
   re-tune after V2), tone-mapping/exposure re-check after ground change, sun

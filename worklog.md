@@ -1570,3 +1570,27 @@ Stage Summary:
   fill/hemisphere revisit for low-pitch shadow-side readability, tone-mapping
   re-check on the conformed terrain, sun azimuth cross-check), then R1 device
   session (balance dump + angulation numbers + device refs in ONE pass).
+
+---
+Task ID: 48
+Agent: Super Z (main)
+Task: V3 environment truth-out — post-merge verification (already landed by
+  concurrent renderer session; ID renumbered from 47 — concurrent session
+  holds 47 on origin)
+
+Work Log:
+- Selected V3 as next item; found f6aef63 had already landed it (baseProps removal
+  in applyTerrainGrid). Verified the mechanism in the merged tree: placeBaseProps
+  stores this.baseProps; applyTerrainGrid removes it on real-map arrival (before
+  the menu overlay hides at battle start); no-map fallback keeps it by design.
+- Live verification on deployed v=48 (skirmish on the jungle map): __realMap=true,
+  sim running, baseProps=null (REMOVED), decor = 1177 authentic InstancedMesh from
+  __realMap placements via applyRealMap, 0 primitive-fallback geometries. Evidence:
+  scripts/p16_v3_realmap_verified.png (in repo scripts/, not committed to docs).
+- Audit updated: §13 placeBaseProps row marked RESOLVED with live evidence; §21 V3
+  bullet marked DONE.
+
+Stage Summary:
+- V3 confirmed done and honest end-to-end (code + live). Next cheapest per §21:
+  V6 (wire extracted flame/part sprites — evidence-anchored, no device) or V4
+  (materials/lighting calibration after V2 settles).
