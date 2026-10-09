@@ -1,0 +1,420 @@
+R7 sight consumer census — 6.9.18 (libil2cpp.so 8ace05bb…)
+
+== BuildingLevelType.get_Radar @0x458f4b0: 0 BL callers
+== BuildingLevelType.get_Sight @0x458f500: 0 BL callers
+== BuildingLevelType.get_SightInit @0x458f570: 0 BL callers
+== Flag.get_Sight @0x45976d0: 0 BL callers
+== GameMechanicType.get_Invisible @0x45981a0: 0 BL callers
+== Goods.get_Invisible @0x4598bec: 0 BL callers
+== SalePreset.get_Invisible @0x45aa514: 0 BL callers
+== Unit.get_SightCurr @0x45b134c: 0 BL callers
+== UnitStateType.get_Invisible @0x45b356c: 0 BL callers
+== UnitStateType.get_Radar @0x45b35fc: 0 BL callers
+== UnitStateType.get_Sight @0x45b362c: 0 BL callers
+== UnitStateType.get_SightInit @0x45b36ec: 0 BL callers
+== GAICommandFlag.get_Sight @0x45dbfb8: 0 BL callers
+== ClientBattleSideAppearance.get_InvisibleMaskedMaterialCreator @0x800a2e4: 0 BL callers
+== ClientFlag.get_Sight @0x8072aa8: 0 BL callers
+== FlagRecord.get_Sight @0x814aac8: 0 BL callers
+
+== #0xBC (Unit.sight_curr) unsigned-offset accesses: 415
+   0x3cf3838 ldrw [x,#0xBC]  ctx: ?
+   0x3cf3870 ldrw [x,#0xBC]  ctx: ?
+   0x3cf4678 ldrw [x,#0xBC]  ctx: ?
+   0x3cf46ac ldrw [x,#0xBC]  ctx: ?
+   0x424b708 strw [x,#0xBC]  ctx: SimpleDeserializer.deserializeInt
+   0x44772e0 strw [x,#0xBC]  ctx: SimpleDeserializer.deserializeInt
+   0x44af490 ldrb [x,#0xBC]  ctx: SimpleSerializer.serializeInt, GearGamesRunTimeException..ctor
+   0x44af4c4 strb [x,#0xBC]  ctx: GearGamesRunTimeException..ctor
+   0x4597e60 ldrw [x,#0xBC]  ctx: ?
+   0x4597e68 strw [x,#0xBC]  ctx: ?
+   0x45b134c ldrw [x,#0xBC]  ctx: ?
+   0x45b1354 strw [x,#0xBC]  ctx: ?
+   0x45b1a30 strw [x,#0xBC]  ctx: ?
+   0x45b1a60 strw [x,#0xBC]  ctx: ?
+   0x45b1a80 strw [x,#0xBC]  ctx: ?
+   0x462c130 strw [x,#0xBC]  ctx: SimpleDeserializer.deserializeInt, SimpleDeserializer.deserializeInt
+   0x46344a4 strw [x,#0xBC]  ctx: ?
+   0x4634680 strw [x,#0xBC]  ctx: Battle.$B
+   0x4634ea4 strw [x,#0xBC]  ctx: ?
+   0x4634fcc ldrw [x,#0xBC]  ctx: ?
+   0x4635114 ldrw [x,#0xBC]  ctx: ?
+   0x4636b10 strw [x,#0xBC]  ctx: ?
+   0x46447c4 ldrw [x,#0xBC]  ctx: ?
+   0x46447cc strw [x,#0xBC]  ctx: ?
+   0x46bb460 strw [x,#0xBC]  ctx: BuildingAct.$bc
+   0x46bb934 ldrw [x,#0xBC]  ctx: ?
+   0x46d9a98 strw [x,#0xBC]  ctx: ?
+   0x46dc7a0 ldrw [x,#0xBC]  ctx: ?
+   0x46dcf24 strw [x,#0xBC]  ctx: ?
+   0x4718a0c strh [x,#0xBC]  ctx: ?
+   0x471d124 strh [x,#0xBC]  ctx: ResolveEventHandler.ToString
+   0x47319f4 ldrw [x,#0xBC]  ctx: ?
+   0x47396d4 strw [x,#0xBC]  ctx: ?
+   0x47396dc ldrw [x,#0xBC]  ctx: ?
+   0x47398b8 ldrw [x,#0xBC]  ctx: HeroAct.$RD
+   0x47398c0 strw [x,#0xBC]  ctx: HeroAct.$RD
+   0x473996c ldrw [x,#0xBC]  ctx: ?
+   0x473a09c strw [x,#0xBC]  ctx: ?
+   0x473ab94 ldrw [x,#0xBC]  ctx: UnitAct.$pi, CheckAndCalc.$Qc
+   0x473aba0 strw [x,#0xBC]  ctx: UnitAct.$pi, CheckAndCalc.$Qc
+   0x474e42c strw [x,#0xBC]  ctx: ?
+   0x474e458 strw [x,#0xBC]  ctx: ?
+   0x474ea10 ldrw [x,#0xBC]  ctx: CheckAndCalc.$fC
+   0x47502e4 strw [x,#0xBC]  ctx: ?
+   0x4751718 ldrw [x,#0xBC]  ctx: PathAct.$be
+   0x4751720 strw [x,#0xBC]  ctx: PathAct.$be
+   0x4751900 ldrw [x,#0xBC]  ctx: ?
+   0x4751c04 ldrw [x,#0xBC]  ctx: ?
+   0x4751c38 strw [x,#0xBC]  ctx: ?
+   0x47526cc ldrw [x,#0xBC]  ctx: CheckAndCalc.$Nc
+   0x47532b0 ldrw [x,#0xBC]  ctx: PathAct.$be
+   0x47532bc strw [x,#0xBC]  ctx: PathAct.$be
+   0x4754f24 ldrw [x,#0xBC]  ctx: ?
+   0x4754fa4 strw [x,#0xBC]  ctx: ?
+   0x4755014 strw [x,#0xBC]  ctx: ?
+   0x4755210 strw [x,#0xBC]  ctx: ?
+   0x475527c strw [x,#0xBC]  ctx: ?
+   0x475bacc strw [x,#0xBC]  ctx: ?
+   0x475c000 strw [x,#0xBC]  ctx: ?
+   0x476bdfc strw [x,#0xBC]  ctx: ?
+   0x476be8c ldrw [x,#0xBC]  ctx: ?
+   0x476bf50 ldrw [x,#0xBC]  ctx: ?
+   0x476bf58 strw [x,#0xBC]  ctx: ?
+   0x476c090 ldrw [x,#0xBC]  ctx: ?
+   0x476c6a0 ldrw [x,#0xBC]  ctx: ?
+   0x476c8cc ldrw [x,#0xBC]  ctx: PathAct.$ue
+   0x476cb0c ldrw [x,#0xBC]  ctx: ?
+   0x476cc38 ldrw [x,#0xBC]  ctx: ?
+   0x476d070 ldrw [x,#0xBC]  ctx: ?
+   0x476d364 ldrw [x,#0xBC]  ctx: ?
+   0x477fecc strw [x,#0xBC]  ctx: SimpleDeserializer.deserializeInt
+   0x478a354 strw [x,#0xBC]  ctx: ?
+   0x478a3dc ldrw [x,#0xBC]  ctx: ?
+   0x478c51c strw [x,#0xBC]  ctx: BattleAct.$PA
+   0x478d870 strw [x,#0xBC]  ctx: ?
+   0x4799f9c strw [x,#0xBC]  ctx: ?
+   0x479a034 ldrw [x,#0xBC]  ctx: ?
+   0x479a3a8 strw [x,#0xBC]  ctx: ?
+   0x479aa1c strw [x,#0xBC]  ctx: CheckAndCalc.$Nc
+   0x479ad68 ldrw [x,#0xBC]  ctx: ShotAct.$gE
+   0x479b048 ldrw [x,#0xBC]  ctx: ShotAct.$oE, CheckAndCalc.$Nc
+   0x479b134 strw [x,#0xBC]  ctx: ?
+   0x479be88 ldrw [x,#0xBC]  ctx: ?
+   0x479bfd4 ldrw [x,#0xBC]  ctx: ?
+   0x479c084 ldrw [x,#0xBC]  ctx: ?
+   0x479c150 ldrw [x,#0xBC]  ctx: ?
+   0x47a7f38 strw [x,#0xBC]  ctx: ?
+   0x47a8228 strw [x,#0xBC]  ctx: ShotAct.$oE, ShotAct.$oE, ShotAct.$oE
+   0x47a8324 ldrw [x,#0xBC]  ctx: ShotAct.$oE
+   0x47a89bc ldrw [x,#0xBC]  ctx: ShotAct.$oE
+   0x47a8adc ldrw [x,#0xBC]  ctx: ShotAct.$kE
+   0x47a8c18 ldrw [x,#0xBC]  ctx: ?
+   0x47a8de8 ldrw [x,#0xBC]  ctx: CheckAndCalc.$Nc
+   0x47a8e18 ldrw [x,#0xBC]  ctx: CheckAndCalc.$Nc
+   0x480bc44 strw [x,#0xBC]  ctx: ?
+   0x480c218 ldrw [x,#0xBC]  ctx: ?
+   0x480c238 strw [x,#0xBC]  ctx: ?
+   0x480c790 ldrw [x,#0xBC]  ctx: UnitAct.$Hi
+   0x480c7b8 strw [x,#0xBC]  ctx: UnitAct.$Hi
+   0x480c990 ldrw [x,#0xBC]  ctx: ?
+   0x480cae8 strw [x,#0xBC]  ctx: ?
+   0x480eb28 ldrw [x,#0xBC]  ctx: ?
+   0x4810388 strw [x,#0xBC]  ctx: UnitAct.$bh, UnitAct.$YG
+   0x4854c04 strw [x,#0xBC]  ctx: ?
+   0x4854e30 strw [x,#0xBC]  ctx: ?
+   0x485532c ldrw [x,#0xBC]  ctx: ?
+   0x4855c1c strw [x,#0xBC]  ctx: ?
+   0x48560a0 strw [x,#0xBC]  ctx: ?
+   0x4862474 strw [x,#0xBC]  ctx: ShotAct.$Ye
+   0x4862d7c ldrw [x,#0xBC]  ctx: FlagAct.$Bd
+   0x48755f0 ldrw [x,#0xBC]  ctx: UnitAct.$XH
+   0x4875674 ldrw [x,#0xBC]  ctx: UnitAct.$XH
+   0x48756ac strw [x,#0xBC]  ctx: UnitAct.$XH
+   0x48759e4 strw [x,#0xBC]  ctx: ?
+   0x4877e68 ldrw [x,#0xBC]  ctx: ?
+   0x4877f8c ldrw [x,#0xBC]  ctx: ?
+   0x487879c ldrw [x,#0xBC]  ctx: CheckAndCalc.$kc
+   0x48787c4 strw [x,#0xBC]  ctx: CheckAndCalc.$kc
+   0x4880060 strw [x,#0xBC]  ctx: ?
+   0x488040c ldrw [x,#0xBC]  ctx: UnitAct.$Sh
+   0x4880510 ldrw [x,#0xBC]  ctx: ?
+   0x4880538 strw [x,#0xBC]  ctx: HeroAct.$xD
+   0x48806fc ldrw [x,#0xBC]  ctx: UnitAct.$DH, UnitAct.$Mh, UnitAct.$ph
+   0x48808dc ldrw [x,#0xBC]  ctx: UnitAct.$pH
+   0x4880b1c ldrw [x,#0xBC]  ctx: ?
+   0x488135c ldrw [x,#0xBC]  ctx: UnitAct.$pH
+   0x48813f0 ldrw [x,#0xBC]  ctx: ?
+   0x488141c ldrw [x,#0xBC]  ctx: HeroAct.$zD
+   0x4881724 ldrw [x,#0xBC]  ctx: ?
+   0x4881a7c ldrw [x,#0xBC]  ctx: ?
+   0x4881f34 strw [x,#0xBC]  ctx: ?
+   0x48823f4 ldrw [x,#0xBC]  ctx: ?
+   0x4882438 ldrw [x,#0xBC]  ctx: ?
+   0x48a0a04 ldrw [x,#0xBC]  ctx: ?
+   0x48a0a0c strw [x,#0xBC]  ctx: ?
+   0x48b34e8 ldrw [x,#0xBC]  ctx: ?
+   0x48b34f0 strw [x,#0xBC]  ctx: ?
+   0x48ebad4 strw [x,#0xBC]  ctx: ?
+   0x48ebcc0 ldrw [x,#0xBC]  ctx: ?
+   0x48ec958 strw [x,#0xBC]  ctx: InsufficientExecutionStackException.ToString
+   0x48ec9c8 strw [x,#0xBC]  ctx: ?
+   0x48ecb78 ldrw [x,#0xBC]  ctx: ?
+   0x490a2dc strw [x,#0xBC]  ctx: ?
+   0x490a38c strw [x,#0xBC]  ctx: ?
+   0x490a430 strw [x,#0xBC]  ctx: ?
+   0x490c0b0 ldrw [x,#0xBC]  ctx: ?
+   0x490e12c strw [x,#0xBC]  ctx: ?
+   0x49c3c38 ldrb [x,#0xBC]  ctx: MethodBase.Invoke
+   0x49c48e4 ldrb [x,#0xBC]  ctx: Debugger.LogInvalidTween, Debugger.LogNullTween, Debugger.LogWarning
+   0x49c498c ldrb [x,#0xBC]  ctx: Component.get_transform, Transform.get_position
+   0x49c592c strw [x,#0xBC]  ctx: Component.get_gameObject, Object.get_name, String.Format, Component.get_gameObject
+   0x49c5934 ldrw [x,#0xBC]  ctx: Component.get_gameObject, Object.get_name, String.Format, Component.get_gameObject
+   0x49c60b8 ldrw [x,#0xBC]  ctx: DOTweenModuleUI.DOSizeDelta, ShortcutExtensions.DOScale, DOTweenModuleUI.DOShakeAnchorPos, DOTweenModuleUI.DOPunchAnchorPos
+   0x49c61b4 ldrw [x,#0xBC]  ctx: DOTweenModuleUI.DOColor, DOTweenModuleSprite.DOColor, DOTweenModuleUI.DOColor, Transform.get_position
+   0x49c6e08 ldrw [x,#0xBC]  ctx: Object.GetType, DOTweenAnimation.TypeToDOTargetType
+   0x49ce040 ldrb [x,#0xBC]  ctx: ?
+   0x49ce05c strb [x,#0xBC]  ctx: ?
+   0x4a3f008 ldrb [x,#0xBC]  ctx: ?
+   0x4a3f048 strb [x,#0xBC]  ctx: ?
+   0x4a660c0 strw [x,#0xBC]  ctx: ?
+   0x4a660d8 strw [x,#0xBC]  ctx: ?
+   0x4a66180 ldrw [x,#0xBC]  ctx: Action..ctor, CancellationToken.<>c.Register
+   0x4a66298 strw [x,#0xBC]  ctx: GGApplicationEvents.AddApplicationPauseCallback, GGSocialPlatformFacade.StartSignInWaiter, UniTaskExtensions.Forget
+   0x4a662ec strw [x,#0xBC]  ctx: GGSocialPlatformFacade.StartSignInWaiter, UniTaskExtensions.Forget
+   0x51a87f4 strw [x,#0xBC]  ctx: ?
+   0x52ffa5c strw [x,#0xBC]  ctx: ?
+   0x52ffa78 strw [x,#0xBC]  ctx: ?
+   0x52ffa90 ldrw [x,#0xBC]  ctx: ?
+   0x52ffc54 strw [x,#0xBC]  ctx: ?
+   0x530048c strw [x,#0xBC]  ctx: ?
+   0x55b92f8 ldrh [x,#0xBC]  ctx: CancellationTokenSource.get_Token, UniTask.<>c__DisplayClass44_0.WaitUntilCanceled, UniTask.<>c__DisplayClass44_0.WhenAny
+   0x55b9368 ldrh [x,#0xBC]  ctx: ?
+   0x55ba300 ldrh [x,#0xBC]  ctx: CancellationTokenSource.get_Token, UniTask.<>c__DisplayClass44_0.WaitUntilCanceled, UniTask.<>c__DisplayClass44_0.WhenAny
+   0x55ba370 ldrh [x,#0xBC]  ctx: ?
+   0x57a85f4 ldrb [x,#0xBC]  ctx: Object..ctor
+   0x57a8614 strb [x,#0xBC]  ctx: Object..ctor
+   0x5c3f928 strw [x,#0xBC]  ctx: ?
+   0x5c3f96c strw [x,#0xBC]  ctx: ?
+   0x5c4087c ldrw [x,#0xBC]  ctx: OSA<TParams.ChangeItemSizeAndUpdateContentSizeAccordingly, OSA<TParams.RecycleOrStealViewsHolder
+   0x5c409ac ldrw [x,#0xBC]  ctx: OSA<TParams.ExtractRecyclableViewsHolderOrCreateNew, OSA<TParams.ComputeVisibilityForCurrentPosition, OSA<TParams.ComputeVisibilityForCurrentPosition, OSA<TParams.ExtractRecyclableViewsHolderOrCreateNew
+   0x5c409cc ldrw [x,#0xBC]  ctx: OSA<TParams.ExtractRecyclableViewsHolderOrCreateNew, OSA<TParams.ComputeVisibilityForCurrentPosition, OSA<TParams.ComputeVisibilityForCurrentPosition, OSA<TParams.ExtractRecyclableViewsHolderOrCreateNew
+   0x5c73910 ldrb [x,#0xBC]  ctx: Comparer.Compare, Object.GetType
+   0x5c7393c strb [x,#0xBC]  ctx: Object.GetType
+   0x5d9c718 ldrw [x,#0xBC]  ctx: EventBase<T>.TypeId
+   0x5d9c720 strw [x,#0xBC]  ctx: EventBase<T>.TypeId
+   0x5d9d750 strw [x,#0xBC]  ctx: Event.get_mousePosition, Event.get_mousePosition, Event.get_delta, Event.get_clickCount
+   0x5d9ded8 strw [x,#0xBC]  ctx: PointerDeviceState.ReleaseButton, PointerDeviceState.GetPressedButtons
+   0x5d9e44c strw [x,#0xBC]  ctx: <Module>.get_position, <Module>.get_deltaPosition, <Module>.get_deltaTime, <Module>.get_tapCount
+   0x5d9eac0 strw [x,#0xBC]  ctx: PointerDeviceState.ReleaseButton, PointerDeviceState.GetPressedButtons
+   0x5d9f624 strw [x,#0xBC]  ctx: ?
+   0x5d9ff90 strw [x,#0xBC]  ctx: ?
+   0x618c574 ldrb [x,#0xBC]  ctx: ?
+   0x618c590 strb [x,#0xBC]  ctx: ?
+   0x649b228 ldrb [x,#0xBC]  ctx: ?
+   0x649b240 strb [x,#0xBC]  ctx: ?
+   0x6977eec strb [x,#0xBC]  ctx: ?
+   0x697d0cc strb [x,#0xBC]  ctx: ?
+   0x6a093bc ldrw [x,#0xBC]  ctx: ReplaySubject<T>.get_IsFailure
+   0x6a093c4 strw [x,#0xBC]  ctx: ReplaySubject<T>.get_IsFailure
+   0x6ada204 ldrb [x,#0xBC]  ctx: ?
+   0x6ada234 strb [x,#0xBC]  ctx: ?
+   0x6c244a8 ldrb [x,#0xBC]  ctx: ?
+   0x6c244c8 strb [x,#0xBC]  ctx: ?
+   0x6c46744 ldrw [x,#0xBC]  ctx: PlayerLoopHelper.AddContinuation
+   0x6c484a4 ldrw [x,#0xBC]  ctx: PlayerLoopHelper.AddContinuation
+   0x6c56610 ldrw [x,#0xBC]  ctx: PlayerLoopHelper.AddContinuation
+   0x6c69c44 ldrw [x,#0xBC]  ctx: PlayerLoopHelper.AddContinuation
+   0x6c6b8c4 ldrw [x,#0xBC]  ctx: PlayerLoopHelper.AddContinuation
+   0x6c7073c ldrw [x,#0xBC]  ctx: PlayerLoopHelper.AddContinuation
+   0x6c96974 ldrw [x,#0xBC]  ctx: PlayerLoopHelper.AddContinuation
+   0x6c9a2a0 ldrw [x,#0xBC]  ctx: PlayerLoopHelper.AddContinuation
+   0x6c9eb4c ldrw [x,#0xBC]  ctx: PlayerLoopHelper.AddContinuation
+   0x6caa11c ldrw [x,#0xBC]  ctx: PlayerLoopHelper.AddContinuation
+   0x6caff14 ldrw [x,#0xBC]  ctx: PlayerLoopHelper.AddContinuation
+   0x6cb3a1c ldrw [x,#0xBC]  ctx: PlayerLoopHelper.AddContinuation
+   0x6cc4628 ldrw [x,#0xBC]  ctx: PlayerLoopHelper.AddContinuation
+   0x6cc5484 ldrw [x,#0xBC]  ctx: PlayerLoopHelper.AddContinuation
+   0x6cc62e0 ldrw [x,#0xBC]  ctx: PlayerLoopHelper.AddContinuation
+   0x6dda150 ldrb [x,#0xBC]  ctx: Delegate.Remove
+   0x6dda170 strb [x,#0xBC]  ctx: Delegate.Remove
+   0x700604c strb [x,#0xBC]  ctx: ?
+   0x700609c strb [x,#0xBC]  ctx: ?
+   0x708d7f0 strb [x,#0xBC]  ctx: ?
+   0x708dba0 ldrb [x,#0xBC]  ctx: GameObjectTraverserExtensions.ConvertToTraverser, GameObjectTraverserExtensions.TryGetHasChild
+   0x7160ab8 ldrh [x,#0xBC]  ctx: ?
+   0x7161a60 ldrh [x,#0xBC]  ctx: ?
+   0x72423f0 strw [x,#0xBC]  ctx: ThrowHelper.ThrowIndexArgumentOutOfRange_NeedNonNegNumException, Array.get_Length, ThrowHelper.ThrowArgumentException
+   0x72c21e8 strw [x,#0xBC]  ctx: DBNull.get_UtcNow, DBNull.get_Ticks, DynamicHeightVirtualizationController<T>.ScheduleScrollDirectionReset, DynamicHeightVirtualizationController<T>.ResetScroll
+   0x72c22a0 strw [x,#0xBC]  ctx: DBNull.get_UtcNow, DBNull.get_Ticks, DynamicHeightVirtualizationController<T>.ScheduleScrollDirectionReset, DynamicHeightVirtualizationController<T>.ResetScroll
+   0x72c22b4 ldrw [x,#0xBC]  ctx: DBNull.get_Ticks, DynamicHeightVirtualizationController<T>.ScheduleScrollDirectionReset, DynamicHeightVirtualizationController<T>.ResetScroll
+   0x72c2664 strw [x,#0xBC]  ctx: ScrollView.get_scrollOffset, VisualElement.get_layout
+   0x72c2d50 ldrw [x,#0xBC]  ctx: VerticalVirtualizationController<T>.ShouldDeferScrollToItem, DynamicHeightVirtualizationController<T>.get_alwaysRebindOnRefresh, DynamicHeightVirtualizationController<T>.MarkWaitingForLayout, DynamicHeightVirtualizationController<T>.IsIndexOutOfBounds
+   0x72c2f4c ldrw [x,#0xBC]  ctx: VisualElement.BringToFront
+   0x72c35fc ldrw [x,#0xBC]  ctx: ScrollView.get_scrollOffset, Array.Clear, DynamicHeightVirtualizationController<T>.get_contentHeight, DynamicHeightVirtualizationController<T>.get_anchoredIndex
+   0x72c3afc ldrw [x,#0xBC]  ctx: DynamicHeightVirtualizationController<T>.GetCachedContentHeight, VisualElement.get_layout, VerticalVirtualizationController<T>.get_firstVisibleIndex
+   0x747c748 ldrb [x,#0xBC]  ctx: ArgumentException..ctor
+   0x747c764 strb [x,#0xBC]  ctx: ?
+   0x757912c ldrb [x,#0xBC]  ctx: ?
+   0x7579160 strb [x,#0xBC]  ctx: ?
+   0x75dd63c ldrw [x,#0xBC]  ctx: Stream..ctor, ArgumentException..ctor
+   0x75dd644 strw [x,#0xBC]  ctx: Stream..ctor, ArgumentException..ctor
+   0x76303f4 ldrw [x,#0xBC]  ctx: ?
+   0x7630618 ldrw [x,#0xBC]  ctx: DateTimeParse.ToByteArray, JsonReader.get_Culture, DateTimeUtils.TryParseDateTimeOffset, ReflectionUtils.ToString
+   0x7634a48 ldrw [x,#0xBC]  ctx: ReflectionUtils..ctor, CLSCompliantAttribute.IsDigit
+   0x7634a68 ldrw [x,#0xBC]  ctx: ReflectionUtils..ctor, CLSCompliantAttribute.IsDigit
+   0x7681794 strw [x,#0xBC]  ctx: JsonObjectContract..ctor, DefaultContractResolver.InitializeContract, JsonTypeReflector.GetObjectMemberSerialization
+   0x7681a9c ldrw [x,#0xBC]  ctx: MemberInfo.op_Inequality, DefaultContractResolver.SetExtensionDataDelegates, JsonContract.get_OnSerializingCallbacks, SerializationCallback..ctor
+   0x768f288 ldrw [x,#0xBC]  ctx: ?
+   0x768f290 strw [x,#0xBC]  ctx: ?
+   0x7721ac0 ldrb [x,#0xBC]  ctx: ?
+   0x7721ae4 strb [x,#0xBC]  ctx: ?
+   0x7754f98 strw [x,#0xBC]  ctx: ?
+   0x7754fb4 strw [x,#0xBC]  ctx: ?
+   0x7754fe8 ldrw [x,#0xBC]  ctx: CancellationToken.<>c.ThrowIfCancellationRequested
+   0x7755100 strw [x,#0xBC]  ctx: GGParamsPairList..ctor, GGParamsPairList.Add, String.Join, GGParamsPairList.Add
+   0x7755504 strw [x,#0xBC]  ctx: NoUpdate..ctor
+   0x778d13c ldrh [x,#0xBC]  ctx: ?
+   0x779956c ldrh [x,#0xBC]  ctx: ?
+   0x77ae190 ldrh [x,#0xBC]  ctx: ?
+   0x77af45c ldrw [x,#0xBC]  ctx: ?
+   0x7804970 strb [x,#0xBC]  ctx: Application.get_isPlaying, Object.op_Inequality, Object.op_Inequality, Transform.get_position
+   0x7804e64 strh [x,#0xBC]  ctx: Behaviour.get_enabled, Component.get_gameObject, NGUITools.GetActive, Object.op_Inequality
+   0x7805674 ldrb [x,#0xBC]  ctx: NGUITools.GetActive, Object.op_Inequality, Camera.ScreenPointToRay, LightingSettings.GetPoint
+   0x78056a0 strb [x,#0xBC]  ctx: NGUITools.GetActive, Object.op_Inequality, Camera.ScreenPointToRay, LightingSettings.GetPoint
+   0x78efc08 ldrb [x,#0xBC]  ctx: StringBuilder.Append, StringBuilder.Append, StringBuilder.Append, StringBuilder.Append
+   0x78efc2c strb [x,#0xBC]  ctx: StringBuilder.Append, StringBuilder.Append, StringBuilder.Append, StringBuilder.Append
+   0x7934810 ldrw [x,#0xBC]  ctx: ?
+   0x7934ee4 strw [x,#0xBC]  ctx: WWWTexture2DLoader.PrintError, GGSafeInvokeExtensions.GGSafeInvoke, FileUtils.GetFileName, WWWResourceLoader..ctor
+   0x7937c14 ldrw [x,#0xBC]  ctx: NotSupportedException..ctor, TimeUtils.GetMilliTicks
+   0x7937c1c strw [x,#0xBC]  ctx: NotSupportedException..ctor, TimeUtils.GetMilliTicks
+   0x7938150 ldrw [x,#0xBC]  ctx: SerializableAttribute.ToString, ClientEventPairList.Add, ClientEventPairList.Add, WWWResourceLoader.PrintMessage
+   0x7938168 ldrw [x,#0xBC]  ctx: SerializableAttribute.ToString, ClientEventPairList.Add, ClientEventPairList.Add, WWWResourceLoader.PrintMessage
+   0x79383f8 ldrw [x,#0xBC]  ctx: ClientEventPairList.Add, ClientEventPairList.Add, ClientEventPairList.Add, WWWResourceLoader.PrintMessage
+   0x7954068 strw [x,#0xBC]  ctx: NotSupportedException..ctor, WWWResourceLoader..ctor
+   0x79b0640 ldrb [x,#0xBC]  ctx: AbstractGestureManager.TryGetGesture, AbstractGestureManager.SetGesture
+   0x79b9c00 strw [x,#0xBC]  ctx: WWWPostData..ctor, WWWResourceLoader..ctor
+   0x79d013c strw [x,#0xBC]  ctx: GGDebug.Info, WWWResourceLoader..ctor
+   0x79d7b10 strw [x,#0xBC]  ctx: WWWResourceLoader..ctor
+   0x79ed1c8 strw [x,#0xBC]  ctx: GGDebug.Error, FileUtils.GetFileName, WWWResourceLoader..ctor
+   0x7a205a4 strw [x,#0xBC]  ctx: WWWPostData..ctor, WWWResourceLoader..ctor
+   0x7ab4244 ldrb [x,#0xBC]  ctx: Action..ctor, AdsInfoModel.get_IsSkipAdAvailable
+   0x7ab42b4 strb [x,#0xBC]  ctx: AdsInfoModel.get_IsSkipAdAvailable
+   0x7c08c8c ldrw [x,#0xBC]  ctx: String.Concat, String.Concat
+   0x7c08ce8 ldrw [x,#0xBC]  ctx: Component.get_transform, Transform.get_localPosition, Animator.SetFloat
+   0x7c08dd0 strw [x,#0xBC]  ctx: Animator.StringToHash, Animator.StringToHash, Animator.StringToHash, Animator.StringToHash
+   0x7c6e93c ldrb [x,#0xBC]  ctx: Object..ctor
+   0x7c6e960 strb [x,#0xBC]  ctx: Object..ctor
+   0x7dbe5e4 strw [x,#0xBC]  ctx: String.Concat, ClientEventPairList..ctor, ClientEventPairList.Add, GGDebug.Error
+   0x7dbfefc ldrw [x,#0xBC]  ctx: StatisticsCollection.GetSystemInfo, AbstractConnectorState.get_Network, SendEventHelper.SendEvent, AbstractConnectorState.get_Network
+   0x7dbff10 strw [x,#0xBC]  ctx: StatisticsCollection.GetSystemInfo, AbstractConnectorState.get_Network, SendEventHelper.SendEvent, AbstractConnectorState.get_Network
+   0x7ddcff4 strw [x,#0xBC]  ctx: UILabel.set_text, WWWResourceLoader..ctor
+   0x7e0bd04 ldrb [x,#0xBC]  ctx: LoadingStateAnalyzer.SetState, Action..ctor, ClientMainNetworkConnector.CSMainSessionRestore..ctor, AbstractClientNetworkConnector.ConnectorStateAdd
+   0x7e0bd28 strb [x,#0xBC]  ctx: LoadingStateAnalyzer.SetState, Action..ctor, ClientMainNetworkConnector.CSMainSessionRestore..ctor, AbstractClientNetworkConnector.ConnectorStateAdd
+   0x7ea8abc ldrb [x,#0xBC]  ctx: BMFont..ctor
+   0x7ea8b20 ldrb [x,#0xBC]  ctx: BMFont..ctor, UIInput.Init
+   0x7ea8b5c strb [x,#0xBC]  ctx: UIInput.Init, Object.op_Inequality
+   0x7ea8c30 ldrb [x,#0xBC]  ctx: UILabel.ProcessAndRequest, Debug.LogWarning, UIRect.get_cachedTransform, Transform.get_localPosition
+   0x7ea8d48 ldrb [x,#0xBC]  ctx: Object.op_Inequality
+   0x7ea8d60 ldrb [x,#0xBC]  ctx: Object.op_Inequality, UIInput.Init, UIInput.get_isSelected
+   0x7ea9824 ldrb [x,#0xBC]  ctx: UILabel.ProcessAndRequest, String.Substring, String.Substring, UILabel.CalculateOffsetToFit
+   0x7ea99f8 ldrb [x,#0xBC]  ctx: Object.op_Inequality
+   0x7ea9a1c ldrb [x,#0xBC]  ctx: Object.op_Inequality, UIInput.Init
+   0x7ea9a88 ldrb [x,#0xBC]  ctx: Object.op_Inequality, UIInput.Init, UIInput.Init
+   0x7ea9a98 ldrb [x,#0xBC]  ctx: Object.op_Inequality, UIInput.Init, UIInput.Init, UIInput.Init
+   0x7eaa0d4 ldrb [x,#0xBC]  ctx: Component.get_gameObject, UIInput.get_isSelected, UIInput.get_inputShouldBeHidden, UIInput.get_isSelected
+   0x7eaa208 ldrb [x,#0xBC]  ctx: UIInput.get_isSelected, UIInput.get_inputShouldBeHidden, UIInput.get_inputShouldBeHidden, UIInput.get_isSelected
+   0x7eaa344 ldrb [x,#0xBC]  ctx: UIInput.get_isSelected, UIInput.get_inputShouldBeHidden, UIInput.get_inputShouldBeHidden, UIInput.get_isSelected
+   0x7eaac40 ldrb [x,#0xBC]  ctx: Object.op_Inequality, Time.get_frameCount
+   0x7eaad58 ldrb [x,#0xBC]  ctx: Object.op_Inequality, Object.op_Inequality, NGUITools.GetActive, Time.get_frameCount
+   0x7eaae1c ldrb [x,#0xBC]  ctx: UIInput.Init, Object.op_Inequality, Object.op_Inequality, NGUITools.GetActive
+   0x7eabc14 ldrb [x,#0xBC]  ctx: NGUITools.GetActive
+   0x7eabdb8 ldrb [x,#0xBC]  ctx: EventDelegate.Execute, UIInput.get_isSelected, Time.get_frameCount
+   0x7eac000 ldrb [x,#0xBC]  ctx: TouchScreenKeyboard.set_hideInput, TouchScreenKeyboard.set_hideInput, TouchScreenKeyboard.Open, UIInput.get_inputShouldBeHidden
+   0x7eadeec strb [x,#0xBC]  ctx: ?
+   0x7fe9aa8 ldrb [x,#0xBC]  ctx: Delegate.Combine, InsufficientExecutionStackException.ToString, UILabel.set_text
+   0x7fe9b2c strb [x,#0xBC]  ctx: InsufficientExecutionStackException.ToString, UILabel.set_text
+   0x8009574 ldrw [x,#0xBC]  ctx: ?
+   0x800957c strw [x,#0xBC]  ctx: ?
+   0x800963c ldrw [x,#0xBC]  ctx: ?
+   0x8009644 strw [x,#0xBC]  ctx: ?
+   0x8064280 ldrw [x,#0xBC]  ctx: ClientBuilding.CheckStates, ClientBuilding.CheckStates, ClientBuilding.CheckStates, ClientBuilding.CheckStates
+   0x806d17c ldrw [x,#0xBC]  ctx: BattleEntityUtils.IsOwnSide, Object.op_Inequality, ClientBuilding.CheckStates
+   0x8072418 ldrw [x,#0xBC]  ctx: GUIBattleMinimapRenderer.FlagAdd
+   0x8072470 ldrw [x,#0xBC]  ctx: ?
+   0x8122fa4 ldrw [x,#0xBC]  ctx: ClientEventPairList.Add, ClientEventPairList.Add, ClientEventPairList.Add, ClientEventPairList.Add
+   0x8192c04 ldrb [x,#0xBC]  ctx: ConvertUtils.IntToStr, ConvertUtils.IntToStr
+   0x8192c24 strb [x,#0xBC]  ctx: ConvertUtils.IntToStr
+   0x81edab4 strb [x,#0xBC]  ctx: ?
+   0x81edd88 strb [x,#0xBC]  ctx: SidesProgressBarsView.UpdateSideView, SidesProgressBarsView.UpdateMirroredVisibility, SidesProgressBarsView.DecreaseBarsWidth, SidesProgressBarsView.RepositionAsync
+   0x828f6d4 ldrw [x,#0xBC]  ctx: Transform.set_localPosition, R3Extensions..ctor, R3Extensions.Union, Array.GetLength
+   0x828f700 ldrw [x,#0xBC]  ctx: R3Extensions..ctor, R3Extensions.Union, Array.GetLength, Array.GetLength
+   0x836bd94 ldrb [x,#0xBC]  ctx: Type.GetTypeFromHandle, Type.GetMethod, Type.GetTypeFromHandle, Type.GetMethod
+   0x836bdc4 strb [x,#0xBC]  ctx: Type.GetTypeFromHandle, Type.GetMethod, Type.GetTypeFromHandle, Type.GetMethod
+   0x84e2c48 strw [x,#0xBC]  ctx: KnownColorTable.UpdateSystemColors
+   0x84f08b8 ldrw [x,#0xBC]  ctx: ?
+   0x84f18f4 strw [x,#0xBC]  ctx: ?
+   0x855f684 ldrb [x,#0xBC]  ctx: ?
+   0x855f694 strb [x,#0xBC]  ctx: ?
+   0x85cef44 strw [x,#0xBC]  ctx: String.get_Chars, HtmlUtf8RawTextWriter..ctor
+   0x85cf01c ldrw [x,#0xBC]  ctx: HtmlUtf8RawTextWriter..ctor, HtmlUtf8RawTextWriter.WriteDocType, ByteStack.Push, HtmlUtf8RawTextWriterIndent.WriteIndent
+   0x85cf030 strw [x,#0xBC]  ctx: HtmlUtf8RawTextWriter.WriteDocType, ByteStack.Push, HtmlUtf8RawTextWriterIndent.WriteIndent
+   0x85cf0dc ldrw [x,#0xBC]  ctx: HtmlUtf8RawTextWriterIndent.WriteIndent, XmlUtf8RawTextWriter.RawText, TernaryTreeReadOnly.FindCaseInsensitiveString, HtmlUtf8RawTextWriterIndent.WriteIndent
+   0x85cf0f0 strw [x,#0xBC]  ctx: HtmlUtf8RawTextWriterIndent.WriteIndent, XmlUtf8RawTextWriter.RawText, TernaryTreeReadOnly.FindCaseInsensitiveString, HtmlUtf8RawTextWriterIndent.WriteIndent
+   0x85cf28c ldrw [x,#0xBC]  ctx: String.get_Chars, XmlUtf8RawTextWriter.RawText
+   0x85cf348 ldrw [x,#0xBC]  ctx: XmlUtf8RawTextWriter.RawText, XmlUtf8RawTextWriter.RawText, HtmlUtf8RawTextWriterIndent.WriteIndent, HtmlUtf8RawTextWriter.WriteMetaElement
+   0x85cf364 strw [x,#0xBC]  ctx: XmlUtf8RawTextWriter.RawText, XmlUtf8RawTextWriter.RawText, HtmlUtf8RawTextWriterIndent.WriteIndent, HtmlUtf8RawTextWriter.WriteMetaElement
+   0x85cf418 ldrw [x,#0xBC]  ctx: HtmlUtf8RawTextWriter.WriteEndElement, HtmlUtf8RawTextWriterIndent.WriteIndent, HtmlUtf8RawTextWriter.WriteEndElement, XmlUtf8RawTextWriter.RawText
+   0x85cf424 strw [x,#0xBC]  ctx: HtmlUtf8RawTextWriter.WriteEndElement, HtmlUtf8RawTextWriterIndent.WriteIndent, HtmlUtf8RawTextWriter.WriteEndElement, XmlUtf8RawTextWriter.RawText
+   0x85cf42c ldrw [x,#0xBC]  ctx: HtmlUtf8RawTextWriterIndent.WriteIndent, HtmlUtf8RawTextWriter.WriteEndElement, XmlUtf8RawTextWriter.RawText, HtmlUtf8RawTextWriterIndent.WriteIndent
+   0x85cf434 strw [x,#0xBC]  ctx: HtmlUtf8RawTextWriterIndent.WriteIndent, HtmlUtf8RawTextWriter.WriteEndElement, XmlUtf8RawTextWriter.RawText, HtmlUtf8RawTextWriterIndent.WriteIndent
+   0x85d0834 strb [x,#0xBC]  ctx: XmlEncodedRawTextWriter..ctor
+   0x85d0b40 strb [x,#0xBC]  ctx: Encoding.set_EncoderFallback
+   0x85d4b84 ldrb [x,#0xBC]  ctx: CultureInfo.get_InvariantCulture, TypeInitializationException.ToString
+   0x85d4d58 ldrb [x,#0xBC]  ctx: XmlEncodedRawTextWriter.GrowTextContentMarks, RuntimeHelpers.get_OffsetToStringData
+   0x877354c ldrb [x,#0xBC]  ctx: WaitCallback..ctor, WaitCallback..ctor
+   0x8773568 strb [x,#0xBC]  ctx: WaitCallback..ctor, WaitCallback..ctor
+   0x88a9040 ldrb [x,#0xBC]  ctx: AsyncOperation.get_isDone, AsyncOperation.get_isDone, BinaryDataProvider.InternalOp.RequestOperation_completed
+   0x88a907c strb [x,#0xBC]  ctx: AsyncOperation.get_isDone, AsyncOperation.get_isDone, BinaryDataProvider.InternalOp.RequestOperation_completed
+   0x89020ac ldrw [x,#0xBC]  ctx: TMPro_ExtensionMethods.GammaToLinear
+   0x89020c8 ldrw [x,#0xBC]  ctx: TMPro_ExtensionMethods.GammaToLinear, TMPro_ExtensionMethods.GammaToLinear
+   0x8902af0 ldrw [x,#0xBC]  ctx: ?
+   0x89033e8 ldrw [x,#0xBC]  ctx: TMPro_ExtensionMethods.GammaToLinear
+   0x8903404 ldrw [x,#0xBC]  ctx: TMPro_ExtensionMethods.GammaToLinear, TMPro_ExtensionMethods.GammaToLinear
+   0x8913b70 strw [x,#0xBC]  ctx: Shader.PropertyToID, Shader.PropertyToID, Shader.PropertyToID, Shader.PropertyToID
+   0x893d5bc ldrw [x,#0xBC]  ctx: Material.SetVector, Material.SetFloat
+   0x8944a2c ldrw [x,#0xBC]  ctx: Object.op_Inequality, ShaderUtilities.GetShaderPropertyIDs, Material.GetFloat
+   0x8a0c7a0 ldrb [x,#0xBC]  ctx: Light.get_type, LightmapperUtils.Extract, LightmapperUtils.Extract
+   0x8a2542c ldrb [x,#0xBC]  ctx: GUIContent..ctor, GUIContent.Temp, GUI.get_skin
+   0x8a2545c strb [x,#0xBC]  ctx: GUIContent.Temp, GUI.get_skin
+   0x8a8ebdc ldrb [x,#0xBC]  ctx: Object..ctor, Action..ctor
+   0x8a8ebf4 strb [x,#0xBC]  ctx: Action..ctor
+   0x8ac7508 strw [x,#0xBC]  ctx: ?
+   0x8ac77bc strw [x,#0xBC]  ctx: FontEngine.TryAddGlyphToTexture_Internal, Object..ctor
+   0x8ac7d0c strw [x,#0xBC]  ctx: ?
+   0x8ac7f54 strw [x,#0xBC]  ctx: ?
+   0x8ac80d0 ldrw [x,#0xBC]  ctx: FontEngine.TryAddGlyphsToTexture_Internal
+   0x8ac80ec ldrw [x,#0xBC]  ctx: FontEngine.TryAddGlyphsToTexture_Internal
+   0x8ac8170 strw [x,#0xBC]  ctx: FontEngine.TryAddGlyphsToTexture_Internal
+   0x8ac81e8 strw [x,#0xBC]  ctx: ?
+   0x8ae148c strw [x,#0xBC]  ctx: FontAsset.UpdateFontAssetsInUpdateQueue
+   0x8af518c strw [x,#0xBC]  ctx: FontAsset.get_atlasRenderMode
+   0x8b0a86c strw [x,#0xBC]  ctx: Shader.PropertyToID, Shader.PropertyToID, Shader.PropertyToID, Shader.PropertyToID
+   0x8b830a8 ldrw [x,#0xBC]  ctx: SerializableAttribute.GetHashCode, SerializableAttribute.GetHashCode, SerializableAttribute.GetHashCode, SerializableAttribute.GetHashCode
+   0x8b9e278 strb [x,#0xBC]  ctx: ?
+   0x8b9e29c strb [x,#0xBC]  ctx: ?
+   0x8bbd44c ldrb [x,#0xBC]  ctx: String.Format
+   0x8bbd470 strb [x,#0xBC]  ctx: String.Format
+   0x8bdaedc ldrw [x,#0xBC]  ctx: MeshGenerationDeferrer.DrawSprite, MeshGenerationDeferrer.DrawRectangle, MeshGenerationDeferrer.ToNativeParams, MeshBuilderNative.MakeBorder
+   0x8be1c64 ldrw [x,#0xBC]  ctx: Debug.Assert
+   0x8be1e88 ldrw [x,#0xBC]  ctx: Debug.Assert
+   0x8be1ed4 ldrw [x,#0xBC]  ctx: Debug.Assert, Debug.Assert
+   0x8be1ee8 ldrw [x,#0xBC]  ctx: Debug.Assert, Debug.Assert
+   0x8be1f34 ldrw [x,#0xBC]  ctx: Debug.Assert, Debug.Assert
+   0x8be5200 ldrw [x,#0xBC]  ctx: RenderEvents.UpdateLocalFlipsWinding, VisualElement.get_renderHints
+   0x8be5230 strw [x,#0xBC]  ctx: RenderEvents.UpdateLocalFlipsWinding, VisualElement.get_renderHints
+   0x8be7770 ldrw [x,#0xBC]  ctx: UIRVEShaderInfoAllocator.ReallyCreateStorage, Debug.Assert, UIRVEShaderInfoAllocator.AllocToTexelCoord
+   0x8be7b70 ldrw [x,#0xBC]  ctx: UIRVEShaderInfoAllocator.ReallyCreateStorage, Debug.Assert, UIRVEShaderInfoAllocator.AllocToTexelCoord
+   0x8bebaa8 strw [x,#0xBC]  ctx: Object..ctor
+   0x8c9ae64 strw [x,#0xBC]  ctx: PointerEventBase<T>.LocalInit, PointerEventBase<T>.PreDispatch
+   0x8cf67d8 ldrb [x,#0xBC]  ctx: Canvas.get_overrideSorting, Object.op_Inequality

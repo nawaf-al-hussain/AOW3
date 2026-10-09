@@ -2005,3 +2005,25 @@ Stage Summary:
   identical with the documented 1-ulp TRS caveat). Remaining roadmap:
   V8 device refs + R1 operator device session (runbook ready), R2
   constants fold-in.
+
+---
+Task ID: 54
+Agent: Super Z (main)
+Task: R7 pass 1 — native sight/visibility rules (server-authoritative fog + Unit.calcSightCurr decode); note + evidence + tools + registry/roadmap update; kernel comment fold-in; no behavior change
+
+Work Log:
+- Environment rebuilt from scratch (workspace reset): XAPK re-fetched via LFS batch API, sha256 re-verified 1a41e033… ; libil2cpp.so 8ace05bb… + global-metadata.dat d2e8dd0d… extracted + pin-verified; dump.cs 0050e67d… unzipped from repo; capstone installed.
+- Structural survey (dump.cs): ClientUnitVisibleState {Undefined -1, Invisible 0, Hidden 1, Visible 2, Detected 3} (dump.cs:268434); ClientUnitVisibleType {Visible 0, HiddenInForest 2, Detected 3, DetectedInForest 4} (268446) — forest concealment is a first-class presentation state; ClientBuildingVisibleState {Invisible 0, Fogged 1, Visible 2} (265554). Fog delivery is SERVER-authoritative: LCUnitFogVisibleChanged {unitId, sbyte} + LCMineFogVisibleChanged + LCBuildingFogVisibleChanged + LCAllianceFogChanged + LCUnitFoggerOn/Off/VisibleChanged → ClientUnit.m_visibleState @0x98 / m_visibleType @0x108 → BattleFogRenderer / GUIBattleMinimapFogRenderer.
+- Battle-core surface: FogAct statics (0x472ED8C..0x4736xxx, Obfuz-renamed) over Battle/BattleMap/BattleAlliance: $pd(Battle,BattleMap,Unit,Dynamic) per-unit contribution; $qd/$Qd/$rd(Battle,int[][],sbyte,int,int,int,bool…) grid openers; $sd(Battle,Bullet,sbyte) = bullets open fog; $Rd/$td/$od(Battle,BattleAlliance) per-alliance. BattleAlliance $HE(0x30)/$iE(0x38) = two int[][] fog grids; BattleMap.$if(0x30) = List<int[][]>. FogOpener (serializable, 7 fields sbyte+5int+bool) = network fog-open payload; GAICommandFogOpener{,Remove} = AI fog ops.
+- census scans (r7_sight_writer_scan.py): all sight getters (UnitStateType.get_Sight/Radar/Invisible/SightInit, BuildingLevelType.*, Flag.get_Sight, Unit.get_SightCurr) have ZERO direct BL callers — virtual dispatch (Build J precedent); #0xBC unsigned-offset census 415 hits with neighborhood attribution.
+- DECODED Unit.calcSightCurr (0x45B19F8, plain-named, 0x45b19f8..0x45b1a98): sight_curr = UnitStateType.get_Sight() [state.sight 0x4C, serialized key "sight" dump.cs:17287 = EStat 10 view domain]; if (Unit.in_forest @0x18F) sight_curr -= (sbyte) via vtbl chain 0x1F8→0x1998 (provider INFERRED = occupied cell/terrain; exact slot names need script.json); if (Unit.boostEffects @0x140 short[] length >= 4) sight_curr += boostEffects[3] — BoostType.ACT_SIGHT = 3 (dump.cs:376978) CONFIRMS the slot index; ACT_SIGHT_BU = 13 recorded. Field names plain in dump.cs (sight_curr 0xBC, in_forest 0x18F + in_forest_client 0x190, boostEffects 0x140). Bounds-check throw at length<4 decoded (tst w9,#~3).
+- False-positive control: Battle.$GL (0x4634104) / CheckAndCalc.$uc #0xBC hits attributed — all [sp,#0xbc] stack locals, NOT Unit.sight_curr; genuine sight_curr write surface = calcSightCurr + accessor pair only.
+- Beholder oversight machinery noted: SightAbilityParamDescription (170971), m_beholderSightInterval/Max/DamageDelay (256205..), SetupAndPlayOversightEffect(int sightAdd, out int currentSight) (278626).
+- Evidence: reverse/evidence/fog/{r7-fogact-scan.txt (8,026 lines, 12,426-method call map), r7-sight-writers.txt, r7-writer-functions.txt}. Tools committed: r7_fog_sight_scan.py / r7_sight_writer_scan.py / r7_writer_functions.py (dump.cs-derived VA→name map, reuse the armor_native_analysis ELF harness pattern).
+- Note: reverse/notes/sight-fog-native-analysis.md (architecture diagram, enums, calcSightCurr decode, browser-delta table H4, pass-2 queue). Registry: R7 UNKNOWN→PARTIALLY_CONFIRMED + 3 findings (F-fog-server-authoritative, F-calc-sight-curr, F-visibility-enums); roadmap R7 row updated.
+- Fold-in: updateVision() kernel comment gains the native anchors (authority model, enum values, calcSightCurr provenance; browser static def.view documented as approximation). Comment-only (verified: 0 non-comment lines changed); node --check OK; 877/877 green; v=56 → v=57.
+
+Stage Summary:
+- R7 converted from UNKNOWN to PARTIALLY_CONFIRMED with the client contract + radius provenance CONFIRMED and the remaining residual bounded (grid-opener circle shape, penalty-provider slot names, $pd/$GL branches — all require the Builds I/J jump-table method on Obfuz statics).
+- Browser fog radius provenance is now evidence-anchored; dynamic sight terms (in_forest, boostEffects[3]) are queued pending forest-cell classification + boost pipeline (recorded in registry next_action).
+- Next: R8 trajectory/gravity consumers (offline), R7 pass 2 ($qd/$Qd/$rd via obfuz-pool-values.json), H1 hash-coverage.

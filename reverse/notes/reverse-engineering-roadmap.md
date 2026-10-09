@@ -20,7 +20,7 @@ dump.cs `0050e67d…`). Evidence labels per AGENTS.md §9 / mission vocabulary:
 | R4 | Damage application semantics | BLOCKED (device/live server) | damage-pipeline note §3.5 | Phase 24 controlled scenarios |
 | R5 | `$Pg` branch micro-logic | **LARGELY DONE** (Builds I/J) | `evidence/combat/pg-branches-decode.txt`, `band-dataflow{,-2,-3}.txt`, `notes/maxstat-tier-band-decode.md` | only if join-arm values ever matter numerically: `$Pg` jump-table case map (bounded residual) |
 | R6 | TakePositions per-bit cell names | PARTIAL (masks CONFIRMED, bit names INFERRED) | `evidence/combat/takepos-cells-decode.txt` | cell-class bit naming via map-prefab cross-ref (offline) |
-| R7 | Native visibility/sight rules | OPEN (offline-startable) | sight fields exist (`UnitStateType`) | xref scan of sight consumers in client code |
+| R7 | Native visibility/sight rules | **PARTIALLY_CONFIRMED** (pass 1: server-authoritative fog + calcSightCurr decoded) | `notes/sight-fog-native-analysis.md`, `evidence/fog/*` | pass 2: `$qd/$Qd/$rd` jump tables via pool values; then fold in dynamic sight terms |
 | R8 | Trajectory type / gravity semantics | OPEN (offline-startable) | `weapon-schema.json` fields 0x3C/0x3E | consumer xref scan in weapon/spawn code (G10) |
 | R9 | Client↔server battle protocol | BLOCKED (device) | AIComm class names | TLS-unpin + capture, or Frida hooks |
 | R10 | Camera/UI metrics | BLOCKED (device captures) | V8 A/B harness exists | record device gameplay; calibrate v2 pitch ramp |

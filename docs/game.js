@@ -2264,6 +2264,21 @@
       }
     }
     updateVision() {
+      // R7 native anchors (sight-fog-native-analysis.md, 6.9.18 libil2cpp.so 8ace05bb…):
+      // fog is SERVER-authoritative in the original — the battle core computes
+      // per-alliance fog grids (BattleAlliance $HE/$iE int[][]; FogAct statics incl.
+      // bullet fog-open $sd(Battle,Bullet,sbyte)) and delivers states as LC logic
+      // commands (LCUnitFogVisibleChanged {unitId, sbyte}; ClientUnitVisibleState
+      // Undefined -1 / Invisible 0 / Hidden 1 / Visible 2 / Detected 3; presentation
+      // ClientUnitVisibleType adds HiddenInForest 2 / DetectedInForest 4). Radius
+      // provenance: Unit.calcSightCurr (0x45B19F8, plain-named) recomputes
+      // Unit.sight_curr per refresh = UnitStateType.sight (serialized key "sight",
+      // EStat 10 view domain) MINUS an (sbyte) penalty gated on Unit.in_forest
+      // (0x18F, vtbl chain 0x1F8->0x1998 — cell/terrain provider INFERRED) PLUS
+      // boostEffects[3] (Unit.boostEffects short[] @0x140; BoostType.ACT_SIGHT = 3,
+      // dump.cs:376978). This browser kernel keeps static def.view radii (documented
+      // approximation — H4); in_forest/boost terms need cell-classified forest data
+      // and the boost pipeline before they can be modeled (registry R7 next actions).
       // JIP/spectator: full-map observation — visible/explored flooded once per
       // step so every existing consumer (renderer culling, minimap, fog,
       // click-select filters) sees everything without per-site checks

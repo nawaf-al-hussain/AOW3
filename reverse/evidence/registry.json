@@ -76,9 +76,18 @@
     },
     "R7": {
       "question": "Native visibility/sight rules",
-      "status": "UNKNOWN",
+      "status": "PARTIALLY_CONFIRMED",
+      "result": "pass 1: fog is SERVER-authoritative (FogAct statics over Battle/BattleMap/BattleAlliance int[][] grids -> LC*FogVisibleChanged logic commands); ClientUnitVisibleState {-1,0,1 Hidden,2 Visible,3 Detected} + ClientUnitVisibleType {HiddenInForest 2, DetectedInForest 4}; Unit.calcSightCurr (0x45B19F8, plain-named) FULLY DECODED: sight_curr = UnitStateType.sight - (sbyte)in_forest penalty (vtbl 0x1F8->0x1998, provider INFERRED) + boostEffects[3] (BoostType.ACT_SIGHT=3, dump.cs:376978); getters have 0 direct BL callers (virtual dispatch)",
+      "evidence": [
+        "reverse/notes/sight-fog-native-analysis.md",
+        "reverse/evidence/fog/r7-fogact-scan.txt",
+        "reverse/evidence/fog/r7-sight-writers.txt",
+        "reverse/evidence/fog/r7-writer-functions.txt"
+      ],
+      "tools": ["reverse/tools/r7_fog_sight_scan.py", "reverse/tools/r7_sight_writer_scan.py", "reverse/tools/r7_writer_functions.py"],
+      "residual": "grid-opener circle shape (FogAct $qd/$Qd/$rd Obfuz jump tables), in-forest penalty provider vtable names (needs script.json), $pd/$GL branch semantics",
       "converts_gaps": ["H4"],
-      "next_action": "xref scan of sight consumers (UnitStateType.sight/sight_curr) in client code (offline-startable)"
+      "next_action": "pass 2: decode $qd/$Qd/$rd jump tables via obfuz-pool-values.json (Builds I/J method); vtable-slot resolution via script.json; then fold in dynamic sight terms (in_forest needs forest-cell classification from map decor; boosts need the boost pipeline)"
     },
     "R8": {
       "question": "m_bulletTrajectoryType / m_gravity consumer semantics",
@@ -112,6 +121,24 @@
     }
   },
   "findings": {
+    "F-fog-server-authoritative": {
+      "claim": "Fog/visibility is computed battle-core-side; client receives LC logic commands (unitId + sbyte ClientUnitVisibleState) and applies them to ClientUnit.m_visibleState; FogOpener is the serialized fog-open payload; bullets open fog (FogAct.$sd)",
+      "status": "CONFIRMED",
+      "labels": ["[DECOMP]"],
+      "evidence": ["reverse/notes/sight-fog-native-analysis.md", "reverse/evidence/fog/r7-fogact-scan.txt"]
+    },
+    "F-calc-sight-curr": {
+      "claim": "Unit.calcSightCurr (0x45B19F8): sight_curr = UnitStateType.sight (0x4C) - (sbyte) forest penalty gated on Unit.in_forest (0x18F) + boostEffects[3] (Unit.boostEffects short[] @0x140, BoostType.ACT_SIGHT=3); field identities plain-named in dump.cs",
+      "status": "CONFIRMED",
+      "labels": ["[DECOMP]"],
+      "evidence": ["reverse/notes/sight-fog-native-analysis.md", "reverse/evidence/fog/r7-writer-functions.txt"]
+    },
+    "F-visibility-enums": {
+      "claim": "ClientUnitVisibleState {Undefined -1, Invisible 0, Hidden 1, Visible 2, Detected 3}; ClientUnitVisibleType {Visible 0, HiddenInForest 2, Detected 3, DetectedInForest 4}; ClientBuildingVisibleState {Undefined -1, Invisible 0, Fogged 1, Visible 2}",
+      "status": "CONFIRMED",
+      "labels": ["[DECOMP]"],
+      "evidence": ["reverse/notes/sight-fog-native-analysis.md"]
+    },
     "F-damage-armor-curve": {
       "claim": "CalculateWeaponArmorDamage is the sole mitigation site; mitigation factor in [0.1,1.0], constants 0.1f/0.9f only; no per-armor-type coefficient exists",
       "status": "CONFIRMED",
@@ -150,6 +177,14 @@
     }
   },
   "browser_foldins": {
+    "v57": {
+      "task": "Task 54 / R7 pass 1 (this session)",
+      "changes": [
+        "updateVision() kernel comment: native fog authority model (server-computed grids + LC commands), ClientUnitVisibleState/Type enum values, calcSightCurr radius provenance (in_forest penalty + boostEffects[3]) with browser static def.view documented as approximation"
+      ],
+      "behavior_change": false,
+      "tests": "full suite green before/after"
+    },
     "v56": {
       "task": "Task 53 (this session)",
       "changes": [
