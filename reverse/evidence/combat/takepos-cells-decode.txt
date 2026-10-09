@@ -1,0 +1,434 @@
+BUILD I — $Pg branch enumeration + TakePositions cell-class decode (AOW3 6.9.18)
+libil2cpp.so sha256 8ace05bbaa2cdfda… / dump.cs sha256 0050e67d23f898… / metadata d2e8dd0d…
+obfuz-pool-values.json 697/697 (R2, Task 42) re-validated: canary PASS, idx0 re-derivation PASS.
+Tools: scripts/pg_takepos_decode.py + slot_k_scan.py + pg_windows.py + pg_final.py (this sandbox).
+Part outputs split below: FILE 1 = defend chase ($Pg/$UG/$yG); FILE 2 = takepos cell-class.
+
+########## PART 2 — UnitTakePositionsManager cell-class masks ##########
+
+===== pass 1: cctor + mask getters + CalculateCellsMask =====
+== 5. UnitTakePositionsManager static masks (.cctor 0x81D4DF4) ==
+-- cctor 0x81d4df4..0x81d4ea0 --
+081d4df4  str      x30, [sp, #-0x20]!
+081d4df8  stp      x20, x19, [sp, #0x10]
+081d4dfc  adrp     x19, #0x9d23000
+081d4e00  adrp     x20, #0x96f3000
+081d4e04  ldrb     w8, [x19, #0x2f0]
+081d4e08  ldr      x20, [x20, #0x9f0]
+081d4e0c  tbnz     w8, #0, #0x81d4e24
+081d4e10  adrp     x0, #0x96f3000
+081d4e14  ldr      x0, [x0, #0x9f0]
+081d4e18  bl       #0x3cc7948
+081d4e1c  mov      w8, #1
+081d4e20  strb     w8, [x19, #0x2f0]
+081d4e24  ldr      x8, [x20]
+081d4e28  mov      w9, #0x215f
+081d4e2c  mov      w10, #0xfefd
+081d4e30  ldp      x20, x19, [sp, #0x10]
+081d4e34  movk     w9, #0xfee0, lsl #16
+081d4e38  ldr      x8, [x8, #0xb8]
+081d4e3c  str      w9, [x8]
+081d4e40  strh     w10, [x8, #4]
+081d4e44  ldr      x30, [sp], #0x20
+081d4e48  ret      
+081d4e4c  ldr      x8, [x0, #0x40]
+081d4e50  ldr      x2, [x0, #0x28]
+081d4e54  ldr      x3, [x0, #0x18]
+081d4e58  mov      x0, x8
+081d4e5c  br       x3
+081d4e60  sub      sp, sp, #0x40
+081d4e64  stp      x30, x21, [sp, #0x20]
+081d4e68  stp      x20, x19, [sp, #0x30]
+081d4e6c  adrp     x8, #0x9674000
+081d4e70  mov      x21, x0
+081d4e74  mov      x19, x3
+081d4e78  ldr      x8, [x8, #0x140]
+081d4e7c  str      w1, [sp, #0x1c]
+081d4e80  add      x1, sp, #0x1c
+081d4e84  mov      x20, x2
+081d4e88  stp      xzr, xzr, [sp, #8]
+081d4e8c  ldr      x0, [x8, #0x48]
+081d4e90  bl       #0x3cc7ad0
+081d4e94  str      x0, [sp, #8]
+081d4e98  add      x1, sp, #8
+081d4e9c  mov      x0, x21
+
+-- GetUnitMask 0x81d43bc..0x81d4568 --
+081d43bc  stp      x30, x21, [sp, #-0x20]!
+081d43c0  stp      x20, x19, [sp, #0x10]
+081d43c4  adrp     x19, #0x9d23000
+081d43c8  adrp     x21, #0x96f3000
+081d43cc  mov      x20, x0
+081d43d0  ldrb     w8, [x19, #0x2eb]
+081d43d4  ldr      x21, [x21, #0x9f0]
+081d43d8  tbnz     w8, #0, #0x81d43f0
+081d43dc  adrp     x0, #0x96f3000
+081d43e0  ldr      x0, [x0, #0x9f0]
+081d43e4  bl       #0x3cc7948
+081d43e8  mov      w8, #1
+081d43ec  strb     w8, [x19, #0x2eb]
+081d43f0  ldr      x0, [x21]
+081d43f4  ldr      w8, [x0, #0xe4]
+081d43f8  cbnz     w8, #0x81d4404
+081d43fc  bl       #0x3cc7ac8
+081d4400  ldr      x0, [x21]
+081d4404  cbz      x20, #0x81d4564
+081d4408  ldr      x8, [x0, #0xb8]
+081d440c  ldr      x9, [x20]
+081d4410  mov      x0, x20
+081d4414  ldrh     w19, [x8]
+081d4418  ldr      x8, [x9, #0x5b8]
+081d441c  ldr      x1, [x9, #0x5c0]
+081d4420  blr      x8
+081d4424  cbz      x0, #0x81d4564
+081d4428  ldr      x8, [x0]
+081d442c  ldr      x9, [x8, #0x288]
+081d4430  ldr      x1, [x8, #0x290]
+081d4434  blr      x9
+081d4438  sxtb     w8, w0
+081d443c  cmp      w8, #2
+081d4440  b.gt     #0x81d4474
+081d4444  cmp      w8, #1
+081d4448  b.eq     #0x81d44c4
+081d444c  cmp      w8, #2
+081d4450  b.ne     #0x81d4554
+081d4454  ldr      x0, [x21]
+081d4458  ldr      w8, [x0, #0xe4]
+081d445c  cbnz     w8, #0x81d4468
+081d4460  bl       #0x3cc7ac8
+081d4464  ldr      x0, [x21]
+081d4468  ldr      x8, [x0, #0xb8]
+081d446c  ldrh     w8, [x8, #4]
+081d4470  b        #0x81d4550
+081d4474  cmp      w8, #3
+081d4478  b.eq     #0x81d4524
+081d447c  cmp      w8, #4
+081d4480  b.ne     #0x81d4554
+081d4484  ldr      x8, [x20]
+081d4488  mov      x0, x20
+081d448c  ldr      x9, [x8, #0x5b8]
+081d4490  ldr      x1, [x8, #0x5c0]
+081d4494  blr      x9
+081d4498  cbz      x0, #0x81d4564
+081d449c  ldr      x8, [x0]
+081d44a0  ldr      x9, [x8, #0x4d8]
+081d44a4  ldr      x1, [x8, #0x4e0]
+081d44a8  blr      x9
+081d44ac  and      w9, w0, #0xff
+081d44b0  mov      w8, #-0x11
+081d44b4  cmp      w9, #0x2a
+081d44b8  mov      w9, #-0x1b
+081d44bc  csel     w8, w9, w8, eq
+081d44c0  b        #0x81d4550
+081d44c4  ldr      x0, [x21]
+081d44c8  ldr      w8, [x0, #0xe4]
+081d44cc  cbnz     w8, #0x81d44d8
+081d44d0  bl       #0x3cc7ac8
+081d44d4  ldr      x0, [x21]
+081d44d8  ldr      x8, [x0, #0xb8]
+081d44dc  ldr      x9, [x20]
+081d44e0  mov      x0, x20
+081d44e4  ldrh     w21, [x8, #4]
+081d44e8  ldr      x8, [x9, #0x5b8]
+081d44ec  ldr      x1, [x9, #0x5c0]
+081d44f0  blr      x8
+081d44f4  cbz      x0, #0x81d4564
+081d44f8  ldr      x8, [x0]
+081d44fc  ldr      x9, [x8, #0x348]
+081d4500  ldr      x1, [x8, #0x350]
+081d4504  blr      x9
+081d4508  cbz      x0, #0x81d4564
+081d450c  ldr      w8, [x0, #0x10]
+081d4510  and      w9, w21, w19
+081d4514  and      w10, w9, #0xfffffffb
+081d4518  cmp      w8, #2
+081d451c  csel     w19, w10, w9, eq
+081d4520  b        #0x81d4554
+081d4524  mov      x0, x20
+081d4528  mov      x1, xzr
+081d452c  bl       #0x8011840   ; -> ClientUnitHelper.IsHelicopterBehaviour
+081d4530  tbz      w0, #0, #0x81d4554
+081d4534  ldr      x0, [x21]
+081d4538  ldr      w8, [x0, #0xe4]
+081d453c  cbnz     w8, #0x81d4548
+081d4540  bl       #0x3cc7ac8
+081d4544  ldr      x0, [x21]
+081d4548  ldr      x8, [x0, #0xb8]
+081d454c  ldrh     w8, [x8, #2]
+081d4550  and      w19, w8, w19
+081d4554  mov      w0, w19
+081d4558  ldp      x20, x19, [sp, #0x10]
+081d455c  ldp      x30, x21, [sp], #0x20
+081d4560  ret      
+081d4564  bl       #0x3cc7bf4
+
+-- GetHeroMask 0x81d4568..0x81d4780 --
+081d4568  str      x30, [sp, #-0x30]!
+081d456c  stp      x22, x21, [sp, #0x10]
+081d4570  stp      x20, x19, [sp, #0x20]
+081d4574  adrp     x19, #0x9d23000
+081d4578  adrp     x22, #0x96f3000
+081d457c  mov      x20, x0
+081d4580  ldrb     w8, [x19, #0x2ec]
+081d4584  ldr      x22, [x22, #0x9f0]
+081d4588  tbnz     w8, #0, #0x81d45c4
+081d458c  adrp     x0, #0x9674000
+081d4590  ldr      x0, [x0, #0xea0]
+081d4594  bl       #0x3cc7948
+081d4598  adrp     x0, #0x9698000
+081d459c  ldr      x0, [x0, #0x810]
+081d45a0  bl       #0x3cc7948
+081d45a4  adrp     x0, #0x96f3000
+081d45a8  ldr      x0, [x0, #0x9f0]
+081d45ac  bl       #0x3cc7948
+081d45b0  adrp     x0, #0x96f3000
+081d45b4  ldr      x0, [x0, #0x9f8]
+081d45b8  bl       #0x3cc7948
+081d45bc  mov      w8, #1
+081d45c0  strb     w8, [x19, #0x2ec]
+081d45c4  ldr      x0, [x22]
+081d45c8  ldr      w8, [x0, #0xe4]
+081d45cc  cbnz     w8, #0x81d45d8
+081d45d0  bl       #0x3cc7ac8
+081d45d4  ldr      x0, [x22]
+081d45d8  cbz      x20, #0x81d477c
+081d45dc  ldr      x8, [x0, #0xb8]
+081d45e0  ldr      x9, [x20]
+081d45e4  mov      x0, x20
+081d45e8  ldrh     w19, [x8]
+081d45ec  ldr      x8, [x9, #0x5b8]
+081d45f0  ldr      x1, [x9, #0x5c0]
+081d45f4  blr      x8
+081d45f8  cbz      x0, #0x81d477c
+081d45fc  ldr      x8, [x0]
+081d4600  ldr      x9, [x8, #0x4d8]
+081d4604  ldr      x1, [x8, #0x4e0]
+081d4608  blr      x9
+081d460c  sxtb     w21, w0
+081d4610  sub      w8, w21, #0x3e
+081d4614  cmp      w8, #0xe
+081d4618  b.hi     #0x81d469c
+081d461c  mov      w9, #1
+081d4620  mov      w10, #0x6a1c
+081d4624  lsl      w9, w9, w8
+081d4628  tst      w9, w10
+081d462c  b.eq     #0x81d4650
+081d4630  ldr      x0, [x22]
+081d4634  ldr      w8, [x0, #0xe4]
+081d4638  cbnz     w8, #0x81d4644
+081d463c  bl       #0x3cc7ac8
+081d4640  ldr      x0, [x22]
+081d4644  ldr      x8, [x0, #0xb8]
+081d4648  ldrh     w8, [x8, #4]
+081d464c  b        #0x81d4764
+081d4650  mov      w10, #0x502
+081d4654  tst      w9, w10
+081d4658  b.eq     #0x81d467c
+081d465c  ldr      x0, [x22]
+081d4660  ldr      w8, [x0, #0xe4]
+081d4664  cbnz     w8, #0x81d4670
+081d4668  bl       #0x3cc7ac8
+081d466c  ldr      x0, [x22]
+081d4670  ldr      x8, [x0, #0xb8]
+081d4674  ldrh     w8, [x8, #2]
+081d4678  b        #0x81d4764
+081d467c  mov      w9, #1
+081d4680  lsl      w8, w9, w8
+081d4684  mov      w9, #0x1001
+081d4688  tst      w8, w9
+081d468c  b.eq     #0x81d469c
+081d4690  mov      w8, #0xffe5
+081d4694  and      w19, w19, w8
+081d4698  b        #0x81d4768
+081d469c  cmp      w21, #0x3d
+081d46a0  b.eq     #0x81d4718
+081d46a4  cmp      w21, #0x3c
+081d46a8  b.eq     #0x81d4630
+081d46ac  adrp     x8, #0x9674000
+081d46b0  ldr      x8, [x8, #0xea0]
+081d46b4  ldr      x0, [x8]
+081d46b8  bl       #0x3cc7be4
+081d46bc  mov      w1, wzr
+081d46c0  mov      x2, xzr
+081d46c4  mov      x20, x0
+081d46c8  bl       #0x82d9178   ; -> ClientEventPairList.ctor
+081d46cc  cbz      x20, #0x81d477c
+081d46d0  mov      x0, x20
+081d46d4  mov      w1, #0x24
+081d46d8  mov      w2, w21
+081d46dc  mov      x3, xzr
+081d46e0  bl       #0x82da254   ; -> ClientEventPairList.Add
+081d46e4  adrp     x8, #0x9698000
+081d46e8  ldr      x8, [x8, #0x810]
+081d46ec  ldr      x0, [x8]
+081d46f0  ldr      w8, [x0, #0xe4]
+081d46f4  cbnz     w8, #0x81d46fc
+081d46f8  bl       #0x3cc7ac8
+081d46fc  adrp     x8, #0x96f3000
+081d4700  mov      x1, x20
+081d4704  mov      x2, xzr
+081d4708  ldr      x8, [x8, #0x9f8]
+081d470c  ldr      x0, [x8]
+081d4710  bl       #0x799faa8   ; -> GGDebug.Error
+081d4714  b        #0x81d4768
+081d4718  mov      x0, x20
+081d471c  mov      x1, xzr
+081d4720  bl       #0x8011840   ; -> ClientUnitHelper.IsHelicopterBehaviour
+081d4724  mov      w8, w0
+081d4728  ldr      x0, [x22]
+081d472c  ldr      w9, [x0, #0xe4]
+081d4730  tbz      w8, #0, #0x81d474c
+081d4734  cbnz     w9, #0x81d4740
+081d4738  bl       #0x3cc7ac8
+081d473c  ldr      x0, [x22]
+081d4740  ldr      x8, [x0, #0xb8]
+081d4744  add      x8, x8, #2
+081d4748  b        #0x81d4760
+081d474c  cbnz     w9, #0x81d4758
+081d4750  bl       #0x3cc7ac8
+081d4754  ldr      x0, [x22]
+081d4758  ldr      x8, [x0, #0xb8]
+081d475c  add      x8, x8, #4
+081d4760  ldrh     w8, [x8]
+081d4764  and      w19, w8, w19
+081d4768  mov      w0, w19
+081d476c  ldp      x20, x19, [sp, #0x20]
+081d4770  ldp      x22, x21, [sp, #0x10]
+081d4774  ldr      x30, [sp], #0x30
+081d4778  ret      
+081d477c  bl       #0x3cc7bf4
+
+-- CalcCellsMask 0x81d4780..0x81d4954 --
+081d4780  sub      sp, sp, #0x80
+081d4784  str      x30, [sp, #0x40]
+081d4788  stp      x24, x23, [sp, #0x50]
+081d478c  stp      x22, x21, [sp, #0x60]
+081d4790  stp      x20, x19, [sp, #0x70]
+081d4794  adrp     x20, #0x9d23000
+081d4798  mov      x19, x0
+081d479c  ldrb     w8, [x20, #0x2ed]
+081d47a0  tbnz     w8, #0, #0x81d47e8
+081d47a4  adrp     x0, #0x96ea000
+081d47a8  ldr      x0, [x0, #0x9b8]
+081d47ac  bl       #0x3cc7948
+081d47b0  adrp     x0, #0x96ea000
+081d47b4  ldr      x0, [x0, #0x9c0]
+081d47b8  bl       #0x3cc7948
+081d47bc  adrp     x0, #0x96ea000
+081d47c0  ldr      x0, [x0, #0x9c8]
+081d47c4  bl       #0x3cc7948
+081d47c8  adrp     x0, #0x96ea000
+081d47cc  ldr      x0, [x0, #0x9d8]
+081d47d0  bl       #0x3cc7948
+081d47d4  adrp     x0, #0x96f3000
+081d47d8  ldr      x0, [x0, #0x9f0]
+081d47dc  bl       #0x3cc7948
+081d47e0  mov      w8, #1
+081d47e4  strb     w8, [x20, #0x2ed]
+081d47e8  ldr      x0, [x19, #0x10]
+081d47ec  stp      xzr, xzr, [sp, #0x20]
+081d47f0  str      xzr, [sp, #0x30]
+081d47f4  cbz      x0, #0x81d48e8
+081d47f8  adrp     x8, #0x96ea000
+081d47fc  adrp     x23, #0x96ea000
+081d4800  adrp     x24, #0x96f3000
+081d4804  ldr      x8, [x8, #0x9d8]
+081d4808  adrp     x21, #0x96ea000
+081d480c  ldr      x23, [x23, #0x9c0]
+081d4810  ldr      x24, [x24, #0x9f0]
+081d4814  ldr      x21, [x21, #0x9b8]
+081d4818  ldr      x1, [x8]
+081d481c  add      x8, sp, #8
+081d4820  bl       #0x59ae2dc
+081d4824  ldr      x8, [sp, #0x18]
+081d4828  ldur     q0, [sp, #8]
+081d482c  mov      w22, #0x7fff
+081d4830  str      x8, [sp, #0x30]
+081d4834  add      x8, sp, #0x20
+081d4838  str      q0, [sp, #0x20]
+081d483c  stp      xzr, x8, [sp, #8]
+081d4840  ldr      x1, [x23]
+081d4844  add      x0, sp, #0x20
+081d4848  bl       #0x736a6ac
+081d484c  tbz      w0, #0, #0x81d48b8
+081d4850  ldr      x20, [sp, #0x30]
+081d4854  cbz      x20, #0x81d48e0
+081d4858  ldr      x8, [x20]
+081d485c  ldr      x1, [x8, #0x5c0]
+081d4860  ldr      x9, [x8, #0x5b8]
+081d4864  mov      x0, x20
+081d4868  blr      x9
+081d486c  cbz      x0, #0x81d48e4
+081d4870  ldr      x8, [x0]
+081d4874  ldp      x9, x1, [x8, #0x1f8]
+081d4878  blr      x9
+081d487c  mov      w8, w0
+081d4880  ldr      x0, [x24]
+081d4884  ldr      w9, [x0, #0xe4]
+081d4888  tbz      w8, #0, #0x81d48a0
+081d488c  cbnz     w9, #0x81d4894
+081d4890  bl       #0x3cc7ac8
+081d4894  mov      x0, x20
+081d4898  bl       #0x81d4568   ; -> UnitTakePositionsManager.GetHeroUnitOccupancyMask
+081d489c  b        #0x81d48b0
+081d48a0  cbnz     w9, #0x81d48a8
+081d48a4  bl       #0x3cc7ac8
+081d48a8  mov      x0, x20
+081d48ac  bl       #0x81d43bc   ; -> UnitTakePositionsManager.GetUnitOccupancyMask
+081d48b0  and      w22, w0, w22
+081d48b4  b        #0x81d4840
+081d48b8  ldr      x1, [x21]
+081d48bc  add      x0, sp, #0x20
+081d48c0  bl       #0x736a6a8
+081d48c4  strh     w22, [x19, #0x18]
+081d48c8  ldp      x20, x19, [sp, #0x70]
+081d48cc  ldp      x22, x21, [sp, #0x60]
+081d48d0  ldr      x30, [sp, #0x40]
+081d48d4  ldp      x24, x23, [sp, #0x50]
+081d48d8  add      sp, sp, #0x80
+081d48dc  ret      
+081d48e0  bl       #0x3cc7bf4
+081d48e4  bl       #0x3cc7bf4
+081d48e8  bl       #0x3cc7bf4
+081d48ec  b        #0x81d490c
+081d48f0  b        #0x81d490c
+081d48f4  b        #0x81d490c
+081d48f8  b        #0x81d490c
+081d48fc  b        #0x81d490c
+081d4900  b        #0x81d490c
+081d4904  b        #0x81d490c
+081d4908  b        #0x81d490c
+081d490c  cmp      w1, #1
+081d4910  b.ne     #0x81d493c
+081d4914  bl       #0x8fd69e0
+081d4918  ldr      x20, [x0]
+081d491c  str      x20, [sp, #8]
+081d4920  bl       #0x8fd69f0
+081d4924  ldr      x0, [sp, #0x10]
+081d4928  ldr      x1, [x21]
+081d492c  bl       #0x736a6a8
+081d4930  cbz      x20, #0x81d48c4
+081d4934  mov      x0, x20
+081d4938  bl       #0x3cc7bec
+081d493c  mov      x19, x0
+081d4940  add      x0, sp, #8
+081d4944  bl       #0x3c6a81c
+081d4948  mov      x0, x19
+081d494c  bl       #0x3db58cc
+081d4950  bl       #0x38a8c98
+
+== 9. UnitAct class fields per dump.cs ==
+  UnitAct: {'static': [], 'const': [('$Vm', '0'), ('$wm', '1'), ('$Wm', '2')]}
+  ClientUnit statics: []
+
+===== pass 2: consumer scan (get_CellsMask / CalculateCellsMask / SendNearest / IsHelicopterBehaviour) =====
+== 7. BL callers of get_CellsMask 0x81D3C7C / CalculateCellsMask 0x81D4780 / SendNearest 0x81D4954 ==
+  get_CellsMask (0x81d3c7c): 0 callers
+    enclosing: []
+  CalculateCellsMask (0x81d4780): 1 callers
+    enclosing: ['UnitTakePositionsManager.Update']
+  SendNearestUnitToCell (0x81d4954): 1 callers
+    enclosing: ['GHUnitTakePositions.OnBattleMapClick']
+  ClientUnitHelper.IsHelicopterBehaviour (0x8011840): 9 callers
+    enclosing: ['ActiveAbilityRadiusAction.Update', 'ClientUnitHelper.IsCanAircraftSelectByDoubleTap', 'ClientUnitHelper.IsDrawSectorOfFireRequired', 'UnitMoveEngine.DoMove', 'UnitMoveEngine.MoveEngineStart', 'UnitTakePositionsManager.GetHeroUnitOccupancyMask', 'UnitTakePositionsManager.GetUnitOccupancyMask', 'WeaponAttackSectorComponent.<UpdateCoroutine>d__36.MoveNext']
+
