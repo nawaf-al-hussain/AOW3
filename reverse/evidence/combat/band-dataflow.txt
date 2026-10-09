@@ -1,0 +1,355 @@
+$Pg disasm: 11171 instructions
+band stores: 18
+  0x483c85c  str w24, [sp, #0x134]
+  0x483d528  str w8, [sp, #0x134]
+  0x483eeac  str w9, [sp, #0x134]
+  0x483ffac  str w23, [sp, #0x134]
+  0x4840090  str w28, [sp, #0x134]
+  0x48403bc  str w19, [sp, #0x134]
+  0x484074c  str w24, [sp, #0x134]
+  0x4840bc8  str w20, [sp, #0x134]
+  0x4842308  str w19, [sp, #0x134]
+  0x484236c  str w19, [sp, #0x134]
+  0x4844558  str w25, [sp, #0x134]
+  0x4845258  str w28, [sp, #0x134]
+  0x4845c84  str w28, [sp, #0x134]
+  0x48463e0  str w20, [sp, #0x134]
+  0x4846440  str w21, [sp, #0x134]
+  0x4846690  str w10, [sp, #0x134]
+  0x484677c  str w21, [sp, #0x134]
+  0x4846cb4  str w8, [sp, #0x134]
+
+=== band store #1 @0x483c85c  (str w24, [sp, #0x134]) ===
+  context:
+    0483c82c  blr     x9
+    0483c830  adrp    x9, #0x968e000
+    0483c834  mov     w8, w0
+    0483c838  mov     x28, x27
+    0483c83c  ldr     x9, [x9, #0x4d8]
+    0483c840  ldr     x21, [sp, #0xd8]
+    0483c844  ldr     w24, [sp, #0x134]
+    0483c848  mov     x23, x29
+    0483c84c  ldr     w29, [sp, #0x164]
+    0483c850  ldr     x27, [sp, #0x118]
+    0483c854  ldr     x0, [x9]
+    0483c858  str     x21, [sp, #0xd8]
+  slice (newest first):
+    0483c844  ldr w24, [sp, #0x134]          ; BAND-SELF-READ (previous band value)
+
+=== band store #2 @0x483d528  (str w8, [sp, #0x134]) ===
+  context:
+    0483d4f8  ldr     w9, [x9, #0x18]
+    0483d4fc  ldr     x0, [x8]
+    0483d500  str     w9, [sp, #0x90]
+    0483d504  ldr     w8, [x0, #0xe4]
+    0483d508  cbnz    w8, #0x483d51c
+    0483d50c  bl      #0x3cc7ac8
+    0483d510  adrp    x8, #0x968e000
+    0483d514  ldr     x8, [x8, #0x4d8]
+    0483d518  ldr     x0, [x8]
+    0483d51c  ldr     x8, [x0, #0xb8]
+    0483d520  ldp     w9, w8, [x8, #4]
+    0483d524  mul     w8, w8, w9
+  slice (newest first):
+    0483d524  mul w8, w8, w9                 ; uses w8,w9
+    0483d520  ldp w9, w8, [x8, #4]           ; ldp pair
+    0483d51c  ldr x8, [x0, #0xb8]            ; mem[x0#0xb8]
+    0483d518  ldr x0, [x8]                   ; mem[x8]
+    0483d514  ldr x8, [x8, #0x4d8]           ; mem[x8#0x4d8]
+    0483d510  adrp x8, #0x968e000            ; page 0x968e000
+
+=== band store #3 @0x483eeac  (str w9, [sp, #0x134]) ===
+  context:
+    0483ee7c  ldr     x0, [x8]
+    0483ee80  ldr     w8, [x0, #0xe4]
+    0483ee84  cbnz    w8, #0x483ee98
+    0483ee88  bl      #0x3cc7ac8
+    0483ee8c  adrp    x8, #0x968e000
+    0483ee90  ldr     x8, [x8, #0x4d8]
+    0483ee94  ldr     x0, [x8]
+    0483ee98  ldr     x8, [x0, #0xb8]
+    0483ee9c  ldp     w9, w8, [x8, #0xc]
+    0483eea0  eor     w8, w8, w9
+    0483eea4  ldr     w9, [sp, #0x134]
+    0483eea8  add     w9, w8, w9
+  slice (newest first):
+    0483eea8  add w9, w8, w9                 ; uses w8,w9
+    0483eea4  ldr w9, [sp, #0x134]           ; BAND-SELF-READ (previous band value)
+    0483eea0  eor w8, w8, w9                 ; uses w8,w9
+    0483ee9c  ldp w9, w8, [x8, #0xc]         ; ldp pair
+    0483ee98  ldr x8, [x0, #0xb8]            ; mem[x0#0xb8]
+    0483ee94  ldr x0, [x8]                   ; mem[x8]
+    0483ee90  ldr x8, [x8, #0x4d8]           ; mem[x8#0x4d8]
+    0483ee8c  adrp x8, #0x968e000            ; page 0x968e000
+
+=== band store #4 @0x483ffac  (str w23, [sp, #0x134]) ===
+  context:
+    0483ff7c  ldp     w9, w8, [x8, #0xc]
+    0483ff80  str     w28, [sp, #0xec]
+    0483ff84  eor     w8, w8, w9
+    0483ff88  add     w8, w8, w21
+    0483ff8c  str     w8, [x20]
+    0483ff90  ldr     w8, [x0, #0xe4]
+    0483ff94  cbnz    w8, #0x483ffa0
+    0483ff98  bl      #0x3cc7ac8
+    0483ff9c  ldr     x0, [x26]
+    0483ffa0  mov     x9, x25
+    0483ffa4  stp     x27, x24, [sp, #0x108]
+    0483ffa8  ldr     x8, [x0, #0xb8]
+  slice (newest first):
+    0483ff64  ldr w23, [sp, #0x134]          ; BAND-SELF-READ (previous band value)
+
+=== band store #5 @0x4840090  (str w28, [sp, #0x134]) ===
+  context:
+    04840060  mov     x4, xzr
+    04840064  mov     x19, x0
+    04840068  bl      #0x4594abc
+    0484006c  ldr     x0, [x29]
+    04840070  str     x19, [sp, #0xf8]
+    04840074  ldr     w8, [x0, #0xe4]
+    04840078  cbnz    w8, #0x4840084
+    0484007c  bl      #0x3cc7ac8
+    04840080  ldr     x0, [x29]
+    04840084  ldr     x8, [x0, #0xb8]
+    04840088  str     x23, [sp, #0x110]
+    0484008c  adrp    x23, #0x968e000
+  slice (newest first):
+    04840004  ldr w28, [sp, #0x134]          ; BAND-SELF-READ (previous band value)
+
+=== band store #6 @0x48403bc  (str w19, [sp, #0x134]) ===
+  context:
+    0484038c  cbnz    w8, #0x484039c
+    04840390  mov     x21, x25
+    04840394  bl      #0x3cc7ac8
+    04840398  ldr     x0, [x25]
+    0484039c  ldr     x8, [x0, #0xb8]
+    048403a0  mov     x27, x29
+    048403a4  mov     x21, x26
+    048403a8  mov     w29, w20
+    048403ac  mov     x26, x23
+    048403b0  ldr     x23, [sp, #0x118]
+    048403b4  ldr     w9, [x8, #0x180]
+    048403b8  ldr     w10, [x8, #0x184]
+  slice (newest first):
+    048402f0  ldr w19, [sp, #0x134]          ; BAND-SELF-READ (previous band value)
+
+=== band store #7 @0x484074c  (str w24, [sp, #0x134]) ===
+  context:
+    0484071c  b.ne    #0x4845e6c
+    04840720  ldr     w9, [x0, #0xe4]
+    04840724  cbnz    w9, #0x484073c
+    04840728  bl      #0x3cc7ac8
+    0484072c  adrp    x8, #0x968e000
+    04840730  ldr     x8, [x8, #0x4d8]
+    04840734  ldr     x8, [x8]
+    04840738  ldr     x8, [x8, #0xb8]
+    0484073c  add     x8, x8, #0x870
+    04840740  mov     x23, x25
+    04840744  mov     x25, x29
+    04840748  mov     x29, x26
+  slice (newest first):
+    048406ac  ldr w24, [sp, #0x134]          ; BAND-SELF-READ (previous band value)
+
+=== band store #8 @0x4840bc8  (str w20, [sp, #0x134]) ===
+  context:
+    04840b98  ldr     w9, [x8, #0xe4]
+    04840b9c  cbnz    w9, #0x4840bac
+    04840ba0  mov     x0, x8
+    04840ba4  bl      #0x3cc7ac8
+    04840ba8  ldr     x8, [x22]
+    04840bac  ldr     x9, [x8, #0xb8]
+    04840bb0  mov     x12, x20
+    04840bb4  ldr     w20, [sp, #0x134]
+    04840bb8  ldr     x27, [sp, #0x138]
+    04840bbc  mov     w13, w28
+    04840bc0  adrp    x29, #0x1b0f000
+    04840bc4  add     x29, x29, #0xaf0
+  slice (newest first):
+    04840bb4  ldr w20, [sp, #0x134]          ; BAND-SELF-READ (previous band value)
+
+=== band store #9 @0x4842308  (str w19, [sp, #0x134]) ===
+  context:
+    048422d8  cmp     w24, w0
+    048422dc  str     x28, [sp, #0x78]
+    048422e0  adrp    x24, #0x968e000
+    048422e4  ldr     x24, [x24, #0x4d8]
+    048422e8  ldr     x9, [sp, #0x138]
+    048422ec  b.ge    #0x4842350
+    048422f0  ldr     x0, [x24]
+    048422f4  ldr     w8, [x0, #0xe4]
+    048422f8  cbnz    w8, #0x4842304
+    048422fc  bl      #0x3cc7ac8
+    04842300  ldr     x0, [x24]
+    04842304  ldr     x10, [sp, #0xf8]
+  slice (newest first):
+    04842234  ldr w19, [sp, #0x134]          ; BAND-SELF-READ (previous band value)
+
+=== band store #10 @0x484236c  (str w19, [sp, #0x134]) ===
+  context:
+    0484233c  ldr     x29, [sp, #0x118]
+    04842340  ldp     x19, x25, [sp, #0x148]
+    04842344  ldr     x23, [x23, #0x4e0]
+    04842348  ldp     x22, x27, [sp, #0x138]
+    0484234c  b       #0x483c410
+    04842350  ldr     x0, [x24]
+    04842354  mov     x23, x9
+    04842358  stp     x22, x26, [sp, #0xd8]
+    0484235c  ldr     w8, [x0, #0xe4]
+    04842360  cbnz    w8, #0x484236c
+    04842364  bl      #0x3cc7ac8
+    04842368  ldr     x0, [x24]
+  slice (newest first):
+    04842340  ldp x19, x25, [sp, #0x148]     ; ldp pair
+    048422bc  cbz x25, #0x4847090            ; 
+
+=== band store #11 @0x4844558  (str w25, [sp, #0x134]) ===
+  context:
+    04844528  ldr     x9, [x20]
+    0484452c  mov     w24, w0
+    04844530  mov     x0, x20
+    04844534  ldr     x8, [x8, #0xb8]
+    04844538  ldr     w19, [x8, #0x24]
+    0484453c  ldp     w26, w21, [x8, #0xc]
+    04844540  ldp     x8, x1, [x9, #0x198]
+    04844544  blr     x8
+    04844548  add     w9, w19, w27
+    0484454c  ldp     x19, x13, [sp, #0x148]
+    04844550  sxth    w8, w24
+    04844554  eor     w10, w21, w26
+  slice (newest first):
+    04844420  ldr w25, [sp, #0x134]          ; BAND-SELF-READ (previous band value)
+
+=== band store #12 @0x4845258  (str w28, [sp, #0x134]) ===
+  context:
+    04845228  mov     x0, x22
+    0484522c  ldr     x9, [x8, #0xc88]
+    04845230  ldr     x1, [x8, #0xc90]
+    04845234  blr     x9
+    04845238  ldr     x8, [x22]
+    0484523c  sxtb    w19, w0
+    04845240  mov     x0, x22
+    04845244  ldr     x9, [x8, #0xc68]
+    04845248  ldr     x1, [x8, #0xc70]
+    0484524c  blr     x9
+    04845250  mov     w8, w0
+    04845254  ldr     x0, [x29]
+  slice (newest first):
+    0484517c  ldr w28, [sp, #0x134]          ; BAND-SELF-READ (previous band value)
+
+=== band store #13 @0x4845c84  (str w28, [sp, #0x134]) ===
+  context:
+    04845c54  mov     x19, x27
+    04845c58  mov     x25, x10
+    04845c5c  ldr     x21, [sp, #0xf0]
+    04845c60  ldr     w9, [x8, #0xe4]
+    04845c64  stp     x21, x12, [sp, #0xf0]
+    04845c68  cbnz    w9, #0x4845c78
+    04845c6c  mov     x0, x8
+    04845c70  bl      #0x3cc7ac8
+    04845c74  ldr     x8, [x22]
+    04845c78  stp     x20, x24, [sp, #0x108]
+    04845c7c  ldr     x8, [x8, #0xb8]
+    04845c80  adrp    x23, #0x968e000
+  slice (newest first):
+    04845c4c  ldr w28, [sp, #0x134]          ; BAND-SELF-READ (previous band value)
+
+=== band store #14 @0x48463e0  (str w20, [sp, #0x134]) ===
+  context:
+    048463b0  ldr     x8, [x0, #0xb8]
+    048463b4  mov     x22, x19
+    048463b8  mov     w21, w28
+    048463bc  mov     x28, x25
+    048463c0  mov     x11, x27
+    048463c4  ldp     x19, x25, [sp, #0x148]
+    048463c8  str     x23, [sp, #0x100]
+    048463cc  mov     x23, x26
+    048463d0  ldr     w26, [sp, #0x164]
+    048463d4  mov     x27, x29
+    048463d8  ldr     x29, [sp, #0x118]
+    048463dc  add     x8, x8, #0x2c
+  slice (newest first):
+    04846388  mov w20, w23                   ; uses w23
+    04846240  mov x23, x22                   ; uses x22
+    048461ac  mov x22, x23                   ; uses x23
+    0484612c  mov x23, x22                   ; uses x22
+    048460d4  mov x22, x23                   ; uses x23
+    048460a4  mov x23, x26                   ; uses x26
+    0484607c  mov w26, w9                    ; uses w9
+    0484605c  ldr w9, [sp, #0x164]           ; stack[0x164] load
+
+=== band store #15 @0x4846440  (str w21, [sp, #0x134]) ===
+  context:
+    04846410  str     w8, [sp, #0x38]
+    04846414  ldr     w8, [x0, #0xe4]
+    04846418  cbnz    w8, #0x4846424
+    0484641c  bl      #0x3cc7ac8
+    04846420  ldr     x0, [x19]
+    04846424  ldr     x8, [x0, #0xb8]
+    04846428  ldr     x11, [sp, #0x128]
+    0484642c  mov     x29, x25
+    04846430  mov     x19, x26
+    04846434  mov     x10, x27
+    04846438  ldr     w26, [sp, #0x164]
+    0484643c  ldr     x25, [sp, #0x150]
+  slice (newest first):
+    048463ec  mov w21, w9                    ; uses w9
+    04846328  ldr x9, [x0, #0xb8]            ; mem[x0#0xb8]
+    04846318  ldr x0, [x19]                  ; mem[x19]
+    04846198  mov x19, x29                   ; uses x29
+    04846188  mov x29, x26                   ; uses x26
+    048460b4  ldr w26, [sp, #0x164]          ; stack[0x164] load
+
+=== band store #16 @0x4846690  (str w10, [sp, #0x134]) ===
+  context:
+    04846660  ldr     w9, [x8, #0xe4]
+    04846664  cbnz    w9, #0x4846678
+    04846668  mov     x0, x8
+    0484666c  bl      #0x3cc7ac8
+    04846670  mov     x8, x29
+    04846674  ldr     x8, [x29]
+    04846678  ldr     w10, [sp, #0x134]
+    0484667c  ldr     x8, [x8, #0xb8]
+    04846680  mov     x9, x28
+    04846684  mov     w11, w20
+    04846688  ldr     w26, [sp, #0x164]
+    0484668c  mov     x19, x22
+  slice (newest first):
+    04846678  ldr w10, [sp, #0x134]          ; BAND-SELF-READ (previous band value)
+
+=== band store #17 @0x484677c  (str w21, [sp, #0x134]) ===
+  context:
+    0484674c  mov     x1, xzr
+    04846750  ldr     x8, [x25]
+    04846754  ldr     w9, [sp, #0x84]
+    04846758  mul     w3, w23, w27
+    0484675c  mov     x0, x25
+    04846760  sxtb    w2, w9
+    04846764  ldr     x9, [x8, #0x878]
+    04846768  ldr     x4, [x8, #0x880]
+    0484676c  blr     x9
+    04846770  adrp    x19, #0x968e000
+    04846774  ldp     x9, x26, [sp, #0xf0]
+    04846778  ldr     x19, [x19, #0x4d8]
+  slice (newest first):
+    048466f8  mov w21, w20                   ; uses w20
+    048466b0  add x20, x20, #0xaf0           ; uses x20
+    048466ac  adrp x20, #0x1b0f000           ; page 0x1b0f000
+
+=== band store #18 @0x4846cb4  (str w8, [sp, #0x134]) ===
+  context:
+    04846c84  mov     x19, x26
+    04846c88  ldr     w29, [sp, #0x134]
+    04846c8c  ldr     w20, [sp, #0x124]
+    04846c90  ldr     x27, [sp, #0x128]
+    04846c94  ldr     x26, [sp, #0x108]
+    04846c98  ldr     w8, [x0, #0xe4]
+    04846c9c  cbnz    w8, #0x4846ca8
+    04846ca0  bl      #0x3cc7ac8
+    04846ca4  ldr     x0, [x21]
+    04846ca8  mov     w8, w29
+    04846cac  mov     x29, x19
+    04846cb0  ldr     x19, [sp, #0x148]
+  slice (newest first):
+    04846ca8  mov w8, w29                    ; uses w29
+    04846c88  ldr w29, [sp, #0x134]          ; BAND-SELF-READ (previous band value)
+
