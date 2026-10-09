@@ -1,0 +1,103 @@
+{
+ "$schema_note": "$Pg live-pool holder-segment constants \u2014 materialization of the Build I (Task 51) ad-hoc decode (pg-branches-decode.txt pass 3); chain identical to the R2 static decoder (shared $GOA/$kK core); raw segment words recorded here for the first time",
+ "game_version": "6.9.18",
+ "generated": "2026-10-09",
+ "provenance": {
+  "libil2cpp_sha256": "8ace05bbaa2cdfda156e377cfbcb0c0a6fb223fa68188fa3df49f677f10e90c5",
+  "global_metadata_sha256": "d2e8dd0dfe1b82337d2399edeec967ba382593fedf0c46acc8d6a80e92697e9e",
+  "secret_key_sha256": "885f4d0c3ccc13e2cb6f706b32c401adb9db61b909e25373cd58713c72c1ffe0",
+  "segment_fdv_offset": "0xDBDBF0",
+  "segment_cbc_keyA": "0xC1A1C8CC",
+  "segment_cbc_salt": "0x44A79BB9",
+  "grid_scan": "k=-4 on the 0x808-stride family (0xDBFC10 - 4*0x808)",
+  "evidence": "reverse/evidence/combat/pg-branches-decode.txt (pass 1 callsites + pass 3 decode)",
+  "sanity_crosscheck": "reverse/evidence/obfuz/obfuz-pool-values.json idx 0"
+ },
+ "validation": {
+  "goa_canary": "PASS",
+  "pool_idx0_rederivation": "PASS",
+  "values_match_committed_record": "8/8 PASS"
+ },
+ "records": [
+  {
+   "site_va": "0x4843094",
+   "start": "0x698",
+   "keyA": "0x16",
+   "salt": "0xdabd7bca",
+   "raw": "0xf1f67c76",
+   "value": 73,
+   "semantics": "UnitType id BEHOLDER (73) \u2014 cmp w0,w-reg,sxtb unit-type-id compare arm",
+   "confidence": "INFERRED field identity (Build I); UNIT_ID_BEHOLDER=73 per unit-type-ids.json"
+  },
+  {
+   "site_va": "0x4843504",
+   "start": "0x69c",
+   "keyA": "0x11",
+   "salt": "0x2927ab7e",
+   "raw": "0xf9832032",
+   "value": 5,
+   "semantics": "UnitTaskType.BOMBARD (5)",
+   "confidence": "CONFIRMED (dump.cs:395395 enum; Build I)"
+  },
+  {
+   "site_va": "0x4846ffc",
+   "start": "0x6a0",
+   "keyA": "0x3d",
+   "salt": "0x27428cbf",
+   "raw": "0xa3af9c8d",
+   "value": 2,
+   "semantics": "UnitTaskType.DEFEND (2)",
+   "confidence": "CONFIRMED (dump.cs:395395 enum; Build I)"
+  },
+  {
+   "site_va": "0x4842a7c",
+   "start": "0x6a4",
+   "keyA": "0x16",
+   "salt": "0xdabd7bca",
+   "raw": "0xf1f67c76",
+   "value": 73,
+   "semantics": "UnitType id BEHOLDER (73)",
+   "confidence": "INFERRED field identity (Build I); UNIT_ID_BEHOLDER=73 per unit-type-ids.json"
+  },
+  {
+   "site_va": "0x483c7c4",
+   "start": "0x6a8",
+   "keyA": "0x3d",
+   "salt": "0x27428cbf",
+   "raw": "0xa3af9c8d",
+   "value": 2,
+   "semantics": "UnitTaskType.DEFEND (2)",
+   "confidence": "CONFIRMED (dump.cs:395395 enum; Build I)"
+  },
+  {
+   "site_va": "0x4841160",
+   "start": "0x6ac",
+   "keyA": "0x3d",
+   "salt": "0x27428cbf",
+   "raw": "0xa3af9c8d",
+   "value": 2,
+   "semantics": "UnitTaskType.DEFEND (2)",
+   "confidence": "CONFIRMED (dump.cs:395395 enum; Build I)"
+  },
+  {
+   "site_va": "0x483dbc4",
+   "start": "0x6b0",
+   "keyA": "0x11",
+   "salt": "0x2927ab7e",
+   "raw": "0xf9832032",
+   "value": 5,
+   "semantics": "UnitTaskType.BOMBARD (5)",
+   "confidence": "CONFIRMED (dump.cs:395395 enum; Build I)"
+  },
+  {
+   "site_va": "0x4844dfc",
+   "start": "0x6b4",
+   "keyA": "0x16",
+   "salt": "0xdabd7bca",
+   "raw": "0xf1f67c76",
+   "value": 73,
+   "semantics": "UnitType id BEHOLDER (73)",
+   "confidence": "INFERRED field identity (Build I); UNIT_ID_BEHOLDER=73 per unit-type-ids.json"
+  }
+ ]
+}

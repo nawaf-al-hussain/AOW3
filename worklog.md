@@ -2027,3 +2027,54 @@ Stage Summary:
 - R7 converted from UNKNOWN to PARTIALLY_CONFIRMED with the client contract + radius provenance CONFIRMED and the remaining residual bounded (grid-opener circle shape, penalty-provider slot names, $pd/$GL branches — all require the Builds I/J jump-table method on Obfuz statics).
 - Browser fog radius provenance is now evidence-anchored; dynamic sight terms (in_forest, boostEffects[3]) are queued pending forest-cell classification + boost pipeline (recorded in registry next_action).
 - Next: R8 trajectory/gravity consumers (offline), R7 pass 2 ($qd/$Qd/$rd via obfuz-pool-values.json), H1 hash-coverage.
+
+---
+Task ID: 55
+Agent: Super Z (main)
+Task: R2 constants fold-in closure — materialize the 8 $Pg live-pool holder-segment
+  constants (Build I follow-up) with a committed reproducible decoder; registry/
+  roadmap/inventory updated; no game.js change
+
+Work Log:
+- Scope re-derivation: the owner-directed R2 fold-in (audit §10 step 3) was already
+  EXECUTED as Task 45 (nativeTask derived task layer + decoded-constants block +
+  per-mille siege accumulator; live since v=47, markers verified in the current
+  game.js v=57 — 12 hits for TASK_DONT_SHOOT/SIEGE_DEN/nativeTask); the v56/v57
+  comment fold-ins (Build I/J provenance + R7 anchors) are registered in
+  registry browser_foldins as done. The recurring "R2 constants fold-in" in older
+  Stage-Summary remaining-lists was stale boilerplate. The one material residual:
+  Task 51's 8 $gK live-pool constants were never materialized into the committed
+  inventory (0 hits in the 697-record pool JSON at offsets 0x698..0x6b4) and their
+  decode pipeline lived only in the since-wiped sandbox scripts.
+- Environment rebuilt: XAPK re-fetched via the LFS batch API (270,599,286 B, sha256
+  re-verified 1a41e033…), libil2cpp.so 8ace05bb… + global-metadata.dat d2e8dd0d…
+  extracted + pin-verified; unicorn 2.1.4 + capstone 5.0.9 installed.
+- reverse/tools/obfuz_livepool_decode.py (NEW): imports the R2 static decoder's
+  $GOA/$kK core (single cipher implementation repo-wide); decrypts the live holder
+  segment from fdv 0xDBDBF0 (grid-scan k=-4 on the 0x808-stride family, CBC keyA
+  0xC1A1C8CC / salt 0x44A79BB9 per pg-branches-decode.txt pass 3) and applies the 8
+  committed callsite triples (sites 0x483c7c4..0x4846ffc).
+- Validation (all PASS): $GOA boot canary; pool idx0 re-derivation through the full
+  segment machinery (raw 0x87b2f461 -> 1069165131, matching the committed pool JSON
+  record); 8/8 values vs the committed pass-3 record — DEFEND=2 x3 (0x6a0/0x6a8/
+  0x6ac), BOMBARD=5 x2 (0x69c/0x6b0), BEHOLDER=73 x3 (0x698/0x6a4/0x6b4).
+- New facts recorded: the RAW segment words, never printed by the ad-hoc session —
+  0x698/0x6a4/0x6b4 = 0xf1f67c76, 0x69c/0x6b0 = 0xf9832032, 0x6a0/0x6a8/0x6ac =
+  0xa3af9c8d (same-value plaintext duplicated across segment offsets; one raw per
+  distinct value, per-accessor keys differ).
+- reverse/evidence/obfuz/obfuz-livepool-values.json (NEW): 8 records {site_va,
+  start, keyA, salt, raw, value, semantics, confidence} + provenance (binary sha
+  pins, fdv offset, CBC keys, evidence path) + validation block.
+- inventory.md: follow-up banner + live-pool decoder + live-pool values entries;
+  registry R2: result/evidence/next_action updated (materialization DONE);
+  roadmap R2 row: 697/697 static + 8/8 live-pool materialized.
+- Tests: 8/8 suites green (877/877: accuracy 13, commands-determinism 50, data-model
+  379, lockstep-jip 88, phase5 236, replay 45, stat-caps 37, unit-fsm 29). No
+  game.js/index.html change — no §35.1 bump (live stays v=57).
+
+Stage Summary:
+- R2 is closed end-to-end: the 697-record .cctor inventory (Task 42), the Task-45
+  browser fold-in, and the 8 live-pool holder-segment constants (Build I) are all
+  committed AND reproducible from committed inputs — the stale "R2 constants
+  fold-in" remaining-item is retired from the roadmap. Remaining: R1 operator
+  device session (sole blocked capture), R8/H1/R6/R7-pass-2 (offline, queued).

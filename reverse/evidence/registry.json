@@ -1,7 +1,7 @@
 {
   "$schema_note": "Machine-readable evidence/task registry (routing layer). Statuses: CONFIRMED | PARTIALLY_CONFIRMED | INFERRED | UNKNOWN | BLOCKED. Gap IDs cross-reference reverse/notes/1-to-1-fidelity-audit.md section 6; investigation IDs continue audit section 7 (R1-R11). Do not duplicate evidence content here - reference authoritative artifacts.",
   "game_version": "6.9.18",
-  "updated": "2026-10-09",
+  "updated": "2026-10-10",
   "provenance": {
     "xapk_sha256": "1a41e033...",
     "libil2cpp_sha256": "8ace05bb...",
@@ -27,15 +27,17 @@
     "R2": {
       "question": "Obfuz pool plaintext constants",
       "status": "CONFIRMED",
-      "result": "697/697 static decode (629 int, 66 string, 2 float), zero device runs",
+      "result": "697/697 static decode (629 int, 66 string, 2 float), zero device runs + 8/8 $Pg live-pool holder-segment constants materialized reproducibly (Task 55: raw words recorded, Build I ad-hoc decode closed)",
       "evidence": [
         "reverse/evidence/obfuz/inventory.md",
         "reverse/evidence/obfuz/obfuz-pool-values.json",
         "reverse/tools/obfuz_static_decode.py",
-        "reverse/tools/obfuz_secret_key.bin"
+        "reverse/tools/obfuz_secret_key.bin",
+        "reverse/evidence/obfuz/obfuz-livepool-values.json",
+        "reverse/tools/obfuz_livepool_decode.py"
       ],
       "repro": "python3 reverse/tools/obfuz_static_decode.py (needs libil2cpp.so + global-metadata.dat from XAPK)",
-      "next_action": "keep decoder reproducible; reuse values to pin new branch constants"
+      "next_action": "keep both decoders reproducible; reuse values to pin new branch constants (live-pool materialization DONE — Task 55)"
     },
     "R3": {
       "question": "Native tick rate / timing grid",

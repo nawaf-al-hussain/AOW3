@@ -15,7 +15,7 @@ dump.cs `0050e67d…`). Evidence labels per AGENTS.md §9 / mission vocabulary:
 | Audit ID | Question | Status | Evidence anchor | Next concrete action |
 |---|---|---|---|---|
 | R1 | Per-unit/weapon balance values | **BLOCKED** (device) | `evidence/prototype-data/on-device-run.md`; schema + caps recovered offline | user-run `tools/r1_dictionary_dump.js` Frida session; offline import path ready (`notes/r1-prototype-data-pipeline.md`) |
-| R2 | Obfuz pool plaintexts | **DONE** (697/697, static) | `evidence/obfuz/obfuz-pool-values.json` | keep decoder reproducible; use values to pin new branch constants |
+| R2 | Obfuz pool plaintexts | **DONE** (697/697 static + 8/8 live-pool materialized, Task 55) | `evidence/obfuz/obfuz-pool-values.json`, `evidence/obfuz/obfuz-livepool-values.json` | keep both decoders reproducible; use values to pin new branch constants |
 | R3 | Native tick rate | BLOCKED (device) | B6 note | on-device tick instrumentation |
 | R4 | Damage application semantics | BLOCKED (device/live server) | damage-pipeline note §3.5 | Phase 24 controlled scenarios |
 | R5 | `$Pg` branch micro-logic | **LARGELY DONE** (Builds I/J) | `evidence/combat/pg-branches-decode.txt`, `band-dataflow{,-2,-3}.txt`, `notes/maxstat-tier-band-decode.md` | only if join-arm values ever matter numerically: `$Pg` jump-table case map (bounded residual) |

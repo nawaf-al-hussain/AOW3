@@ -13,6 +13,12 @@ output: `obfuz-pool-values.json` (this directory). The ciphertext blocks WERE on
 along (fdv data blob of global-metadata.dat); Build G2's structural closure (§5/§7 of the
 note) was a false negative.
 
+Follow-up (Task 55, 2026-10-10): the 8 `$Pg` **live-pool** holder-segment constants that
+Build I (Task 51) decoded ad-hoc (values only, tools lost with the sandbox) are now
+materialized reproducibly — `reverse/tools/obfuz_livepool_decode.py` re-derives them
+(8/8 value cross-check + canary + pool-idx0 sanity) and records the previously
+unrecorded RAW segment words in `obfuz-livepool-values.json` (this directory).
+
 ## Artifacts
 
 ### Committed tools
@@ -26,6 +32,18 @@ note) was a false negative.
   Purpose: full offline 697-value decode; embeds the four semantic self-checks
   Known plaintext: game canary `$GOA(0x720BA23E,0x545EE170,0x98705298)=0x12345678`
   Unknown: none (0 CIPHER_UNSURE)
+  Confidence: HIGH
+
+- Artifact: live-pool decoder (Task 55, R2 follow-up)
+  Path: reverse/tools/obfuz_livepool_decode.py
+  Game version: 6.9.18 (offsets pinned)
+  Source: written from the committed Build I evidence (pg-branches-decode.txt pass 1
+  callsites + pass 3 decode); imports the static decoder's $GOA/$kK core — one cipher
+  implementation repo-wide
+  Format: python3 + unicorn; inputs libil2cpp.so + global-metadata.dat + 1024-B key blob
+  Purpose: reproduce the 8 `$Pg` live-pool holder-segment constants from the fdv block
+  @0xDBDBF0 (CBC keyA 0xC1A1C8CC / salt 0x44A79BB9) and materialize them with their raw
+  words; embeds canary + pool-idx0 re-derivation + 8/8 value cross-checks
   Confidence: HIGH
 
 - Artifact: device-transcript consumer (Build H; superseded for recovery, kept for
@@ -62,6 +80,21 @@ note) was a false negative.
   'income ', " doesn't exist on client, " …)
   Unknown: none; every value carries its triple + provenance
   Confidence: HIGH
+
+- Artifact: live-pool holder-segment constants (Task 55, R2 follow-up)
+  Path: reverse/evidence/obfuz/obfuz-livepool-values.json
+  Game version: 6.9.18
+  Source: obfuz_livepool_decode.py over the pinned binaries
+  Format: JSON {meta, provenance, validation, records[8] {site_va, start, keyA, salt,
+  raw, value, semantics, confidence}}
+  Purpose: materializes the Build I ad-hoc decode into the inventory: sites
+  0x483c7c4..0x4846ffc -> DEFEND=2 (x3), BOMBARD=5 (x2), BEHOLDER=73 (x3); records the
+  RAW segment words (0x698/0x6a4/0x6b4 = 0xf1f67c76, 0x69c/0x6b0 = 0xf9832032,
+  0x6a0/0x6a8/0x6ac = 0xa3af9c8d — same-value reuse across duplicate segment words)
+  that the ad-hoc session never printed
+  Validation: canary PASS, pool idx0 re-derivation PASS, values 8/8 vs the committed
+  pass-3 record
+  Confidence: HIGH (decode); BEHOLDER field identity INFERRED per Build I
 
 - Artifact: builder chain decode (Build G2)
   Path: reverse/evidence/obfuz/builder-chain-decode.txt
