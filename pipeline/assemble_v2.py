@@ -73,6 +73,24 @@ class GLB2(GLB):
         return len(self.skins) - 1
 
     def save2(self, path, roots, animations):
+        # Fold-in of tools/fix_empty_skins.py (flagged Task 45, done Task 53):
+        # nodes whose mesh primitives lack JOINTS_0 drop their skin ref, then
+        # unreferenced skins are filtered (order-preserving; kept skins keep
+        # their indices — every corpus keep is index 0). Byte-identical to the
+        # post-pass: "skins" is emitted whenever the assembler created any
+        # skin, even if all were dropped (f1_veh_hammer ships "skins":[]),
+        # and omitted when none was ever created (f1_veh_shield has no key).
+        had_skins = bool(self.skins)
+        for nd in self.nodes:
+            if "mesh" not in nd or "skin" not in nd:
+                continue
+            m = self.meshes[nd["mesh"]]
+            if not all("JOINTS_0" in p.get("attributes", {})
+                       for p in m.get("primitives", [])):
+                del nd["skin"]
+        used = {nd["skin"] for nd in self.nodes if "skin" in nd}
+        if len(used) < len(self.skins):
+            self.skins = [s for i, s in enumerate(self.skins) if i in used]
         gltf = {
             "asset": {"version": "2.0", "generator": "aow3-assembler-v2"},
             "scene": 0, "scenes": [{"nodes": roots}],
@@ -83,7 +101,7 @@ class GLB2(GLB):
             "accessors": self.accs, "bufferViews": self.views,
             "animations": animations,
             "buffers": [{"byteLength": len(self.bin)}]}
-        if self.skins:
+        if had_skins:
             gltf["skins"] = self.skins
         js = json.dumps(gltf, separators=(',', ':')).encode()
         while len(js) % 4: js += b' '
