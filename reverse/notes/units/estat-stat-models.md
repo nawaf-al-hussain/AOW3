@@ -377,3 +377,46 @@ Tribute mapping guidance (Phase 5+ / Phase 26 consumers):
 - The numeric balance values behind every stat (backend-delivered; out of APK scope, as
   established by the audit).
 - ~~`MaxStatValueProvider` tier thresholds (BaseMax/FirstMax/MegaMax values) — native data.~~ **Resolved 2026-10-07** — §7: full 72-entry table extracted from the ctor literals (`estat-tiers.txt`); MinePrice/71 cap = 30; only WeaponFireRate/60, WeaponMineCost/66, WeaponSuperWeaponCP/70 run unregistered.
+
+## 8. Get/Calculate semantics decoded — Get returns a normalized fraction, not a clamp; factory column labels corrected (2026-10-09, Build J)
+
+Evidence: `reverse/evidence/estat/estat-get-decode.txt` (full disasm of Get
+0x7CC176C..0x7CC1A94, Calculate 0x7CC1A94..0x7CC1C18,
+CalculateWeaponArmorDamage 0x7CC1C18..0x7CC1D94, StatInfo.Max1/2/3, binary-wide
+BL caller scan, the §6.7 tail-call window). Full analysis:
+`reverse/notes/maxstat-tier-band-decode.md` (Build J).
+
+- **Get(value, stat) = Math.Min(fraction, 1.0)** — routing: `(1 << (stat-61)) & 0x3807`
+  selects {61,62,63,72,73,74} → CalculateWeaponArmorDamage, everything else →
+  Calculate. The v=32 tribute comment ("Get … clamp the value to the stat's tier
+  cap") mis-describes the native contract: native Get is the stat-panel progress-bar
+  FILL FRACTION in [0,1]. Over-cap values still return 1.0; the >1.0 intermediate
+  only drives the NeedLogStatWithOverMaxValue telemetry (ClientEventPairList with
+  the raw value, EStat name and caps — return value unaffected).
+- **Calculate (non-armor), piecewise with extracted literals 0.8/0.15/0.05/0.95:**
+  unregistered → v/BaseMax; v<=FirstMax → v/FirstMax*0.8; FirstMax<v<=BaseMax →
+  (v-FirstMax)/(BaseMax-FirstMax)*0.15+0.8; v>BaseMax →
+  (v-BaseMax)/(MegaMax??BaseMax-BaseMax)*0.05+0.95 (two-tier: div0 → inf → 1.0 via
+  Get). Continuous 0→0.8→0.95→1.0.
+- **CalculateWeaponArmorDamage (the six armor-damage keys), the native "0.9/0.1":**
+  v<=BaseMax → 0.9*(v/(FirstMax??Base+v) + v/(Base*(1+Base/(First??Base)))) — a
+  smooth curve hitting exactly 0.9 at v=BaseMax; v>BaseMax →
+  0.9+(v-Base)*0.1/(Mega-Base) → 1.0 at MegaMax. 90% of the bar covers
+  [0..BaseMax], the last 10% [BaseMax..MegaMax].
+- **Factory mapping CORRECTED (bodies, not call sites):** Max1(v) → BaseMax=v;
+  Max2(v1,v2) → FirstMax=v1, BaseMax=v2; Max3(v1,v2,v3) → FirstMax=v1, BaseMax=v2,
+  MegaMax=v3. Verified at call sites: Health Max3(8000,25000,45000) →
+  First=8000/Base=25000/Mega=45000; Price Max2(1000,2600) → First=1000/Base=2600.
+  §7's table VALUES are untouched — the literals and their ascending order are
+  correct; only the column LABELS BaseMax↔FirstMax swap for Max2/Max3 entries
+  (Max1 entries were labeled correctly). The tribute's tier ladder (ascending
+  rungs with fallback) is numerically unaffected.
+- **Nullable<float> binary layout: { bool hasValue @+0; float value @+4 }** —
+  has-value FIRST (Calculate's presence tests take the low byte of each 8-byte
+  Nullable block and the value from the high word). Non-standard vs C# field
+  order; matters for raw-struct reads.
+- Hex correction to the Build I note: Value3/Value4 = 2197149770/2197149771 =
+  **0x82F5D84A/0x82F5D84B** (Build I's §1.2 printed 0x82E23D2A/B — typo; decimals
+  and XOR=1 were correct; re-verified from obfuz-pool-values.json this build).
+- Get has ZERO direct BL callers (interface-map-walk dispatch; confirmed shape at
+  the MineCostStat.CalculateProgress tail-call 0x80e8f08, `mov w1, #0x47`).
