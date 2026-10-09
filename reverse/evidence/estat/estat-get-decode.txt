@@ -1,0 +1,558 @@
+=== Build J part 1: MaxStatValueProvider.Get/Calculate/CalculateWeaponArmorDamage ===
+so sha256 prefix 8ace05bb
+
+-- StatInfo.Max1 0x7cc1640..0x7cc1650 (16 B) --
+07cc1640  str      s0, [x8]
+07cc1644  stur     xzr, [x8, #0xc]
+07cc1648  stur     xzr, [x8, #4]
+07cc164c  ret      
+
+-- StatInfo.Max3 0x7cc1650..0x7cc16f0 (160 B) --
+07cc1650  sub      sp, sp, #0x50
+07cc1654  str      d10, [sp, #0x10]
+07cc1658  stp      d9, d8, [sp, #0x20]
+07cc165c  stp      x30, x21, [sp, #0x30]
+07cc1660  stp      x20, x19, [sp, #0x40]
+07cc1664  fmov     s9, s2
+07cc1668  fmov     s8, s1
+07cc166c  adrp     x21, #0x9d20000
+07cc1670  fmov     s10, s0
+07cc1674  adrp     x20, #0x9675000
+07cc1678  ldrb     w9, [x21, #0x3b5]
+07cc167c  ldr      x20, [x20, #0xec8]
+07cc1680  mov      x19, x8
+07cc1684  tbnz     w9, #0, #0x7cc169c
+07cc1688  adrp     x0, #0x9675000
+07cc168c  ldr      x0, [x0, #0xec8]
+07cc1690  bl       #0x3cc7948
+07cc1694  mov      w8, #1
+07cc1698  strb     w8, [x21, #0x3b5]
+07cc169c  fmov     s0, s10
+07cc16a0  ldr      x1, [x20]
+07cc16a4  add      x0, sp, #0x18
+07cc16a8  str      xzr, [sp, #0x18]
+07cc16ac  bl       #0x5c34578
+07cc16b0  fmov     s0, s9
+07cc16b4  ldr      x1, [x20]
+07cc16b8  ldr      x21, [sp, #0x18]
+07cc16bc  add      x0, sp, #8
+07cc16c0  str      xzr, [sp, #8]
+07cc16c4  bl       #0x5c34578
+07cc16c8  ldr      x8, [sp, #8]
+07cc16cc  str      s8, [x19]
+07cc16d0  ldr      d10, [sp, #0x10]
+07cc16d4  stur     x21, [x19, #4]
+07cc16d8  ldp      x30, x21, [sp, #0x30]
+07cc16dc  stur     x8, [x19, #0xc]
+07cc16e0  ldp      x20, x19, [sp, #0x40]
+07cc16e4  ldp      d9, d8, [sp, #0x20]
+07cc16e8  add      sp, sp, #0x50
+07cc16ec  ret      
+
+-- StatInfo.Max2 0x7cc16f0..0x7cc176c (124 B) --
+07cc16f0  sub      sp, sp, #0x40
+07cc16f4  stp      d9, d8, [sp, #0x10]
+07cc16f8  stp      x30, x21, [sp, #0x20]
+07cc16fc  stp      x20, x19, [sp, #0x30]
+07cc1700  fmov     s8, s1
+07cc1704  fmov     s9, s0
+07cc1708  adrp     x21, #0x9d20000
+07cc170c  adrp     x20, #0x9675000
+07cc1710  ldrb     w9, [x21, #0x3b4]
+07cc1714  mov      x19, x8
+07cc1718  ldr      x20, [x20, #0xec8]
+07cc171c  tbnz     w9, #0, #0x7cc1734
+07cc1720  adrp     x0, #0x9675000
+07cc1724  ldr      x0, [x0, #0xec8]
+07cc1728  bl       #0x3cc7948
+07cc172c  mov      w8, #1
+07cc1730  strb     w8, [x21, #0x3b4]
+07cc1734  fmov     s0, s9
+07cc1738  ldr      x1, [x20]
+07cc173c  add      x0, sp, #8
+07cc1740  str      xzr, [sp, #8]
+07cc1744  bl       #0x5c34578
+07cc1748  ldr      x8, [sp, #8]
+07cc174c  str      s8, [x19]
+07cc1750  stur     xzr, [x19, #0xc]
+07cc1754  ldp      x30, x21, [sp, #0x20]
+07cc1758  stur     x8, [x19, #4]
+07cc175c  ldp      x20, x19, [sp, #0x30]
+07cc1760  ldp      d9, d8, [sp, #0x10]
+07cc1764  add      sp, sp, #0x40
+07cc1768  ret      
+
+-- Get 0x7cc176c..0x7cc1a94 (808 B) --
+07cc176c  sub      sp, sp, #0x90
+07cc1770  stp      d9, d8, [sp, #0x40]
+07cc1774  str      x30, [sp, #0x50]
+07cc1778  stp      x24, x23, [sp, #0x60]
+07cc177c  stp      x22, x21, [sp, #0x70]
+07cc1780  stp      x20, x19, [sp, #0x80]
+07cc1784  fmov     s9, s0
+07cc1788  adrp     x19, #0x9d20000
+07cc178c  mov      w20, w1
+07cc1790  ldrb     w8, [x19, #0x3af]
+07cc1794  mov      x21, x0
+07cc1798  tbnz     w8, #0, #0x7cc1810
+07cc179c  adrp     x0, #0x9674000
+07cc17a0  ldr      x0, [x0, #0xea0]
+07cc17a4  bl       #0x3cc7948
+07cc17a8  adrp     x0, #0x96d9000
+07cc17ac  ldr      x0, [x0, #0x360]
+07cc17b0  bl       #0x3cc7948
+07cc17b4  adrp     x0, #0x969e000
+07cc17b8  ldr      x0, [x0, #0x1d0]
+07cc17bc  bl       #0x3cc7948
+07cc17c0  adrp     x0, #0x9674000
+07cc17c4  ldr      x0, [x0, #0xef0]
+07cc17c8  bl       #0x3cc7948
+07cc17cc  adrp     x0, #0x9674000
+07cc17d0  ldr      x0, [x0, #0xc20]
+07cc17d4  bl       #0x3cc7948
+07cc17d8  adrp     x0, #0x96b0000
+07cc17dc  ldr      x0, [x0, #0xfb0]
+07cc17e0  bl       #0x3cc7948
+07cc17e4  adrp     x0, #0x9674000
+07cc17e8  ldr      x0, [x0, #0xca8]
+07cc17ec  bl       #0x3cc7948
+07cc17f0  adrp     x0, #0x96d9000
+07cc17f4  ldr      x0, [x0, #0x368]
+07cc17f8  bl       #0x3cc7948
+07cc17fc  adrp     x0, #0x96d9000
+07cc1800  ldr      x0, [x0, #0x370]
+07cc1804  bl       #0x3cc7948
+07cc1808  mov      w8, #1
+07cc180c  strb     w8, [x19, #0x3af]
+07cc1810  sub      w8, w20, #0x3d
+07cc1814  stp      xzr, xzr, [sp, #0x28]
+07cc1818  cmp      w8, #0xd
+07cc181c  str      wzr, [sp, #0x38]
+07cc1820  b.hi     #0x7cc199c
+07cc1824  mov      w9, #1
+07cc1828  lsl      w8, w9, w8
+07cc182c  mov      w9, #0x3807
+07cc1830  tst      w8, w9
+07cc1834  b.eq     #0x7cc199c
+07cc1838  fmov     s0, s9
+07cc183c  mov      x0, x21
+07cc1840  mov      w1, w20
+07cc1844  bl       #0x7cc1c18   ; -> MaxStatValueProvider.CalculateWeaponArmorDamage
+07cc1848  fmov     s8, s0
+07cc184c  fmov     s0, #1.00000000
+07cc1850  fcmp     s8, s0
+07cc1854  b.le     #0x7cc1a4c
+07cc1858  mov      x0, xzr
+07cc185c  bl       #0x3ded654   ; -> CrpValueProvider.get_NeedLogStatWithOverMaxValue
+07cc1860  tbz      w0, #0, #0x7cc1a4c
+07cc1864  adrp     x8, #0x9674000
+07cc1868  ldr      x8, [x8, #0xea0]
+07cc186c  ldr      x19, [x21, #0x18]
+07cc1870  ldr      x0, [x8]
+07cc1874  bl       #0x3cc7be4
+07cc1878  mov      w1, wzr
+07cc187c  mov      x2, xzr
+07cc1880  mov      x22, x0
+07cc1884  bl       #0x82d9178   ; -> ClientEventPairList.ctor
+07cc1888  cbz      x22, #0x7cc1a90
+07cc188c  fcvt     d0, s9
+07cc1890  mov      x0, x22
+07cc1894  mov      w1, wzr
+07cc1898  mov      x2, xzr
+07cc189c  bl       #0x82da3e0   ; -> ClientEventPairList.Add
+07cc18a0  adrp     x8, #0x969e000
+07cc18a4  mov      x9, #-1
+07cc18a8  add      x0, sp, #0x10
+07cc18ac  ldr      x8, [x8, #0x1d0]
+07cc18b0  mov      x1, xzr
+07cc18b4  str      w20, [sp, #0x20]
+07cc18b8  ldr      x8, [x8]
+07cc18bc  stp      x8, x9, [sp, #0x10]
+07cc18c0  bl       #0x8f855c8   ; -> Enum.ToString
+07cc18c4  mov      x2, x0
+07cc18c8  mov      x0, x22
+07cc18cc  mov      w1, #0xbf
+07cc18d0  mov      x3, xzr
+07cc18d4  bl       #0x82d9464   ; -> ClientEventPairList.Add
+07cc18d8  fcvt     d0, s8
+07cc18dc  mov      x0, x22
+07cc18e0  mov      w1, #5
+07cc18e4  mov      x2, xzr
+07cc18e8  bl       #0x82da3e0   ; -> ClientEventPairList.Add
+07cc18ec  ldr      x0, [x21, #0x10]
+07cc18f0  cbz      x0, #0x7cc1a90
+07cc18f4  adrp     x8, #0x96d9000
+07cc18f8  add      x2, sp, #0x28
+07cc18fc  mov      w1, w20
+07cc1900  ldr      x8, [x8, #0x360]
+07cc1904  ldr      x3, [x8]
+07cc1908  bl       #0x7182c4c
+07cc190c  adrp     x8, #0x96d9000
+07cc1910  ldr      x8, [x8, #0x370]
+07cc1914  ldr      x20, [x8]
+07cc1918  tbz      w0, #0, #0x7cc19b0
+07cc191c  adrp     x24, #0x96b0000
+07cc1920  add      x1, sp, #0x10
+07cc1924  ldr      x24, [x24, #0xfb0]
+07cc1928  ldur     x8, [sp, #0x2c]
+07cc192c  ldr      x0, [x24]
+07cc1930  str      x8, [sp, #0x10]
+07cc1934  bl       #0x3cc7ad0
+07cc1938  adrp     x8, #0x9674000
+07cc193c  mov      x21, x0
+07cc1940  add      x1, sp, #0x5c
+07cc1944  ldr      x8, [x8, #0x140]
+07cc1948  ldr      s0, [sp, #0x28]
+07cc194c  ldr      x0, [x8, #0x78]
+07cc1950  str      s0, [sp, #0x5c]
+07cc1954  bl       #0x3cc7ad0
+07cc1958  mov      x23, x0
+07cc195c  ldur     x8, [sp, #0x34]
+07cc1960  ldr      x0, [x24]
+07cc1964  add      x1, sp, #8
+07cc1968  str      x8, [sp, #8]
+07cc196c  bl       #0x3cc7ad0
+07cc1970  adrp     x8, #0x96d9000
+07cc1974  mov      x3, x0
+07cc1978  mov      x1, x21
+07cc197c  ldr      x8, [x8, #0x368]
+07cc1980  mov      x2, x23
+07cc1984  mov      x4, xzr
+07cc1988  ldr      x8, [x8]
+07cc198c  mov      x0, x8
+07cc1990  bl       #0x8db6c04   ; -> String.Format
+07cc1994  mov      x2, x0
+07cc1998  b        #0x7cc19bc
+07cc199c  fmov     s0, s9
+07cc19a0  mov      x0, x21
+07cc19a4  mov      w1, w20
+07cc19a8  bl       #0x7cc1a94   ; -> MaxStatValueProvider.Calculate
+07cc19ac  b        #0x7cc1848
+07cc19b0  adrp     x8, #0x9674000
+07cc19b4  ldr      x8, [x8, #0xca8]
+07cc19b8  ldr      x2, [x8]
+07cc19bc  mov      x0, x22
+07cc19c0  mov      w1, #0x131
+07cc19c4  mov      x3, xzr
+07cc19c8  bl       #0x82d9464   ; -> ClientEventPairList.Add
+07cc19cc  mov      x0, x22
+07cc19d0  mov      x1, xzr
+07cc19d4  bl       #0x75e78cc   ; -> GGParamsMapper.MapToGGParamsPairList
+07cc19d8  cbz      x19, #0x7cc1a90
+07cc19dc  adrp     x10, #0x9674000
+07cc19e0  ldr      x8, [x19]
+07cc19e4  mov      x21, x0
+07cc19e8  ldr      x10, [x10, #0xef0]
+07cc19ec  ldrh     w9, [x8, #0x12e]
+07cc19f0  ldr      x1, [x10]
+07cc19f4  cbz      x9, #0x7cc1a18
+07cc19f8  ldr      x10, [x8, #0xb0]
+07cc19fc  add      x10, x10, #8
+07cc1a00  ldur     x11, [x10, #-8]
+07cc1a04  cmp      x11, x1
+07cc1a08  b.eq     #0x7cc1a28
+07cc1a0c  subs     x9, x9, #1
+07cc1a10  add      x10, x10, #0x10
+07cc1a14  b.ne     #0x7cc1a00
+07cc1a18  mov      x0, x19
+07cc1a1c  mov      w2, #8
+07cc1a20  bl       #0x3d00398
+07cc1a24  b        #0x7cc1a38
+07cc1a28  ldr      w9, [x10]
+07cc1a2c  add      w9, w9, #8
+07cc1a30  add      x8, x8, w9, sxtw #4
+07cc1a34  add      x0, x8, #0x138
+07cc1a38  ldp      x8, x3, [x0]
+07cc1a3c  mov      x0, x19
+07cc1a40  mov      x1, x20
+07cc1a44  mov      x2, x21
+07cc1a48  blr      x8
+07cc1a4c  adrp     x8, #0x9674000
+07cc1a50  ldr      x8, [x8, #0xc20]
+07cc1a54  ldr      x0, [x8]
+07cc1a58  ldr      w8, [x0, #0xe4]
+07cc1a5c  cbnz     w8, #0x7cc1a64
+07cc1a60  bl       #0x3cc7ac8
+07cc1a64  fmov     s0, s8
+07cc1a68  fmov     s1, #1.00000000
+07cc1a6c  mov      x0, xzr
+07cc1a70  bl       #0x8f4f918   ; -> Math.Min
+07cc1a74  ldp      x20, x19, [sp, #0x80]
+07cc1a78  ldr      x30, [sp, #0x50]
+07cc1a7c  ldp      x22, x21, [sp, #0x70]
+07cc1a80  ldp      x24, x23, [sp, #0x60]
+07cc1a84  ldp      d9, d8, [sp, #0x40]
+07cc1a88  add      sp, sp, #0x90
+07cc1a8c  ret      
+07cc1a90  bl       #0x3cc7bf4
+
+-- Calculate 0x7cc1a94..0x7cc1c18 (388 B) --
+07cc1a94  sub      sp, sp, #0x50
+07cc1a98  stp      d9, d8, [sp, #0x20]
+07cc1a9c  stp      x30, x21, [sp, #0x30]
+07cc1aa0  stp      x20, x19, [sp, #0x40]
+07cc1aa4  fmov     s8, s0
+07cc1aa8  adrp     x21, #0x9d20000
+07cc1aac  mov      w19, w1
+07cc1ab0  ldrb     w8, [x21, #0x3b0]
+07cc1ab4  mov      x20, x0
+07cc1ab8  tbnz     w8, #0, #0x7cc1af4
+07cc1abc  adrp     x0, #0x96d9000
+07cc1ac0  ldr      x0, [x0, #0x360]
+07cc1ac4  bl       #0x3cc7948
+07cc1ac8  adrp     x0, #0x9674000
+07cc1acc  ldr      x0, [x0, #0xc20]
+07cc1ad0  bl       #0x3cc7948
+07cc1ad4  adrp     x0, #0x9675000
+07cc1ad8  ldr      x0, [x0, #0xeb8]
+07cc1adc  bl       #0x3cc7948
+07cc1ae0  adrp     x0, #0x9675000
+07cc1ae4  ldr      x0, [x0, #0xec0]
+07cc1ae8  bl       #0x3cc7948
+07cc1aec  mov      w8, #1
+07cc1af0  strb     w8, [x21, #0x3b0]
+07cc1af4  ldr      x0, [x20, #0x10]
+07cc1af8  stp      xzr, xzr, [sp, #8]
+07cc1afc  str      wzr, [sp, #0x18]
+07cc1b00  cbz      x0, #0x7cc1c14
+07cc1b04  adrp     x8, #0x96d9000
+07cc1b08  add      x2, sp, #8
+07cc1b0c  mov      w1, w19
+07cc1b10  ldr      x8, [x8, #0x360]
+07cc1b14  ldr      x3, [x8]
+07cc1b18  bl       #0x7182c4c
+07cc1b1c  movi     d0, #0000000000000000
+07cc1b20  tbz      w0, #0, #0x7cc1c00
+07cc1b24  adrp     x8, #0x9674000
+07cc1b28  ldr      x8, [x8, #0xc20]
+07cc1b2c  ldr      s9, [sp, #8]
+07cc1b30  ldr      x0, [x8]
+07cc1b34  ldr      w8, [x0, #0xe4]
+07cc1b38  cbnz     w8, #0x7cc1b40
+07cc1b3c  bl       #0x3cc7ac8
+07cc1b40  movi     d0, #0000000000000000
+07cc1b44  fmov     s1, s8
+07cc1b48  mov      x0, xzr
+07cc1b4c  bl       #0x8f4f7c8   ; -> Math.Max
+07cc1b50  ldrb     w8, [sp, #0xc]
+07cc1b54  ldrb     w9, [sp, #0x14]
+07cc1b58  orr      w8, w8, w9
+07cc1b5c  cbz      w8, #0x7cc1bbc
+07cc1b60  ldur     x8, [sp, #0xc]
+07cc1b64  lsr      x9, x8, #0x20
+07cc1b68  tst      x8, #0xff
+07cc1b6c  ldur     x8, [sp, #0x14]
+07cc1b70  fmov     s1, w9
+07cc1b74  lsr      x9, x8, #0x20
+07cc1b78  fmov     s2, w9
+07cc1b7c  fcsel    s1, s9, s1, eq
+07cc1b80  tst      x8, #0xff
+07cc1b84  fcsel    s2, s9, s2, eq
+07cc1b88  fcmp     s0, s1
+07cc1b8c  b.ls     #0x7cc1bc4
+07cc1b90  fcmp     s0, s9
+07cc1b94  b.ls     #0x7cc1bdc
+07cc1b98  fsub     s0, s0, s9
+07cc1b9c  fsub     s1, s2, s9
+07cc1ba0  adrp     x8, #0x1b09000
+07cc1ba4  fdiv     s0, s0, s1
+07cc1ba8  ldr      s1, [x8, #0x9c4]
+07cc1bac  adrp     x8, #0x1b09000
+07cc1bb0  fmul     s0, s0, s1
+07cc1bb4  ldr      s1, [x8, #0xb4c]
+07cc1bb8  b        #0x7cc1bfc
+07cc1bbc  fdiv     s0, s0, s9
+07cc1bc0  b        #0x7cc1c00
+07cc1bc4  fdiv     s0, s0, s1
+07cc1bc8  adrp     x8, #0x1b09000
+07cc1bcc  ldr      s1, [x8, #0xa88]
+07cc1bd0  fmul     s0, s0, s1
+07cc1bd4  movi     d1, #0000000000000000
+07cc1bd8  b        #0x7cc1bfc
+07cc1bdc  fsub     s0, s0, s1
+07cc1be0  fsub     s1, s9, s1
+07cc1be4  adrp     x8, #0x1b09000
+07cc1be8  fdiv     s0, s0, s1
+07cc1bec  ldr      s1, [x8, #0xd58]
+07cc1bf0  adrp     x8, #0x1b09000
+07cc1bf4  fmul     s0, s0, s1
+07cc1bf8  ldr      s1, [x8, #0xa88]
+07cc1bfc  fadd     s0, s0, s1
+07cc1c00  ldp      x20, x19, [sp, #0x40]
+07cc1c04  ldp      x30, x21, [sp, #0x30]
+07cc1c08  ldp      d9, d8, [sp, #0x20]
+07cc1c0c  add      sp, sp, #0x50
+07cc1c10  ret      
+07cc1c14  bl       #0x3cc7bf4
+
+-- CalculateWeaponArmorDamage 0x7cc1c18..0x7cc1d94 (380 B) --
+07cc1c18  sub      sp, sp, #0x50
+07cc1c1c  stp      d9, d8, [sp, #0x20]
+07cc1c20  stp      x30, x21, [sp, #0x30]
+07cc1c24  stp      x20, x19, [sp, #0x40]
+07cc1c28  fmov     s8, s0
+07cc1c2c  adrp     x21, #0x9d20000
+07cc1c30  mov      w19, w1
+07cc1c34  ldrb     w8, [x21, #0x3b1]
+07cc1c38  mov      x20, x0
+07cc1c3c  tbnz     w8, #0, #0x7cc1c78
+07cc1c40  adrp     x0, #0x96d9000
+07cc1c44  ldr      x0, [x0, #0x360]
+07cc1c48  bl       #0x3cc7948
+07cc1c4c  adrp     x0, #0x9674000
+07cc1c50  ldr      x0, [x0, #0xc20]
+07cc1c54  bl       #0x3cc7948
+07cc1c58  adrp     x0, #0x9675000
+07cc1c5c  ldr      x0, [x0, #0xeb8]
+07cc1c60  bl       #0x3cc7948
+07cc1c64  adrp     x0, #0x9675000
+07cc1c68  ldr      x0, [x0, #0xec0]
+07cc1c6c  bl       #0x3cc7948
+07cc1c70  mov      w8, #1
+07cc1c74  strb     w8, [x21, #0x3b1]
+07cc1c78  ldr      x0, [x20, #0x10]
+07cc1c7c  stp      xzr, xzr, [sp, #8]
+07cc1c80  str      wzr, [sp, #0x18]
+07cc1c84  cbz      x0, #0x7cc1d90
+07cc1c88  adrp     x8, #0x96d9000
+07cc1c8c  add      x2, sp, #8
+07cc1c90  mov      w1, w19
+07cc1c94  ldr      x8, [x8, #0x360]
+07cc1c98  ldr      x3, [x8]
+07cc1c9c  bl       #0x7182c4c
+07cc1ca0  movi     d0, #0000000000000000
+07cc1ca4  tbz      w0, #0, #0x7cc1d7c
+07cc1ca8  adrp     x8, #0x9674000
+07cc1cac  ldr      x8, [x8, #0xc20]
+07cc1cb0  ldr      s9, [sp, #8]
+07cc1cb4  ldr      x0, [x8]
+07cc1cb8  ldr      w8, [x0, #0xe4]
+07cc1cbc  cbnz     w8, #0x7cc1cc4
+07cc1cc0  bl       #0x3cc7ac8
+07cc1cc4  movi     d0, #0000000000000000
+07cc1cc8  fmov     s1, s8
+07cc1ccc  mov      x0, xzr
+07cc1cd0  bl       #0x8f4f7c8   ; -> Math.Max
+07cc1cd4  ldrb     w8, [sp, #0xc]
+07cc1cd8  ldrb     w9, [sp, #0x14]
+07cc1cdc  orr      w8, w8, w9
+07cc1ce0  cbz      w8, #0x7cc1d28
+07cc1ce4  fcmp     s9, s8
+07cc1ce8  b.ge     #0x7cc1d30
+07cc1cec  ldur     x8, [sp, #0x14]
+07cc1cf0  fsub     s1, s8, s9
+07cc1cf4  lsr      x9, x8, #0x20
+07cc1cf8  tst      x8, #0xff
+07cc1cfc  adrp     x8, #0x1b09000
+07cc1d00  ldr      s2, [x8, #0xb9c]
+07cc1d04  adrp     x8, #0x1b09000
+07cc1d08  fmov     s0, w9
+07cc1d0c  fmul     s1, s1, s2
+07cc1d10  fcsel    s0, s9, s0, eq
+07cc1d14  fsub     s0, s0, s9
+07cc1d18  fdiv     s0, s1, s0
+07cc1d1c  ldr      s1, [x8, #0x9f0]
+07cc1d20  fadd     s0, s0, s1
+07cc1d24  b        #0x7cc1d7c
+07cc1d28  fdiv     s0, s0, s9
+07cc1d2c  b        #0x7cc1d7c
+07cc1d30  ldur     x8, [sp, #0xc]
+07cc1d34  fmov     s2, #1.00000000
+07cc1d38  lsr      x9, x8, #0x20
+07cc1d3c  tst      x8, #0xff
+07cc1d40  adrp     x8, #0x1b09000
+07cc1d44  fmov     s0, w9
+07cc1d48  fcsel    s0, s9, s0, eq
+07cc1d4c  fdiv     s1, s9, s0
+07cc1d50  fdiv     s0, s8, s0
+07cc1d54  fadd     s1, s1, s2
+07cc1d58  fdiv     s1, s2, s1
+07cc1d5c  fadd     s0, s0, s2
+07cc1d60  fdiv     s0, s2, s0
+07cc1d64  fmul     s1, s1, s8
+07cc1d68  fdiv     s1, s1, s9
+07cc1d6c  fsub     s0, s2, s0
+07cc1d70  fadd     s0, s0, s1
+07cc1d74  ldr      s1, [x8, #0x9f0]
+07cc1d78  fmul     s0, s0, s1
+07cc1d7c  ldp      x20, x19, [sp, #0x40]
+07cc1d80  ldp      x30, x21, [sp, #0x30]
+07cc1d84  ldp      d9, d8, [sp, #0x20]
+07cc1d88  add      sp, sp, #0x50
+07cc1d8c  ret      
+07cc1d90  bl       #0x3cc7bf4
+
+=== direct BL/B caller scan (whole .text) ===
+bl 0x7cc0cd0 -> StatInfo.Max3   caller=None
+bl 0x7cc0cfc -> StatInfo.Max2   caller=None
+bl 0x7cc0d90 -> StatInfo.Max2   caller=None
+bl 0x7cc0dc4 -> StatInfo.Max2   caller=None
+bl 0x7cc0de8 -> StatInfo.Max2   caller=None
+bl 0x7cc0e0c -> StatInfo.Max2   caller=None
+bl 0x7cc0fcc -> StatInfo.Max2   caller=None
+bl 0x7cc14a4 -> StatInfo.Max3   caller=None
+bl 0x7cc14cc -> StatInfo.Max3   caller=None
+bl 0x7cc14f4 -> StatInfo.Max3   caller=None
+bl 0x7cc1524 -> StatInfo.Max3   caller=None
+bl 0x7cc154c -> StatInfo.Max3   caller=None
+bl 0x7cc1574 -> StatInfo.Max3   caller=None
+bl 0x7cc1844 -> CalculateWeaponArmorDamage   caller=None
+bl 0x7cc19a8 -> Calculate   caller=None
+
+=== context @0x80e8f08 (MineCostStat.CalculateProgress -> m_max.Get tail-call) ===
+-- tail-call window 0x80e8e80..0x80e8f40 (192 B) --
+080e8e80  ldr      x0, [x0, #0x3a0]
+080e8e84  bl       #0x3cc7948
+080e8e88  mov      w8, #1
+080e8e8c  strb     w8, [x20, #0xa3f]
+080e8e90  ldr      x19, [x19, #0x18]
+080e8e94  cbz      x19, #0x80e8f0c
+080e8e98  adrp     x10, #0x96d9000
+080e8e9c  ldr      x8, [x19]
+080e8ea0  ldr      x10, [x10, #0x3a0]
+080e8ea4  ldrh     w9, [x8, #0x12e]
+080e8ea8  ldr      x1, [x10]
+080e8eac  cbz      x9, #0x80e8ed0
+080e8eb0  ldr      x10, [x8, #0xb0]
+080e8eb4  add      x10, x10, #8
+080e8eb8  ldur     x11, [x10, #-8]
+080e8ebc  cmp      x11, x1
+080e8ec0  b.eq     #0x80e8ee0
+080e8ec4  subs     x9, x9, #1
+080e8ec8  add      x10, x10, #0x10
+080e8ecc  b.ne     #0x80e8eb8
+080e8ed0  mov      x0, x19
+080e8ed4  mov      w2, wzr
+080e8ed8  bl       #0x3d00398
+080e8edc  b        #0x80e8eec
+080e8ee0  ldrsw    x9, [x10]
+080e8ee4  add      x8, x8, x9, lsl #4
+080e8ee8  add      x0, x8, #0x138
+080e8eec  ldp      x3, x2, [x0]
+080e8ef0  mov      x0, x19
+080e8ef4  ldp      x20, x19, [sp, #0x10]
+080e8ef8  fmov     s0, s8
+080e8efc  ldr      x30, [sp, #8]
+080e8f00  mov      w1, #0x47
+080e8f04  ldr      d8, [sp], #0x20
+080e8f08  br       x3
+080e8f0c  bl       #0x3cc7bf4
+080e8f10  mov      w0, #0x277
+080e8f14  ret      
+080e8f18  ldr      x0, [x0, #0x20]
+080e8f1c  ret      
+080e8f20  mov      w0, #0x2d1
+080e8f24  mov      x1, xzr
+080e8f28  b        #0x7a2855c   ; -> LocalizationRawStringBuilder.CreateRawString
+080e8f2c  mov      w0, #1
+080e8f30  ret      
+080e8f34  mov      w0, #0x3f
+080e8f38  ret      
+080e8f3c  str      x30, [sp, #-0x20]!
+
+
+=== scan: [klass+#vt] load + blr patterns near 0x80e8f08-like dispatch ===
+
+=== Get: notable loads — m_statInfos dict @this+0x10, StatInfo{BaseMax@0x0, FirstMax@0x4(hv@0x8?), MegaMax@0xC} ===
+Nullable<float> layout: value @+0x0, has_value @+0x4; FirstMax field @0x4 -> value @+0x4, has_value @+0x8;
+MegaMax @0xC -> value @+0xC, has_value @+0x10. Struct size 0x14 (padded 0x18).
