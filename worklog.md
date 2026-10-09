@@ -1805,3 +1805,22 @@ Work Log:
 
 Stage Summary:
 - Both Task-38 open RE surfaces are closed to their bounded residuals: the defend-chase act's constants, leash provenance (client-computed band+1, XOR pair decoded to 1), flag_shoot gate, selector chains and the Beholder/DEFEND/BOMBARD branch constants are CONFIRMED; the takepos cell-class masks, the AND-reduce 15-bit clamp and the full per-category/per-hero-type partition are CONFIRMED. Remaining bounded: the band formula (17 stores), chain-terminal semantics, cell-class bit names, hero ids 60-69/76 + unit 42 naming. Next RE surfaces: MaxStatValueProvider tier thresholds (backlog b), the band dataflow, R1 device captures.
+
+
+---
+Task ID: 52
+Agent: Super Z (main)
+Task: Build J — MaxStatValueProvider.Get/Calculate/CalculateWeaponArmorDamage native decode (backlog b consumption side) + $Pg band dataflow classification (user: "MaxStatValueProvider tier thresholds (backlog b), the band dataflow (17 stores enumerated)")
+
+Work Log:
+- State check: main @ 028c38c9 (Task 51 head, no upstream movement). The tier-threshold VALUES were already CONFIRMED (estat §7, 72/78); the open residual was the consumption side — Get/Calculate/CalculateWeaponArmorDamage bodies (never disassembled) — plus the 17-store band residual in $Pg.
+- Disassembled all six MaxStatValueProvider methods (0x7CC1640..0x7CC1D94): Get routes (1<<(stat-61)) & 0x3807 -> {61,62,63,72,73,74} to CalculateWeaponArmorDamage, else Calculate; tail = Math.Min(result, 1.0f) — Get returns a normalized FRACTION, not a clamped value (v=32 comment corrected). Over-max telemetry path decoded (ClientEventPairList + String.Format of the StatInfo caps; return unaffected).
+- Calculate piecewise decoded with literal-pool extraction: 0.8 @0x1B09A88, 0.05 @0x1B099C4, 0.95 @0x1B09B4C, 0.15 @0x1B09D58 — continuous 0->0.8->0.95->1.0 over [0..First]/[First..Base]/[Base..Mega]; two-tier overflow div0 -> 1.0 via the min. Armor curve: 0.9*(v/(a+v)+v/(B(1+B/a))) with 0.9 @0x1B099F0 + linear 0.1 tail — the native "0.9/0.1" pair.
+- StatInfo.Max factories: Max2/Max3 store arg2 -> BaseMax (bodies + call sites Health/Price verified) — estat §7 column labels BaseMax<->FirstMax swapped for multi-rung entries; table values + ascending ladder unchanged. Nullable<float> binary layout = {hasValue@+0, value@+4} (has-value first).
+- Consumer fact: Get has ZERO direct BL callers (numpy scan); interface-map-walk dispatch confirmed at MineCostStat.CalculateProgress 0x80e8f08 (w1=0x47=MinePrice).
+- Band dataflow: backward register slices for all 18 non-init [sp+0x134] stores in $Pg — 14 classified value-preserving spills; reset arm 0x483d528 = Value1*Value2 with pool idx2 = 0 (obfuscated zero, double-confirmed); +1 composition at 0x483eeac; 3 join-arm writes (0x48463e0/0x4846440/0x484677c) located in the 0x1B0Fxxxx jump-table dispatch cluster (parity gate b.eq 0x4840818 -> 0x48466e8; statics+0x34 = 2 candidate via register dance, INFERRED).
+- Census re-verified: $UG x3 (0x483f014/0x483fef0/0x4840e0c), $yG x3 (0x483e3d4/0x4846108/0x48461e0, each building band+1 inline), $bh x0 direct. Obfuscated bit-test decoded: (1 << ((Value@0x30 + 0xCB5E3C38) & 1)) = 2 -> "(vt result) & 2". Value3/4 hex corrected to 0x82F5D84A/B.
+- Pushed: reverse/notes/maxstat-tier-band-decode.md, estat-stat-models.md §8, evidence estat-get-decode.txt + band-dataflow{,-2,-3}.txt, tools maxstat_get_decode.py / maxstat_literals.py / band_dataflow.py / band_dataflow_join.py / band_dataflow_cluster.py. No game.js change (fold-in candidates recorded: tier-label comment, Get-fraction contract, DEFEND_TETHER provenance append).
+
+Stage Summary:
+- Both Task-51 "next" surfaces closed to bounded residuals: the MaxStatValueProvider consumption side is fully decoded (CONFIRMED constants + corrected contract/labels), and every band store is classified with the reset + composition decoded; residuals = 3 join-arm sources (mechanism confirmed) + $UG/$yG chain terminals. Next RE surfaces: R1 device captures (on-device Frida run still pending), attack-path fire-discipline fidelity fold-in, remaining Phase 5 adjacents (bombard duration already bounded, hide/same-speed acts documented), Obfuz $Pg jump-table case map if the band join values ever matter numerically.
