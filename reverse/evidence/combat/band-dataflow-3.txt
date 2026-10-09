@@ -1,0 +1,405 @@
+=== branches into join blocks ===
+  0x483e614  b       -> 0x4842350
+  0x4840818  b.eq    -> 0x48466e8
+  0x48422ec  b.ge    -> 0x4842350
+
+-- w23 def hunt (pre store #14 chain) (0x4846348 +0x40) --
+04846348  ldr      x1, [sp, #0xb8]
+0484634c  eor      w3, w20, w19
+04846350  mov      x0, x28
+04846354  mov      w2, w24
+04846358  mov      x4, xzr
+0484635c  mov      x19, x28
+04846360  bl       #0x47c4f68   ; -> SideAct.oF
+04846364  mov      x21, x26
+04846368  adrp     x26, #0x968e000
+0484636c  ldr      x0, [x27]
+04846370  ldr      x26, [x26, #0x4e0]
+04846374  str      x29, [sp, #0x118]
+04846378  mov      x29, x25
+0484637c  ldr      w28, [sp, #0x124]
+04846380  ldr      x19, [sp, #0x138]
+04846384  ldr      x25, [sp, #0x128]
+
+-- predecessor region before 0x4846320 (band-14 chain) (0x4846240 +0xf0) --
+04846240  mov      x23, x22
+04846244  mov      x22, x27
+04846248  mov      w21, w26
+0484624c  cbnz     w9, #0x4846264
+04846250  bl       #0x3cc7ac8   ; -> 0x3cc7ac8
+04846254  adrp     x8, #0x968e000
+04846258  ldr      x8, [x8, #0x4d8]
+0484625c  ldr      x8, [x8]
+04846260  ldr      x8, [x8, #0xb8]
+04846264  mov      x27, x29
+04846268  mov      x29, x25
+0484626c  ldr      x28, [sp, #0x128]
+04846270  ldr      x25, [sp, #0x150]
+04846274  add      x8, x8, #0xbbc
+04846278  mov      w26, w24
+0484627c  b        #0x483c410
+04846280  ldr      x8, [sp, #0x40]
+04846284  cbnz     x8, #0x4845750
+04846288  str      xzr, [sp, #0xf0]
+0484628c  ldr      w8, [x0, #0xe4]
+04846290  cbnz     w8, #0x48462a4
+04846294  bl       #0x3cc7ac8   ; -> 0x3cc7ac8
+04846298  adrp     x8, #0x968e000
+0484629c  ldr      x8, [x8, #0x4d8]
+048462a0  ldr      x0, [x8]
+048462a4  ldr      x8, [x0, #0xb8]
+048462a8  add      x8, x8, #0x34
+048462ac  b        #0x483c410
+048462b0  str      xzr, [sp, #0x58]
+048462b4  adrp     x8, #0x968e000
+048462b8  ldr      x8, [x8, #0x4d8]
+048462bc  ldr      x0, [x8]
+048462c0  ldr      w8, [x0, #0xe4]
+048462c4  cbnz     w8, #0x48462d8
+048462c8  bl       #0x3cc7ac8   ; -> 0x3cc7ac8
+048462cc  adrp     x8, #0x968e000
+048462d0  ldr      x8, [x8, #0x4d8]
+048462d4  ldr      x0, [x8]
+048462d8  ldr      x8, [x0, #0xb8]
+048462dc  add      x8, x8, #0x920
+048462e0  b        #0x483c410
+048462e4  str      x9, [sp, #0x110]
+048462e8  ldr      w8, [x0, #0xe4]
+048462ec  cbnz     w8, #0x4846300
+048462f0  bl       #0x3cc7ac8   ; -> 0x3cc7ac8
+048462f4  adrp     x8, #0x968e000
+048462f8  ldr      x8, [x8, #0x4d8]
+048462fc  ldr      x0, [x8]
+04846300  ldr      x8, [x0, #0xb8]
+04846304  add      x8, x8, #0xa10
+04846308  b        #0x483c410
+0484630c  mov      x25, x27
+04846310  mov      x26, x10
+04846314  bl       #0x3cc7ac8   ; -> 0x3cc7ac8
+04846318  ldr      x0, [x19]
+0484631c  mov      x27, x19
+04846320  adrp     x8, #0x968c000
+04846324  ldr      x8, [x8, #0xb50]
+04846328  ldr      x9, [x0, #0xb8]
+0484632c  ldr      x8, [x8]
+
+-- further predecessor region (0x4846100 +0x140) --
+04846100  ldr      w9, [sp, #0x134]
+04846104  add      w2, w8, w9
+04846108  bl       #0x480cb44   ; -> UnitAct.yG
+0484610c  cbz      x23, #0x4847090
+04846110  ldr      x0, [sp, #0x168]
+04846114  ldr      x8, [x0]
+04846118  ldr      x9, [x8, #0x368]
+0484611c  ldr      x1, [x8, #0x370]
+04846120  blr      x9
+04846124  cbz      x0, #0x4847090
+04846128  ldr      x8, [x0]
+0484612c  mov      x23, x22
+04846130  ldr      x9, [x8, #0x4d8]
+04846134  ldr      x1, [x8, #0x4e0]
+04846138  blr      x9
+0484613c  adrp     x8, #0x968e000
+04846140  mov      x22, x25
+04846144  ldr      x8, [x8, #0x4d8]
+04846148  ldr      x8, [x8]
+0484614c  ldr      x9, [x8, #0xb8]
+04846150  ldr      w10, [x9, #0x50]
+04846154  cmp      w10, w0, sxtb
+04846158  b.ne     #0x4846194
+0484615c  ldr      w10, [x8, #0xe4]
+04846160  mov      x25, x19
+04846164  cbnz     w10, #0x4846180
+04846168  mov      x0, x8
+0484616c  bl       #0x3cc7ac8   ; -> 0x3cc7ac8
+04846170  adrp     x8, #0x968e000
+04846174  ldr      x8, [x8, #0x4d8]
+04846178  ldr      x8, [x8]
+0484617c  ldr      x9, [x8, #0xb8]
+04846180  add      x8, x9, #0xb28
+04846184  mov      x19, x29
+04846188  mov      x29, x26
+0484618c  mov      w26, w24
+04846190  b        #0x483c410
+04846194  mov      x25, x19
+04846198  mov      x19, x29
+0484619c  mov      x29, x26
+048461a0  b        #0x48464d0
+048461a4  mov      w26, w21
+048461a8  mov      x27, x22
+048461ac  mov      x22, x23
+048461b0  bl       #0x3cc7ac8   ; -> 0x3cc7ac8
+048461b4  adrp     x8, #0x968e000
+048461b8  ldr      x8, [x8, #0x4d8]
+048461bc  ldr      x0, [x8]
+048461c0  ldr      x8, [x0, #0xb8]
+048461c4  ldr      w21, [sp, #0x134]
+048461c8  ldr      x23, [sp, #0x168]
+048461cc  ldr      x0, [sp, #0x158]
+048461d0  ldp      w9, w8, [x8, #0xc]
+048461d4  mov      x1, x23
+048461d8  eor      w8, w8, w9
+048461dc  add      w2, w8, w21
+048461e0  bl       #0x480cb44   ; -> UnitAct.yG
+048461e4  cbz      x23, #0x4847090
+048461e8  ldr      x0, [sp, #0x168]
+048461ec  ldr      x8, [x0]
+048461f0  ldr      x9, [x8, #0x6c8]
+048461f4  ldr      x1, [x8, #0x6d0]
+048461f8  blr      x9
+048461fc  adrp     x9, #0x968e000
+04846200  mov      w8, w0
+04846204  mov      w13, #0x3c38
+04846208  ldr      x9, [x9, #0x4d8]
+0484620c  movk     w13, #0xcb5e, lsl #16
+04846210  ldr      x0, [x9]
+04846214  sxtb     w9, w8
+04846218  ldr      x8, [x0, #0xb8]
+0484621c  ldr      w10, [x8, #0x30]
+04846220  ldp      w11, w12, [x8, #0xc]
+04846224  add      w10, w10, w13
+04846228  and      w10, w10, w21
+0484622c  eor      w11, w12, w11
+04846230  lsl      w10, w11, w10
+04846234  tst      w10, w9
+04846238  b.eq     #0x48464b4
+0484623c  ldr      w9, [x0, #0xe4]
+
+-- predecessor region before 0x48466e8 (band-17 chain) (0x48465e0 +0x110) --
+048465e0  b        #0x483c410
+048465e4  cbnz     w8, #0x48465f8
+048465e8  bl       #0x3cc7ac8   ; -> 0x3cc7ac8
+048465ec  adrp     x8, #0x968e000
+048465f0  ldr      x8, [x8, #0x4d8]
+048465f4  ldr      x0, [x8]
+048465f8  ldr      x8, [x0, #0xb8]
+048465fc  add      x8, x8, #0x9dc
+04846600  b        #0x483c410
+04846604  ldr      w9, [x8, #0xe4]
+04846608  cbnz     w9, #0x4846620
+0484660c  mov      x0, x8
+04846610  bl       #0x3cc7ac8   ; -> 0x3cc7ac8
+04846614  adrp     x8, #0x968e000
+04846618  ldr      x8, [x8, #0x4d8]
+0484661c  ldr      x8, [x8]
+04846620  ldr      x8, [x8, #0xb8]
+04846624  add      x8, x8, #0xb9c
+04846628  b        #0x483c410
+0484662c  str      x27, [sp, #0x140]
+04846630  mov      x12, x28
+04846634  mov      x28, x23
+04846638  str      w26, [sp, #0x164]
+0484663c  ldr      x23, [sp, #0x100]
+04846640  mov      x27, x22
+04846644  str      x25, [sp, #0x150]
+04846648  mov      x25, x29
+0484664c  adrp     x29, #0x968e000
+04846650  ldr      x29, [x29, #0x4d8]
+04846654  mov      x22, x19
+04846658  mov      w20, w21
+0484665c  mov      x21, x12
+04846660  ldr      w9, [x8, #0xe4]
+04846664  cbnz     w9, #0x4846678
+04846668  mov      x0, x8
+0484666c  bl       #0x3cc7ac8   ; -> 0x3cc7ac8
+04846670  mov      x8, x29
+04846674  ldr      x8, [x29]
+04846678  ldr      w10, [sp, #0x134]
+0484667c  ldr      x8, [x8, #0xb8]
+04846680  mov      x9, x28
+04846684  mov      w11, w20
+04846688  ldr      w26, [sp, #0x164]
+0484668c  mov      x19, x22
+04846690  str      w10, [sp, #0x134]
+04846694  mov      x10, x25
+04846698  ldr      x25, [sp, #0x150]
+0484669c  mov      x22, x27
+048466a0  ldr      x27, [sp, #0x140]
+048466a4  add      x8, x8, #0xb8c
+048466a8  mov      x28, x21
+048466ac  adrp     x20, #0x1b0f000
+048466b0  add      x20, x20, #0xaf0
+048466b4  mov      w21, w11
+048466b8  mov      x29, x10
+048466bc  str      x23, [sp, #0x100]
+048466c0  mov      x23, x9
+048466c4  b        #0x483c410
+048466c8  cbnz     w8, #0x48466dc
+048466cc  bl       #0x3cc7ac8   ; -> 0x3cc7ac8
+048466d0  adrp     x8, #0x968e000
+048466d4  ldr      x8, [x8, #0x4d8]
+048466d8  ldr      x0, [x8]
+048466dc  ldr      x8, [x0, #0xb8]
+048466e0  add      x8, x8, #0x94c
+048466e4  b        #0x483c410
+048466e8  ldp      x27, x19, [sp, #0x140]
+048466ec  adrp     x23, #0x968e000
+
+-- between #15 and #17: decrypt arms + $yG prep (0x4846480 +0x170) --
+04846480  ldr      x8, [x8, #0x4d8]
+04846484  ldr      x0, [x8]
+04846488  ldr      x8, [x0, #0xb8]
+0484648c  add      x8, x8, #0xb14
+04846490  b        #0x483c410
+04846494  cbnz     w8, #0x48464a8
+04846498  bl       #0x3cc7ac8   ; -> 0x3cc7ac8
+0484649c  adrp     x8, #0x968e000
+048464a0  ldr      x8, [x8, #0x4d8]
+048464a4  ldr      x0, [x8]
+048464a8  ldr      x8, [x0, #0xb8]
+048464ac  add      x8, x8, #0xb04
+048464b0  b        #0x483c410
+048464b4  mov      x23, x22
+048464b8  mov      x22, x27
+048464bc  mov      x27, x29
+048464c0  mov      x29, x25
+048464c4  ldr      x28, [sp, #0x128]
+048464c8  ldr      x25, [sp, #0x150]
+048464cc  mov      w21, w26
+048464d0  mov      w26, w24
+048464d4  adrp     x8, #0x968e000
+048464d8  ldr      x8, [x8, #0x4d8]
+048464dc  ldr      x0, [x8]
+048464e0  ldr      w8, [x0, #0xe4]
+048464e4  cbnz     w8, #0x48464f8
+048464e8  bl       #0x3cc7ac8   ; -> 0x3cc7ac8
+048464ec  adrp     x8, #0x968e000
+048464f0  ldr      x8, [x8, #0x4d8]
+048464f4  ldr      x0, [x8]
+048464f8  ldr      x8, [x0, #0xb8]
+048464fc  add      x8, x8, #0x89c
+04846500  b        #0x483c410
+04846504  cbnz     w10, #0x4846520
+04846508  mov      x0, x8
+0484650c  bl       #0x3cc7ac8   ; -> 0x3cc7ac8
+04846510  adrp     x8, #0x968e000
+04846514  ldr      x8, [x8, #0x4d8]
+04846518  ldr      x8, [x8]
+0484651c  ldr      x9, [x8, #0xb8]
+04846520  add      x8, x9, #0x960
+04846524  b        #0x483c410
+04846528  cbnz     w8, #0x484653c
+0484652c  bl       #0x3cc7ac8   ; -> 0x3cc7ac8
+04846530  adrp     x8, #0x968e000
+04846534  ldr      x8, [x8, #0x4d8]
+04846538  ldr      x0, [x8]
+0484653c  ldr      x8, [x0, #0xb8]
+04846540  add      x8, x8, #0x9cc
+04846544  b        #0x483c410
+04846548  ldr      x0, [x19]
+0484654c  mov      x23, x19
+04846550  mov      x19, x21
+04846554  str      x26, [sp, #0xf8]
+04846558  ldr      w8, [x0, #0xe4]
+0484655c  cbnz     w8, #0x4846568
+04846560  bl       #0x3cc7ac8   ; -> 0x3cc7ac8
+04846564  ldr      x0, [x23]
+04846568  mov      x8, x24
+0484656c  ldp      x22, x27, [sp, #0x138]
+04846570  ldr      x8, [x0, #0xb8]
+04846574  mov      x23, x28
+04846578  ldr      x29, [sp, #0x118]
+0484657c  ldr      x28, [sp, #0x128]
+04846580  ldr      w21, [sp, #0x124]
+04846584  mov      w26, w20
+04846588  str      x24, [sp, #0x110]
+0484658c  add      x8, x8, #0x1bc
+04846590  adrp     x20, #0x1b0f000
+04846594  add      x20, x20, #0xaf0
+04846598  b        #0x483c410
+0484659c  cbnz     w8, #0x48465b0
+048465a0  bl       #0x3cc7ac8   ; -> 0x3cc7ac8
+048465a4  adrp     x8, #0x968e000
+048465a8  ldr      x8, [x8, #0x4d8]
+048465ac  ldr      x0, [x8]
+048465b0  ldr      x8, [x0, #0xb8]
+048465b4  add      x8, x8, #0xa60
+048465b8  b        #0x483c410
+048465bc  ldr      w10, [x8, #0xe4]
+048465c0  cbnz     w10, #0x48465dc
+048465c4  mov      x0, x8
+048465c8  bl       #0x3cc7ac8   ; -> 0x3cc7ac8
+048465cc  adrp     x8, #0x968e000
+048465d0  ldr      x8, [x8, #0x4d8]
+048465d4  ldr      x8, [x8]
+048465d8  ldr      x9, [x8, #0xb8]
+048465dc  add      x8, x9, #0x984
+048465e0  b        #0x483c410
+048465e4  cbnz     w8, #0x48465f8
+048465e8  bl       #0x3cc7ac8   ; -> 0x3cc7ac8
+048465ec  adrp     x8, #0x968e000
+
+-- after #17: $UG call + band reads (0x4846790 +0x120) --
+04846790  ldr      w20, [sp, #0x124]
+04846794  ldr      x21, [sp, #0x128]
+04846798  adrp     x29, #0x1b0f000
+0484679c  add      x29, x29, #0xaf0
+048467a0  ldr      x25, [sp, #0x118]
+048467a4  ldr      x23, [sp, #0x100]
+048467a8  ldr      x28, [x28, #0x4e0]
+048467ac  ldr      x0, [x19]
+048467b0  stp      x9, x26, [sp, #0xf0]
+048467b4  ldr      w8, [x0, #0xe4]
+048467b8  cbnz     w8, #0x48467c4
+048467bc  bl       #0x3cc7ac8   ; -> 0x3cc7ac8
+048467c0  ldr      x0, [x19]
+048467c4  ldr      x8, [x0, #0xb8]
+048467c8  mov      x19, x22
+048467cc  mov      w10, w20
+048467d0  mov      x13, x25
+048467d4  ldr      x25, [sp, #0x150]
+048467d8  ldr      w26, [sp, #0x164]
+048467dc  mov      x22, x27
+048467e0  ldr      x27, [sp, #0x140]
+048467e4  str      x23, [sp, #0x100]
+048467e8  add      x8, x8, #0x928
+048467ec  mov      x23, x28
+048467f0  mov      x28, x21
+048467f4  mov      x20, x29
+048467f8  mov      x29, x13
+048467fc  mov      w21, w10
+04846800  b        #0x483c410
+04846804  ldr      x20, [sp, #0xe0]
+04846808  mov      x0, x8
+0484680c  bl       #0x3cc7ac8   ; -> 0x3cc7ac8
+04846810  ldr      x8, [x26]
+04846814  ldr      x8, [x8, #0xb8]
+04846818  ldr      x9, [x29]
+0484681c  mov      x0, x29
+04846820  str      x20, [sp, #0xe0]
+04846824  ldr      x28, [sp, #0x100]
+04846828  ldr      w20, [x8, #0x24]
+0484682c  ldr      x8, [x9, #0x388]
+04846830  ldr      x1, [x9, #0x390]
+04846834  str      x29, [sp, #0x118]
+04846838  blr      x8
+0484683c  cbz      x0, #0x4847090
+04846840  ldr      x8, [x0]
+04846844  stp      x19, x23, [sp, #0x148]
+04846848  str      x25, [sp, #0x128]
+0484684c  ldr      x9, [x8, #0x2f8]
+04846850  ldr      x1, [x8, #0x300]
+04846854  blr      x9
+04846858  cbz      x28, #0x4847090
+0484685c  ldr      x8, [x26]
+04846860  ldr      x9, [x28]
+04846864  mov      w24, w0
+04846868  mov      x0, x28
+0484686c  ldr      x8, [x8, #0xb8]
+04846870  ldr      w19, [x8, #0x34]
+04846874  ldr      w25, [x8, #0x24]
+04846878  ldp      w23, w22, [x8, #0xc]
+0484687c  ldp      x8, x1, [x9, #0x178]
+04846880  blr      x8
+04846884  sxtb     w8, w24
+04846888  mov      w29, #0x6a7
+0484688c  eor      w9, w23, w22
+04846890  movk     w29, #0x8529, lsl #16
+04846894  sub      w8, w8, w9
+04846898  add      w10, w25, w29
+0484689c  add      w11, w20, w29
+048468a0  mul      w8, w8, w10
+048468a4  sxth     w10, w21
+048468a8  sub      w9, w27, w9
+048468ac  sdiv     w8, w8, w19
+
