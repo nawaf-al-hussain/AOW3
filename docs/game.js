@@ -36579,6 +36579,11 @@ void main() {
       } catch (e) {
         console.warn("decor preload failed", e);
       }
+      try {
+        await this.loadV5Presentation(base);
+      } catch (e) {
+        console.warn("v5 presentation preload failed", e);
+      }
     }
     buildStaticWorld(groundTex, hqImg) {
       const ground = this.groundMesh = new Mesh(new PlaneGeometry(MAP_W, MAP_H), new MeshStandardMaterial({ map: groundTex, roughness: 1, metalness: 0 }));
@@ -37060,6 +37065,71 @@ void main() {
       this.hqRed = new CanvasTexture(tintFaction(src, "red"));
       this.hqRed.colorSpace = SRGBColorSpace;
     }
+    async loadV5Presentation(base) {
+      // V5 (visual-fidelity-audit §21): building flags + unit rank insignias
+      // from the extracted 6.9.18 sprite art (provenance: curated extraction
+      // zip, sha256 fff43c4d... — reverse/notes/vfx-asset-prefix-check.md).
+      // ico_emblem_conf/res are the factions' white line-art emblems; the
+      // f1/f2 insignias are the authentic 1/2/3-chevron veterancy art.
+      const files = [
+        ["embF1", base + "ui/emblem-conf.png"],
+        ["embF2", base + "ui/emblem-res.png"],
+        ["ins11", base + "ui/insignia-f1-1.png"],
+        ["ins12", base + "ui/insignia-f1-2.png"],
+        ["ins13", base + "ui/insignia-f1-3.png"],
+        ["ins21", base + "ui/insignia-f2-1.png"],
+        ["ins22", base + "ui/insignia-f2-2.png"],
+        ["ins23", base + "ui/insignia-f2-3.png"]
+      ];
+      const rs = await Promise.allSettled(files.map(([, src2]) => loadImage(src2)));
+      const got = {};
+      files.forEach(([k], i) => {
+        if (rs[i].status === "fulfilled")
+          got[k] = rs[i].value;
+      });
+      // Flag cloth per seat: seat-color field + faction emblem centered
+      // (factionVariant pairing — seats 1/3 conf, 2/4 res; the emblems are
+      // white line art, dark underlay keeps contrast on light fields).
+      // Neutral seat 0 = plain gray cloth (no emblem — no evidence the
+      // neutral flags carry one; [EXT]-derived compositing, the original's
+      // other/flag_* sprites are [NOT EXTRACTED] as of 6.9.18).
+      const tint = (img, col) => {
+        const c = document.createElement("canvas");
+        c.width = img.naturalWidth;
+        c.height = img.naturalHeight;
+        const g2 = c.getContext("2d");
+        g2.drawImage(img, 0, 0);
+        g2.globalCompositeOperation = "source-in";
+        g2.fillStyle = col;
+        g2.fillRect(0, 0, c.width, c.height);
+        return c;
+      };
+      const cloth = (fieldHex, emb) => {
+        const c = document.createElement("canvas");
+        c.width = 128;
+        c.height = 80;
+        const g2 = c.getContext("2d");
+        g2.fillStyle = "#" + fieldHex.toString(16).padStart(6, "0");
+        g2.fillRect(0, 0, 128, 80);
+        if (emb) {
+          const h = 50, w = emb.naturalWidth / emb.naturalHeight * h;
+          const x = (128 - w) / 2, y = (80 - h) / 2;
+          const dark = tint(emb, "rgba(20,22,26,0.85)");
+          g2.drawImage(dark, x + 2, y + 2, w, h);
+          g2.drawImage(emb, x, y, w, h);
+        }
+        return c;
+      };
+      this.flagTex = {};
+      for (let seat = 0; seat <= 4; seat++) {
+        const emb = seat === 0 ? null : seat % 2 === 1 ? got.embF1 : got.embF2;
+        const field = seat === 0 ? 12599312 : SEAT_HEX[seat];
+        this.flagTex[seat] = new CanvasTexture(cloth(field, emb));
+        this.flagTex[seat].colorSpace = SRGBColorSpace;
+      }
+      if (got.ins11)
+        this.insignia = { 1: [got.ins11, got.ins12, got.ins13], 2: [got.ins21, got.ins22, got.ins23] };
+    }
     placeBaseProps() {
       const rand = rng(777);
       const props = new Group;
@@ -37167,8 +37237,17 @@ void main() {
           this.bldViews.set(b.id, v);
         }
         if (v.flag) {
-          const col = SEAT_HEX[b.owner] || 13157556;
-          v.flag.material.color.setHex(col);
+          const ftex = this.flagTex?.[b.owner];
+          if (ftex) {
+            if (v.flag.material.map !== ftex) {
+              v.flag.material.map = ftex;
+              v.flag.material.color.setHex(16777215);
+              v.flag.material.needsUpdate = true;
+            }
+          } else {
+            const col = SEAT_HEX[b.owner] || 13157556;
+            v.flag.material.color.setHex(col);
+          }
         }
         if (v.capRing) {
           const prog = b.captureT;
@@ -37329,7 +37408,8 @@ void main() {
         const pole = new Mesh(new CylinderGeometry(0.045, 0.045, 1.7, 6), mat(5592405, { metal: 0.5, rough: 0.5 }));
         pole.position.set(0, hq ? 4.6 : 6.1, 0);
         group.add(pole);
-        const flag = new Mesh(new PlaneGeometry(1.15, 0.7, 8, 4), new MeshBasicMaterial({ color: SEAT_HEX[b.owner] || 12599312, side: DoubleSide }));
+        const flagTex = this.flagTex?.[b.owner];
+        const flag = new Mesh(new PlaneGeometry(1.15, 0.7, 8, 4), new MeshBasicMaterial({ map: flagTex, color: flagTex ? 16777215 : SEAT_HEX[b.owner] || 12599312, side: DoubleSide }));
         flag.position.set(0.62, hq ? 5.05 : 6.55, 0);
         group.add(flag);
         view.flag = flag;
@@ -37371,7 +37451,8 @@ void main() {
           const pole = new Mesh(new CylinderGeometry(0.04, 0.04, 2.1, 6), mat(5592405, { metal: 0.5, rough: 0.5 }));
           pole.position.set(def.radius * 0.85, 1.05, -def.radius * 0.6);
           group.add(pole);
-          const flag = new Mesh(new PlaneGeometry(0.85, 0.5, 8, 4), new MeshBasicMaterial({ color: SEAT_HEX[b.owner] || 12599312, side: DoubleSide }));
+          const flagTex2 = this.flagTex?.[b.owner];
+          const flag = new Mesh(new PlaneGeometry(0.85, 0.5, 8, 4), new MeshBasicMaterial({ map: flagTex2, color: flagTex2 ? 16777215 : SEAT_HEX[b.owner] || 12599312, side: DoubleSide }));
           flag.position.set(def.radius * 0.85 + 0.45, 1.95, -def.radius * 0.6);
           group.add(flag);
           view.flag = flag;
@@ -37537,7 +37618,7 @@ void main() {
         const rt = rankTier(u);
         if (rt !== v.rankT) {
           v.rankT = rt;
-          this.paintRank(v.rankCanvas, rt);
+          this.paintRank(v.rankCanvas, rt, v.faction);
           v.rankTex.needsUpdate = true;
         }
         v.rankSprite.visible = rt > 0 && (u.owner === (sim.viewSlot || 1) || frac < 0.999 || isSel);
@@ -37748,6 +37829,8 @@ void main() {
     makeUnitView(u) {
       const model = buildUnit(u.def, u.owner);
       model.group.userData.unit = u;
+      const mpair = UNIT_MODEL[u.def.id];
+      const faction = mpair && mpair[factionVariant(u.owner) - 1]?.startsWith("f2_") ? 2 : 1;
       const [wx, wz] = t2w(u.x, u.y);
       model.group.position.set(wx, u.def.kind === "aircraft" || u.def.aircraft ? 2.1 : 0, wz);
       this.scene.add(model.group);
@@ -37798,6 +37881,7 @@ void main() {
         rankCanvas,
         rankTex,
         rankSprite,
+        faction,
         rankT: -1
       };
       if (u.def.kind === "aircraft" || u.def.aircraft) {
@@ -37818,11 +37902,17 @@ void main() {
       g.fillStyle = enemy ? "#e05840" : frac > 0.55 ? "#58d858" : frac > 0.25 ? "#d8c840" : "#e05840";
       g.fillRect(2, 2, 60 * Math.max(0, frac), 6);
     }
-    paintRank(c, tier) {
+    paintRank(c, tier, faction = 1) {
       const g = c.getContext("2d");
       g.clearRect(0, 0, 48, 18);
       if (tier <= 0)
         return;
+      const ins = this.insignia?.[faction]?.[tier - 1];
+      if (ins) {
+        const h = 16, w = ins.naturalWidth / ins.naturalHeight * h;
+        g.drawImage(ins, (48 - w) / 2, 1, w, h);
+        return;
+      }
       g.strokeStyle = "rgba(0,0,0,0.85)";
       g.lineWidth = 1.5;
       g.fillStyle = "#fcd34d";
