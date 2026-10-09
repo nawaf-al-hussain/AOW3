@@ -1,0 +1,62 @@
+{
+ "overview-far": {
+  "v54": [
+   "bcf8f8f8e8c00000",
+   "fcf8f8f8e0400000"
+  ],
+  "v55": [
+   "3cf8f8f8e8e00000"
+  ],
+  "verdict": "SHIFT"
+ },
+ "tactical-mid-yaw": {
+  "v54": [
+   "bfffffffff020000"
+  ],
+  "v55": [
+   "bffffffffb020000",
+   "bfffffffff020000"
+  ],
+  "verdict": "SHIFT"
+ },
+ "tactical-close": {
+  "v54": [
+   "3fffffffff030000"
+  ],
+  "v55": [
+   "3fffffffff030000"
+  ],
+  "verdict": "SAME-SET"
+ },
+ "field-north-yaw": {
+  "v54": [
+   "2fefffffff030000",
+   "ffffffffef010000"
+  ],
+  "v55": [
+   "2fefffffff4b0000",
+   "3fffffffff030000"
+  ],
+  "verdict": "SHIFT"
+ },
+ "slope-detail": {
+  "v54": [
+   "bffffffdf9400000",
+   "fffffdfdf8000000"
+  ],
+  "v55": [
+   "bff7fffdf9400000",
+   "fffffffdf8420000"
+  ],
+  "verdict": "SHIFT"
+ },
+ "slope-detail-cross": {
+  "v54": [
+   "1f1f7f5fdf030000"
+  ],
+  "v55": [
+   "1f1f7f5fdf4b0000"
+  ],
+  "verdict": "SHIFT"
+ }
+}

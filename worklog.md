@@ -1881,3 +1881,52 @@ Stage Summary:
 - Remaining §21: V7 (UI font/HUD metrics), V8 device refs + R1 device session
   (operator-run), plus the registered R2 constants fold-in and the Task-49
   pipeline flag (fix_empty_skins fold-in + hero assembly script).
+
+---
+Task ID: 52b
+Agent: Super Z (main)
+Task: V7 — UI presentation (visual-fidelity-audit §21 V7): original font extraction + HUD typographic anchor + victory/defeat extracted art. "The last sandbox-executable §21 item."
+  (ID 52b: upstream e13144a already holds a different "Task ID: 52" — the
+  Build J MaxStatValueProvider/band-dataflow decode; git auto-merged this
+  append without flagging the header collision; renumbered per the 48b/51b
+  convention, no entry edited)
+
+Work Log:
+- §21 V7 scope taken as: (a) font extraction/identification pass, (b) HUD
+  metrics from original screenshots (Phase-24 method), (c) victory/defeat
+  presentation with extracted art. (b) is R1-dependent (no original
+  screenshots in the sandbox) — executed as the typographic-anchor pass
+  instead, with the metric measurement explicitly staged for the device
+  session.
+- FONT PASS: IL2CPP string literals ('Fonts/MainFont.asset', TMP material
+  names) -> Unity Font object 'MainFont' in bundle e3ef60f1… carries the
+  TTF in m_FontData. Extracted byte-verbatim (14,177,104 B, sha256
+  53380e7a…) = Refrigerator Deluxe Bold (fontTools: 51,432 glyphs, upem
+  1024, cap 0.700em). TMP atlases (MainFont + RefrigeratorDeluxe-Bold_
+  Fallback, 1024×1024) extracted as evidence. Deployed docs/assets/ui/
+  mainfont-font.ttf; @font-face "AOW3 MainFont" + global stack swap in the
+  renderer CSS (fallback chain kept, font-display:swap).
+- VICTORY/DEFEAT: head_back_win.png (48×85) frames the verdict;
+  back_player_panel.png (381×134) backs the scoreboard rows at native
+  resolution (both byte-verbatim from curated zip fff43c4d…, same
+  provenance chain as V5); #over laid out as a stacked column.
+- QA: node --check clean; 8/8 suites green; document.fonts confirms
+  "AOW3 MainFont/loaded"; v7-menu-font / v7-end-victory / v7-end-defeat
+  captures verified (the tight "AT" in DEFEAT = authentic −27px kern pair,
+  TTF-verified — not clipping). Cache-bust v=54 -> v=55.
+- V8 A/B v54-vs-v55 (3 runs/scenario, set comparison): shifts confined to
+  low-order aHash bytes of the DOM HUD rows (intentional font swap);
+  tactical-close SAME-SET; slope-detail-cross scene bytes identical; sandbox
+  rasterizer bimodality quantified — v54 self cross-state diff 54.8% of
+  pixels vs same-state 0.04%, envelope exceeds every observed v54-v55 delta.
+  v8-ab-v54-v55.json recorded; results.json re-captured at v=55.
+- Commits (LOCAL — push needs the user PAT; V5's 169cdc9/0608850 are also
+  still unpushed): renderer commit + docs/evidence commit.
+
+Stage Summary:
+- V7 closed: original font extracted + wired (typography now evidence-
+  anchored, not eyeballed); result screen carries authentic art. §21 state:
+  V1-V8 all sandbox-executed; REMAINING = V8 device references + R1 operator
+  device session (runbook ready), R2 constants fold-in, Task-49 pipeline
+  flag (fix_empty_skins fold-in + hero assembly script).
+- Push debt: 4 commits total (V5 pair + V7 pair) awaiting the user PAT.

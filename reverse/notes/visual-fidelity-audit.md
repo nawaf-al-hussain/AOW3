@@ -679,3 +679,43 @@ fully executable without a device, and de-risks V4's calibration pass.
   headless Chromium and appears in BOTH builds — no V5-caused hash shift at
   8×8 aHash resolution; the emblem detail is sub-cell at harness poses).
   Renderer-only; sim/network/replay untouched; v=54.
+- **V7 (2026-10-09)**: UI presentation closed — the §19 "[NOT FOUND LOCALLY]"
+  original HUD font is now FOUND, EXTRACTED and WIRED. (1) Font
+  identification: the 6.9.18 IL2CPP string literal `Fonts/MainFont.asset` +
+  TMP materials 'RefrigeratorDeluxe-Bold Material' /
+  'RefrigeratorDeluxe-Bold_Fallback' pointed the hunt; the Unity `Font`
+  object 'MainFont' in bundle `e3ef60f1…` carries the actual TTF in
+  m_FontData — byte-verbatim extraction (14,177,104 B,
+  sha256 `53380e7a…`) = **Refrigerator Deluxe Bold** (51,432 glyphs;
+  unitsPerEm 1024, capHeight 717 = 0.700em, xHeight 481 = 0.470em,
+  typoAsc/Desc 844/−180). TMP atlases ('MainFont Atlas',
+  'RefrigeratorDeluxe-Bold_Fallback Atlas', 1024×1024) extracted as
+  evidence PNGs. Deployed as `docs/assets/ui/mainfont-font.ttf` and wired
+  via @font-face "AOW3 MainFont" (font-display:swap; system-ui fallback
+  chain kept) — every HUD/menu/result string now renders in the authentic
+  face. (2) HUD metrics: the §19/§22 "UI layout metrics" unknown remains
+  [AWAITING R1] (no original screenshot exists in the sandbox — Phase-24
+  measurement joins the device session); what IS now evidence-anchored is
+  the typographic layer itself (the font + its design metrics, recorded in
+  the game.js CSS comment block), replacing the biggest eyeballed [BROWSER]
+  guess. (3) Victory/defeat presentation now uses extracted art:
+  `head_back_win.png` (48×85, yellow header rules) frames the verdict,
+  `back_player_panel.png` (381×134, diagonal hatch + angled edge) backs the
+  scoreboard rows at native resolution — both byte-verbatim from the
+  provenance-verified curated zip (sha256 `fff43c4d…`); verdict/report laid
+  out as a stacked column (previous flex-row was an eyeballed [BROWSER]
+  artifact). Live QA: font load verified through `document.fonts`
+  (`AOW3 MainFont/loaded`), menu + battle HUD + victory/defeat screens
+  captured (`reverse/evidence/visual/v7-*.png`); the close-set "AT" pair in
+  "DEFEAT" is the font's authentic kerning (−27px at 52px, TTF-verified),
+  not a clipping defect. Tests 8/8 suites green (877/877 baseline).
+  V8 harness v54-vs-v55 A/B: per-scenario hash sets differ only in the
+  low-order bytes mapped to the DOM HUD rows (the intentional font swap) —
+  scene bytes identical where flicker state matched (tactical-close
+  SAME-SET; slope-detail-cross scene bytes equal) — and the sandbox's
+  rasterizer bimodality QUANTIFIED for the record: v54-vs-itself across its
+  two states diffs 54.8% of pixels (same-state self-diff 0.04%), an
+  envelope larger than any observed v54-vs-v55 delta (≤42.9%), i.e. no
+  V7-caused canvas change; `v8-ab-v54-v55.json` +
+  `results.json` re-captured at v=55. Renderer-only; sim/network/replay
+  untouched.
