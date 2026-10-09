@@ -1930,3 +1930,25 @@ Stage Summary:
   device session (runbook ready), R2 constants fold-in, Task-49 pipeline
   flag (fix_empty_skins fold-in + hero assembly script).
 - Push debt: 4 commits total (V5 pair + V7 pair) awaiting the user PAT.
+
+---
+Task ID: 53
+Agent: Super Z (main)
+Task: Mission run — repo recon + baseline tests + critical index.html conflict fix + central RE workflow (index/roadmap/registry) + Build I/J fold-ins (no behavior change)
+
+Work Log:
+- Recon: pulled 4 upstream commits (V5 v=54, V7 v=55, audit/worklog docs); state main @ 47ef2c6, tree clean. AGENTS.md §27/§28/§35 workflow rules re-read and followed.
+- Baseline tests (before any change): all 8 suites GREEN — commands-determinism 50/50, data-model 379, lockstep-jip 88, phase5 236/236, replay 45/45, stat-caps 37/37, accuracy all vectors, unit-fsm all vectors.
+- CRITICAL FIX (02af790): docs/index.html had a committed unresolved merge conflict (V6 rebase e259577 left markers on main; later v=50..v=55 bumps edited INSIDE the conflict block, so GitHub Pages served <<<<<<< HEAD / ======= / >>>>>>> marker text since V6). Resolution: keep current game.js?v=55 tag, drop markers + empty HEAD side; 5-line deletion, no game.js change (no §35.1 bump). Pushed and (to be) live-verified.
+- RE workflow established (commit B): reverse/README.md rewritten as the central RE index (recovered areas -> tools -> evidence -> browser fold-in protocol; provenance hashes pinned; blockers table with exact missing prerequisites; regeneration runbook). reverse/notes/reverse-engineering-roadmap.md created as the prioritized routing layer (audit §6/§7 remains the gap source of truth; R1-R11 status snapshot; priorities A-E sequenced; immediate next queue R7/R8/H1/R6). reverse/evidence/registry.json created (machine-readable: 11 investigations, 6 confirmed findings, fold-in tracking, blocker summary).
+- R2 verified preserved: obfuz_static_decode.py + secret key + obfuz-pool-values.json (697/697) intact with correction register; R1 verified BLOCKED on device/session (offline prep complete: schema.json + r1-prototype-data-pipeline.md + r1_dictionary_dump.js ready).
+- Fold-ins executed (Task 52 recorded candidates, all comment-only — 38/38 changed lines are // comments, zero behavior delta, node --check OK):
+  1. DEFEND_TETHER provenance: "server-delivered" retired -> native leash is client-computed band+1 inside $Pg (Build I; XOR pair Value3^Value4=1); tether VALUE stays gameplay-tuned [BROWSER] pending band join-arm values.
+  2. MaxStatValueProvider.Get contract: "clamp the value to the tier cap" -> native Get returns min(piecewise FRACTION, 1.0) fill fraction (0.8/0.15/0.05 non-armor, 0.9/0.1 armor-damage keys); browser maxStatGet documented as the display-clamp analog (Build J).
+  3. Tier rung labels: [BaseMax, FirstMax|null, MegaMax|null] -> [FirstMax, BaseMax|null, MegaMax|null] per factory decode (Max2/Max3 store FirstMax=v1, BaseMax=v2); tier-resolution comment relabeled; stat-caps.test.js check names/comments re-labeled to match (assertion VALUES untouched — they are independent native literals).
+- Cache-bust v=55 -> v=56 per §35.1 (game.js changed). Full suite re-run: all 8 suites GREEN, identical counts, zero regressions.
+
+Stage Summary:
+- Live-site hygiene restored (conflict garbage no longer served); RE workflow layer now exists (index + roadmap + registry) and routes all future investigation through the fidelity audit + registry IDs.
+- Build I/J evidence is now reflected in the shipped code's provenance comments, closing Task 52's three recorded fold-in candidates.
+- Next (queued in roadmap): R7 sight/visibility consumer scan, R8 trajectory/gravity consumers, H1 hash-coverage extension, R6 bit-name cross-ref — all offline; R1 device run remains the single highest-value unlock (user-supplied session).

@@ -1,11 +1,12 @@
 #!/usr/bin/env node
-// Stat tier caps test — MaxStatValueProvider three-tier thresholds (BaseMax /
-// FirstMax / MegaMax) ported verbatim from the native ctor literal extraction.
+// Stat tier caps test — MaxStatValueProvider three-tier thresholds (FirstMax /
+// BaseMax / MegaMax) ported verbatim from the native ctor literal extraction.
 // Evidence: MaxStatValueProvider..ctor(ILogger) VA 0x7CC0C00..0x7CC1640 populates
-// m_statInfos : Dictionary<EStat, StatInfo {BaseMax, FirstMax?, MegaMax?}>
+// m_statInfos : Dictionary<EStat, StatInfo {FirstMax, BaseMax?, MegaMax?}> — rung
+// labels per Build J factory decode (estat-stat-models.md §8); values unchanged.
 // (dump.cs 6.9.18, sha256 0050e67d...); tool reverse/tools/extract_maxstat_tiers.py;
 // full table reverse/evidence/estat/estat-tiers.txt; analysis
-// reverse/notes/units/estat-stat-models.md section 7 (CONFIRMED, literal extraction).
+// reverse/notes/units/estat-stat-models.md sections 7-8 (CONFIRMED, literal extraction).
 // The tribute port (AOW3_MAX_STAT_TIERS + maxStatCap/maxStatGet) lives inside the
 // SIM KERNEL — extracted verbatim here so a shipped-code mismatch fails by
 // construction.
@@ -86,12 +87,12 @@ section('table integrity: 72 registered EStats, verbatim ctor literals');
 // ================= 2. tier resolution =================
 section('tier resolution: rank tier -> cap with fallback chain');
 {
-  check('BaseMax at tier 0', K.maxStatCap(1, 0), 8000);
-  check('FirstMax at tier 1', K.maxStatCap(1, 1), 25000);
+  check('FirstMax (lowest rung) at tier 0', K.maxStatCap(1, 0), 8000);
+  check('BaseMax at tier 1', K.maxStatCap(1, 1), 25000);
   check('MegaMax at tier 2', K.maxStatCap(1, 2), 45000);
   check('MegaMax at tier 3 (ACE maps onto mega)', K.maxStatCap(1, 3), 45000);
-  check('Speed/6 tier 2 falls back to FirstMax (no mega tier)', K.maxStatCap(6, 2), 450);
-  check('Price/2 tier 2 falls back to FirstMax', K.maxStatCap(2, 2), 2600);
+  check('Speed/6 tier 2 falls back to BaseMax (no mega tier)', K.maxStatCap(6, 2), 450);
+  check('Price/2 tier 2 falls back to BaseMax', K.maxStatCap(2, 2), 2600);
   check('single-tier stat ignores tier entirely (MinePrice/71 tier 2 = 30)', K.maxStatCap(71, 2), 30);
   check('unregistered EStat -> null (uncapped domain)', K.maxStatCap(60, 1), null);
   check('unregistered EStat -> null (WeaponMineCost/66)', K.maxStatCap(66, 0), null);
@@ -103,8 +104,8 @@ section('tier resolution: rank tier -> cap with fallback chain');
 section('maxStatGet: IMaxStatValueProvider.Get analog (dump.cs:168886)');
 {
   check('below cap passes through', K.maxStatGet(5000, 1, 0), 5000);
-  check('above cap clamps to BaseMax', K.maxStatGet(99999, 1, 0), 8000);
-  check('above cap clamps to FirstMax at tier 1', K.maxStatGet(99999, 1, 1), 25000);
+  check('above cap clamps to FirstMax (tier-0 cap)', K.maxStatGet(99999, 1, 0), 8000);
+  check('above cap clamps to BaseMax at tier 1', K.maxStatGet(99999, 1, 1), 25000);
   check('above cap clamps to MegaMax at tier 2', K.maxStatGet(99999, 1, 2), 45000);
   check('exact cap unchanged', K.maxStatGet(8000, 1, 0), 8000);
   check('weapon-armor damage clamp at base (61)', K.maxStatGet(500, 61, 0), 300);
@@ -115,7 +116,7 @@ section('maxStatGet: IMaxStatValueProvider.Get analog (dump.cs:168886)');
 }
 
 // ================= 4. data sanity: tribute defs inside the cap domain ======
-section('data sanity: unit health values inside native Health BaseMax');
+section('data sanity: unit health values inside native Health tier-cap domain');
 {
   let worst = null;
   for (const id of Object.keys(K.UNITS)) {
@@ -125,7 +126,7 @@ section('data sanity: unit health values inside native Health BaseMax');
     if (d.health > 8000 && (!worst || d.health > worst.v))
       worst = { id, v: d.health };
   }
-  check('no unit def exceeds Health BaseMax 8000 (tuned scale sits in base domain)',
+  check('no unit def exceeds Health FirstMax 8000 (tuned scale sits in the lowest-rung domain)',
     worst, null);
 }
 

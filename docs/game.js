@@ -59,17 +59,20 @@
   }
   // ---- MaxStatValueProvider tier caps: native literal extraction (CONFIRMED) ----
   // Evidence: MaxStatValueProvider..ctor(ILogger) VA 0x7CC0C00..0x7CC1640 populates
-  // m_statInfos : Dictionary<EStat, StatInfo {BaseMax, FirstMax?, MegaMax?}>
-  // (dump.cs 6.9.18 sha256 0050e67d...); every entry is a constructor float literal
+  // m_statInfos : Dictionary<EStat, StatInfo {FirstMax, BaseMax?, MegaMax?}> — rung
+  // labels per Build J factory decode (Max1(v)->BaseMax; Max2(v1,v2)->FirstMax=v1,
+  // BaseMax=v2; Max3(v1,v2,v3) adds MegaMax=v3; verified at Health/Price call sites).
+  // dump.cs 6.9.18 sha256 0050e67d...; every entry is a constructor float literal
   // parsed by reverse/tools/extract_maxstat_tiers.py -> reverse/evidence/estat/
   // estat-tiers.txt (72/78 EStats registered). Full analysis:
-  // reverse/notes/units/estat-stat-models.md section 7. Unregistered (run uncapped):
+  // reverse/notes/units/estat-stat-models.md sections 7-8. Unregistered (run uncapped):
   // None/0, WeaponFireRate/60, WeaponMineCost/66, WeaponSuperWeaponCP/70. Three-tier
   // caps exist only for Health and the six weapon-armor keys (the veterancy/mega
   // surfaces); two-tier: Price, Speed, armor triad, DeminingSpeed. Native consumers
-  // use Get(value, stat) as the UI stat-panel progress-bar maximum (display
+  // use Get(value, stat) as the UI stat-panel progress-bar FILL FRACTION (display
   // normalization domain), not additional sim math. Shape: EStat id ->
-  // [BaseMax, FirstMax|null, MegaMax|null].
+  // [FirstMax, BaseMax|null, MegaMax|null] (ascending rungs; Build J relabel —
+  // pre-Build J comments mislabeled the first two rungs BaseMax/FirstMax).
   var AOW3_MAX_STAT_TIERS = {
     1: [8000, 25000, 45000], 2: [1000, 2600, null], 3: [5, null, null],
     4: [15, null, null], 5: [150, null, null], 6: [100, 450, null],
@@ -96,9 +99,11 @@
     72: [300, 4000, 55000], 73: [300, 4000, 55000], 74: [300, 4000, 55000],
     75: [40, null, null], 76: [100, null, null], 77: [12, null, null]
   };
-  // Tier cap resolution: rank tier 0 -> BaseMax; 1 -> FirstMax (falls back to
-  // BaseMax when the tier is unregistered for the stat); 2/3 -> MegaMax (falls
-  // back down the chain). Unregistered EStat -> null (uncapped domain).
+  // Tier cap resolution: rank tier 0 -> FirstMax (lowest rung); 1 -> BaseMax (falls
+  // back to FirstMax when the tier is unregistered for the stat); 2/3 -> MegaMax
+  // (falls back down the chain). Unregistered EStat -> null (uncapped domain).
+  // (Rung NAMES per Build J factory decode; the rank->rung mapping itself remains
+  // the browser's documented approximation — native rank wiring is balance-side.)
   function maxStatCap(statKey, tier) {
     const e = AOW3_MAX_STAT_TIERS[statKey];
     if (!e)
@@ -110,8 +115,13 @@
       return e[1];
     return e[0];
   }
-  // Native IMaxStatValueProvider.Get(value, stat) analog (dump.cs:168886): clamp
-  // the value to the stat's tier cap; unregistered stats pass through unchanged.
+  // Browser clamp analog of the tier-cap domain (dump.cs:168886). Build J decode of
+  // the native MaxStatValueProvider.Get (0x7CC176C..0x7CC1A94): native Get returns
+  // min(piecewise FRACTION, 1.0) — the stat-panel fill fraction (0.8/0.15/0.05 over
+  // First/Base/Mega rungs for non-armor stats, 0.9/0.1 armor-damage keys), NOT a
+  // value clamp. This browser helper keeps the display normalization the panel math
+  // expects (clamp to cap; unregistered stats pass through unchanged); see
+  // reverse/notes/maxstat-tier-band-decode.md and estat-stat-models.md §8.
   function maxStatGet(value, statKey, tier) {
     const cap = maxStatCap(statKey, tier);
     return cap === null ? value : Math.min(value, cap);
@@ -162,8 +172,12 @@
   // ClientBunkerWeapon crew-served muzzles); value gameplay-tuned.
   const GARRISON_CAP = 3;
   // native: Defend = task 2 + spec 1024 + ACT_DEFEND = 5 (dump.cs:271216/271170,
-  // GAICommandSpecMode 410916) — anchored stance; no native leash constant is
-  // recoverable from the APK (server-delivered), tether is gameplay-tuned.
+  // GAICommandSpecMode 410916) — anchored stance. Leash PROVENANCE corrected by
+  // Build I ($Pg decode, reverse/notes/defend-chase-takepos-decode.md): the native
+  // leash is CLIENT-computed inside $Pg as band + 1 (band = $Pg-computed local;
+  // XOR pair Value3^Value4 = 1; NOT server-delivered as this comment previously
+  // claimed). The band's numeric join-arm values remain a bounded residual, so the
+  // tether VALUE below stays gameplay-tuned [BROWSER].
   const DEFEND_TETHER = 4;
   // hide (native task 4 / spec 131072): a hidden unit is untargetable beyond
   // this range — the VISIBLE_HIDDEN -> VISIBLE_DETECTED transition radius
