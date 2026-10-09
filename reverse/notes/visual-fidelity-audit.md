@@ -647,3 +647,35 @@ fully executable without a device, and de-risks V4's calibration pass.
   v=53; visual evidence `scripts/p16_v6b_flame_final.png`,
   `scripts/p16_v6b_flame_clean.png` (atlas-grid defect + fix chain:
   p16_v6_flame_framed2.png shows the pre-fix grid).
+- **V5 (2026-10-09)**: units/buildings presentation wired from the extracted
+  sprite art. Building flags: the procedural seat-color planes now carry
+  **authentic-art cloth** — the factions' white line-art emblems
+  (`ico_emblem_conf`/`ico_emblem_res`, byte-verbatim from the provenance-verified
+  curated extraction zip, sha256 `fff43c4d…` per the vfx-asset-prefix-check note)
+  composited onto the seat-color field per the `factionVariant` pairing
+  (seats 1/3 conf globe, 2/4 res fist; neutral seat 0 = plain gray cloth — no
+  evidence neutral flags carry an emblem). The original's `other/flag_*` sprite
+  addresses exist in the 6.9.18 string literals but the sprites themselves are
+  [NOT EXTRACTED] — the emblem-on-field cloth is the closest [EXT]-derived
+  representation, flagged for swap when the originals are pulled. Unit rank
+  insignias: the procedural canvas chevrons are replaced by the **authentic
+  veterancy art** (`f1/f2_insignias_01..03` — silver vs olive chevrons,
+  1/2/3 per tier), faction keyed off the unit's GLB model pair
+  (`UNIT_MODEL[def.id][factionVariant(owner)-1]`); procedural chevrons kept as
+  load-failure fallback. Damage-state review: buildings already run the
+  2-stage smoke/fire chain (§22 V6 consumer chain) + frac-based material
+  darkening; units have NO damage presentation beyond HP bars — no local
+  evidence of the original's damaged-unit look, filed [AWAITING R1 device
+  refs] rather than speculatively coded. Placement note (pre-existing, not
+  V5-introduced): the HQ pole/flag stand ~2.5 units above the GLB HQ roof
+  (sprite-HQ-era tuning never re-derived after the GLB migration); visible in
+  normal framing, exact placement calibration joins the R1 session. QA:
+  8/8 suites green; flag cloths probed pixel-level (seat field + white emblem
+  + dark underlay); all four seat cloths + neutral rendered and screenshotted;
+  rank chevrons painted through the live `paintRank` path at tiers 1–3 both
+  factions (`reverse/evidence/visual/v5-*.png`); V8 harness v53-vs-v54 A/B via
+  HEAD worktree — identical per-scenario hash SETS across repeated runs
+  (per-run flicker between two rasterization states exists in this sandbox's
+  headless Chromium and appears in BOTH builds — no V5-caused hash shift at
+  8×8 aHash resolution; the emblem detail is sub-cell at harness poses).
+  Renderer-only; sim/network/replay untouched; v=54.

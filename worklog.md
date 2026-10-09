@@ -1824,3 +1824,60 @@ Work Log:
 
 Stage Summary:
 - Both Task-51 "next" surfaces closed to bounded residuals: the MaxStatValueProvider consumption side is fully decoded (CONFIRMED constants + corrected contract/labels), and every band store is classified with the reset + composition decoded; residuals = 3 join-arm sources (mechanism confirmed) + $UG/$yG chain terminals. Next RE surfaces: R1 device captures (on-device Frida run still pending), attack-path fire-discipline fidelity fold-in, remaining Phase 5 adjacents (bombard duration already bounded, hide/same-speed acts documented), Obfuz $Pg jump-table case map if the band join values ever matter numerically.
+
+---
+Task ID: 51b
+Agent: Super Z (main)
+Task: V5 — units/buildings presentation (flags + rank insignias from extracted art; damage-state review)
+  (ID 51b: upstream e13144a already holds different "Task ID: 51"/"Task ID: 52"
+  entries — the Build I/J reverse-engineering sessions; append-only order
+  preserved, no entry edited)
+
+Work Log:
+- Environment rebuilt mid-task: sandbox workspace was reset between sessions
+  (clone, PAT, scripts gone); repo re-cloned anonymously at origin 58fcae3
+  (Task 49's 39c6f46 + Task 50's V6/V6b line verified present). Multi-agent
+  worklog restored from the surviving /tmp snapshot.
+- Evidence pass: procedural flags located (HQ 1.15x0.7 + building 0.85x0.5
+  seat-color planes, animateFlags vertex wave); rank icons = canvas gold
+  chevrons. Scanned the 6.9.18 string literals -> original flag addresses
+  `other/flag_2|flag_factory|marine_flag` + `AtlasClanEmblems0/1`; sprites
+  themselves [NOT EXTRACTED]. BUT the provenance-verified curated zip holds
+  the authentic art: `ico_emblem_conf/res` (white line-art faction emblems),
+  `f1/f2_insignias_01..03` (the REAL 1/2/3-chevron veterancy art, silver vs
+  olive), `int_ranks_1024x512` (profile-rank shields — NOT unit veterancy),
+  `area_flag*` (capture-area overlays). 8 assets deployed byte-verbatim to
+  docs/assets/ui/ (emblem-conf/res, insignia-f{1,2}-{1,2,3}).
+- Implementation (asserted patch scripts/patch_v5.py, 10 anchors, all
+  verified before write): loadV5Presentation() builds 5 cloth textures
+  (seat-color field + white emblem + dark underlay, factionVariant pairing
+  seats 1/3=conf 2/4=res, neutral gray no-emblem) + insignia image table;
+  HQ + building flag materials take map=flagTex[owner] (white tint) with
+  flat-color fallback; syncBuildings owner change swaps the texture;
+  makeUnitView stores faction from the GLB model pair; paintRank(c, tier,
+  faction) draws the extracted chevron (procedural fallback kept);
+  cache-bust v=53 -> v=54. Renderer-only — sim/network/replay untouched.
+- Tests 8/8 suites green post-patch (877/877 assertions, real run).
+- Live QA (local serve + headless probes): flagTex 0-4 + both insignia
+  tables load; battle flags carry maps (3/3 owner>0 buildings); cloth
+  canvases pixel-verified (seat field corner, white emblem, underlay);
+  isolated render + in-scene shots confirm the emblem flag flying at the HQ
+  (close-up "invisibility" was pre-existing frustum cropping — flag floats
+  ~2.5u above the GLB roof, sprite-HQ-era tuning, recorded for R1
+  calibration); 4-seat cloth grid + f1/f2 chevron tiers 1-3 verified through
+  the live paintRank path. Evidence: reverse/evidence/visual/v5-flag-cloth-
+  grid.png, v5-flag-hq-live.png, v5-rank-insignias.png.
+- V8 harness A/B (HEAD-worktree v=53 vs working-tree v=54, 6 scenarios x
+  repeated runs): identical per-scenario hash SETS in both builds; per-run
+  flicker between two rasterization states exists in this sandbox's headless
+  Chromium and appears in BOTH versions — no V5-caused shift at 8x8 aHash
+  resolution (emblem detail sub-cell at harness poses). results.json
+  re-captured at v=54 (merged full run).
+
+Stage Summary:
+- V5 closed: building flags + unit veterancy now render authentic extracted
+  art; damage-state review filed (building chain complete; unit damage
+  presentation [AWAITING R1]; HQ flag placement calibration [AWAITING R1]).
+- Remaining §21: V7 (UI font/HUD metrics), V8 device refs + R1 device session
+  (operator-run), plus the registered R2 constants fold-in and the Task-49
+  pipeline flag (fix_empty_skins fold-in + hero assembly script).
