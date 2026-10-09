@@ -1,0 +1,169 @@
+{
+  "$schema_note": "Machine-readable evidence/task registry (routing layer). Statuses: CONFIRMED | PARTIALLY_CONFIRMED | INFERRED | UNKNOWN | BLOCKED. Gap IDs cross-reference reverse/notes/1-to-1-fidelity-audit.md section 6; investigation IDs continue audit section 7 (R1-R11). Do not duplicate evidence content here - reference authoritative artifacts.",
+  "game_version": "6.9.18",
+  "updated": "2026-10-09",
+  "provenance": {
+    "xapk_sha256": "1a41e033...",
+    "libil2cpp_sha256": "8ace05bb...",
+    "global_metadata_sha256": "d2e8dd0d...",
+    "dump_cs_sha256": "0050e67d...",
+    "dumper": "Il2CppDumper v6.7.46 (metadata v31)"
+  },
+  "investigations": {
+    "R1": {
+      "question": "What are the actual per-unit/per-weapon balance numbers (server-delivered prototypes)?",
+      "status": "BLOCKED",
+      "blocker": "no compatible device / installed client / authenticated session in this environment",
+      "evidence": [
+        "reverse/evidence/prototype-data/on-device-run.md",
+        "reverse/evidence/prototype-data/schema.json",
+        "reverse/notes/r1-prototype-data-pipeline.md",
+        "reverse/tools/r1_dictionary_dump.js"
+      ],
+      "repro": "user-run Frida session per on-device-run.md; offline import path ready",
+      "converts_gaps": ["B1"],
+      "next_action": "user supplies device session; run r1_dictionary_dump.js; import via offline pipeline"
+    },
+    "R2": {
+      "question": "Obfuz pool plaintext constants",
+      "status": "CONFIRMED",
+      "result": "697/697 static decode (629 int, 66 string, 2 float), zero device runs",
+      "evidence": [
+        "reverse/evidence/obfuz/inventory.md",
+        "reverse/evidence/obfuz/obfuz-pool-values.json",
+        "reverse/tools/obfuz_static_decode.py",
+        "reverse/tools/obfuz_secret_key.bin"
+      ],
+      "repro": "python3 reverse/tools/obfuz_static_decode.py (needs libil2cpp.so + global-metadata.dat from XAPK)",
+      "next_action": "keep decoder reproducible; reuse values to pin new branch constants"
+    },
+    "R3": {
+      "question": "Native tick rate / timing grid",
+      "status": "BLOCKED",
+      "blocker": "on-device instrumentation required",
+      "converts_gaps": ["B6"],
+      "next_action": "device tick instrumentation; FIRE_TICK_LENGTH=4 anchor already pinned"
+    },
+    "R4": {
+      "question": "Live damage application semantics (cadence, ordering, rounding)",
+      "status": "BLOCKED",
+      "blocker": "client pipeline ends at UI boundary; live semantics need controlled device experiments",
+      "evidence": ["reverse/notes/damage-pipeline-native-analysis.md"],
+      "converts_gaps": ["B4"],
+      "next_action": "dev-plan Phase 24 scenario A/B with frame-stepped video vs browser replay"
+    },
+    "R5": {
+      "question": "$Pg (UnitAct) branch micro-logic incl. defend leash + band dataflow",
+      "status": "CONFIRMED",
+      "result": "leash = client-computed band+1 (XOR pair Value3^Value4=1); 19 band stores classified (reset=Value1*0, +1 composition, 14 spills, 3 jump-table joins bounded residual); DEFEND/BOMBARD/BEHOLDER constants decoded; $UG/$yG selector chains flattened",
+      "evidence": [
+        "reverse/evidence/combat/pg-branches-decode.txt",
+        "reverse/evidence/combat/band-dataflow.txt",
+        "reverse/evidence/combat/band-dataflow-2.txt",
+        "reverse/evidence/combat/band-dataflow-3.txt",
+        "reverse/notes/defend-chase-takepos-decode.md",
+        "reverse/notes/maxstat-tier-band-decode.md"
+      ],
+      "residual": "3 join-arm numeric sources + $UG/$yG chain terminals (mechanism confirmed, values bounded)",
+      "next_action": "closed unless join-arm values matter numerically (jump-table case map)"
+    },
+    "R6": {
+      "question": "TakePositions 15-bit cell-class per-bit semantics",
+      "status": "PARTIALLY_CONFIRMED",
+      "result": "masks 0x215F/0xFEE0/0xFEFD + AND-reduce clamp + per-hero partition CONFIRMED; bit names INFERRED",
+      "evidence": ["reverse/evidence/combat/takepos-cells-decode.txt", "reverse/notes/defend-chase-takepos-decode.md"],
+      "next_action": "bit-name cross-ref vs map prefab cell classes (offline)"
+    },
+    "R7": {
+      "question": "Native visibility/sight rules",
+      "status": "UNKNOWN",
+      "converts_gaps": ["H4"],
+      "next_action": "xref scan of sight consumers (UnitStateType.sight/sight_curr) in client code (offline-startable)"
+    },
+    "R8": {
+      "question": "m_bulletTrajectoryType / m_gravity consumer semantics",
+      "status": "UNKNOWN",
+      "evidence": ["reverse/evidence/data-model/weapon-schema.json"],
+      "converts_gaps": ["G10"],
+      "next_action": "xref scan of WeaponType fields 0x3C/0x3E in weapon/spawn code (offline-startable)"
+    },
+    "R9": {
+      "question": "Native client-server battle wire protocol",
+      "status": "BLOCKED",
+      "blocker": "traffic capture needs device + unpinning decision",
+      "converts_gaps": ["P1r"],
+      "next_action": "TLS-unpin + capture or Frida message hooks"
+    },
+    "R10": {
+      "question": "Original camera/UI metrics for calibration",
+      "status": "BLOCKED",
+      "blocker": "no device screen recordings; V8 A/B harness ready",
+      "evidence": ["reverse/evidence/visual/v8-ab-v54-v55.json"],
+      "converts_gaps": ["H8", "H9"],
+      "next_action": "record device gameplay per dev plan Phase 18/20"
+    },
+    "R11": {
+      "question": "Do naval/aircraft/hero prefabs exist in downloadable Addressables content?",
+      "status": "BLOCKED",
+      "blocker": "device storage / remote catalogs unreachable from sandbox",
+      "evidence": ["reverse/notes/hero-prefabs-10-remaining.md", "reverse/notes/vfx-asset-prefix-check.md"],
+      "converts_gaps": ["B2", "B3"],
+      "next_action": "pull assets/aa/catalog.json + bundles, re-run pipeline/tools/unpack_bundles.py"
+    }
+  },
+  "findings": {
+    "F-damage-armor-curve": {
+      "claim": "CalculateWeaponArmorDamage is the sole mitigation site; mitigation factor in [0.1,1.0], constants 0.1f/0.9f only; no per-armor-type coefficient exists",
+      "status": "CONFIRMED",
+      "labels": ["[DECOMP]", "[NATIVE]"],
+      "evidence": ["reverse/notes/combat-stats.md", "reverse/notes/armor-stat-helper-native-analysis.md"]
+    },
+    "F-maxstat-get-fraction": {
+      "claim": "MaxStatValueProvider.Get = min(piecewise fraction, 1.0): 0.8/0.15/0.05 non-armor rung fractions; 0.9/0.1 armor-damage keys; routing (1<<(stat-61))&0x3807 -> {61,62,63,72,73,74}",
+      "status": "CONFIRMED",
+      "labels": ["[DECOMP]"],
+      "evidence": ["reverse/notes/maxstat-tier-band-decode.md", "reverse/evidence/estat/estat-get-decode.txt", "reverse/notes/units/estat-stat-models.md"]
+    },
+    "F-maxstat-factory-labels": {
+      "claim": "Max1(v)->BaseMax; Max2(v1,v2)->FirstMax=v1,BaseMax=v2; Max3(v1,v2,v3)->FirstMax=v1,BaseMax=v2,MegaMax=v3; ascending ladder values unchanged",
+      "status": "CONFIRMED",
+      "labels": ["[DECOMP]"],
+      "evidence": ["reverse/notes/units/estat-stat-models.md"]
+    },
+    "F-defend-leash-client-computed": {
+      "claim": "Defend leash = band+1 computed inside $Pg (client-side); 'server-delivered leash' retired; browser tether value remains gameplay-tuned pending join-arm values",
+      "status": "CONFIRMED",
+      "labels": ["[DECOMP]"],
+      "evidence": ["reverse/notes/defend-chase-takepos-decode.md", "reverse/evidence/combat/pg-branches-decode.txt"]
+    },
+    "F-weapon-surface": {
+      "claim": "WeaponType.type 0x24 = SHELL_TYPE_*; aiming 0x8B = 6-class target bitmask; OCCUPATION_FOR_AIR=0x1A; hit_bonus client-inert; no crit system in client",
+      "status": "CONFIRMED",
+      "labels": ["[DECOMP]"],
+      "evidence": ["reverse/notes/weapon-type-surface-native-analysis.md"]
+    },
+    "F-balance-values-server-side": {
+      "claim": "Per-unit hp/price/damage prototype dictionaries are runtime-delivered, absent from APK",
+      "status": "CONFIRMED",
+      "labels": ["[NATIVE]"],
+      "evidence": ["reverse/notes/unit-roster-native-analysis.md", "reverse/notes/data-model-extraction.md"]
+    }
+  },
+  "browser_foldins": {
+    "v56": {
+      "task": "Task 53 (this session)",
+      "changes": [
+        "DEFEND_TETHER provenance: server-delivered -> client-computed band+1 (Build I evidence)",
+        "Get-fraction contract comment: clamp wording -> normalized fill fraction (Build J)",
+        "Tier rung labels: [BaseMax,FirstMax,Mega] -> [FirstMax,BaseMax,Mega] per factory decode (Build J)"
+      ],
+      "behavior_change": false,
+      "tests": "full suite green before/after"
+    }
+  },
+  "blockers_summary": {
+    "device_required": ["R1", "R3", "R4", "R9", "R10", "R11"],
+    "offline_open": ["R6", "R7", "R8"],
+    "note": "See reverse/notes/reverse-engineering-roadmap.md for sequencing rationale"
+  }
+}
