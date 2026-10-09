@@ -719,3 +719,13 @@ fully executable without a device, and de-risks V4's calibration pass.
   V7-caused canvas change; `v8-ab-v54-v55.json` +
   `results.json` re-captured at v=55. Renderer-only; sim/network/replay
   untouched.
+
+- **Pipeline flag closure (2026-10-09, Task 53)**: the Task-49 flagged
+  fold-in is done — fix_empty_skins.py semantics now live in
+  assemble_v2.py save2 (had_skins-gated "skins" emission, JOINTS_0-gated
+  node skin refs, order-preserving skin filter), and the Task-16 ad-hoc
+  hero pass is committed as pipeline/assemble_heroes.py (bundle prefixes
+  from the 5,515-bundle Material/GameObject hunt). Regeneration is now
+  one-command reproducible: 27/27 roster GLBs byte-identical (including
+  the 5 Task-49 drifts), heroes BIN-identical with a documented 1-ulp
+  node-TRS JSON delta (Task-16 arithmetic; no geometry/skin/anim change).

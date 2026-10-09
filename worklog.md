@@ -1952,3 +1952,56 @@ Stage Summary:
 - Live-site hygiene restored (conflict garbage no longer served); RE workflow layer now exists (index + roadmap + registry) and routes all future investigation through the fidelity audit + registry IDs.
 - Build I/J evidence is now reflected in the shipped code's provenance comments, closing Task 52's three recorded fold-in candidates.
 - Next (queued in roadmap): R7 sight/visibility consumer scan, R8 trajectory/gravity consumers, H1 hash-coverage extension, R6 bit-name cross-ref — all offline; R1 device run remains the single highest-value unlock (user-supplied session).
+
+---
+Task ID: 53
+Agent: Super Z (main)
+Task: pipeline flag closure — fold fix_empty_skins.py into assemble_v2.py + commit the Task-16 hero assembly script (one-command reproducibility)
+
+Work Log:
+- Baseline: 8/8 suites green at v=56; upstream had moved (16 Build I/J note
+  commits + the index.html conflict-marker fix + central RE index + comment
+  fold-in); pipeline/ untouched upstream — rebase clean onto d634560.
+- fix_empty_skins semantics re-derived from surviving evidence (raw
+  assembler output in the old sandbox vs committed GLBs): a skin is dropped
+  iff no node-mesh primitive carries JOINTS_0/WEIGHTS_0; node skin refs
+  drop with it; kept skins keep their indices (every corpus keep is index
+  0); orphaned inverseBindMatrices accessors stay (accessor/bufferView
+  counts match raw); "skins" key emitted iff the assembler ever created a
+  skin — f1_veh_hammer ships "skins":[], f1_veh_shield has no key.
+- Fold-in: GLB2.save2 (pipeline/assemble_v2.py) now runs the strip before
+  serialization (had_skins captured pre-strip; same node walk; same
+  order-preserving filter). tools/fix_empty_skins.py retained as the
+  historical post-pass reference.
+- Byte-identity proof: full 27-unit re-run — 27/27 BYTE-IDENTICAL to
+  committed docs/assets/models, including the 5 previously drifted units
+  (f1_bld_bunker, f1_bld_power, f1_veh_hammer, f1_veh_zeus,
+  f2_avia_helicopter) that Task 49 had to bake instead of replace. The
+  assembler is now the single source of truth for the roster.
+- Hero hunt: prefab names never appear in raw bundle bytes (LZ4) —
+  Material/GameObject name hunt via UnityPy over all 5,515 bundles_all
+  files (11s, 0 errors). Found: f1_hero_cerber -> 2bc937c0… (+ hero_cerber/
+  commando GameObjects; _meta companion 802c2f3c…), f1_hero_seraphim ->
+  75eeec1c… (meta 63a5618e…/746a7f6b…), f1_bld_hero -> 50dddfac…; also
+  located f2_bld_hero (8d25c057…, never assembled — out of scope).
+- pipeline/assemble_heroes.py: minimal driver over the exact assemble_v2
+  unit path with the verified prefixes (same GLB2 writer, CLIP_PRIORITY
+  filter, V-down UVs, empty-skins fold-in).
+- Hero verification: f1_hero_cerber BIN chunk BYTE-IDENTICAL to committed
+  (480,232 B — geometry/skins/anims/UVs bit-exact); f1_hero_seraphim
+  (rotate_cw/w1_round/w2_round) and f1_bld_hero (5 meshes 5 skins, no
+  anims) match the committed clip/skin structure. JSON drift = 1-ulp
+  floats in node TRS components only (Task-16-era quaternion arithmetic
+  not bit-reproducible; sub-visual, no geometry/skin/anim delta) — honest
+  caveat in the script docstring.
+- The empty-skins fold-in is a no-op for heroes (all hero skins used).
+- Tests 8/8 suites green post-rebase. No game.js/index.html change — no
+  §35.1 bump (live stays v=56).
+- Commits: a90a339 (pipeline, rebased onto d634560) + this docs commit.
+
+Stage Summary:
+- The Task-45/49 pipeline flag is closed: GLB regeneration is one-command
+  reproducible from committed code (27/27 byte-identical; heroes BIN-
+  identical with the documented 1-ulp TRS caveat). Remaining roadmap:
+  V8 device refs + R1 operator device session (runbook ready), R2
+  constants fold-in.
