@@ -38611,7 +38611,16 @@ void main() {
   var wrap = $("wrap");
   var css = document.createElement("style");
   css.textContent = `
-html,body{margin:0;height:100%;background:#0c100c;font-family:system-ui,Segoe UI,Roboto,sans-serif;overflow:hidden}
+/* V7-a [EXT] original HUD font recovered: Unity Font 'MainFont' = Refrigerator
+   Deluxe Bold — TTF byte-verbatim from m_FontData (bundle e3ef60f1…, sha256
+   53380e7a…), corroborated by the 'Fonts/MainFont.asset' string literal and the
+   'RefrigeratorDeluxe-Bold Material' + 1024x1024 TMP atlases (evidence PNGs
+   docs/assets/ui/tmp-*-atlas-1024x1024.png). V7-b typographic anchor:
+   unitsPerEm 1024, capHeight 717 (0.700em), xHeight 481 (0.470em),
+   typoAsc/Desc 844/-180. Panel paddings/icon sizes remain [SPEC] until the R1
+   device screenshots (Phase-24 measurement; audit §18/§19/§22). */
+@font-face{font-family:"AOW3 MainFont";src:url(assets/ui/mainfont-font.ttf) format("truetype");font-display:swap;font-weight:400 900;font-style:normal}
+html,body{margin:0;height:100%;background:#0c100c;font-family:"AOW3 MainFont",system-ui,Segoe UI,Roboto,sans-serif;overflow:hidden}
 #wrap{position:relative;width:100vw;height:100vh;overflow:hidden;background:#000;user-select:none;-webkit-user-select:none}
 #cv{position:absolute;inset:0;touch-action:none;cursor:crosshair}
 #selbox{position:absolute;display:none;border:1px dashed rgba(255,255,255,.85);background:rgba(255,255,255,.08);z-index:5;pointer-events:none}
@@ -38678,8 +38687,9 @@ button{cursor:pointer;border:0;border-radius:8px}
 .card .qn{position:absolute;right:4px;top:4px;background:rgba(16,185,129,.95);color:#000;font-size:10px;font-weight:800;border-radius:3px;padding:0 4px}
 .gold{color:#fcd34d}.green{color:#6ee7b7;font-size:11px;font-weight:400}.cp{color:#7dd3fc;font-size:12px;font-weight:700}
 #home{background:rgba(255,255,255,.1);color:#fff;font-size:11px;padding:4px 8px;border:1px solid rgba(255,255,255,.2)}
-#over{background:linear-gradient(180deg,rgba(2,4,6,.86),rgba(2,4,6,.94)),url(assets/ui/menu-bg.png) center/cover}
-#verdict{font-size:52px;font-weight:900}
+#over{background:linear-gradient(180deg,rgba(2,4,6,.86),rgba(2,4,6,.94)),url(assets/ui/menu-bg.png) center/cover;flex-direction:column;gap:8px}
+#over #verdict-sub{margin:0}
+#verdict{font-size:52px;font-weight:900;letter-spacing:2px;padding:16px 36px 18px;background:url(assets/ui/head_back_win.png) center/100% 100% no-repeat;border-radius:2px;text-shadow:0 3px 14px rgba(0,0,0,.85)}
 .hidden{display:none!important}
 .ico-cp{height:16px;filter:drop-shadow(0 1px 1px rgba(0,0,0,.6))}
 .bimg{height:36px;max-width:66px;object-fit:contain;filter:drop-shadow(0 1px 2px rgba(0,0,0,.55))}
@@ -38708,6 +38718,14 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
 #report .ra{color:#f87171;font-weight:800;text-align:right}
 #report tbody th{color:rgba(255,255,255,.6);font-weight:600;text-align:center;font-size:10px;letter-spacing:1.5px}
 #report td{color:#fff;font-weight:800;text-align:center}
+/* V7-c [EXT] authentic result-screen art: per-row scoreboard backdrop
+   back_player_panel.png (381x134, curated zip sha256 fff43c4d…) shown at native
+   resolution (middle-band crop keeps the hatch + angled edge un-blurred); the
+   verdict is framed by head_back_win.png (48x85, yellow header rules). The
+   row->panel mapping is [SPEC] — no original end-screen screenshot exists in
+   the sandbox; calibration joins the R1 device session (audit §21 V7). */
+#report tbody tr{background:url(assets/ui/back_player_panel.png) center/381px 134px no-repeat}
+#report tbody tr td,#report tbody tr th{border-bottom-color:rgba(0,0,0,.35)}
 `;
   document.head.appendChild(css);
   var sim = null;
