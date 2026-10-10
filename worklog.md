@@ -2364,3 +2364,41 @@ Stage Summary:
 - Next: R1 device session remains the highest-value unblock (user-supplied); optional
   offline items: per-unit voice layer from note §2, M3 weapon->sound table from audio
   bundles, B7 path-slot system (deliberately last).
+
+---
+Task ID: 61
+Agent: main (RE session, orthogonal-workstream #2 — R8 numeric pass taken from the registry queue after the parallel session closed R7/R6/H1/R12; audio and sim-kernel files untouched)
+Task: R8 numeric .so pass — decode the ballistic arc/gravity math at the 392 structural-pass RVA anchors (converts audit G10's math half; registry R8 PARTIAL -> CONFIRMED)
+
+Work Log:
+- Repo sync: local tree carried 1201 mode-only "modifications" (umask artifact, 0 content delta) -> core.fileMode false (local-only), ff-pulled d634560..4e426ce (parallel session's R7 p3 / R8 structural / H1 / R6 / R12). Baseline: 9/9 suites green (announcer 10/10 included), HEAD 4e426ce, tree clean.
+- Environment re-verified: libil2cpp.so /home/z/my-project/aow3-extract/ sha256 8ace05bb… MATCH (Task 60 re-acquisition), dump.cs 0050e67d…, capstone 5.0.7 reinstalled (env reset).
+- Wrote reverse/tools/r8_numeric_arc_decode.py (armor-harness lineage): PT_LOAD vaddr<->file-offset map, rodata float annotation, 30 anchored functions disassembled, plus a whole-binary BL xref (41,649,815 words scanned, bulk-unpacked, bisect segment map). Two tool bugs found and fixed in-flight: Capstone 5 operand types are REG=1/IMM=2/MEM=3 (the ldr annotation arm had IMM for the dest reg — all float annotations were dead until fixed), and plain ldr/ldrsb field loads now annotated against the WeaponType offset table.
+- get_EngineType x6 [DECOMP]: Linear 0 (mov w0,wzr), Ballistic 1, BallisticHigh 2, SelfDirected 3, ChainLighting 4, Adjustable 6. TAXONOMY CORRECTION: the structural pass's "UpAndSelfDirected=6 — no dedicated class, open residual" is resolved — slot 6 IS AdjustableBallisticBulletEngine (0x80B2B30 returns 6).
+- Gravity [DECOMP] CalculateGravity 0x80B25A8: g = (short)[owner+0x48 -> WeaponType+0xA0] / 100.0f, divider INLINED as mov w8,#0x42C80000 (not rodata); runtime offset 0xA0 re-confirmed in code.
+- THE ARC LAW [DECOMP] CalculateHeightCoefficients(duration) 0x80B2050 -> m_pa=-0.5g @0x84, m_pb=0.5g·k² @0x88, m_pc=k=duration/200 @0x8C (field names m_pa/m_pb/m_pc per dump.cs:276258-60); CalculateAltitudeTime 0x80B2604 = t/100; CalculateCurrentPosition 0x80B2200 = X/Z lerp(orig->target, elapsed/m_duration) + m_pa·(alt−m_pc)² + m_pb on Y, MaxPositionY @0xA4 running apex tracker, MIN_MOVE_SQR=1e-6f (rodata 0x1B09CBC) idle gate on m_prevPosition/m_prevElapsedTime. CLOSED FORM: height(t) = 0.5·g·(k² − (t/100−k)²) — h(0)=0, h(duration)=0, apex exactly at t=duration/2 with height 0.5g·k². Accelerating path: CalculatePositionTime 0x80B25DC = T(t)/(2·T(m_duration)), T(n)=n(n+1)/2 triangular easing. EngineInitiate 0x80B1BC8: m_offsetTargetPosition = statics[0x9674DE0].fields[+0x18..+0x20] × 0.2f (rodata 0x1B09B48=0.2f).
+- Leviathan [DECOMP] CalculateGravity 0x80B5A18 = base g then min/max gravity-divider interpolation from two WeaponType virtual getters + target/curve state; GetClamped01Time/position/altitude overrides verbatim in evidence. SelfDirected [DECOMP] 0x80B7E40: t̂=millisecs/duration Hermite-style polynomial over pos0/1/2+vel0/1/2 buffers; MissTargeting/curve-mode branches verbatim.
+- Miss flight [DECOMP+SERVER-DATA] LCBulletMissed.RetargetingBullet 0x81429DC: miss direction × MISSED_FLIGTH_DISTANCE (float instance field @0x20), duration × DURATION_TIME_SCALER (int instance field @0x1C) — dump.cs:290068-9 proves both are per-instance SERVER-delivered values, not binary constants (R1-session carryable).
+- Sim readers settled [DECOMP+NEGATIVE]: Bullet.get_AccelerateAndGuide 0x458FD60 is 6 instructions — return (sbyte)we_type.bulletTrajectoryType(@0x9E) == 6 (guided family) — the sim DOES read the trajectory field directly (inlined load); whole-binary BL xref of get_BulletTrajectoryType/get_Gravity/get_Accelerating = 0 callers each (inlined getters; also satisfies the structural note §9(6) question). Gravity has NO sim-side reader — purely client arc input.
+- Fold-in (docs/game.js, COMMENT-ONLY, v=61 -> v=62 per §35.1): fireShell comment block extended with the engine-id table + closed-form arc law + AccelerateAndGuide predicate + miss-flight server-field classification; updateProjectiles comment extended with the height law + SelfDirected Hermite pointer. Zero behavior delta — 9/9 suites green, node --check OK.
+- Cross-file updates: note r8-trajectory-gravity-consumers.md (header, §3 taxonomy correction + confirmed engine ids, new §7 numeric results A-G, §8 verdict updated, §9 implementation guidance updated); registry R8 -> CONFIRMED (math) with 4 new key findings + evidence rows; roadmap R8 row CLOSED, priority-B item 2 struck, post-session queue item 2 struck; audit §6 projectile-travel row -> CONFIRMED (math), §6 G10 -> CONFIRMED math, §7 R8 row updated; reverse/README.md new recovered-areas row "Trajectory/gravity arc law".
+- Evidence: reverse/evidence/combat/r8-numeric-arc-decode.txt (4,147 lines, 30 functions + BL xref, sha-pinned). Tool: reverse/tools/r8_numeric_arc_decode.py.
+
+Stage Summary:
+- R8 CONFIRMED at the statically-reachable limit: the complete native ballistic arc
+  law is decoded — height(t) = 0.5g·(k²−(t/100−k)²), g=gravity/100, k=duration/200,
+  apex 0.5gk² at t=duration/2 — plus engine family ids (taxonomy corrected: slot 6 =
+  AdjustableBallisticBulletEngine), the accelerating-path triangular easing, the
+  Leviathan divider interpolation, the SelfDirected Hermite shape, and the sim-side
+  AccelerateAndGuide predicate (trajectory==6, direct @0x9E field read).
+- Browser: comment-only fold-in shipped (v=62); the renderer can adopt the closed
+  form the moment R1 per-weapon gravity/trajectory values arrive — no further RE
+  blocks it. Miss-flight MISSED_FLIGTH_DISTANCE/DURATION_TIME_SCALER classified
+  server-data (R1-session carryable).
+- Residual: per-weapon VALUES (gravity/trajectory/accelerating rows) remain server
+  balance data — same class as R1's dictionary; nothing else.
+- Next (orthogonal lane): remaining offline-open items are thin — optional R12
+  per-unit voice layer and M3 weapon-sound table (other session's declared lane),
+  B7 path-slot system (deliberately last), or wait on user direction / R1 device
+  session (highest value; now also carries R8's per-weapon values + miss-flight
+  params + R6 cell overlay).

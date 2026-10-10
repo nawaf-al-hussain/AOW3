@@ -1,396 +1,402 @@
 {
-  "$schema_note": "Machine-readable evidence/task registry (routing layer). Statuses: CONFIRMED | PARTIALLY_CONFIRMED | INFERRED | UNKNOWN | BLOCKED. Gap IDs cross-reference reverse/notes/1-to-1-fidelity-audit.md section 6; investigation IDs continue audit section 7 (R1-R11). Do not duplicate evidence content here - reference authoritative artifacts.",
-  "game_version": "6.9.18",
-  "updated": "2026-10-10",
-  "provenance": {
-    "xapk_sha256": "1a41e033...",
-    "libil2cpp_sha256": "8ace05bb...",
-    "global_metadata_sha256": "d2e8dd0d...",
-    "dump_cs_sha256": "0050e67d...",
-    "dumper": "Il2CppDumper v6.7.46 (metadata v31)"
+ "$schema_note": "Machine-readable evidence/task registry (routing layer). Statuses: CONFIRMED | PARTIALLY_CONFIRMED | INFERRED | UNKNOWN | BLOCKED. Gap IDs cross-reference reverse/notes/1-to-1-fidelity-audit.md section 6; investigation IDs continue audit section 7 (R1-R11). Do not duplicate evidence content here - reference authoritative artifacts.",
+ "game_version": "6.9.18",
+ "updated": "2026-10-10",
+ "provenance": {
+  "xapk_sha256": "1a41e033...",
+  "libil2cpp_sha256": "8ace05bb...",
+  "global_metadata_sha256": "d2e8dd0d...",
+  "dump_cs_sha256": "0050e67d...",
+  "dumper": "Il2CppDumper v6.7.46 (metadata v31)"
+ },
+ "investigations": {
+  "R1": {
+   "question": "What are the actual per-unit/per-weapon balance numbers (server-delivered prototypes)?",
+   "status": "BLOCKED",
+   "blocker": "no compatible device / installed client / authenticated session in this environment",
+   "evidence": [
+    "reverse/evidence/prototype-data/on-device-run.md",
+    "reverse/evidence/prototype-data/schema.json",
+    "reverse/notes/r1-prototype-data-pipeline.md",
+    "reverse/tools/r1_dictionary_dump.js"
+   ],
+   "repro": "user-run Frida session per on-device-run.md; offline import path ready",
+   "converts_gaps": [
+    "B1"
+   ],
+   "next_action": "user supplies device session; run r1_dictionary_dump.js; import via offline pipeline"
   },
-  "investigations": {
-    "R1": {
-      "question": "What are the actual per-unit/per-weapon balance numbers (server-delivered prototypes)?",
-      "status": "BLOCKED",
-      "blocker": "no compatible device / installed client / authenticated session in this environment",
-      "evidence": [
-        "reverse/evidence/prototype-data/on-device-run.md",
-        "reverse/evidence/prototype-data/schema.json",
-        "reverse/notes/r1-prototype-data-pipeline.md",
-        "reverse/tools/r1_dictionary_dump.js"
-      ],
-      "repro": "user-run Frida session per on-device-run.md; offline import path ready",
-      "converts_gaps": [
-        "B1"
-      ],
-      "next_action": "user supplies device session; run r1_dictionary_dump.js; import via offline pipeline"
-    },
-    "R2": {
-      "question": "Obfuz pool plaintext constants",
-      "status": "CONFIRMED",
-      "result": "697/697 static decode (629 int, 66 string, 2 float), zero device runs + 8/8 $Pg live-pool holder-segment constants materialized reproducibly (Task 55: raw words recorded, Build I ad-hoc decode closed)",
-      "evidence": [
-        "reverse/evidence/obfuz/inventory.md",
-        "reverse/evidence/obfuz/obfuz-pool-values.json",
-        "reverse/tools/obfuz_static_decode.py",
-        "reverse/tools/obfuz_secret_key.bin",
-        "reverse/evidence/obfuz/obfuz-livepool-values.json",
-        "reverse/tools/obfuz_livepool_decode.py"
-      ],
-      "repro": "python3 reverse/tools/obfuz_static_decode.py (needs libil2cpp.so + global-metadata.dat from XAPK)",
-      "next_action": "keep both decoders reproducible; reuse values to pin new branch constants (live-pool materialization DONE — Task 55)"
-    },
-    "R3": {
-      "question": "Native tick rate / timing grid",
-      "status": "BLOCKED",
-      "blocker": "on-device instrumentation required",
-      "converts_gaps": [
-        "B6"
-      ],
-      "next_action": "device tick instrumentation; FIRE_TICK_LENGTH=4 anchor already pinned"
-    },
-    "R4": {
-      "question": "Live damage application semantics (cadence, ordering, rounding)",
-      "status": "BLOCKED",
-      "blocker": "client pipeline ends at UI boundary; live semantics need controlled device experiments",
-      "evidence": [
-        "reverse/notes/damage-pipeline-native-analysis.md"
-      ],
-      "converts_gaps": [
-        "B4"
-      ],
-      "next_action": "dev-plan Phase 24 scenario A/B with frame-stepped video vs browser replay"
-    },
-    "R5": {
-      "question": "$Pg (UnitAct) branch micro-logic incl. defend leash + band dataflow",
-      "status": "CONFIRMED",
-      "result": "leash = client-computed band+1 (XOR pair Value3^Value4=1); 19 band stores classified (reset=Value1*0, +1 composition, 14 spills, 3 jump-table joins bounded residual); DEFEND/BOMBARD/BEHOLDER constants decoded; $UG/$yG selector chains flattened",
-      "evidence": [
-        "reverse/evidence/combat/pg-branches-decode.txt",
-        "reverse/evidence/combat/band-dataflow.txt",
-        "reverse/evidence/combat/band-dataflow-2.txt",
-        "reverse/evidence/combat/band-dataflow-3.txt",
-        "reverse/notes/defend-chase-takepos-decode.md",
-        "reverse/notes/maxstat-tier-band-decode.md"
-      ],
-      "residual": "3 join-arm numeric sources + $UG/$yG chain terminals (mechanism confirmed, values bounded)",
-      "next_action": "closed unless join-arm values matter numerically (jump-table case map)"
-    },
-    "R6": {
-      "question": "TakePositions 15-bit cell-class per-bit semantics",
-      "status": "CONFIRMED (13/15 bits NAMED, Task 59; bits 7/14 reserved)",
-      "result": "bit space = ClientBattleCell.m_passMask (short @0x38, dump.cs:262577); CheckByMask(mask) = (mask & m_passMask)==0 (0x8054284) -> takepos masks are BLOCKED-state masks; bits 0-6/8-13 named by consts (Barrier, Land, Forest, Shore, Water, Fog, Dark, Building, BuildingBand, BuildingBarrier, VisAndInvisUnit, VisAndInvisEnemyUnit, CameraInvisible) each writer-confirmed (AddBarrier orr 0x1, BuildingEnter orr 0x100, UnitEnter orr 0x800/0x1000, fog clears 0x20/0x40, SetUnbuild/RemoveUnbuild 0x400, set_IsCameraVisible 0x2000); ctor passMask = 0x2060 (FullInvisibleCellMask) | terrain LUT[0x1BFE5BC] kind0-4 = {Land, Shore, Water, Barrier, Land|Forest} | 0x400 when not crossable; takepos arms == building-exit legality consts: infantry/vehicle/land-heroes 0x215D = LandBuildingExitCellMask, ships 0x214F = WaterBuildingExitCellMask (amphibian 42 + heroes {62,74} 0x2145 = Land+Shore+Water), heli 0x2040 = {Dark, CamInvis} only, fixed-wing/cat-0 0x215F = never placeable; bits 7/14 have no const and no client writer (reserved); map.prefab.bundle re-scanned = geometry-only (6777 transforms, 7 render-side MonoScripts, 0 TextAssets) -> per-cell terrain-kind grid is server battle-setup data (ST serializer family), empirical overlay needs device capture",
-      "evidence": [
-        "reverse/evidence/combat/takepos-cells-decode.txt",
-        "reverse/evidence/combat/r6-checkbymask-decode.txt",
-        "reverse/evidence/combat/r6-passmask-writers.txt",
-        "reverse/evidence/combat/r6-map-prefab-scan.txt",
-        "reverse/notes/defend-chase-takepos-decode.md",
-        "reverse/notes/r6-bitname-crossref.md"
-      ],
-      "tools": [
-        "reverse/tools/r6_bitname_crossref.py",
-        "reverse/tools/r6_lut_and_bits.py",
-        "reverse/tools/r6_passmask_writers.py",
-        "reverse/tools/r6_map_prefab_scan.py"
-      ],
-      "residual": "per-cell kind-vs-geometry overlay (server battle setup needed, R1-session carryable); infantry forest-variant sub-type identity (vt[0x348] field==2, INFERRED); hero ids 60-69/76 + unit 42 names",
-      "next_action": "CLOSED at the statically-reachable limit; fold-in = comment-only (game.js takepos block, blocked-state semantics + bit names, cache bump)"
-    },
-    "R7": {
-      "question": "Native visibility/sight rules",
-      "status": "PARTIALLY_CONFIRMED",
-      "result": "pass 1 (Task 53-session, 9535132): command/act stream server-driven (lockstep-authoritative); ClientUnitVisibleState {-1,0,1 Hidden,2 Visible,3 Detected} + ClientUnitVisibleType {HiddenInForest 2, DetectedInForest 4}; Unit.calcSightCurr (0x45B19F8, plain-named) FULLY DECODED: sight_curr = UnitStateType.sight - (sbyte)in_forest penalty (vtbl 0x1F8->0x1998, provider INFERRED) + boostEffects[3] (BoostType.ACT_SIGHT=3, dump.cs:376978); getters have 0 direct BL callers. pass 2 (Task 54, 775e7d6): client-side kernel CONFIRMED [DECOMP] - FogAct maintains the bitmaps from the deterministic stream + sight stats: 3-state fog (Clear/Fogged/Dark); per-alliance packed int[][] bitmaps (32 cells/int, orr/bic run-masks via FogAct.$rd); reveal shape = precomputed per-radius row-extent sbyte[][] 'fog lines' tables (Battle.$kc 0x2B8/$Mc 0x2D0, BattleAlliance.$kE 0x58); drivers: per-unit $pd->$Qd, per-tick $Od, bullets $sd, flags, GAICommandFogOpener x/y/w/h rects. pass 3 (Task 57, this commit): MEMBERSHIP CONTRACT DECODED [DECOMP] - AICommBuSet.$Ik = |dy|<=r then INCLUSIVE |dx| <= (sbyte)fogLines[r][|dy|]/2 with divisor D=2 ($gK seg[statics+0x3830] 0x5D0/0x3D/0x27428CBF, raw 0xa3af9c8d = Task-55 live-pool raw-word family; statics[4]*statics[8]=0 polarity gadget returns the INSIDE test; null fogLines throws - pass 2's strict-< and null->true corrected); CheckAndCalc.$ec grid constants R=15 S=31(=2R+1, Battle consts $cc/$Cc) M=0xFF N=3 -> 31x31 grid, (byte&0xFF)>>3 = 1/8-cell levels; all constants live in ONE global statics class (klass ccache slot 0x968E4D8) = the class the R2 697-value holder cctor writes (697/697 re-attributed, 631/631 pool records cross-checked); GAICommandFogOpener.execute decoded (rect path $Qd/$qd arg map). PASS-2 CORRECTION: BattleSide.$iu does NOT produce Battle.$Mc - the 0x469794C store is BattleSide.$ch = new List<BuildingDestroyed>(cap); $iu is a plain field initializer (pool-fed container capacities, mix of committed 0x2820 segment and uncommitted segments). fogLines BYTE VALUES remain [BLOCKED-STATIC]: no client producer (stores=setter bodies only, 0 BL callers, no array_new in Battle init surface $HL/$ju/$iu/$Iu/$fb, no strb grid writers, no pool-string tables, ST serializer/deserializer never touch $kc/$Mc) - tables fill via virtual setter dispatch ($ZM/$Pn/$HS callvirt) needing script.json or a device dump. For a consistently-built Euclidean table the native membership is provably identical to the browser's integer-cell hypot disc; delta risk = hand-tuned extents only.",
-      "evidence": [
-        "reverse/notes/sight-fog-native-analysis.md",
-        "reverse/evidence/fog/r7-fogact-scan.txt",
-        "reverse/evidence/fog/r7-sight-writers.txt",
-        "reverse/evidence/fog/r7-writer-functions.txt",
-        "reverse/notes/sight-visibility-native-analysis.md",
-        "reverse/evidence/vision/sight-jumptable-decode.txt",
-        "reverse/evidence/vision/jumptable-decode.txt",
-        "reverse/evidence/vision/fogact-disasm.txt",
-        "reverse/evidence/vision/circle-primitive-disasm.txt",
-        "reverse/evidence/vision/ik-ec-constants-decode.txt",
-        "reverse/evidence/vision/ik-ec-constants.json"
-      ],
-      "tools": [
-        "reverse/tools/r7_fog_sight_scan.py",
-        "reverse/tools/r7_sight_writer_scan.py",
-        "reverse/tools/r7_writer_functions.py",
-        "reverse/tools/r7_ik_ec_constants_decode.py"
-      ],
-      "residual": "fogLines table byte values (virtual-dispatch producer; needs Il2CppDumper script.json or a device dump), $ec rowIdx statics[0x10] class-cctor rewrite (eor-pair 0x82F5D84A/0x82F5D84B), $ec auxiliary bounds (0xabababab filler in committed segment - real runtime segment uncommitted), four uncommitted runtime pool segments ($iu starts 0x144-0x17C families), in-forest penalty provider vtable names (needs script.json), $pd/$GL branch semantics",
-      "converts_gaps": [
-        "H4"
-      ],
-      "next_action": "R7 CLOSED at the statically-reachable limit: architecture + membership contract [DECOMP]; table bytes blocked on script.json/device. Optional later: re-run with script.json to resolve $ZM/$Pn/$HS vtable callers and dump the tables; until then H4 stays PARTIALLY CONFIRMED with the decoded contract recorded. Next queue: R8 trajectory/gravity consumers (->G10), H1 hash-coverage, R6 bit-name cross-ref"
-    },
-    "R8": {
-      "question": "m_bulletTrajectoryType / m_gravity consumer semantics",
-      "status": "PARTIAL (structure recovered offline; numeric arc math needs .so)",
-      "evidence": [
-        "reverse/evidence/combat/trajectory-gravity-consumer-scan.txt",
-        "reverse/notes/r8-trajectory-gravity-consumers.md",
-        "reverse/evidence/data-model/weapon-schema.json"
-      ],
-      "converts_gaps": [
-        "G10"
-      ],
-      "key_findings": [
-        "trajectory type = client engine selector: BulletEngineType Linear=0/Ballistic=1/Ballistic_High=2/SelfDirected=3/ChainLighting=4/Melee=5/UpAndSelfDirected=6 (dump.cs:378800), one engine class per family",
-        "gravity unit fact: AbstractBallisticBulletEngine.GRAVITY_DIVIDER=100 -> field/100 = arc gravity (dump.cs:276256)",
-        "height is parametric in duration (CalculateHeightCoefficients), sim Bullet has NO vel_z; sim timing = duration/duration_next/duration_long triple + lowing @0x97 + needing_guidance @0xAA",
-        "twin surfaces: MapEditorConfig 0x3C/0x3E <-> runtime WeaponType 0x9E/0xA0/0xA2 (+accelerating 0xA2, bul_type 0xA4, boom_type 0xA8); R1 keys bind to the runtime offsets",
-        "LCBulletMissed dispatches miss flight by engine family (BallisticBulletExecute/SelfDirectedBulletExecute)",
-        "392 RVA anchors recorded for the future libil2cpp.so disassembly pass"
-      ],
-      "next_action": "numeric pass when libil2cpp.so re-acquired (anchors ready); browser arc model can be built structurally now, values drop in with R1"
-    },
-    "R9": {
-      "question": "Native client-server battle wire protocol",
-      "status": "BLOCKED",
-      "blocker": "traffic capture needs device + unpinning decision",
-      "converts_gaps": [
-        "P1r"
-      ],
-      "next_action": "TLS-unpin + capture or Frida message hooks"
-    },
-    "R10": {
-      "question": "Original camera/UI metrics for calibration",
-      "status": "BLOCKED",
-      "blocker": "no device screen recordings; V8 A/B harness ready",
-      "evidence": [
-        "reverse/evidence/visual/v8-ab-v54-v55.json"
-      ],
-      "converts_gaps": [
-        "H8",
-        "H9"
-      ],
-      "next_action": "record device gameplay per dev plan Phase 18/20"
-    },
-    "R11": {
-      "question": "Do naval/aircraft/hero prefabs exist in downloadable Addressables content?",
-      "status": "BLOCKED",
-      "blocker": "device storage / remote catalogs unreachable from sandbox",
-      "evidence": [
-        "reverse/notes/hero-prefabs-10-remaining.md",
-        "reverse/notes/vfx-asset-prefix-check.md"
-      ],
-      "converts_gaps": [
-        "B2",
-        "B3"
-      ],
-      "next_action": "pull assets/aa/catalog.json + bundles, re-run pipeline/tools/unpack_bundles.py"
-    },
-    "R12": {
-      "question": "Native announcer/voice trigger system (who plays which cue when)",
-      "status": "CONFIRMED (trigger wiring decoded; clip inventory + prefab delay values RUNTIME)",
-      "converts_gaps": [
-        "M1",
-        "I10"
-      ],
-      "key_findings": [
-        "two systems: AudioBattleVoicesPlayer (dump.cs:80813, per-unit-category voices keyed VoiceCategory x DamageFrom/DestroyedEnemyType/SpottedEnemyType; VoiceType enum dump.cs:83222 = 45 numbered voice events) and BattleUIEventHelper (dump.cs:296691, global AudioFile.BattleEvent announcements, dump.cs:81440 = 38 ids incl. OurBaseUnderAttack=2/EnemyDetected=8/FlagCaptured=12/FlagLost=13/BldComplete=14/EnemyControlsFlags=19/TroopArrived=29)",
-        "voice triggers ride the LC logic-command stream (same server stream R7 decoded): LCUnitDamage->UnderDamage+Mine, LCUnitDie->EnemyDestroyed+AviaHit, LCUnitFogVisibleChanged->FogDetected/ShieldDetected/ZombieSpotted, LCFlagCaptured->FlagCapturedVoice, LCUnitShoot->HeroMeleeAttack, ClientUnit.Birth/Kill->HeroCreated/Died; command acknowledgements fire from GH gesture handlers (GHUnitTakePositions.OnBattleMapClick->move voice)",
-        "strategic announcements: LCBuildingProcessCompleted->BldComplete/UpgComplete, ClientFlag.Capture->FlagIsCaptured/FlagIsLost, LCCommonMessage->PlayerControlsFlags/EnemyControlsFlags, minimap.EnemyDetected/UnitAttacked/BuildingAttacked->EnemyDetected/OurUnit/Allied/OurBase under-attack family, LCBuildingSuperWeapon*->Space/Nuclear events, LCSideDailyUpdate->ContractCompleted",
-        "flag polarity [DECOMP] (ClientFlag.Capture 0x8072CBC): m_side==side no-op; announce only when m_inProgress; capturer BattleEntityUtils.IsAllySide 0x8261618 -> FlagIsCaptured else FlagIsLost; prior owner NOT consulted (neutral progress-capture announces); no throttle",
-        "under-attack feed [DECOMP logic]: CreateEntityAction filter + per-channel next-allowed-time throttle (GetMilliTicks + prefab int delay; units/buildings separate channels) + IsOwnEntity 0x82739CC Our-vs-Allied split; flags are not ClientBuildings",
-        "anti-spam [DECOMP logic, values RUNTIME]: CheckEventTimeouts Light/Hard lanes via GetUnitCombatType + random per-lane timeouts + command-voice timeout + last-voice dedup; spectator/replay gate get_IsSpectator 0x816C294/get_IsReplay 0x816C2E4",
-        "M3 anchor: UnitShootSoundEffector.ToShoot(int weaponIndex) 0x80D12EC -> PlayLimitedSoundById (per-weapon table bundle-bound, left open)"
-      ],
-      "evidence": [
-        "reverse/notes/announcer-voice-native-analysis.md",
-        "reverse/evidence/audio/r12-voice-trigger-xref.txt",
-        "reverse/evidence/audio/r12-battleui-event-xref.txt",
-        "reverse/evidence/audio/r12-flag-capture-decode.txt"
-      ],
-      "tools": [
-        "reverse/tools/r12_voice_trigger_xref.py",
-        "reverse/tools/r12_battleui_event_xref.py",
-        "reverse/tools/r12_flag_capture_decode.py"
-      ],
-      "browser_foldins": [
-        "v61: Announcer UI-layer observer (docs/game.js ANNOUNCER block) — ann_captured/ann_flag_lost (flag polarity per ClientFlag.Capture), ann_flags_lost (all-flags-hostile, INFERRED), ann_enemy (new fog-detection transitions), ann_base_attack (allied building hp drop, throttled); spectator gate; ann_arrived/ann_achievement decoded-but-dormant (transports/contracts out of browser scope); kernel untouched, zero hash impact; announcer.test.js 10 vectors"
-      ],
-      "residual": "audio clip inventory + prefab throttle values (scene/asset-bundle serialized, R11-adjacent); TryPlayEnemySpottedVoice static call site (delegate-driven); per-unit VoiceType voice layer not modeled in browser (wiring table recorded in note §2)",
-      "next_action": "closed at the statically-reachable limit for the global announcer register; optional: per-unit voice layer fold-in from note §2 table, M3 weapon-sound table from audio bundles"
-    }
+  "R2": {
+   "question": "Obfuz pool plaintext constants",
+   "status": "CONFIRMED",
+   "result": "697/697 static decode (629 int, 66 string, 2 float), zero device runs + 8/8 $Pg live-pool holder-segment constants materialized reproducibly (Task 55: raw words recorded, Build I ad-hoc decode closed)",
+   "evidence": [
+    "reverse/evidence/obfuz/inventory.md",
+    "reverse/evidence/obfuz/obfuz-pool-values.json",
+    "reverse/tools/obfuz_static_decode.py",
+    "reverse/tools/obfuz_secret_key.bin",
+    "reverse/evidence/obfuz/obfuz-livepool-values.json",
+    "reverse/tools/obfuz_livepool_decode.py"
+   ],
+   "repro": "python3 reverse/tools/obfuz_static_decode.py (needs libil2cpp.so + global-metadata.dat from XAPK)",
+   "next_action": "keep both decoders reproducible; reuse values to pin new branch constants (live-pool materialization DONE — Task 55)"
   },
-  "findings": {
-    "F-fog-server-authoritative": {
-      "claim": "Fog/visibility is computed battle-core-side; client receives LC logic commands (unitId + sbyte ClientUnitVisibleState) and applies them to ClientUnit.m_visibleState; FogOpener is the serialized fog-open payload; bullets open fog (FogAct.$sd)",
-      "status": "CONFIRMED",
-      "labels": [
-        "[DECOMP]"
-      ],
-      "evidence": [
-        "reverse/notes/sight-fog-native-analysis.md",
-        "reverse/evidence/fog/r7-fogact-scan.txt"
-      ]
-    },
-    "F-calc-sight-curr": {
-      "claim": "Unit.calcSightCurr (0x45B19F8): sight_curr = UnitStateType.sight (0x4C) - (sbyte) forest penalty gated on Unit.in_forest (0x18F) + boostEffects[3] (Unit.boostEffects short[] @0x140, BoostType.ACT_SIGHT=3); field identities plain-named in dump.cs",
-      "status": "CONFIRMED",
-      "labels": [
-        "[DECOMP]"
-      ],
-      "evidence": [
-        "reverse/notes/sight-fog-native-analysis.md",
-        "reverse/evidence/fog/r7-writer-functions.txt"
-      ]
-    },
-    "F-visibility-enums": {
-      "claim": "ClientUnitVisibleState {Undefined -1, Invisible 0, Hidden 1, Visible 2, Detected 3}; ClientUnitVisibleType {Visible 0, HiddenInForest 2, Detected 3, DetectedInForest 4}; ClientBuildingVisibleState {Undefined -1, Invisible 0, Fogged 1, Visible 2}",
-      "status": "CONFIRMED",
-      "labels": [
-        "[DECOMP]"
-      ],
-      "evidence": [
-        "reverse/notes/sight-fog-native-analysis.md"
-      ]
-    },
-    "F-fog-visibility-architecture": {
-      "claim": "Battle-core reveal algorithm (complements F-fog-server-authoritative presentation layer): 3-state (Clear/Fogged/Dark) cell fog over per-alliance packed int[][] bitmaps (32 cells/int; BattleAlliance 0x30 visible + 0x38 explored); reveal spans via orr/bic run-of-ones masks (FogAct.$rd 0x473566C); shape = precomputed per-radius row-extent sbyte[][] fogLines tables, membership (pass 3 DECODED) |dy|<=r AND |dx| <= (sbyte)fogLines[r][|dy|]/2 - D=2 half-cell fixed-point, INCLUSIVE bound via the statics[4]*statics[8]=0 polarity gadget, null fogLines throws (AICommBuSet.$Ik 0x48E649C, client mirror IsCellInCircle); packed variant CheckAndCalc.$ec (0x46D2E7C, 33 callers) = 31x31 grid (R+dy)*S+(R+dx), (byte&0xFF)>>3, R=15/S=31/M=0xFF/N=3 (1/8-cell levels; Battle consts $cc=31/$Cc=15); drivers: unit sight $pd->$Qd, tick acts $Od, bullets $sd, flags, GAICommandFogOpener x/y/w/h rect commands; sight stat: Unit.sight_curr int @0xBC, EStat FogRadius=31, Fraction.ForestSightDrop, ShieldFogRadius, Beholder hero params; all constants in ONE global statics class (ccache 0x968E4D8) written by the R2 697-value holder cctor; table BYTES runtime battle-init data via virtual setter dispatch (no static producer - pass 3 ruled out field stores/BL callers/array_new/strb writers/pool strings/ST serializers); per-battle alliance wire payload carries none of them (deserializer reads 3 ints)",
-      "status": "CONFIRMED",
-      "labels": [
-        "[DECOMP]",
-        "[NATIVE]"
-      ],
-      "evidence": [
-        "reverse/notes/sight-visibility-native-analysis.md",
-        "reverse/evidence/vision/sight-jumptable-decode.txt",
-        "reverse/evidence/vision/ik-ec-constants-decode.txt"
-      ]
-    },
-    "F-damage-armor-curve": {
-      "claim": "CalculateWeaponArmorDamage is the sole mitigation site; mitigation factor in [0.1,1.0], constants 0.1f/0.9f only; no per-armor-type coefficient exists",
-      "status": "CONFIRMED",
-      "labels": [
-        "[DECOMP]",
-        "[NATIVE]"
-      ],
-      "evidence": [
-        "reverse/notes/combat-stats.md",
-        "reverse/notes/armor-stat-helper-native-analysis.md"
-      ]
-    },
-    "F-maxstat-get-fraction": {
-      "claim": "MaxStatValueProvider.Get = min(piecewise fraction, 1.0): 0.8/0.15/0.05 non-armor rung fractions; 0.9/0.1 armor-damage keys; routing (1<<(stat-61))&0x3807 -> {61,62,63,72,73,74}",
-      "status": "CONFIRMED",
-      "labels": [
-        "[DECOMP]"
-      ],
-      "evidence": [
-        "reverse/notes/maxstat-tier-band-decode.md",
-        "reverse/evidence/estat/estat-get-decode.txt",
-        "reverse/notes/units/estat-stat-models.md"
-      ]
-    },
-    "F-maxstat-factory-labels": {
-      "claim": "Max1(v)->BaseMax; Max2(v1,v2)->FirstMax=v1,BaseMax=v2; Max3(v1,v2,v3)->FirstMax=v1,BaseMax=v2,MegaMax=v3; ascending ladder values unchanged",
-      "status": "CONFIRMED",
-      "labels": [
-        "[DECOMP]"
-      ],
-      "evidence": [
-        "reverse/notes/units/estat-stat-models.md"
-      ]
-    },
-    "F-defend-leash-client-computed": {
-      "claim": "Defend leash = band+1 computed inside $Pg (client-side); 'server-delivered leash' retired; browser tether value remains gameplay-tuned pending join-arm values",
-      "status": "CONFIRMED",
-      "labels": [
-        "[DECOMP]"
-      ],
-      "evidence": [
-        "reverse/notes/defend-chase-takepos-decode.md",
-        "reverse/evidence/combat/pg-branches-decode.txt"
-      ]
-    },
-    "F-weapon-surface": {
-      "claim": "WeaponType.type 0x24 = SHELL_TYPE_*; aiming 0x8B = 6-class target bitmask; OCCUPATION_FOR_AIR=0x1A; hit_bonus client-inert; no crit system in client",
-      "status": "CONFIRMED",
-      "labels": [
-        "[DECOMP]"
-      ],
-      "evidence": [
-        "reverse/notes/weapon-type-surface-native-analysis.md"
-      ]
-    },
-    "F-balance-values-server-side": {
-      "claim": "Per-unit hp/price/damage prototype dictionaries are runtime-delivered, absent from APK",
-      "status": "CONFIRMED",
-      "labels": [
-        "[NATIVE]"
-      ],
-      "evidence": [
-        "reverse/notes/unit-roster-native-analysis.md",
-        "reverse/notes/data-model-extraction.md"
-      ]
-    }
+  "R3": {
+   "question": "Native tick rate / timing grid",
+   "status": "BLOCKED",
+   "blocker": "on-device instrumentation required",
+   "converts_gaps": [
+    "B6"
+   ],
+   "next_action": "device tick instrumentation; FIRE_TICK_LENGTH=4 anchor already pinned"
   },
-  "browser_foldins": {
-    "v57": {
-      "task": "Task 54 / R7 pass 1 (upstream 9535132) + R7 pass 2 (rebased 775e7d6)",
-      "changes": [
-        "updateVision() kernel comment: native fog authority model (server-computed grids + LC commands), ClientUnitVisibleState/Type enum values, calcSightCurr radius provenance (in_forest penalty + boostEffects[3]) with browser static def.view documented as approximation",
-        "updateVision reveal kernel: provenance comment - native shape = per-radius row-extent fogLines tables (AICommBuSet.$Ik), packed orr/bic bitmaps, 3-state fog; Euclidean disc retained pending table values"
-      ],
-      "behavior_change": false,
-      "tests": "full suite green before/after"
-    },
-    "v56": {
-      "task": "Task 53 (this session)",
-      "changes": [
-        "DEFEND_TETHER provenance: server-delivered -> client-computed band+1 (Build I evidence)",
-        "Get-fraction contract comment: clamp wording -> normalized fill fraction (Build J)",
-        "Tier rung labels: [BaseMax,FirstMax,Mega] -> [FirstMax,BaseMax,Mega] per factory decode (Build J)"
-      ],
-      "behavior_change": false,
-      "tests": "full suite green before/after"
-    },
-    "v58": {
-      "task": "Task 57 / R7 pass 3",
-      "changes": [
-        "updateVision reveal kernel comment: decoded $Ik membership contract (|dx| <= (sbyte)fogLines[r][|dy|]/2, D=2 half-cell fixed-point, inclusive via polarity gadget, null throws), $ec 31x31 grid constants (R=15/S=31/M=0xFF/N=3, 1/8-cell levels), BattleSide.$iu producer claim corrected (List<BuildingDestroyed> capacity, not Battle.$Mc), table bytes blocked-static note; comment-only, zero behavior delta"
-      ],
-      "behavior_change": false
-    },
-    "v59": {
-      "task": "Task 58 (this session)",
-      "changes": [
-        "H1/I2 hash-coverage: stateString() now serializes ALL stored behavior-affecting state — mines as M-lines (owner/x/y/arm), u._chain re-entrancy guard, behavior-timer block (slowT/burnT/burnDps/invulnT/heat/abilCd/repathCd/burstT), lastMode weapon-mode memory, orientDest pre-fire heading, corpse dieT (cleanup timing), cmdSeq issue counter in the T-line; exclusions documented in-kernel (floats/booms/pops, explored/visible fog views, grid/pf pathfinding infra, scoreboard stats, derived vx/vy/rotate)",
-        "JIP snapshot fix EXPOSED by the extension: the hub archived input frames only while clients were attached, so commands issued during a fully-clientless window were missing from a later JIP's replay journal (cmdSeq cs-field divergence, lockstep-jip 86/2); hub now archives every command-bearing tick regardless of client count",
-        "golden re-baseline: phase5 structure assertions moved from endsWith tails to column-indexed form; commands-determinism +7 vectors (M-line format, abilCd ticking, cross-run M-line equality, M-lines-feed-hash probe)"
-      ],
-      "behavior_change": true,
-      "tests": "8/8 suites green: commands-determinism 57/57, phase5 236/236, replay 45/45, lockstep-jip 88/88, data-model 379, accuracy all, stat-caps 37/37, unit-fsm all"
-    },
-    "v60": {
-      "task": "Task 59 (this session)",
-      "changes": [
-        "R6 comment-only fold-in: commandTakePositions block corrected + extended - 'exact complements' retired (All|Heli = All|Land = 0xFFFF union-supersets), blocked-state semantics (CheckByMask 0x8054284 = (mask & m_passMask)==0), the 15 ClientBattleCell.m_passMask bits named (Barrier/Land/Forest/Shore/Water/Fog/Dark/reserved/Building/BuildingBand/BuildingBarrier/VisUnit/VisEnemy/CamInvisible/reserved), passMask lifecycle (0x2060 init + terrain LUT kinds 0-4 + 0x400 barrier-band), takepos arms == building-exit legality consts (0x215D land / 0x214F water / 0x2145 amphibian / 0x2040 heli)"
-      ],
-      "behavior_change": false,
-      "cache_bump": "v=59 -> v=60 (comment-only per protocol)"
-    }
+  "R4": {
+   "question": "Live damage application semantics (cadence, ordering, rounding)",
+   "status": "BLOCKED",
+   "blocker": "client pipeline ends at UI boundary; live semantics need controlled device experiments",
+   "evidence": [
+    "reverse/notes/damage-pipeline-native-analysis.md"
+   ],
+   "converts_gaps": [
+    "B4"
+   ],
+   "next_action": "dev-plan Phase 24 scenario A/B with frame-stepped video vs browser replay"
   },
-  "blockers_summary": {
-    "device_required": [
-      "R1",
-      "R3",
-      "R4",
-      "R9",
-      "R10",
-      "R11"
-    ],
-    "offline_open": [
-      "R6",
-      "R7",
-      "R8 (structural done 2026-10-10)"
-    ],
-    "note": "See reverse/notes/reverse-engineering-roadmap.md for sequencing rationale"
+  "R5": {
+   "question": "$Pg (UnitAct) branch micro-logic incl. defend leash + band dataflow",
+   "status": "CONFIRMED",
+   "result": "leash = client-computed band+1 (XOR pair Value3^Value4=1); 19 band stores classified (reset=Value1*0, +1 composition, 14 spills, 3 jump-table joins bounded residual); DEFEND/BOMBARD/BEHOLDER constants decoded; $UG/$yG selector chains flattened",
+   "evidence": [
+    "reverse/evidence/combat/pg-branches-decode.txt",
+    "reverse/evidence/combat/band-dataflow.txt",
+    "reverse/evidence/combat/band-dataflow-2.txt",
+    "reverse/evidence/combat/band-dataflow-3.txt",
+    "reverse/notes/defend-chase-takepos-decode.md",
+    "reverse/notes/maxstat-tier-band-decode.md"
+   ],
+   "residual": "3 join-arm numeric sources + $UG/$yG chain terminals (mechanism confirmed, values bounded)",
+   "next_action": "closed unless join-arm values matter numerically (jump-table case map)"
+  },
+  "R6": {
+   "question": "TakePositions 15-bit cell-class per-bit semantics",
+   "status": "CONFIRMED (13/15 bits NAMED, Task 59; bits 7/14 reserved)",
+   "result": "bit space = ClientBattleCell.m_passMask (short @0x38, dump.cs:262577); CheckByMask(mask) = (mask & m_passMask)==0 (0x8054284) -> takepos masks are BLOCKED-state masks; bits 0-6/8-13 named by consts (Barrier, Land, Forest, Shore, Water, Fog, Dark, Building, BuildingBand, BuildingBarrier, VisAndInvisUnit, VisAndInvisEnemyUnit, CameraInvisible) each writer-confirmed (AddBarrier orr 0x1, BuildingEnter orr 0x100, UnitEnter orr 0x800/0x1000, fog clears 0x20/0x40, SetUnbuild/RemoveUnbuild 0x400, set_IsCameraVisible 0x2000); ctor passMask = 0x2060 (FullInvisibleCellMask) | terrain LUT[0x1BFE5BC] kind0-4 = {Land, Shore, Water, Barrier, Land|Forest} | 0x400 when not crossable; takepos arms == building-exit legality consts: infantry/vehicle/land-heroes 0x215D = LandBuildingExitCellMask, ships 0x214F = WaterBuildingExitCellMask (amphibian 42 + heroes {62,74} 0x2145 = Land+Shore+Water), heli 0x2040 = {Dark, CamInvis} only, fixed-wing/cat-0 0x215F = never placeable; bits 7/14 have no const and no client writer (reserved); map.prefab.bundle re-scanned = geometry-only (6777 transforms, 7 render-side MonoScripts, 0 TextAssets) -> per-cell terrain-kind grid is server battle-setup data (ST serializer family), empirical overlay needs device capture",
+   "evidence": [
+    "reverse/evidence/combat/takepos-cells-decode.txt",
+    "reverse/evidence/combat/r6-checkbymask-decode.txt",
+    "reverse/evidence/combat/r6-passmask-writers.txt",
+    "reverse/evidence/combat/r6-map-prefab-scan.txt",
+    "reverse/notes/defend-chase-takepos-decode.md",
+    "reverse/notes/r6-bitname-crossref.md"
+   ],
+   "tools": [
+    "reverse/tools/r6_bitname_crossref.py",
+    "reverse/tools/r6_lut_and_bits.py",
+    "reverse/tools/r6_passmask_writers.py",
+    "reverse/tools/r6_map_prefab_scan.py"
+   ],
+   "residual": "per-cell kind-vs-geometry overlay (server battle setup needed, R1-session carryable); infantry forest-variant sub-type identity (vt[0x348] field==2, INFERRED); hero ids 60-69/76 + unit 42 names",
+   "next_action": "CLOSED at the statically-reachable limit; fold-in = comment-only (game.js takepos block, blocked-state semantics + bit names, cache bump)"
+  },
+  "R7": {
+   "question": "Native visibility/sight rules",
+   "status": "PARTIALLY_CONFIRMED",
+   "result": "pass 1 (Task 53-session, 9535132): command/act stream server-driven (lockstep-authoritative); ClientUnitVisibleState {-1,0,1 Hidden,2 Visible,3 Detected} + ClientUnitVisibleType {HiddenInForest 2, DetectedInForest 4}; Unit.calcSightCurr (0x45B19F8, plain-named) FULLY DECODED: sight_curr = UnitStateType.sight - (sbyte)in_forest penalty (vtbl 0x1F8->0x1998, provider INFERRED) + boostEffects[3] (BoostType.ACT_SIGHT=3, dump.cs:376978); getters have 0 direct BL callers. pass 2 (Task 54, 775e7d6): client-side kernel CONFIRMED [DECOMP] - FogAct maintains the bitmaps from the deterministic stream + sight stats: 3-state fog (Clear/Fogged/Dark); per-alliance packed int[][] bitmaps (32 cells/int, orr/bic run-masks via FogAct.$rd); reveal shape = precomputed per-radius row-extent sbyte[][] 'fog lines' tables (Battle.$kc 0x2B8/$Mc 0x2D0, BattleAlliance.$kE 0x58); drivers: per-unit $pd->$Qd, per-tick $Od, bullets $sd, flags, GAICommandFogOpener x/y/w/h rects. pass 3 (Task 57, this commit): MEMBERSHIP CONTRACT DECODED [DECOMP] - AICommBuSet.$Ik = |dy|<=r then INCLUSIVE |dx| <= (sbyte)fogLines[r][|dy|]/2 with divisor D=2 ($gK seg[statics+0x3830] 0x5D0/0x3D/0x27428CBF, raw 0xa3af9c8d = Task-55 live-pool raw-word family; statics[4]*statics[8]=0 polarity gadget returns the INSIDE test; null fogLines throws - pass 2's strict-< and null->true corrected); CheckAndCalc.$ec grid constants R=15 S=31(=2R+1, Battle consts $cc/$Cc) M=0xFF N=3 -> 31x31 grid, (byte&0xFF)>>3 = 1/8-cell levels; all constants live in ONE global statics class (klass ccache slot 0x968E4D8) = the class the R2 697-value holder cctor writes (697/697 re-attributed, 631/631 pool records cross-checked); GAICommandFogOpener.execute decoded (rect path $Qd/$qd arg map). PASS-2 CORRECTION: BattleSide.$iu does NOT produce Battle.$Mc - the 0x469794C store is BattleSide.$ch = new List<BuildingDestroyed>(cap); $iu is a plain field initializer (pool-fed container capacities, mix of committed 0x2820 segment and uncommitted segments). fogLines BYTE VALUES remain [BLOCKED-STATIC]: no client producer (stores=setter bodies only, 0 BL callers, no array_new in Battle init surface $HL/$ju/$iu/$Iu/$fb, no strb grid writers, no pool-string tables, ST serializer/deserializer never touch $kc/$Mc) - tables fill via virtual setter dispatch ($ZM/$Pn/$HS callvirt) needing script.json or a device dump. For a consistently-built Euclidean table the native membership is provably identical to the browser's integer-cell hypot disc; delta risk = hand-tuned extents only.",
+   "evidence": [
+    "reverse/notes/sight-fog-native-analysis.md",
+    "reverse/evidence/fog/r7-fogact-scan.txt",
+    "reverse/evidence/fog/r7-sight-writers.txt",
+    "reverse/evidence/fog/r7-writer-functions.txt",
+    "reverse/notes/sight-visibility-native-analysis.md",
+    "reverse/evidence/vision/sight-jumptable-decode.txt",
+    "reverse/evidence/vision/jumptable-decode.txt",
+    "reverse/evidence/vision/fogact-disasm.txt",
+    "reverse/evidence/vision/circle-primitive-disasm.txt",
+    "reverse/evidence/vision/ik-ec-constants-decode.txt",
+    "reverse/evidence/vision/ik-ec-constants.json"
+   ],
+   "tools": [
+    "reverse/tools/r7_fog_sight_scan.py",
+    "reverse/tools/r7_sight_writer_scan.py",
+    "reverse/tools/r7_writer_functions.py",
+    "reverse/tools/r7_ik_ec_constants_decode.py"
+   ],
+   "residual": "fogLines table byte values (virtual-dispatch producer; needs Il2CppDumper script.json or a device dump), $ec rowIdx statics[0x10] class-cctor rewrite (eor-pair 0x82F5D84A/0x82F5D84B), $ec auxiliary bounds (0xabababab filler in committed segment - real runtime segment uncommitted), four uncommitted runtime pool segments ($iu starts 0x144-0x17C families), in-forest penalty provider vtable names (needs script.json), $pd/$GL branch semantics",
+   "converts_gaps": [
+    "H4"
+   ],
+   "next_action": "R7 CLOSED at the statically-reachable limit: architecture + membership contract [DECOMP]; table bytes blocked on script.json/device. Optional later: re-run with script.json to resolve $ZM/$Pn/$HS vtable callers and dump the tables; until then H4 stays PARTIALLY CONFIRMED with the decoded contract recorded. Next queue: R8 trajectory/gravity consumers (->G10), H1 hash-coverage, R6 bit-name cross-ref"
+  },
+  "R8": {
+   "question": "m_bulletTrajectoryType / m_gravity consumer semantics",
+   "status": "CONFIRMED (arc/gravity math decoded [DECOMP] via numeric .so pass; per-weapon gravity/trajectory VALUES remain server data, R1-bound)",
+   "evidence": [
+    "reverse/evidence/combat/trajectory-gravity-consumer-scan.txt",
+    "reverse/notes/r8-trajectory-gravity-consumers.md",
+    "reverse/evidence/data-model/weapon-schema.json",
+    "reverse/evidence/combat/r8-numeric-arc-decode.txt",
+    "reverse/tools/r8_numeric_arc_decode.py"
+   ],
+   "converts_gaps": [
+    "G10"
+   ],
+   "key_findings": [
+    "trajectory type = client engine selector: BulletEngineType Linear=0/Ballistic=1/Ballistic_High=2/SelfDirected=3/ChainLighting=4/Melee=5/UpAndSelfDirected=6 (dump.cs:378800), one engine class per family",
+    "gravity unit fact: AbstractBallisticBulletEngine.GRAVITY_DIVIDER=100 -> field/100 = arc gravity (dump.cs:276256)",
+    "height is parametric in duration (CalculateHeightCoefficients), sim Bullet has NO vel_z; sim timing = duration/duration_next/duration_long triple + lowing @0x97 + needing_guidance @0xAA",
+    "twin surfaces: MapEditorConfig 0x3C/0x3E <-> runtime WeaponType 0x9E/0xA0/0xA2 (+accelerating 0xA2, bul_type 0xA4, boom_type 0xA8); R1 keys bind to the runtime offsets",
+    "LCBulletMissed dispatches miss flight by engine family (BallisticBulletExecute/SelfDirectedBulletExecute)",
+    "392 RVA anchors recorded for the future libil2cpp.so disassembly pass",
+    "closed-form ballistic arc: height(t)=0.5g(k^2-(t/100-k)^2), k=duration/200, apex 0.5gk^2 at t=duration/2 [DECOMP 0x80B2050/0x80B2200/0x80B25A8/0x80B2604]",
+    "EngineType ids: Linear=0 Ballistic=1 BallisticHigh=2 SelfDirected=3 ChainLighting=4 Adjustable=6 — slot UpAndSelfDirected(6) IS AdjustableBallisticBulletEngine (taxonomy corrected)",
+    "Bullet.get_AccelerateAndGuide 0x458FD60 = direct WeaponType.bulletTrajectoryType(@0x9E) read, predicate ==6; whole-binary BL xref of the 3 getters = 0 callers (inlined)",
+    "miss-flight params MISSED_FLIGTH_DISTANCE(@0x20)/DURATION_TIME_SCALER(@0x1C) are per-instance server-delivered fields, not binary constants"
+   ],
+   "next_action": "adopt the closed-form arc law in the renderer when R1 values land: height(t)=0.5g(k^2-(t/100-k)^2), g=gravity/100, k=duration/200 (note r8-trajectory-gravity-consumers.md §7-§9); miss-flight MISSED_FLIGTH_DISTANCE / DURATION_TIME_SCALER are server instance fields (dump.cs:290068-9) — R1-session carryable"
+  },
+  "R9": {
+   "question": "Native client-server battle wire protocol",
+   "status": "BLOCKED",
+   "blocker": "traffic capture needs device + unpinning decision",
+   "converts_gaps": [
+    "P1r"
+   ],
+   "next_action": "TLS-unpin + capture or Frida message hooks"
+  },
+  "R10": {
+   "question": "Original camera/UI metrics for calibration",
+   "status": "BLOCKED",
+   "blocker": "no device screen recordings; V8 A/B harness ready",
+   "evidence": [
+    "reverse/evidence/visual/v8-ab-v54-v55.json"
+   ],
+   "converts_gaps": [
+    "H8",
+    "H9"
+   ],
+   "next_action": "record device gameplay per dev plan Phase 18/20"
+  },
+  "R11": {
+   "question": "Do naval/aircraft/hero prefabs exist in downloadable Addressables content?",
+   "status": "BLOCKED",
+   "blocker": "device storage / remote catalogs unreachable from sandbox",
+   "evidence": [
+    "reverse/notes/hero-prefabs-10-remaining.md",
+    "reverse/notes/vfx-asset-prefix-check.md"
+   ],
+   "converts_gaps": [
+    "B2",
+    "B3"
+   ],
+   "next_action": "pull assets/aa/catalog.json + bundles, re-run pipeline/tools/unpack_bundles.py"
+  },
+  "R12": {
+   "question": "Native announcer/voice trigger system (who plays which cue when)",
+   "status": "CONFIRMED (trigger wiring decoded; clip inventory + prefab delay values RUNTIME)",
+   "converts_gaps": [
+    "M1",
+    "I10"
+   ],
+   "key_findings": [
+    "two systems: AudioBattleVoicesPlayer (dump.cs:80813, per-unit-category voices keyed VoiceCategory x DamageFrom/DestroyedEnemyType/SpottedEnemyType; VoiceType enum dump.cs:83222 = 45 numbered voice events) and BattleUIEventHelper (dump.cs:296691, global AudioFile.BattleEvent announcements, dump.cs:81440 = 38 ids incl. OurBaseUnderAttack=2/EnemyDetected=8/FlagCaptured=12/FlagLost=13/BldComplete=14/EnemyControlsFlags=19/TroopArrived=29)",
+    "voice triggers ride the LC logic-command stream (same server stream R7 decoded): LCUnitDamage->UnderDamage+Mine, LCUnitDie->EnemyDestroyed+AviaHit, LCUnitFogVisibleChanged->FogDetected/ShieldDetected/ZombieSpotted, LCFlagCaptured->FlagCapturedVoice, LCUnitShoot->HeroMeleeAttack, ClientUnit.Birth/Kill->HeroCreated/Died; command acknowledgements fire from GH gesture handlers (GHUnitTakePositions.OnBattleMapClick->move voice)",
+    "strategic announcements: LCBuildingProcessCompleted->BldComplete/UpgComplete, ClientFlag.Capture->FlagIsCaptured/FlagIsLost, LCCommonMessage->PlayerControlsFlags/EnemyControlsFlags, minimap.EnemyDetected/UnitAttacked/BuildingAttacked->EnemyDetected/OurUnit/Allied/OurBase under-attack family, LCBuildingSuperWeapon*->Space/Nuclear events, LCSideDailyUpdate->ContractCompleted",
+    "flag polarity [DECOMP] (ClientFlag.Capture 0x8072CBC): m_side==side no-op; announce only when m_inProgress; capturer BattleEntityUtils.IsAllySide 0x8261618 -> FlagIsCaptured else FlagIsLost; prior owner NOT consulted (neutral progress-capture announces); no throttle",
+    "under-attack feed [DECOMP logic]: CreateEntityAction filter + per-channel next-allowed-time throttle (GetMilliTicks + prefab int delay; units/buildings separate channels) + IsOwnEntity 0x82739CC Our-vs-Allied split; flags are not ClientBuildings",
+    "anti-spam [DECOMP logic, values RUNTIME]: CheckEventTimeouts Light/Hard lanes via GetUnitCombatType + random per-lane timeouts + command-voice timeout + last-voice dedup; spectator/replay gate get_IsSpectator 0x816C294/get_IsReplay 0x816C2E4",
+    "M3 anchor: UnitShootSoundEffector.ToShoot(int weaponIndex) 0x80D12EC -> PlayLimitedSoundById (per-weapon table bundle-bound, left open)"
+   ],
+   "evidence": [
+    "reverse/notes/announcer-voice-native-analysis.md",
+    "reverse/evidence/audio/r12-voice-trigger-xref.txt",
+    "reverse/evidence/audio/r12-battleui-event-xref.txt",
+    "reverse/evidence/audio/r12-flag-capture-decode.txt"
+   ],
+   "tools": [
+    "reverse/tools/r12_voice_trigger_xref.py",
+    "reverse/tools/r12_battleui_event_xref.py",
+    "reverse/tools/r12_flag_capture_decode.py"
+   ],
+   "browser_foldins": [
+    "v61: Announcer UI-layer observer (docs/game.js ANNOUNCER block) — ann_captured/ann_flag_lost (flag polarity per ClientFlag.Capture), ann_flags_lost (all-flags-hostile, INFERRED), ann_enemy (new fog-detection transitions), ann_base_attack (allied building hp drop, throttled); spectator gate; ann_arrived/ann_achievement decoded-but-dormant (transports/contracts out of browser scope); kernel untouched, zero hash impact; announcer.test.js 10 vectors"
+   ],
+   "residual": "audio clip inventory + prefab throttle values (scene/asset-bundle serialized, R11-adjacent); TryPlayEnemySpottedVoice static call site (delegate-driven); per-unit VoiceType voice layer not modeled in browser (wiring table recorded in note §2)",
+   "next_action": "closed at the statically-reachable limit for the global announcer register; optional: per-unit voice layer fold-in from note §2 table, M3 weapon-sound table from audio bundles"
   }
+ },
+ "findings": {
+  "F-fog-server-authoritative": {
+   "claim": "Fog/visibility is computed battle-core-side; client receives LC logic commands (unitId + sbyte ClientUnitVisibleState) and applies them to ClientUnit.m_visibleState; FogOpener is the serialized fog-open payload; bullets open fog (FogAct.$sd)",
+   "status": "CONFIRMED",
+   "labels": [
+    "[DECOMP]"
+   ],
+   "evidence": [
+    "reverse/notes/sight-fog-native-analysis.md",
+    "reverse/evidence/fog/r7-fogact-scan.txt"
+   ]
+  },
+  "F-calc-sight-curr": {
+   "claim": "Unit.calcSightCurr (0x45B19F8): sight_curr = UnitStateType.sight (0x4C) - (sbyte) forest penalty gated on Unit.in_forest (0x18F) + boostEffects[3] (Unit.boostEffects short[] @0x140, BoostType.ACT_SIGHT=3); field identities plain-named in dump.cs",
+   "status": "CONFIRMED",
+   "labels": [
+    "[DECOMP]"
+   ],
+   "evidence": [
+    "reverse/notes/sight-fog-native-analysis.md",
+    "reverse/evidence/fog/r7-writer-functions.txt"
+   ]
+  },
+  "F-visibility-enums": {
+   "claim": "ClientUnitVisibleState {Undefined -1, Invisible 0, Hidden 1, Visible 2, Detected 3}; ClientUnitVisibleType {Visible 0, HiddenInForest 2, Detected 3, DetectedInForest 4}; ClientBuildingVisibleState {Undefined -1, Invisible 0, Fogged 1, Visible 2}",
+   "status": "CONFIRMED",
+   "labels": [
+    "[DECOMP]"
+   ],
+   "evidence": [
+    "reverse/notes/sight-fog-native-analysis.md"
+   ]
+  },
+  "F-fog-visibility-architecture": {
+   "claim": "Battle-core reveal algorithm (complements F-fog-server-authoritative presentation layer): 3-state (Clear/Fogged/Dark) cell fog over per-alliance packed int[][] bitmaps (32 cells/int; BattleAlliance 0x30 visible + 0x38 explored); reveal spans via orr/bic run-of-ones masks (FogAct.$rd 0x473566C); shape = precomputed per-radius row-extent sbyte[][] fogLines tables, membership (pass 3 DECODED) |dy|<=r AND |dx| <= (sbyte)fogLines[r][|dy|]/2 - D=2 half-cell fixed-point, INCLUSIVE bound via the statics[4]*statics[8]=0 polarity gadget, null fogLines throws (AICommBuSet.$Ik 0x48E649C, client mirror IsCellInCircle); packed variant CheckAndCalc.$ec (0x46D2E7C, 33 callers) = 31x31 grid (R+dy)*S+(R+dx), (byte&0xFF)>>3, R=15/S=31/M=0xFF/N=3 (1/8-cell levels; Battle consts $cc=31/$Cc=15); drivers: unit sight $pd->$Qd, tick acts $Od, bullets $sd, flags, GAICommandFogOpener x/y/w/h rect commands; sight stat: Unit.sight_curr int @0xBC, EStat FogRadius=31, Fraction.ForestSightDrop, ShieldFogRadius, Beholder hero params; all constants in ONE global statics class (ccache 0x968E4D8) written by the R2 697-value holder cctor; table BYTES runtime battle-init data via virtual setter dispatch (no static producer - pass 3 ruled out field stores/BL callers/array_new/strb writers/pool strings/ST serializers); per-battle alliance wire payload carries none of them (deserializer reads 3 ints)",
+   "status": "CONFIRMED",
+   "labels": [
+    "[DECOMP]",
+    "[NATIVE]"
+   ],
+   "evidence": [
+    "reverse/notes/sight-visibility-native-analysis.md",
+    "reverse/evidence/vision/sight-jumptable-decode.txt",
+    "reverse/evidence/vision/ik-ec-constants-decode.txt"
+   ]
+  },
+  "F-damage-armor-curve": {
+   "claim": "CalculateWeaponArmorDamage is the sole mitigation site; mitigation factor in [0.1,1.0], constants 0.1f/0.9f only; no per-armor-type coefficient exists",
+   "status": "CONFIRMED",
+   "labels": [
+    "[DECOMP]",
+    "[NATIVE]"
+   ],
+   "evidence": [
+    "reverse/notes/combat-stats.md",
+    "reverse/notes/armor-stat-helper-native-analysis.md"
+   ]
+  },
+  "F-maxstat-get-fraction": {
+   "claim": "MaxStatValueProvider.Get = min(piecewise fraction, 1.0): 0.8/0.15/0.05 non-armor rung fractions; 0.9/0.1 armor-damage keys; routing (1<<(stat-61))&0x3807 -> {61,62,63,72,73,74}",
+   "status": "CONFIRMED",
+   "labels": [
+    "[DECOMP]"
+   ],
+   "evidence": [
+    "reverse/notes/maxstat-tier-band-decode.md",
+    "reverse/evidence/estat/estat-get-decode.txt",
+    "reverse/notes/units/estat-stat-models.md"
+   ]
+  },
+  "F-maxstat-factory-labels": {
+   "claim": "Max1(v)->BaseMax; Max2(v1,v2)->FirstMax=v1,BaseMax=v2; Max3(v1,v2,v3)->FirstMax=v1,BaseMax=v2,MegaMax=v3; ascending ladder values unchanged",
+   "status": "CONFIRMED",
+   "labels": [
+    "[DECOMP]"
+   ],
+   "evidence": [
+    "reverse/notes/units/estat-stat-models.md"
+   ]
+  },
+  "F-defend-leash-client-computed": {
+   "claim": "Defend leash = band+1 computed inside $Pg (client-side); 'server-delivered leash' retired; browser tether value remains gameplay-tuned pending join-arm values",
+   "status": "CONFIRMED",
+   "labels": [
+    "[DECOMP]"
+   ],
+   "evidence": [
+    "reverse/notes/defend-chase-takepos-decode.md",
+    "reverse/evidence/combat/pg-branches-decode.txt"
+   ]
+  },
+  "F-weapon-surface": {
+   "claim": "WeaponType.type 0x24 = SHELL_TYPE_*; aiming 0x8B = 6-class target bitmask; OCCUPATION_FOR_AIR=0x1A; hit_bonus client-inert; no crit system in client",
+   "status": "CONFIRMED",
+   "labels": [
+    "[DECOMP]"
+   ],
+   "evidence": [
+    "reverse/notes/weapon-type-surface-native-analysis.md"
+   ]
+  },
+  "F-balance-values-server-side": {
+   "claim": "Per-unit hp/price/damage prototype dictionaries are runtime-delivered, absent from APK",
+   "status": "CONFIRMED",
+   "labels": [
+    "[NATIVE]"
+   ],
+   "evidence": [
+    "reverse/notes/unit-roster-native-analysis.md",
+    "reverse/notes/data-model-extraction.md"
+   ]
+  }
+ },
+ "browser_foldins": {
+  "v57": {
+   "task": "Task 54 / R7 pass 1 (upstream 9535132) + R7 pass 2 (rebased 775e7d6)",
+   "changes": [
+    "updateVision() kernel comment: native fog authority model (server-computed grids + LC commands), ClientUnitVisibleState/Type enum values, calcSightCurr radius provenance (in_forest penalty + boostEffects[3]) with browser static def.view documented as approximation",
+    "updateVision reveal kernel: provenance comment - native shape = per-radius row-extent fogLines tables (AICommBuSet.$Ik), packed orr/bic bitmaps, 3-state fog; Euclidean disc retained pending table values"
+   ],
+   "behavior_change": false,
+   "tests": "full suite green before/after"
+  },
+  "v56": {
+   "task": "Task 53 (this session)",
+   "changes": [
+    "DEFEND_TETHER provenance: server-delivered -> client-computed band+1 (Build I evidence)",
+    "Get-fraction contract comment: clamp wording -> normalized fill fraction (Build J)",
+    "Tier rung labels: [BaseMax,FirstMax,Mega] -> [FirstMax,BaseMax,Mega] per factory decode (Build J)"
+   ],
+   "behavior_change": false,
+   "tests": "full suite green before/after"
+  },
+  "v58": {
+   "task": "Task 57 / R7 pass 3",
+   "changes": [
+    "updateVision reveal kernel comment: decoded $Ik membership contract (|dx| <= (sbyte)fogLines[r][|dy|]/2, D=2 half-cell fixed-point, inclusive via polarity gadget, null throws), $ec 31x31 grid constants (R=15/S=31/M=0xFF/N=3, 1/8-cell levels), BattleSide.$iu producer claim corrected (List<BuildingDestroyed> capacity, not Battle.$Mc), table bytes blocked-static note; comment-only, zero behavior delta"
+   ],
+   "behavior_change": false
+  },
+  "v59": {
+   "task": "Task 58 (this session)",
+   "changes": [
+    "H1/I2 hash-coverage: stateString() now serializes ALL stored behavior-affecting state — mines as M-lines (owner/x/y/arm), u._chain re-entrancy guard, behavior-timer block (slowT/burnT/burnDps/invulnT/heat/abilCd/repathCd/burstT), lastMode weapon-mode memory, orientDest pre-fire heading, corpse dieT (cleanup timing), cmdSeq issue counter in the T-line; exclusions documented in-kernel (floats/booms/pops, explored/visible fog views, grid/pf pathfinding infra, scoreboard stats, derived vx/vy/rotate)",
+    "JIP snapshot fix EXPOSED by the extension: the hub archived input frames only while clients were attached, so commands issued during a fully-clientless window were missing from a later JIP's replay journal (cmdSeq cs-field divergence, lockstep-jip 86/2); hub now archives every command-bearing tick regardless of client count",
+    "golden re-baseline: phase5 structure assertions moved from endsWith tails to column-indexed form; commands-determinism +7 vectors (M-line format, abilCd ticking, cross-run M-line equality, M-lines-feed-hash probe)"
+   ],
+   "behavior_change": true,
+   "tests": "8/8 suites green: commands-determinism 57/57, phase5 236/236, replay 45/45, lockstep-jip 88/88, data-model 379, accuracy all, stat-caps 37/37, unit-fsm all"
+  },
+  "v60": {
+   "task": "Task 59 (this session)",
+   "changes": [
+    "R6 comment-only fold-in: commandTakePositions block corrected + extended - 'exact complements' retired (All|Heli = All|Land = 0xFFFF union-supersets), blocked-state semantics (CheckByMask 0x8054284 = (mask & m_passMask)==0), the 15 ClientBattleCell.m_passMask bits named (Barrier/Land/Forest/Shore/Water/Fog/Dark/reserved/Building/BuildingBand/BuildingBarrier/VisUnit/VisEnemy/CamInvisible/reserved), passMask lifecycle (0x2060 init + terrain LUT kinds 0-4 + 0x400 barrier-band), takepos arms == building-exit legality consts (0x215D land / 0x214F water / 0x2145 amphibian / 0x2040 heli)"
+   ],
+   "behavior_change": false,
+   "cache_bump": "v=59 -> v=60 (comment-only per protocol)"
+  }
+ },
+ "blockers_summary": {
+  "device_required": [
+   "R1",
+   "R3",
+   "R4",
+   "R9",
+   "R10",
+   "R11"
+  ],
+  "offline_open": [
+   "R6",
+   "R7",
+   "R8 (structural done 2026-10-10)"
+  ],
+  "note": "See reverse/notes/reverse-engineering-roadmap.md for sequencing rationale"
+ }
 }

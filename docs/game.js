@@ -1928,15 +1928,37 @@
         u.burstT = u.def.weapon.shotInt ?? 0.2;
       }
     }
-    // R8 trajectory/gravity consumers (dump.cs structural scan, reverse/notes/
-    // r8-trajectory-gravity-consumers.md): native BulletEngineType families are
-    // Linear=0 / Ballistic=1 / Ballistic_High=2 / SelfDirected=3 / ChainLighting=4 /
-    // Melee=5 / UpAndSelfDirected=6 — trajectoryType selects the client arc engine;
-    // gravity enters as field/100 (AbstractBallisticBulletEngine.GRAVITY_DIVIDER),
-    // height is parametric in the flight duration, and sim timing is the
-    // duration/duration_next/duration_long triple (Bullet @0x5A..0x5E). Browser:
-    // linear speed·dt flight stays authoritative-timing-driven; per-family arcs
-    // + gravity/100 land when R1 per-weapon values arrive (keys mapped, zero-index).
+    // R8 trajectory/gravity consumers (dump.cs structural scan + numeric .so pass,
+    // reverse/notes/r8-trajectory-gravity-consumers.md): native BulletEngineType
+    // families are Linear=0 / Ballistic=1 / Ballistic_High=2 / SelfDirected=3 /
+    // ChainLighting=4 / Melee=5 / Adjustable=6 — trajectoryType selects the client
+    // arc engine; get_EngineType one-instruction reads @0x80B3558/0x80B36EC/
+    // 0x80B5CAC/0x80B6A80/0x80B4FDC/0x80B2B30 (Linear returns via wzr).
+    // Numeric arc law [DECOMP] AbstractBallisticBulletEngine (6.9.18):
+    //   g = (short)WeaponType.gravity / 100.0f      (CalculateGravity 0x80B25A8,
+    //     divider inlined as const 100.0f, runtime field @0xA0)
+    //   k = flightDuration / 200                    (m_pc @0x8C, 0x80B2050)
+    //   m_pa=-0.5g  m_pb=0.5g·k²  m_pc=k            (height coeffs @0x84/88/8C)
+    //   altitudeTime(t) = t / 100                   (0x80B2604)
+    //   height(t) = m_pa·(altitudeTime−m_pc)² + m_pb = 0.5g·(k² − (t/100−k)²)
+    //     -> h(0)=0, h(duration)=0, apex at t=duration/2 with height 0.5g·k²
+    //     (CalculateCurrentPosition 0x80B2200: X/Z lerp orig→target by t/duration,
+    //     Y = lerpY + parabola; MaxPositionY @0xA4 running apex tracker;
+    //     MIN_MOVE_SQR=1e-6 rodata gate on m_prevPosition updates)
+    //   accelerating path re-evaluates progress via CalculatePositionTime
+    //     t(t+1)/2 / (2·m_duration·(m_duration+1)) (0x80B25DC, m_duration @0x58)
+    //   sim-side get_AccelerateAndGuide (0x458FD60) = direct read of
+    //     WeaponType.bulletTrajectoryType @0x9E, predicate == 6 (guided family);
+    //     whole-binary BL xref of the three getters: 0 callers (inlined loads).
+    // gravity enters as field/100 (AbstractBallisticBulletEngine.GRAVITY_DIVIDER,
+    // dump.cs:276256), height is parametric in the flight duration, and sim timing
+    // is the duration/duration_next/duration_long triple (Bullet @0x5A..0x5E).
+    // Miss flight: LCBulletMissed.MISSED_FLIGTH_DISTANCE (@0x20 float) scales the
+    // miss direction, DURATION_TIME_SCALER (@0x1C int) scales duration — both
+    // per-instance fields (dump.cs:290068-9), server-delivered (R1-bound).
+    // Browser: linear speed·dt flight stays authoritative-timing-driven; per-family
+    // arcs + gravity/100 land when R1 per-weapon values arrive (keys mapped,
+    // zero-index); the closed-form height law above is the shape to adopt then.
     fireShell(u, tx, ty, tgt, d) {
       if (this.nativeTask(u) === TASK_DONT_SHOOT)
         return;
@@ -2166,6 +2188,11 @@
       // sim-supplied duration triple (no vel_z anywhere — Bullet @0x28..0x54 is
       // fixed-point horizontal kinematics only); this linear path is the
       // trajectory-less fallback until R1 values land (see fireShell note).
+      // Decoded base-ballistic height law (0x80B2200/0x80B2050/0x80B25A8):
+      // height(t) = 0.5·g·(k² − (t/100−k)²), g=gravity/100, k=duration/200 —
+      // zero at both ends, apex 0.5g·k² at t=duration/2. Adopt per-weapon when
+      // R1 gravity values arrive; SelfDirected family evaluates a Hermite-style
+      // polynomial on t̂=millisecs/duration instead (0x80B7E40).
       for (const p of this.projectiles) {
         const dx = p.tx - p.x, dy = p.ty - p.y;
         const d = Math.hypot(dx, dy);

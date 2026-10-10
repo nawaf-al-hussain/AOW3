@@ -1,10 +1,15 @@
-# RE note: R8 — trajectory-type / gravity consumers (6.9.18, offline structural pass)
+# RE note: R8 — trajectory-type / gravity consumers (6.9.18)
 
-Created: 2026-10-10. Registry `R8` ("m_bulletTrajectoryType / m_gravity consumer
-semantics", converts gap `G10`). Companion to `weapon-type-surface-native-analysis.md`
-(WeaponType combat surface), `data-model-extraction.md` (weapon-schema.json) and
+Created: 2026-10-10 (offline structural pass). Updated 2026-10-10: **numeric .so
+pass appended (§10)** — arc/gravity math decoded from libil2cpp.so `8ace05bb…`.
+Registry `R8` ("m_bulletTrajectoryType / m_gravity consumer semantics", converts
+gap `G10`). Companion to `weapon-type-surface-native-analysis.md` (WeaponType
+combat surface), `data-model-extraction.md` (weapon-schema.json) and
 `r1-prototype-data-pipeline.md` (per-weapon value keys). Evidence:
-`reverse/evidence/combat/trajectory-gravity-consumer-scan.txt` (5 parts, 1,142 lines).
+`reverse/evidence/combat/trajectory-gravity-consumer-scan.txt` (5 parts, 1,142
+lines, structural) and `reverse/evidence/combat/r8-numeric-arc-decode.txt`
+(4,147 lines, numeric: 30 functions disassembled + whole-binary BL xref,
+tool `reverse/tools/r8_numeric_arc_decode.py`).
 
 ## 1. Provenance and scope
 
@@ -54,14 +59,14 @@ Engine class per family (all `AbstractBulletEngine` subclasses, dump.cs:276251..
 | 3 | `SelfDirectedBulletEngine` | homing with Hermite-style pos0/1/2 + vel0/1/2 buffers, `CurveMode` Clear=0/Straight=1/Single=2/Double=3, `ACCELERATION_MULTIPLIER = 10`, `MissTargeting(offset, durationLeftFrom)` |
 | 4 | `ChainLightingBulletEngine` | chain lightning (`ChainBulletParams`, `m_randomMagnetPoint`, controller list) |
 | 5 | `Melee` | no bullet body (instant hit — no engine class exists) |
-| 6 | `UpAndSelfDirected` | no dedicated class → up-phase then self-directed (handled inside `SelfDirectedBulletEngine` targeting) — open residual |
-| — | `AdjustableBallisticBulletEngine` (subclass of 1) | mid-flight retarget: `m_target`, `m_originalStartTime`, `TryGetBulletMagnetPosition`, overrides `CalculateElapsedTime/CalculateCurrentPosition` |
+| 6 | `AdjustableBallisticBulletEngine` | **CORRECTED by the numeric pass**: the enum slot `UpAndSelfDirected = 6` IS this class — `get_EngineType` (0x80B2B30) returns **6**, not 1. Mid-flight retarget + up-phase then self-directed homing; sim-side `Bullet.get_AccelerateAndGuide` (0x458FD60) is literally `trajectoryType == 6`. The structural pass's "no dedicated class — open residual" is RESOLVED. |
 | — | `LeviaphanNuclearRocketBallisticBulletEngine` (subclass of 2) | hero special: `m_positionCurve`/`m_heightCurve` AnimationCurves, `m_min/maxDistanceGravityDivider` ([Min(0.5)]/[Min(1)]), overrides `CalculateGravity/CalculatePositionTime/CalculateAltitudeTime`, `GetClamped01Time` |
 
-Every engine exposes `abstract sbyte EngineType` (getters: Ballistic `0x80B3558`,
-BallisticHigh `0x80B36EC`, Linear `0x80B5CAC`, SelfDirected `0x80B6A80`,
-ChainLighting `0x80B4FDC`, Adjustable `0x80B2B30`) — the .so pass can confirm
-each family's numeric id in one instruction read each.
+Every engine exposes `abstract sbyte EngineType` — numeric pass confirmed all six
+one-instruction getters (§10.A): Ballistic `mov w0,#1` @0x80B3558, BallisticHigh
+`mov w0,#2` @0x80B36EC, Linear `mov w0,wzr` @0x80B5CAC, SelfDirected `mov w0,#3`
+@0x80B6A80, ChainLighting `mov w0,#4` @0x80B4FDC, Adjustable `mov w0,#6`
+@0x80B2B30.
 
 ## 4. Finding 3 — gravity semantics (`AbstractBallisticBulletEngine`, dump.cs:276251)
 
@@ -122,48 +127,122 @@ dx, dy, dz, durationLeftFrom)`).
    `engine.GetExplosionPoint`; named weapon specials: `ThorBombWeaponId = 66`,
    `AlbatrossBombWeaponId = 166`.
 
-## 7. Verdict and G10 impact
+## 7. Numeric pass — all structural-pass unknowns resolved (libil2cpp.so 8ace05bb…, tool r8_numeric_arc_decode.py)
 
-`m_bulletTrajectoryType` = **client engine selector** (7 families, §3);
-`m_gravity` = **client arc input in field/100 units**; `accelerating` =
-**arc-acceleration + guidance pairing**. The sim's own trajectory-relevant
-semantics are the duration triple, `lowing`, `on_target/missed/target_precise_hit`
-— all already structurally mirrored in the browser battle model, which today
-flies every projectile on a linear `speed·dt` path (`game.js` `fireShell` →
-`updateProjectiles`), artillery arcs purely cosmetic, and no arc model at all.
+All structural-pass unknowns (the retired §9 list: arc math, engine ids,
+EngineInitiate path, SelfDirected profile, miss-flight values, sim-side field
+readers) resolved. Full verbatim
+disassembly: evidence `r8-numeric-arc-decode.txt` (4,147 lines). Summary:
 
-What converts **now** (structural, offline): per-family arc shapes + `gravity/100`
-scaling + `accelerating` handling can be built as soon as R1 values arrive — the
-schema keys are mapped (browser-comparison.md L62) and the family table is final.
-What still needs the **.so** (numeric): arc height math
-(`CalculateHeightCoefficients`), each engine's returned `EngineType` constant,
-gravity read path in `EngineInitiate`, SelfDirected acceleration profile,
-miss-flight distance math — all RVA-anchored in evidence PART 5 (392 methods),
-so the future pass is a straight disassembly run, no re-search.
+**A. Engine family ids [DECOMP]** — six one-instruction getters: Linear 0
+(`mov w0,wzr`), Ballistic 1, BallisticHigh 2, SelfDirected 3, ChainLighting 4,
+**Adjustable 6** — see §3 correction. No other engine class exists, so the
+`UpAndSelfDirected` enum label and `AdjustableBallisticBulletEngine` are the same
+slot: guided up-then-homing shells.
 
-## 8. Implementation guidance (browser tribute)
+**B. Gravity read path [DECOMP]** — `CalculateGravity` 0x80B25A8:
+`owner = this+0x20; prototype = owner+0x48; g = (short)prototype.gravity(@0xA0) / 100.0f`
+with the divider **inlined as `mov w8, #0x42C80000`** (not a rodata load); null
+paths throw through 0x3CC7BF4. Runtime offset 0xA0 re-confirmed in code.
+
+**C. The arc law [DECOMP]** — `CalculateHeightCoefficients(duration)` 0x80B2050
+stores (V1 = virtual call via vtbl+0x238 = `CalculateGravity`):
+```
+k    = duration / 200.0f          -> m_pc @0x8C
+m_pa = -0.5f * g                  -> @0x84
+m_pb = 0.5f * g * k*k             -> @0x88
+```
+`CalculateAltitudeTime(t)` 0x80B2604 = `t / 100.0f`.
+`CalculateCurrentPosition` 0x80B2200 (base) then computes, per client tick:
+```
+t̂   = clamp(elapsed / m_duration, 0, 1)        (m_duration @0x58)
+xz  = lerp(originalPosition, targetPosition, t̂)
+alt = elapsed / 100
+y   = lerpY + m_pa*(alt − m_pc)² + m_pb        (apex at alt == m_pc)
+MaxPositionY @0xA4 = running max of y          (apex tracker)
+m_prevPosition @0x94 / m_prevElapsedTime @0xA0 updated only when the squared
+  displacement ≥ MIN_MOVE_SQR = 1e-6f (rodata 0x1B09CBC) — idle-tick gate
+```
+Substituting the coefficients gives the **closed-form arc**:
+`height(t) = 0.5·g·(k² − (t/100 − k)²)`, `k = duration/200` —
+`h(0) = 0`, `h(duration) = 0`, **apex exactly at t = duration/2 with height
+`0.5·g·k²`**. The parabola is fully determined by (gravity, duration); with the
+launch/target lerp this is the complete base-ballistic flight render model.
+
+`CalculatePositionTime(t)` 0x80B25DC (accelerating-path progress evaluator):
+`T(t) / (2·T(m_duration))` with `T(n) = n(n+1)/2` (triangular) — a quadratic
+easing over twice m_duration; consumed via the m_accelerating branch
+(vtbl+0x248) of CalculateCurrentPosition when `m_accelerating @0x90` is set.
+`EngineInitiate` 0x80B1BC8: `m_offsetTargetPosition @0x78 =
+statics[0x9674DE0].fields[+0x18..+0x20] × 0.2f` (rodata 0x1B09B48 = 0.2f).
+
+**D. Leviathan hero variant [DECOMP]** — `CalculateGravity` 0x80B5A18 calls the
+base then interpolates the gravity divider from two WeaponType virtual getters
+(vtbl+0x378/+0x358) plus target/curve state ([owner+0x58] floats) — the
+`m_min/maxDistanceGravityDivider` distance-interpolated arc; curve samplers
+0x80B5BBC/0x80B5BF4 + `GetClamped01Time` 0x80B5BE4 verbatim in evidence.
+
+**E. SelfDirected [DECOMP]** — `CalculateCurrentPositionAndVelocity` 0x80B7E40:
+normalizes `t̂ = millisecs / duration` then evaluates the Hermite-style
+polynomial over the pos0/1/2 + vel0/1/2 buffers (vector fmul/fadd chain verbatim
+in evidence); `MissTargeting` 0x80B7E28, `SetCurrentPositionAndVelocity`
+0x80B7A98, curve-mode branches `TargetingCurveModeClear` 0x80B6D24 /
+`NotClear` 0x80B6FC4.
+
+**F. Miss flight [DECOMP + SERVER-DATA]** — `LCBulletMissed.RetargetingBullet`
+0x81429DC scales the miss direction vector by `MISSED_FLIGTH_DISTANCE`
+(float instance field @0x20) and the flight time by `DURATION_TIME_SCALER`
+(int instance field @0x1C). dump.cs:290068-9 shows both are **instance fields,
+not constants** — the values ride the server payload (R1/session-bound); the
+browser cannot obtain them offline.
+
+**G. Sim-side readers [DECOMP + NEGATIVE]** — `Bullet.get_AccelerateAndGuide`
+0x458FD60 is a 6-instruction predicate: `return (sbyte)we_type.bulletTrajectoryType(@0x9E) == 6`
+(guided family), i.e. the sim DOES consume the trajectory field directly
+(inlined field load — consistent with the whole-binary BL xref finding **zero**
+BL callers for get_BulletTrajectoryType/get_Gravity/get_Accelerating across
+41,649,815 scanned words). Trajectory semantics: family 6 = accelerate+guide
+(mid-flight retarget); gravity has no sim-side reader — it is purely the client
+arc input; sim timing stays the duration triple (§5).
+
+## 8. Verdict and G10 impact (updated by the numeric pass)
+
+`m_bulletTrajectoryType` = **client engine selector** (6 engine classes over 7
+enum slots; slot 6 IS Adjustable — §7.A); `m_gravity` = **client arc input in
+field/100 units**; `accelerating` = **arc-acceleration + guidance pairing**
+(sim predicate: trajectory == 6). The sim's own trajectory-relevant semantics
+are the duration triple, `lowing`, `on_target/missed/target_precise_hit` —
+already structurally mirrored in the browser battle model, which today flies
+every projectile on a linear `speed·dt` path (`game.js` `fireShell` →
+`updateProjectiles`).
+
+The **arc math is now fully decoded** (§7.C): base-ballistic height is the
+closed-form parabola `0.5·g·(k² − (t/100 − k)²)`, `g = gravity/100`,
+`k = duration/200` — determined by exactly two inputs, the per-weapon gravity
+value (R1-bound balance data) and the flight duration the sim already streams.
+Nothing else blocks an authentic browser arc model: when R1 values land, the
+renderer adopts the closed form per family (Linear = no arc, SelfDirected =
+Hermite on pos/vel buffers, Adjustable = retargeting variant) with zero further
+RE. Residuals are server-data values (per-weapon gravity/trajectory/accelerating
+rows; miss-flight MISSED_FLIGTH_DISTANCE/DURATION_TIME_SCALER) — all R1-session
+carryable.
+
+## 9. Implementation guidance (browser tribute, updated)
 
 * Keep the projectile struct render-only; the authoritative timing stays
   duration-driven. A future `trajectory` field on the weapon def (values from R1)
-  should select among the seven families with Linear=0 as fallback.
+  selects among the engine families with Linear=0 as fallback.
 * Gravity enters ONLY as `field / 100`; never interpret the raw short as m/s².
+* Base-ballistic arc (families 1/2): `height(t) = 0.5·g·(k² − (t/100−k)²)`,
+  `k = duration/200` — zero at both ends, apex `0.5·g·k²` at `t = duration/2`;
+  X/Z progress is a plain lerp over `duration` (accelerating shells swap in the
+  triangular-number easing `T(t)/(2·T(duration))`).
+* SelfDirected (3): Hermite-style evaluation on `t̂ = millisecs/duration` over
+  the pos0/1/2 + vel0/1/2 buffers; Adjustable (6): same plus mid-flight
+  retargeting (`m_originalStartTime`, `TryGetBulletMagnetPosition`).
 * `Melee` (5) means no projectile — matches the current instant-hit branch at
   `projectileSpeed === 0` only for melee-class weapons; ranged speed=0 is a
   separate semantic (already flagged in the audit row).
 * Comment fold-in shipped at `fireShell`/`updateProjectiles` (provenance +
-  family table pointer); cache-bumped v=56 → v=57 per §35.1.
-
-## 9. Unknowns (RVA-anchored, blocked on libil2cpp.so re-acquisition)
-
-1. Arc math: `CalculateHeightCoefficients` `0x80B2050`, `CalculateGravity` `0x80B25A8`,
-   Leviathan overrides `0x80B5A18` (+ curve sampling in
-   `CalculatePositionTime/CalculateAltitudeTime`).
-2. `get_EngineType` returns per class (six one-liner reads at the §3 RVAs).
-3. `EngineInitiate` gravity/accelerating read path (`0x80B1BC8` abstract base).
-4. SelfDirected: `CalculateCurrentPositionAndVelocity` `0x80B7E40`,
-   `TargetingCurveModeClear/NotClear` (clear-line-of-fire branch condition).
-5. Miss flight: `LCBulletMissed.RetargetingBullet` `0x81429DC` +
-   `MISSED_FLIGTH_DISTANCE`/`DURATION_TIME_SCALER` values.
-6. Whether sim-side code reads `WeaponType.bulletTrajectoryType` at all (loose
-   end for gameplay semantics like shooting over obstacles; the BL-xref pass
-   would settle it in minutes once the .so is back).
+  family table + closed-form law); cache-bumped v=61 → v=62 per §35.1
+  (comment-only, zero behavior delta).

@@ -21,7 +21,7 @@ dump.cs `0050e67d…`). Evidence labels per AGENTS.md §9 / mission vocabulary:
 | R5 | `$Pg` branch micro-logic | **LARGELY DONE** (Builds I/J) | `evidence/combat/pg-branches-decode.txt`, `band-dataflow{,-2,-3}.txt`, `notes/maxstat-tier-band-decode.md` | only if join-arm values ever matter numerically: `$Pg` jump-table case map (bounded residual) |
 | R6 | TakePositions per-bit cell names | **CONFIRMED** (13/15 bits named; bit space = ClientBattleCell.m_passMask, CheckByMask blocked-state semantics; bits 7/14 reserved) | `notes/r6-bitname-crossref.md`, `evidence/combat/r6-checkbymask-decode.txt` | CLOSED at the statically-reachable limit; per-cell empirical overlay rides the R1 device session |
 | R7 | Native visibility/sight rules | **PARTIALLY_CONFIRMED** (pass 1: server-authoritative command stream + calcSightCurr; pass 2: client-core kernel + shape mechanism; pass 3: membership CONTRACT decoded — \|dx\| ≤ (sbyte)fogLines[r][\|dy\|]/2, D=2 half-cell fixed-point, $ec R=15/S=31/M=0xFF/N=3, $iu producer claim corrected; fogLines byte VALUES blocked-static: virtual-setter producer needs script.json/device) | `notes/sight-fog-native-analysis.md`, `evidence/fog/*`, `evidence/vision/*` (incl. `ik-ec-constants-decode.txt`), `notes/sight-visibility-native-analysis.md` | CLOSED at the statically-reachable limit; optional re-open with script.json (vtable closure → table bytes); dynamic sight terms (in_forest provider, boosts) remain audit items |
-| R8 | Trajectory type / gravity semantics | **PARTIAL** (structure offline 2026-10-10; numeric arc math needs .so) | `evidence/combat/trajectory-gravity-consumer-scan.txt`, `notes/r8-trajectory-gravity-consumers.md` | numeric .so pass at the 392 recorded RVAs; browser arc model structurally buildable now (values drop in with R1) |
+| R8 | Trajectory type / gravity semantics | **CONFIRMED** (structure offline 2026-10-10 + numeric .so pass 2026-10-10: closed-form ballistic arc height(t)=0.5g(k²−(t/100−k)²), k=duration/200, apex 0.5gk² at t=duration/2 [DECOMP]; EngineType ids 0-6 confirmed, slot 6 = Adjustable; AccelerateAndGuide = trajectory==6 @0x458FD60; miss-flight params are server instance fields) | `evidence/combat/trajectory-gravity-consumer-scan.txt`, `evidence/combat/r8-numeric-arc-decode.txt`, `notes/r8-trajectory-gravity-consumers.md` | CLOSED at the statically-reachable limit; renderer adopts the decoded closed form when R1 gravity/trajectory values land (note §9); miss-flight server fields ride the R1 session |
 | R9 | Client↔server battle protocol | BLOCKED (device) | AIComm class names | TLS-unpin + capture, or Frida hooks |
 | R10 | Camera/UI metrics | BLOCKED (device captures) | V8 A/B harness exists | record device gameplay; calibrate v2 pitch ramp |
 | R11 | Addressables DLC scan (naval/air prefabs) | BLOCKED (device storage) | APK-side absence proven | pull catalog+bundles from device, re-run `unpack_bundles.py` |
@@ -41,7 +41,11 @@ dump.cs `0050e67d…`). Evidence labels per AGENTS.md §9 / mission vocabulary:
 ### Priority B — Native simulation semantics (offline-startable now)
 Ranked by fidelity impact per audit §7 and current residuals:
 1. **R7 pass 3 — membership contract DECODED (Task 57)** — `$Ik` D=2 (inclusive,
-2. **R8 trajectory/gravity consumers** — STRUCTURE RECOVERED (engine taxonomy Linear0..UpAndSelfDirected6, gravity/100, duration-triple sim timing); converts G10's structure now, numerics wait for .so.
+2. ~~**R8 trajectory/gravity consumers**~~ — **DONE (structural + numeric, Task 61)**:
+   closed-form arc law decoded (height = 0.5g·(k²−(t/100−k)²), g=gravity/100,
+   k=duration/200); engine ids confirmed, taxonomy corrected (slot 6 = Adjustable);
+   AccelerateAndGuide predicate pinned; converts G10's structure AND math — only
+   per-weapon VALUES remain (R1).
 3. **G11 burst wire-up** — `shot_count/shot_int` machinery exists; values arrive with R1;
    ensure sim paths are burst-ready and hash-covered (audit I2/I7).
 4. ~~**H1 hash blind spots**~~ — **DONE (Task 58, v=59)**: mines (M-lines) + `_chain` + behavior-timer block + cmdSeq serialized; golden structure assertions re-baselined; exposed + fixed the JIP clientless-window archive hole (lockstep-jip).
@@ -82,8 +86,9 @@ Ranked by fidelity impact per audit §7 and current residuals:
 
 1. ~~R7 sight/visibility consumer scan~~ — **DONE (passes 1–3, Tasks 54–57)**;
    CLOSED at the statically-reachable limit, optional re-open gated on script.json.
-2. ~~R8 trajectory/gravity consumer scan~~ — **DONE (structural) 2026-10-10**;
-   numeric .so pass queued on APK re-acquisition (392 RVA anchors ready).
+2. ~~R8 trajectory/gravity consumer scan~~ — **DONE (structural 2026-10-10 + numeric .so pass Task 61)**;
+   closed-form arc law + engine ids + AccelerateAndGuide predicate decoded
+   (r8-numeric-arc-decode.txt); CLOSED — only R1-bound per-weapon values remain.
 3. ~~**H1 hash-coverage extension**~~ — **DONE (Task 58, 2026-10-10)**; mined fields, chain guard, behavior timers and cmdSeq now hash-covered; JIP snapshot hole found + fixed on the way.
 4. ~~**R6 bit-name cross-ref**~~ — **DONE (Task 59, 2026-10-10)**; 13/15 bits named from
    ClientBattleCell.m_passMask consts + terrain LUT + writer census; takepos masks are
