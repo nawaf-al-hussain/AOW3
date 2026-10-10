@@ -1,0 +1,120 @@
+{
+ "$schema_note": "R7 pass 3 \u2014 decoded Obfuz-pool constants behind the fog reveal-shape tests: AICommBuSet.$Ik membership (D divisor) and CheckAndCalc.$ec grid constants (R/S/M/N). Shared R2 $GOA/$kK core; segments and pool cross-checked against committed evidence.",
+ "game_version": "6.9.18",
+ "generated": "2026-10-10",
+ "provenance": {
+  "libil2cpp_sha256": "8ace05bbaa2cdfda156e377cfbcb0c0a6fb223fa68188fa3df49f677f10e90c5",
+  "global_metadata_sha256": "d2e8dd0dfe1b82337d2399edeec967ba382593fedf0c46acc8d6a80e92697e9e",
+  "secret_key_sha256": "885f4d0c3ccc13e2cb6f706b32c401adb9db61b909e25373cd58713c72c1ffe0",
+  "segments": {
+   "0x1008": {
+    "fdv_offset": "0xDBFC10",
+    "keyA": "0x5B300BF1",
+    "salt": "0x8952D5F4"
+   },
+   "0x1810": {
+    "fdv_offset": "0xDC0418",
+    "keyA": "0xF91F0C58",
+    "salt": "0x9A457001"
+   },
+   "0x2820": {
+    "fdv_offset": "0xDBDBF0",
+    "keyA": "0xC1A1C8CC",
+    "salt": "0x44A79BB9"
+   }
+  },
+  "statics_class_ccache_slot": "0x968E4D8",
+  "evidence": "reverse/evidence/vision/ik-ec-constants-decode.txt"
+ },
+ "callsites": [
+  {
+   "label": "$Ik divisor D",
+   "segment": "0x2820",
+   "start": "0x5d0",
+   "keyA": "0x3d",
+   "salt": "0x27428cbf",
+   "raw": "0xa3af9c8d",
+   "value": 2,
+   "source": "AICommBuSet.$Ik 0x48E649C @0x48E6654-0x48E6668; segment byte[] read from statics+0x3830"
+  },
+  {
+   "label": "$ec bound A",
+   "segment": "0x1810",
+   "start": "0x574",
+   "keyA": "0x79",
+   "salt": "0x9b98d882",
+   "raw": "0xabababab",
+   "value": 129592899,
+   "source": "CheckAndCalc.$ec 0x46D2E7C @0x46D3068-0x46D307C; statics+0x1810 segment"
+  },
+  {
+   "label": "$ec bound B",
+   "segment": "0x1810",
+   "start": "0x578",
+   "keyA": "0x79",
+   "salt": "0x9b98d882",
+   "raw": "0xabababab",
+   "value": 129592899,
+   "source": "CheckAndCalc.$ec 0x46D2E7C @0x46D2FF4-0x46D3008; statics+0x1810 segment"
+  }
+ ],
+ "statics": [
+  {
+   "target": "0xd4",
+   "pool_value": "0x7fe0ca87",
+   "mode": "eor",
+   "key": "0x7fe0ca88",
+   "plain": 15,
+   "note": "$ec R (grid radius bound); $Ik row bound"
+  },
+  {
+   "target": "0x30",
+   "pool_value": "0x34a1c3e7",
+   "mode": "add",
+   "key": "0xcb5e3c38",
+   "plain": 31,
+   "note": "$ec S (grid stride = 2R+1); Battle const $cc = 31"
+  },
+  {
+   "target": "0x400",
+   "pool_value": "0xb40928e7",
+   "mode": "eor",
+   "key": "0xb4092818",
+   "plain": 255,
+   "note": "$ec M (byte mask)"
+  },
+  {
+   "target": "0x14",
+   "pool_value": "0x00000003",
+   "mode": "raw",
+   "key": null,
+   "plain": 3,
+   "note": "$ec N (fixed-point shift; 3 fractional bits)"
+  },
+  {
+   "target": "0x4",
+   "pool_value": "0x9b2d74a3",
+   "mode": "mul-a",
+   "key": null,
+   "plain": 2603447459,
+   "note": "$Ik polarity gadget factor A"
+  },
+  {
+   "target": "0x8",
+   "pool_value": "0x00000000",
+   "mode": "mul-b",
+   "key": null,
+   "plain": 0,
+   "note": "$Ik polarity gadget factor B (0 -> gadget returns INSIDE test)"
+  },
+  {
+   "target": "0x688",
+   "pool_value": "0x00001518",
+   "mode": "raw",
+   "key": null,
+   "plain": 5400,
+   "note": "adjacent getter @0x48E6744 returns this directly"
+  }
+ ],
+ "ik_polarity_fold": 0
+}

@@ -2292,17 +2292,25 @@
         this.visible[o].fill(0);
       for (let o = 1; o <= this.seatCount; o++) {
         const vis = this.visible[o - 1];
-        // [DECOMP] R7 pass 2 (Task 54): native reveal is a PRECOMPUTED
-        // per-radius row-extent table ("fog lines", sbyte[][] on
-        // BattleAlliance/Battle), membership |dx| < fogLines[r][|dy|]/D via
-        // AICommBuSet.$Ik 0x48E649C — client mirror is literally named
-        // IsCellInCircle; spans applied as orr/bic run-masks into packed
+        // [DECOMP] R7 pass 2 (Task 54) + pass 3 (Task 57): native reveal is a
+        // PRECOMPUTED per-radius row-extent table ("fog lines", sbyte[][] on
+        // BattleAlliance/Battle), membership via AICommBuSet.$Ik 0x48E649C —
+        // pass 3 decoded the exact contract: |dy| <= r, then INCLUSIVE
+        // |dx| <= (sbyte) fogLines[r][|dy|] / 2 (D = 2 pool-decoded: half-cell
+        // fixed-point; the statics[4]*statics[8] = 0 polarity gadget returns
+        // the inside test; null fogLines throws). Client mirror is literally
+        // named IsCellInCircle; spans applied as orr/bic run-masks into packed
         // int[][] per-alliance bitmaps (32 cells/int, BattleAlliance 0x30
         // visible + 0x38 explored) by FogAct.$rd. Three-state fog:
-        // BattleCellFoggyState Clear/Fogged/Dark. Table BYTES are computed
-        // inside Obfuz-encrypted BattleSide.$iu — values pending R7 pass 3;
-        // until then the Euclidean disc below stays (native tables may be
-        // exactly this disc — evidence: reverse/evidence/vision/).
+        // BattleCellFoggyState Clear/Fogged/Dark. Companion packed query:
+        // CheckAndCalc.$ec = 31x31 grid, (R+dy)*31+(R+dx), returns
+        // (byte & 0xFF) >> 3 — R = 15, S = 31 = 2R+1 (Battle consts $cc/$Cc),
+        // 1/8-cell levels. Table BYTES are runtime battle-init data (virtual
+        // setter dispatch; no static producer — see
+        // reverse/evidence/vision/ik-ec-constants-decode.txt §4); for a
+        // consistently-built Euclidean table the membership above is provably
+        // identical to the integer-cell disc below, so the Euclidean test
+        // stays until the bytes are recovered (delta risk: hand-tuned extents).
         const reveal = (x, y, r) => {
           const x0 = Math.max(0, Math.floor(x - r)), x1 = Math.min(MAP_W - 1, Math.ceil(x + r));
           const y0 = Math.max(0, Math.floor(y - r)), y1 = Math.min(MAP_H - 1, Math.ceil(y + r));

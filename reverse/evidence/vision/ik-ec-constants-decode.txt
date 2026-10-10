@@ -1,0 +1,152 @@
+R7 pass 3 evidence: fog reveal-shape test constants ($Ik D + $ec R/S/M/N) decode
+=================================================================================
+Game: AOW3 6.9.18 — libil2cpp.so sha256 8ace05bbaa2cdfda…, global-metadata.dat
+d2e8dd0dfe1b8233…, obfuz_secret_key.bin 885f4d0c3ccc13e2… (all re-verified this run).
+Method: shared R2 Obfuz core ($GOA unicorn emulation + $kK CBC; obfuz_static_decode.py),
+segment oracle + numpy operand scans + Capstone window reads. No device required.
+Labels per AGENTS.md §9. Companion note: reverse/notes/sight-visibility-native-analysis.md.
+Repro: reverse/tools/r7_ik_ec_constants_decode.py (emits ik-ec-constants.json, all PASS).
+
+--------------------------------------------------------------------------------
+[1] THE STATICS CLASS [DECOMP]
+--------------------------------------------------------------------------------
+Every R7 shape function reads ONE global obfuscated-constants statics class,
+identified by its klass ccache slot 0x968E4D8 (pattern: adrp 0x968E000 +
+ldr [x,#0x4D8] -> klass; statics at [klass+0xB8]):
+  CheckAndCalc.$ec (0x46D2E7C), AICommBuSet.$Ik (0x48E649C), UnitAct.$Pg/$CG/$rH,
+  PathAct.$Te/$we/$Re, FlightAct.$Kd, ShotAct.$Ze/$jE/$DE, Battle.$HL, FlagAct.$YC, …
+The holder .cctor 0x4975844 (the R2 697-value pool) stores ALL 697 decoded values
+into exactly this one class — verified by re-parsing the cctor with per-store
+target attribution through the reg chain (adrp/ldr slot -> ldr klass -> ldr
+statics -> str T): 697/697 stores resolve to ccache slot 0x968E000+0x4D8.
+Cross-check: 631/631 int/float records reproduce the committed
+reverse/evidence/obfuz/obfuz-pool-values.json (629 int + 2 float = 631).
+
+--------------------------------------------------------------------------------
+[2] $Ik MEMBERSHIP — THE EXACT REVEAL TEST [DECOMP] (0x48E649C, 0x600 B)
+--------------------------------------------------------------------------------
+$Ik(x, y, cx, cy, radius, fogLines) — flattened-dispatch states (statics slots
+0x8/0x14/0x34/0x85C/…); arg regs w0..w4 + x5 tracked through cneg/mov chains:
+  w23 = |x - cx|  (subs w9,w24,w23; cneg mi @0x48E653C)  = |dx|
+  w21 = |y - cy|  (subs w9,w22,w21; cneg mi @0x48E6550)  = |dy|
+  case 1 (0x48E6558): if (|dy| > radius) -> FALSE path (state 0: statics[4]*
+      statics[8] cmp 0; cset ne -> 0 @0x48E66AC-0x48E66CC)
+  case 3 (0x48E65F8): bounds-checked row select:
+      if (fogLines.Length <= radius) throw          ; cmp [x19+0x18], w20; b.ls 0x48E66F0
+      row = fogLines[radius]                        ; x8 = [x19 + radius*8 + 0x20]
+      if (row.Length <= |dy|) throw                 ; cmp w28, [x8+0x18]; b.hs
+      extent = (sbyte) row[|dy|]                    ; ldrsb w20, [x8 + w28 + 0x20] @0x48E662C
+      D = $gK(seg[statics+0x3830], start 0x5D0, keyA 0x3D, salt 0x27428CBF) @0x48E664C-0x48E6668
+      q = extent / D (sdiv)                         ; sdiv w9, w20, w19 @0x48E6688
+  tail (0x48E6690-0x48E66A4):
+      w10,w8 = statics[4], statics[8]  (ldp [x8,#4]); FOLD = w8*w10
+      w9  = (q < |dx|)                 ; cmp w9, w26; cset lt
+      w0  = (FOLD == w9)               ; cmp FOLD, w9; cset eq
+  DECODED VALUES: D = 2  [$gK raw 0xa3af9c8d -> 2 — same raw-word family the
+      Task-55 live-pool record logged (0x6a0/0x6a8/0x6ac = 0xa3af9c8d); decoded
+      from the anchor-validated 0x2820 segment (fdv 0xDBDBF0)]
+      statics[4] = 0x9B2D74A3 (pool), statics[8] = 0 (pool) -> FOLD = 0
+      => the tail returns the INSIDE test; |dy| > radius returns false.
+  *** FINAL: visible(r, dx, dy)  <=>  |dy| <= radius AND |dx| <= (sbyte)fogLines[radius][|dy|] / 2 ***
+  (pass 2 paraphrased this as strict "<" and "fogLines == null -> true"; the null
+  path at 0x48E65F8 cbz x19 -> 0x48E66EC is a THROW (0x3CC7BF4 NullReference),
+  and the bound is INCLUSIVE <= after the FOLD=0 polarity — both corrected here.)
+  Note: sdiv truncates toward zero; for extent >= 0 the set {|dx| : |dx| <=
+  trunc(e/2)} equals {|dx| <= floor(e/2)} — extents are HALF-CELL fixed-point.
+
+--------------------------------------------------------------------------------
+[3] $ec PACKED-GRID QUERY — CONSTANTS [DECOMP] (0x46D2E7C, state 5 @0x46D3100)
+--------------------------------------------------------------------------------
+$ec(fogLines, x0, y0, x1, y1) -> int, state 5 body (0x46D3118-0x46D31A8):
+  if (fogLines == null) throw                       ; cbz x19 -> 0x46D31C8
+  if (fogLines.Length <= rowIdx) throw              ; ldrsw x8, [statics+0x10]; cmp [x19+0x18]
+  row = fogLines[rowIdx]                            ; x19 = [x19 + rowIdx*8 + 0x20]
+  R = statics[0xD4] ^ 0x7FE0CA88  = 0x7FE0CA87 ^ 0x7FE0CA88 = 15
+  S = statics[0x30] + 0xCB5E3C38  = 0x34A1C3E7 + 0xCB5E3C38 = 31  (= 2R+1)
+  idx = (R + dy) * S + (R + dx)                     ; madd w9, w12, w10, w9 @0x46D3178
+  if (idx >= row.Length) throw                      ; cmp w9, [x19+0x18]; b.hs
+  b = (sbyte) row[idx]                              ; ldrsb w9, [x9 + 0x20] @0x46D319C
+  M = statics[0x400] ^ 0xB4092818 = 0xB40928E7 ^ 0xB4092818 = 0xFF
+  N = statics[0x14] = 3
+  return (b & M) >> N                               ; and w9, w10, w9; asr w0, w9, w8
+=> a (2R+1)^2 = 31x31 signed-byte grid per row; each byte = a LEVEL/EXTENT in
+   1/8-cell fixed-point (>>3). Matches Battle consts dump.cs: public const int
+   $cc = 31 and $Cc = 15 (class Battle, lines ~415914/415916).
+   rowIdx = statics[0x10] — pool target 0x10 holds 0x82F5D84B (eor-pair-looking
+   next to statics[0xC] = 0x82F5D84A; XOR = 1) but $ec loads it RAW (ldrsw) and
+   the bounds check must pass at runtime -> a class-cctor-side re-write of
+   statics[0xC]/0x10 is implied; actual rowIdx value PENDING (needs the class's
+   own .cctor — separate from the holder .cctor; statics slot 0x268 is the same
+   story: $ec's +0x268 state returns statics[0x268] * 0x9F1ABCD7 mul-decoded).
+$ec auxiliary state bounds ($gK seg[statics+0x1810-slot], starts 0x574/0x578,
+keyA 0x79, salt 0x9B98D882): decode to 129592899 from the COMMITTED 0x1810
+segment — but the raw words there are 0xabababab (filler) => $ec's runtime
+segment byte[] is one of the FOUR uncommitted runtime arrays (statics bases
+0x968a810/0x968f810/0x9677810/0x967a810 seen across $iu/Battle-init callsites);
+the auxiliary bounds remain PENDING. The membership semantics above do not
+depend on them (state-5 constants come from the STATICS class, all decoded).
+
+--------------------------------------------------------------------------------
+[4] PRODUCER HUNT — WHAT PASS 3 RULED OUT [DECOMP]
+--------------------------------------------------------------------------------
+Pass 2 claimed "BattleSide.$iu stores Battle.$Mc at 0x469794C". REFUTED:
+  x19 in $iu (0x46958E8, bool) is a BattleSide — field fingerprint exact:
+  +0x2E0 = RedeployInfo $dh (ctor 0x45A6A34 annotated), +0x360 = List<BonusChest>
+  $Rh, +0x240..0x2A0 = the List<MineLayingSet>/ImplosionSet/Building/TroopCute/
+  Quest/UnbuildZone/BuildingDestroyed family, +0x110/0x118/0x120 = boost dict/
+  lists. The 0x2D0 store is BattleSide.$ch = new List<BuildingDestroyed>(
+  capacity statics[0x48]*0x68F3338C) — a MUL-decoded container CAPACITY, not a
+  fogLines table. $iu is a plain field initializer (no array allocations; its
+  $gK callsites read capacities from a MIX of committed (0x2820: starts
+  0x150/0x154/0x158/0x160 -> 2, the DEFEND=2 key family) and uncommitted
+  segments; starts 0x144-0x17C, keys (0x11,0x2927AB7E)/(0x3D,0x27428CBF)/
+  (0x02,0x359E6CF8)).
+Also ruled out (operand-level scans, whole .text):
+  - str x,[x,#0x2B8]/#0x2D0 field stores: only the virtual setter bodies
+    ($Pn 0x463F71C, $ZM 0x463F584) + SP-relative false positives (BattleSide.$ju
+    0x4698ECC/0x4698ED4 are str xzr,[sp,…] stack zeroing).
+  - setter BL callers: 0 for $HS/$ZM/$Pn/$hS/$zM/$pn (virtual dispatch only).
+  - byte-grid writers (strb reg-offset near madd): 45 sxtw sites, none in game
+    shape code (PathAct.$Je/UnitAct.$Kh/$lh are act logic, unrelated).
+  - Battle init surface: Battle.$HL (0x4638958, 0x5C84 B) has NO array_new;
+    $ju/$iu/$Iu/$fb none; BattleSide.$Iu/$fb none.
+  - pool strings: all 66 are log/diagnostic fragments — no table data.
+  - BattleSTSerializer/Deserializer: no 0x2B8/0x2D0 entity-field access (the
+    three deserializer hits are class-init loops / vtable dispatch).
+CONCLUSION: Battle.$kc/$Mc (and BattleAlliance.$kE) are filled through
+VIRTUAL SETTER dispatch ($ZM/$Pn/$HS callvirt) whose static call-graph closure
+requires script.json (Il2CppDumper vtable map — NOT recovered; only dump.cs is
+committed). The table BYTES are runtime battle-init data: [BLOCKED-STATIC],
+not [SERVER-DATA] (deserializer reads 3 ints — pass 2, holds).
+
+--------------------------------------------------------------------------------
+[5] SHAPE CONSEQUENCE FOR THE BROWSER [BROWSER]
+--------------------------------------------------------------------------------
+Native membership: |dx| <= floor((sbyte)fogLines[r][|dy|] / 2), |dy| <= r.
+If fogLines encode the Euclidean disc (extent[r][dy] in {2*floor(sqrt(r^2-dy^2)),
+2*floor(sqrt(r^2-dy^2))+1}), this is PROVABLY IDENTICAL to the integer-cell
+Euclidean test the browser already uses (Math.hypot(gx-x, gy-y) <= r with
+integer gx, gy, unit center): |dx| <= floor(sqrt(r^2-dy^2)) <=> hypot <= r.
+The observable delta exists ONLY if the runtime tables hand-tune extents
+(±1 edge cells per row). Table bytes are [BLOCKED-STATIC] (§4) -> the browser
+KEEPS the Euclidean disc; fold-in stays COMMENT-ONLY (v=57 -> v=58), now with
+the decoded contract (D=2, <=, half-cell fixed-point, R/S/M/N) recorded.
+
+--------------------------------------------------------------------------------
+[6] VALIDATION LEDGER (this run)
+--------------------------------------------------------------------------------
+  $GOA canary                                 PASS (0x12345678)
+  segments 0x1008/0x1810/0x2820 decrypt       PASS (R2/Task-55 anchor-validated keys)
+  $Ik D  = GOA(0xa3af9c8d, 0x3d, 0x27428cbf)  = 2                       PASS
+  statics[0xD4]^0x7FE0CA88 = 15 (R)                                 PASS
+  statics[0x30]+0xCB5E3C38 = 31 (S = 2R+1)                          PASS
+  statics[0x400]^0xB4092818 = 0xFF (M)                              PASS
+  statics[0x14] = 3 (N)                                             PASS
+  statics[0x4]*statics[0x8] = 0 (FOLD -> inside test)               PASS
+  statics[0x688] = 5400 (adjacent getter)                           PASS
+  pool cross-check 631/631 int+float records vs committed           PASS
+  holder-cctor target attribution 697/697 -> slot 0x968E4D8         PASS
+PENDING (recorded, not decoded): fogLines table bytes (virtual-dispatch
+producer, needs script.json or a device dump); $ec rowIdx statics[0x10]
+class-cctor rewrite; $ec auxiliary bounds (uncommitted runtime segment); the
+four uncommitted runtime pool segments (starts 0x144-0x17C families).

@@ -10,7 +10,7 @@ Game version of record: **6.9.18** (`libil2cpp.so` sha256 `8ace05bb…`, metadat
 dump.cs `0050e67d…`). Evidence labels per AGENTS.md §9 / mission vocabulary:
 `[NATIVE] [DECOMP] [RUNTIME] [ASSET] [SERVER-DATA] [BROWSER] [INFERRED] [SPECULATIVE]`.
 
-## Status snapshot (2026-10-10, R7 pass 2 / Task 54)
+## Status snapshot (2026-10-10, R7 pass 3 / Task 57)
 
 | Audit ID | Question | Status | Evidence anchor | Next concrete action |
 |---|---|---|---|---|
@@ -20,7 +20,7 @@ dump.cs `0050e67d…`). Evidence labels per AGENTS.md §9 / mission vocabulary:
 | R4 | Damage application semantics | BLOCKED (device/live server) | damage-pipeline note §3.5 | Phase 24 controlled scenarios |
 | R5 | `$Pg` branch micro-logic | **LARGELY DONE** (Builds I/J) | `evidence/combat/pg-branches-decode.txt`, `band-dataflow{,-2,-3}.txt`, `notes/maxstat-tier-band-decode.md` | only if join-arm values ever matter numerically: `$Pg` jump-table case map (bounded residual) |
 | R6 | TakePositions per-bit cell names | PARTIAL (masks CONFIRMED, bit names INFERRED) | `evidence/combat/takepos-cells-decode.txt` | cell-class bit naming via map-prefab cross-ref (offline) |
-| R7 | Native visibility/sight rules | **PARTIALLY_CONFIRMED** (pass 1: server-authoritative command stream + calcSightCurr decoded; pass 2: client-core kernel + shape mechanism CONFIRMED; fogLines table bytes pending pass 3) | `notes/sight-fog-native-analysis.md`, `evidence/fog/*`, `evidence/vision/*`, `notes/sight-visibility-native-analysis.md` | pass 3: Obfuz method-bridge emulation (BattleSide.$iu) to recover fogLines values + $ec/$Ik statics; then dynamic sight terms (in_forest provider, boosts) |
+| R7 | Native visibility/sight rules | **PARTIALLY_CONFIRMED** (pass 1: server-authoritative command stream + calcSightCurr; pass 2: client-core kernel + shape mechanism; pass 3: membership CONTRACT decoded — \|dx\| ≤ (sbyte)fogLines[r][\|dy\|]/2, D=2 half-cell fixed-point, $ec R=15/S=31/M=0xFF/N=3, $iu producer claim corrected; fogLines byte VALUES blocked-static: virtual-setter producer needs script.json/device) | `notes/sight-fog-native-analysis.md`, `evidence/fog/*`, `evidence/vision/*` (incl. `ik-ec-constants-decode.txt`), `notes/sight-visibility-native-analysis.md` | CLOSED at the statically-reachable limit; optional re-open with script.json (vtable closure → table bytes); dynamic sight terms (in_forest provider, boosts) remain audit items |
 | R8 | Trajectory type / gravity semantics | OPEN (offline-startable) | `weapon-schema.json` fields 0x3C/0x3E | consumer xref scan in weapon/spawn code (G10) |
 | R9 | Client↔server battle protocol | BLOCKED (device) | AIComm class names | TLS-unpin + capture, or Frida hooks |
 | R10 | Camera/UI metrics | BLOCKED (device captures) | V8 A/B harness exists | record device gameplay; calibrate v2 pitch ramp |
@@ -39,11 +39,12 @@ dump.cs `0050e67d…`). Evidence labels per AGENTS.md §9 / mission vocabulary:
 
 ### Priority B — Native simulation semantics (offline-startable now)
 Ranked by fidelity impact per audit §7 and current residuals:
-1. **R7 pass 3 — fogLines table values** — architecture decoded (pass 2: packed
-   bitmaps + row-extent tables + `$Ik`/`$ec` membership); values live inside
-   Obfuz-encrypted `BattleSide.$iu` → emulate the `0x5265B74` method bridge
-   (same family as the R2 static decode). Converts H4 fully; then align
-   browser reveal shape if the disc quantization differs.
+1. **R7 pass 3 — membership contract DECODED (Task 57)** — `$Ik` D=2 (inclusive,
+   half-cell extents), `$ec` R/S/M/N, one global statics class (ccache 0x968E4D8)
+   = the R2 holder's single write target; pass-2 `$iu` producer claim corrected
+   (List<BuildingDestroyed> capacity). Table bytes blocked-static (virtual
+   setter dispatch; script.json/device). Browser keeps the Euclidean disc —
+   provably equivalent for consistently-built tables; comment-only fold-in v=58.
 2. **R8 trajectory/gravity consumers** — converts G10 (artillery arcs) with `[DECOMP]` facts.
 3. **G11 burst wire-up** — `shot_count/shot_int` machinery exists; values arrive with R1;
    ensure sim paths are burst-ready and hash-covered (audit I2/I7).
@@ -84,9 +85,9 @@ Ranked by fidelity impact per audit §7 and current residuals:
 
 ## Immediate next queue (post-session)
 
-1. **R7 pass 3: fogLines value recovery via Obfuz bridge emulation** (offline,
-   R2-technique) → H4 table bytes → possible browser reveal-shape fold-in.
-2. **R8 trajectory/gravity consumer scan** (offline) → G10 artillery arcs.
-3. **H1 hash-coverage extension** (offline, small, determinism-protective).
-4. **R6 bit-name cross-ref** (offline, map-prefab correlation).
-5. R1 device run when the user can supply the session (highest total value; converts B1).
+1. **R8 trajectory/gravity consumer scan** (offline) → G10 artillery arcs.
+2. **H1 hash-coverage extension** (offline, small, determinism-protective).
+3. **R6 bit-name cross-ref** (offline, map-prefab correlation).
+4. R1 device run when the user can supply the session (highest total value; converts B1).
+5. R7 re-open (optional, tooling-gated): Il2CppDumper script.json for vtable closure
+   ($ZM/$Pn/$HS callers) → fogLines bytes → reveal-shape fold-in if hand-tuned.

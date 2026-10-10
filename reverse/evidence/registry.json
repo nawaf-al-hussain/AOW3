@@ -21,7 +21,9 @@
         "reverse/tools/r1_dictionary_dump.js"
       ],
       "repro": "user-run Frida session per on-device-run.md; offline import path ready",
-      "converts_gaps": ["B1"],
+      "converts_gaps": [
+        "B1"
+      ],
       "next_action": "user supplies device session; run r1_dictionary_dump.js; import via offline pipeline"
     },
     "R2": {
@@ -37,21 +39,27 @@
         "reverse/tools/obfuz_livepool_decode.py"
       ],
       "repro": "python3 reverse/tools/obfuz_static_decode.py (needs libil2cpp.so + global-metadata.dat from XAPK)",
-      "next_action": "keep both decoders reproducible; reuse values to pin new branch constants (live-pool materialization DONE — Task 55)"
+      "next_action": "keep both decoders reproducible; reuse values to pin new branch constants (live-pool materialization DONE \u2014 Task 55)"
     },
     "R3": {
       "question": "Native tick rate / timing grid",
       "status": "BLOCKED",
       "blocker": "on-device instrumentation required",
-      "converts_gaps": ["B6"],
+      "converts_gaps": [
+        "B6"
+      ],
       "next_action": "device tick instrumentation; FIRE_TICK_LENGTH=4 anchor already pinned"
     },
     "R4": {
       "question": "Live damage application semantics (cadence, ordering, rounding)",
       "status": "BLOCKED",
       "blocker": "client pipeline ends at UI boundary; live semantics need controlled device experiments",
-      "evidence": ["reverse/notes/damage-pipeline-native-analysis.md"],
-      "converts_gaps": ["B4"],
+      "evidence": [
+        "reverse/notes/damage-pipeline-native-analysis.md"
+      ],
+      "converts_gaps": [
+        "B4"
+      ],
       "next_action": "dev-plan Phase 24 scenario A/B with frame-stepped video vs browser replay"
     },
     "R5": {
@@ -73,13 +81,16 @@
       "question": "TakePositions 15-bit cell-class per-bit semantics",
       "status": "PARTIALLY_CONFIRMED",
       "result": "masks 0x215F/0xFEE0/0xFEFD + AND-reduce clamp + per-hero partition CONFIRMED; bit names INFERRED",
-      "evidence": ["reverse/evidence/combat/takepos-cells-decode.txt", "reverse/notes/defend-chase-takepos-decode.md"],
+      "evidence": [
+        "reverse/evidence/combat/takepos-cells-decode.txt",
+        "reverse/notes/defend-chase-takepos-decode.md"
+      ],
       "next_action": "bit-name cross-ref vs map prefab cell classes (offline)"
     },
     "R7": {
       "question": "Native visibility/sight rules",
       "status": "PARTIALLY_CONFIRMED",
-      "result": "pass 1 (Task 53-session, 9535132): command/act stream server-driven (lockstep-authoritative); ClientUnitVisibleState {-1,0,1 Hidden,2 Visible,3 Detected} + ClientUnitVisibleType {HiddenInForest 2, DetectedInForest 4}; Unit.calcSightCurr (0x45B19F8, plain-named) FULLY DECODED: sight_curr = UnitStateType.sight - (sbyte)in_forest penalty (vtbl 0x1F8->0x1998, provider INFERRED) + boostEffects[3] (BoostType.ACT_SIGHT=3, dump.cs:376978); getters have 0 direct BL callers. pass 2 (Task 54, 775e7d6): client-side kernel CONFIRMED [DECOMP] — FogAct maintains the bitmaps from the deterministic stream + sight stats: 3-state fog (Clear/Fogged/Dark); per-alliance packed int[][] bitmaps (32 cells/int, orr/bic run-masks via FogAct.$rd); reveal shape = precomputed per-radius row-extent sbyte[][] 'fog lines' tables, membership |dx| < fogLines[r][|dy|]/D (AICommBuSet.$Ik 0x48E649C; client mirror named IsCellInCircle); bit-packed variant CheckAndCalc.$ec (33 callers); drivers: per-unit $pd->$Qd, per-tick $Od, bullets $sd, flags, GAICommandFogOpener x/y/w/h rects. Table BYTES pending pass 3 (computed inside Obfuz-encrypted BattleSide.$iu; per-battle alliance deserializer reads 3 ints only)",
+      "result": "pass 1 (Task 53-session, 9535132): command/act stream server-driven (lockstep-authoritative); ClientUnitVisibleState {-1,0,1 Hidden,2 Visible,3 Detected} + ClientUnitVisibleType {HiddenInForest 2, DetectedInForest 4}; Unit.calcSightCurr (0x45B19F8, plain-named) FULLY DECODED: sight_curr = UnitStateType.sight - (sbyte)in_forest penalty (vtbl 0x1F8->0x1998, provider INFERRED) + boostEffects[3] (BoostType.ACT_SIGHT=3, dump.cs:376978); getters have 0 direct BL callers. pass 2 (Task 54, 775e7d6): client-side kernel CONFIRMED [DECOMP] - FogAct maintains the bitmaps from the deterministic stream + sight stats: 3-state fog (Clear/Fogged/Dark); per-alliance packed int[][] bitmaps (32 cells/int, orr/bic run-masks via FogAct.$rd); reveal shape = precomputed per-radius row-extent sbyte[][] 'fog lines' tables (Battle.$kc 0x2B8/$Mc 0x2D0, BattleAlliance.$kE 0x58); drivers: per-unit $pd->$Qd, per-tick $Od, bullets $sd, flags, GAICommandFogOpener x/y/w/h rects. pass 3 (Task 57, this commit): MEMBERSHIP CONTRACT DECODED [DECOMP] - AICommBuSet.$Ik = |dy|<=r then INCLUSIVE |dx| <= (sbyte)fogLines[r][|dy|]/2 with divisor D=2 ($gK seg[statics+0x3830] 0x5D0/0x3D/0x27428CBF, raw 0xa3af9c8d = Task-55 live-pool raw-word family; statics[4]*statics[8]=0 polarity gadget returns the INSIDE test; null fogLines throws - pass 2's strict-< and null->true corrected); CheckAndCalc.$ec grid constants R=15 S=31(=2R+1, Battle consts $cc/$Cc) M=0xFF N=3 -> 31x31 grid, (byte&0xFF)>>3 = 1/8-cell levels; all constants live in ONE global statics class (klass ccache slot 0x968E4D8) = the class the R2 697-value holder cctor writes (697/697 re-attributed, 631/631 pool records cross-checked); GAICommandFogOpener.execute decoded (rect path $Qd/$qd arg map). PASS-2 CORRECTION: BattleSide.$iu does NOT produce Battle.$Mc - the 0x469794C store is BattleSide.$ch = new List<BuildingDestroyed>(cap); $iu is a plain field initializer (pool-fed container capacities, mix of committed 0x2820 segment and uncommitted segments). fogLines BYTE VALUES remain [BLOCKED-STATIC]: no client producer (stores=setter bodies only, 0 BL callers, no array_new in Battle init surface $HL/$ju/$iu/$Iu/$fb, no strb grid writers, no pool-string tables, ST serializer/deserializer never touch $kc/$Mc) - tables fill via virtual setter dispatch ($ZM/$Pn/$HS callvirt) needing script.json or a device dump. For a consistently-built Euclidean table the native membership is provably identical to the browser's integer-cell hypot disc; delta risk = hand-tuned extents only.",
       "evidence": [
         "reverse/notes/sight-fog-native-analysis.md",
         "reverse/evidence/fog/r7-fogact-scan.txt",
@@ -89,41 +100,67 @@
         "reverse/evidence/vision/sight-jumptable-decode.txt",
         "reverse/evidence/vision/jumptable-decode.txt",
         "reverse/evidence/vision/fogact-disasm.txt",
-        "reverse/evidence/vision/circle-primitive-disasm.txt"
+        "reverse/evidence/vision/circle-primitive-disasm.txt",
+        "reverse/evidence/vision/ik-ec-constants-decode.txt",
+        "reverse/evidence/vision/ik-ec-constants.json"
       ],
-      "tools": ["reverse/tools/r7_fog_sight_scan.py", "reverse/tools/r7_sight_writer_scan.py", "reverse/tools/r7_writer_functions.py"],
-      "residual": "fogLines table byte values (BattleSide.$iu Obfuz bridge), in-forest penalty provider vtable names (needs script.json), $pd/$GL branch semantics",
-      "converts_gaps": ["H4"],
-      "next_action": "pass 3: emulate Obfuz method bridge (0x5265B74, encrypted ids e.g. (0x144,0x11,0x2927AB7E)) to recover fogLines byte values + $ec/$Ik decoded statics (R=0xD4, S=0x30, M=0x400, N=0x14); then fold in dynamic sight terms (in_forest needs forest-cell classification from map decor; boosts need the boost pipeline)"
+      "tools": [
+        "reverse/tools/r7_fog_sight_scan.py",
+        "reverse/tools/r7_sight_writer_scan.py",
+        "reverse/tools/r7_writer_functions.py",
+        "reverse/tools/r7_ik_ec_constants_decode.py"
+      ],
+      "residual": "fogLines table byte values (virtual-dispatch producer; needs Il2CppDumper script.json or a device dump), $ec rowIdx statics[0x10] class-cctor rewrite (eor-pair 0x82F5D84A/0x82F5D84B), $ec auxiliary bounds (0xabababab filler in committed segment - real runtime segment uncommitted), four uncommitted runtime pool segments ($iu starts 0x144-0x17C families), in-forest penalty provider vtable names (needs script.json), $pd/$GL branch semantics",
+      "converts_gaps": [
+        "H4"
+      ],
+      "next_action": "R7 CLOSED at the statically-reachable limit: architecture + membership contract [DECOMP]; table bytes blocked on script.json/device. Optional later: re-run with script.json to resolve $ZM/$Pn/$HS vtable callers and dump the tables; until then H4 stays PARTIALLY CONFIRMED with the decoded contract recorded. Next queue: R8 trajectory/gravity consumers (->G10), H1 hash-coverage, R6 bit-name cross-ref"
     },
     "R8": {
       "question": "m_bulletTrajectoryType / m_gravity consumer semantics",
       "status": "UNKNOWN",
-      "evidence": ["reverse/evidence/data-model/weapon-schema.json"],
-      "converts_gaps": ["G10"],
+      "evidence": [
+        "reverse/evidence/data-model/weapon-schema.json"
+      ],
+      "converts_gaps": [
+        "G10"
+      ],
       "next_action": "xref scan of WeaponType fields 0x3C/0x3E in weapon/spawn code (offline-startable)"
     },
     "R9": {
       "question": "Native client-server battle wire protocol",
       "status": "BLOCKED",
       "blocker": "traffic capture needs device + unpinning decision",
-      "converts_gaps": ["P1r"],
+      "converts_gaps": [
+        "P1r"
+      ],
       "next_action": "TLS-unpin + capture or Frida message hooks"
     },
     "R10": {
       "question": "Original camera/UI metrics for calibration",
       "status": "BLOCKED",
       "blocker": "no device screen recordings; V8 A/B harness ready",
-      "evidence": ["reverse/evidence/visual/v8-ab-v54-v55.json"],
-      "converts_gaps": ["H8", "H9"],
+      "evidence": [
+        "reverse/evidence/visual/v8-ab-v54-v55.json"
+      ],
+      "converts_gaps": [
+        "H8",
+        "H9"
+      ],
       "next_action": "record device gameplay per dev plan Phase 18/20"
     },
     "R11": {
       "question": "Do naval/aircraft/hero prefabs exist in downloadable Addressables content?",
       "status": "BLOCKED",
       "blocker": "device storage / remote catalogs unreachable from sandbox",
-      "evidence": ["reverse/notes/hero-prefabs-10-remaining.md", "reverse/notes/vfx-asset-prefix-check.md"],
-      "converts_gaps": ["B2", "B3"],
+      "evidence": [
+        "reverse/notes/hero-prefabs-10-remaining.md",
+        "reverse/notes/vfx-asset-prefix-check.md"
+      ],
+      "converts_gaps": [
+        "B2",
+        "B3"
+      ],
       "next_action": "pull assets/aa/catalog.json + bundles, re-run pipeline/tools/unpack_bundles.py"
     }
   },
@@ -131,62 +168,113 @@
     "F-fog-server-authoritative": {
       "claim": "Fog/visibility is computed battle-core-side; client receives LC logic commands (unitId + sbyte ClientUnitVisibleState) and applies them to ClientUnit.m_visibleState; FogOpener is the serialized fog-open payload; bullets open fog (FogAct.$sd)",
       "status": "CONFIRMED",
-      "labels": ["[DECOMP]"],
-      "evidence": ["reverse/notes/sight-fog-native-analysis.md", "reverse/evidence/fog/r7-fogact-scan.txt"]
+      "labels": [
+        "[DECOMP]"
+      ],
+      "evidence": [
+        "reverse/notes/sight-fog-native-analysis.md",
+        "reverse/evidence/fog/r7-fogact-scan.txt"
+      ]
     },
     "F-calc-sight-curr": {
       "claim": "Unit.calcSightCurr (0x45B19F8): sight_curr = UnitStateType.sight (0x4C) - (sbyte) forest penalty gated on Unit.in_forest (0x18F) + boostEffects[3] (Unit.boostEffects short[] @0x140, BoostType.ACT_SIGHT=3); field identities plain-named in dump.cs",
       "status": "CONFIRMED",
-      "labels": ["[DECOMP]"],
-      "evidence": ["reverse/notes/sight-fog-native-analysis.md", "reverse/evidence/fog/r7-writer-functions.txt"]
+      "labels": [
+        "[DECOMP]"
+      ],
+      "evidence": [
+        "reverse/notes/sight-fog-native-analysis.md",
+        "reverse/evidence/fog/r7-writer-functions.txt"
+      ]
     },
     "F-visibility-enums": {
       "claim": "ClientUnitVisibleState {Undefined -1, Invisible 0, Hidden 1, Visible 2, Detected 3}; ClientUnitVisibleType {Visible 0, HiddenInForest 2, Detected 3, DetectedInForest 4}; ClientBuildingVisibleState {Undefined -1, Invisible 0, Fogged 1, Visible 2}",
       "status": "CONFIRMED",
-      "labels": ["[DECOMP]"],
-      "evidence": ["reverse/notes/sight-fog-native-analysis.md"]
+      "labels": [
+        "[DECOMP]"
+      ],
+      "evidence": [
+        "reverse/notes/sight-fog-native-analysis.md"
+      ]
     },
     "F-fog-visibility-architecture": {
-      "claim": "Battle-core reveal algorithm (complements F-fog-server-authoritative presentation layer): 3-state (Clear/Fogged/Dark) cell fog over per-alliance packed int[][] bitmaps (32 cells/int; BattleAlliance 0x30 visible + 0x38 explored); reveal spans via orr/bic run-of-ones masks (FogAct.$rd 0x473566C); shape = precomputed per-radius row-extent sbyte[][] fogLines tables, membership |dx| < fogLines[r][|dy|]/D (AICommBuSet.$Ik 0x48E649C, client mirror IsCellInCircle); bit-packed multi-radius variant CheckAndCalc.$ec (0x46D2E7C, 33 callers, (R+dy)*S+(R+dx) indexing, (byte&M)>>N per radius); drivers: unit sight $pd->$Qd, tick acts $Od, bullets $sd, flags, GAICommandFogOpener x/y/w/h rect commands; sight stat: Unit.sight_curr int @0xBC, EStat FogRadius=31, Fraction.ForestSightDrop, ShieldFogRadius, Beholder hero params; table bytes computed in Obfuz-encrypted BattleSide.$iu (pass 3); per-battle alliance wire payload carries none of them (deserializer reads 3 ints)",
+      "claim": "Battle-core reveal algorithm (complements F-fog-server-authoritative presentation layer): 3-state (Clear/Fogged/Dark) cell fog over per-alliance packed int[][] bitmaps (32 cells/int; BattleAlliance 0x30 visible + 0x38 explored); reveal spans via orr/bic run-of-ones masks (FogAct.$rd 0x473566C); shape = precomputed per-radius row-extent sbyte[][] fogLines tables, membership (pass 3 DECODED) |dy|<=r AND |dx| <= (sbyte)fogLines[r][|dy|]/2 - D=2 half-cell fixed-point, INCLUSIVE bound via the statics[4]*statics[8]=0 polarity gadget, null fogLines throws (AICommBuSet.$Ik 0x48E649C, client mirror IsCellInCircle); packed variant CheckAndCalc.$ec (0x46D2E7C, 33 callers) = 31x31 grid (R+dy)*S+(R+dx), (byte&0xFF)>>3, R=15/S=31/M=0xFF/N=3 (1/8-cell levels; Battle consts $cc=31/$Cc=15); drivers: unit sight $pd->$Qd, tick acts $Od, bullets $sd, flags, GAICommandFogOpener x/y/w/h rect commands; sight stat: Unit.sight_curr int @0xBC, EStat FogRadius=31, Fraction.ForestSightDrop, ShieldFogRadius, Beholder hero params; all constants in ONE global statics class (ccache 0x968E4D8) written by the R2 697-value holder cctor; table BYTES runtime battle-init data via virtual setter dispatch (no static producer - pass 3 ruled out field stores/BL callers/array_new/strb writers/pool strings/ST serializers); per-battle alliance wire payload carries none of them (deserializer reads 3 ints)",
       "status": "CONFIRMED",
-      "labels": ["[DECOMP]", "[NATIVE]"],
-      "evidence": ["reverse/notes/sight-visibility-native-analysis.md", "reverse/evidence/vision/sight-jumptable-decode.txt"]
+      "labels": [
+        "[DECOMP]",
+        "[NATIVE]"
+      ],
+      "evidence": [
+        "reverse/notes/sight-visibility-native-analysis.md",
+        "reverse/evidence/vision/sight-jumptable-decode.txt",
+        "reverse/evidence/vision/ik-ec-constants-decode.txt"
+      ]
     },
     "F-damage-armor-curve": {
       "claim": "CalculateWeaponArmorDamage is the sole mitigation site; mitigation factor in [0.1,1.0], constants 0.1f/0.9f only; no per-armor-type coefficient exists",
       "status": "CONFIRMED",
-      "labels": ["[DECOMP]", "[NATIVE]"],
-      "evidence": ["reverse/notes/combat-stats.md", "reverse/notes/armor-stat-helper-native-analysis.md"]
+      "labels": [
+        "[DECOMP]",
+        "[NATIVE]"
+      ],
+      "evidence": [
+        "reverse/notes/combat-stats.md",
+        "reverse/notes/armor-stat-helper-native-analysis.md"
+      ]
     },
     "F-maxstat-get-fraction": {
       "claim": "MaxStatValueProvider.Get = min(piecewise fraction, 1.0): 0.8/0.15/0.05 non-armor rung fractions; 0.9/0.1 armor-damage keys; routing (1<<(stat-61))&0x3807 -> {61,62,63,72,73,74}",
       "status": "CONFIRMED",
-      "labels": ["[DECOMP]"],
-      "evidence": ["reverse/notes/maxstat-tier-band-decode.md", "reverse/evidence/estat/estat-get-decode.txt", "reverse/notes/units/estat-stat-models.md"]
+      "labels": [
+        "[DECOMP]"
+      ],
+      "evidence": [
+        "reverse/notes/maxstat-tier-band-decode.md",
+        "reverse/evidence/estat/estat-get-decode.txt",
+        "reverse/notes/units/estat-stat-models.md"
+      ]
     },
     "F-maxstat-factory-labels": {
       "claim": "Max1(v)->BaseMax; Max2(v1,v2)->FirstMax=v1,BaseMax=v2; Max3(v1,v2,v3)->FirstMax=v1,BaseMax=v2,MegaMax=v3; ascending ladder values unchanged",
       "status": "CONFIRMED",
-      "labels": ["[DECOMP]"],
-      "evidence": ["reverse/notes/units/estat-stat-models.md"]
+      "labels": [
+        "[DECOMP]"
+      ],
+      "evidence": [
+        "reverse/notes/units/estat-stat-models.md"
+      ]
     },
     "F-defend-leash-client-computed": {
       "claim": "Defend leash = band+1 computed inside $Pg (client-side); 'server-delivered leash' retired; browser tether value remains gameplay-tuned pending join-arm values",
       "status": "CONFIRMED",
-      "labels": ["[DECOMP]"],
-      "evidence": ["reverse/notes/defend-chase-takepos-decode.md", "reverse/evidence/combat/pg-branches-decode.txt"]
+      "labels": [
+        "[DECOMP]"
+      ],
+      "evidence": [
+        "reverse/notes/defend-chase-takepos-decode.md",
+        "reverse/evidence/combat/pg-branches-decode.txt"
+      ]
     },
     "F-weapon-surface": {
       "claim": "WeaponType.type 0x24 = SHELL_TYPE_*; aiming 0x8B = 6-class target bitmask; OCCUPATION_FOR_AIR=0x1A; hit_bonus client-inert; no crit system in client",
       "status": "CONFIRMED",
-      "labels": ["[DECOMP]"],
-      "evidence": ["reverse/notes/weapon-type-surface-native-analysis.md"]
+      "labels": [
+        "[DECOMP]"
+      ],
+      "evidence": [
+        "reverse/notes/weapon-type-surface-native-analysis.md"
+      ]
     },
     "F-balance-values-server-side": {
       "claim": "Per-unit hp/price/damage prototype dictionaries are runtime-delivered, absent from APK",
       "status": "CONFIRMED",
-      "labels": ["[NATIVE]"],
-      "evidence": ["reverse/notes/unit-roster-native-analysis.md", "reverse/notes/data-model-extraction.md"]
+      "labels": [
+        "[NATIVE]"
+      ],
+      "evidence": [
+        "reverse/notes/unit-roster-native-analysis.md",
+        "reverse/notes/data-model-extraction.md"
+      ]
     }
   },
   "browser_foldins": {
@@ -208,11 +296,29 @@
       ],
       "behavior_change": false,
       "tests": "full suite green before/after"
+    },
+    "v58": {
+      "task": "Task 57 / R7 pass 3",
+      "changes": [
+        "updateVision reveal kernel comment: decoded $Ik membership contract (|dx| <= (sbyte)fogLines[r][|dy|]/2, D=2 half-cell fixed-point, inclusive via polarity gadget, null throws), $ec 31x31 grid constants (R=15/S=31/M=0xFF/N=3, 1/8-cell levels), BattleSide.$iu producer claim corrected (List<BuildingDestroyed> capacity, not Battle.$Mc), table bytes blocked-static note; comment-only, zero behavior delta"
+      ],
+      "behavior_change": false
     }
   },
   "blockers_summary": {
-    "device_required": ["R1", "R3", "R4", "R9", "R10", "R11"],
-    "offline_open": ["R6", "R7", "R8"],
+    "device_required": [
+      "R1",
+      "R3",
+      "R4",
+      "R9",
+      "R10",
+      "R11"
+    ],
+    "offline_open": [
+      "R6",
+      "R7",
+      "R8"
+    ],
     "note": "See reverse/notes/reverse-engineering-roadmap.md for sequencing rationale"
   }
 }
