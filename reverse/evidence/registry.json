@@ -79,17 +79,22 @@
     "R7": {
       "question": "Native visibility/sight rules",
       "status": "PARTIALLY_CONFIRMED",
-      "result": "pass 1: fog is SERVER-authoritative (FogAct statics over Battle/BattleMap/BattleAlliance int[][] grids -> LC*FogVisibleChanged logic commands); ClientUnitVisibleState {-1,0,1 Hidden,2 Visible,3 Detected} + ClientUnitVisibleType {HiddenInForest 2, DetectedInForest 4}; Unit.calcSightCurr (0x45B19F8, plain-named) FULLY DECODED: sight_curr = UnitStateType.sight - (sbyte)in_forest penalty (vtbl 0x1F8->0x1998, provider INFERRED) + boostEffects[3] (BoostType.ACT_SIGHT=3, dump.cs:376978); getters have 0 direct BL callers (virtual dispatch)",
+      "result": "pass 1 (Task 53-session, 9535132): command/act stream server-driven (lockstep-authoritative); ClientUnitVisibleState {-1,0,1 Hidden,2 Visible,3 Detected} + ClientUnitVisibleType {HiddenInForest 2, DetectedInForest 4}; Unit.calcSightCurr (0x45B19F8, plain-named) FULLY DECODED: sight_curr = UnitStateType.sight - (sbyte)in_forest penalty (vtbl 0x1F8->0x1998, provider INFERRED) + boostEffects[3] (BoostType.ACT_SIGHT=3, dump.cs:376978); getters have 0 direct BL callers. pass 2 (Task 54, 775e7d6): client-side kernel CONFIRMED [DECOMP] — FogAct maintains the bitmaps from the deterministic stream + sight stats: 3-state fog (Clear/Fogged/Dark); per-alliance packed int[][] bitmaps (32 cells/int, orr/bic run-masks via FogAct.$rd); reveal shape = precomputed per-radius row-extent sbyte[][] 'fog lines' tables, membership |dx| < fogLines[r][|dy|]/D (AICommBuSet.$Ik 0x48E649C; client mirror named IsCellInCircle); bit-packed variant CheckAndCalc.$ec (33 callers); drivers: per-unit $pd->$Qd, per-tick $Od, bullets $sd, flags, GAICommandFogOpener x/y/w/h rects. Table BYTES pending pass 3 (computed inside Obfuz-encrypted BattleSide.$iu; per-battle alliance deserializer reads 3 ints only)",
       "evidence": [
         "reverse/notes/sight-fog-native-analysis.md",
         "reverse/evidence/fog/r7-fogact-scan.txt",
         "reverse/evidence/fog/r7-sight-writers.txt",
-        "reverse/evidence/fog/r7-writer-functions.txt"
+        "reverse/evidence/fog/r7-writer-functions.txt",
+        "reverse/notes/sight-visibility-native-analysis.md",
+        "reverse/evidence/vision/sight-jumptable-decode.txt",
+        "reverse/evidence/vision/jumptable-decode.txt",
+        "reverse/evidence/vision/fogact-disasm.txt",
+        "reverse/evidence/vision/circle-primitive-disasm.txt"
       ],
       "tools": ["reverse/tools/r7_fog_sight_scan.py", "reverse/tools/r7_sight_writer_scan.py", "reverse/tools/r7_writer_functions.py"],
-      "residual": "grid-opener circle shape (FogAct $qd/$Qd/$rd Obfuz jump tables), in-forest penalty provider vtable names (needs script.json), $pd/$GL branch semantics",
+      "residual": "fogLines table byte values (BattleSide.$iu Obfuz bridge), in-forest penalty provider vtable names (needs script.json), $pd/$GL branch semantics",
       "converts_gaps": ["H4"],
-      "next_action": "pass 2: decode $qd/$Qd/$rd jump tables via obfuz-pool-values.json (Builds I/J method); vtable-slot resolution via script.json; then fold in dynamic sight terms (in_forest needs forest-cell classification from map decor; boosts need the boost pipeline)"
+      "next_action": "pass 3: emulate Obfuz method bridge (0x5265B74, encrypted ids e.g. (0x144,0x11,0x2927AB7E)) to recover fogLines byte values + $ec/$Ik decoded statics (R=0xD4, S=0x30, M=0x400, N=0x14); then fold in dynamic sight terms (in_forest needs forest-cell classification from map decor; boosts need the boost pipeline)"
     },
     "R8": {
       "question": "m_bulletTrajectoryType / m_gravity consumer semantics",
@@ -141,6 +146,12 @@
       "labels": ["[DECOMP]"],
       "evidence": ["reverse/notes/sight-fog-native-analysis.md"]
     },
+    "F-fog-visibility-architecture": {
+      "claim": "Battle-core reveal algorithm (complements F-fog-server-authoritative presentation layer): 3-state (Clear/Fogged/Dark) cell fog over per-alliance packed int[][] bitmaps (32 cells/int; BattleAlliance 0x30 visible + 0x38 explored); reveal spans via orr/bic run-of-ones masks (FogAct.$rd 0x473566C); shape = precomputed per-radius row-extent sbyte[][] fogLines tables, membership |dx| < fogLines[r][|dy|]/D (AICommBuSet.$Ik 0x48E649C, client mirror IsCellInCircle); bit-packed multi-radius variant CheckAndCalc.$ec (0x46D2E7C, 33 callers, (R+dy)*S+(R+dx) indexing, (byte&M)>>N per radius); drivers: unit sight $pd->$Qd, tick acts $Od, bullets $sd, flags, GAICommandFogOpener x/y/w/h rect commands; sight stat: Unit.sight_curr int @0xBC, EStat FogRadius=31, Fraction.ForestSightDrop, ShieldFogRadius, Beholder hero params; table bytes computed in Obfuz-encrypted BattleSide.$iu (pass 3); per-battle alliance wire payload carries none of them (deserializer reads 3 ints)",
+      "status": "CONFIRMED",
+      "labels": ["[DECOMP]", "[NATIVE]"],
+      "evidence": ["reverse/notes/sight-visibility-native-analysis.md", "reverse/evidence/vision/sight-jumptable-decode.txt"]
+    },
     "F-damage-armor-curve": {
       "claim": "CalculateWeaponArmorDamage is the sole mitigation site; mitigation factor in [0.1,1.0], constants 0.1f/0.9f only; no per-armor-type coefficient exists",
       "status": "CONFIRMED",
@@ -180,9 +191,10 @@
   },
   "browser_foldins": {
     "v57": {
-      "task": "Task 54 / R7 pass 1 (this session)",
+      "task": "Task 54 / R7 pass 1 (upstream 9535132) + R7 pass 2 (rebased 775e7d6)",
       "changes": [
-        "updateVision() kernel comment: native fog authority model (server-computed grids + LC commands), ClientUnitVisibleState/Type enum values, calcSightCurr radius provenance (in_forest penalty + boostEffects[3]) with browser static def.view documented as approximation"
+        "updateVision() kernel comment: native fog authority model (server-computed grids + LC commands), ClientUnitVisibleState/Type enum values, calcSightCurr radius provenance (in_forest penalty + boostEffects[3]) with browser static def.view documented as approximation",
+        "updateVision reveal kernel: provenance comment - native shape = per-radius row-extent fogLines tables (AICommBuSet.$Ik), packed orr/bic bitmaps, 3-state fog; Euclidean disc retained pending table values"
       ],
       "behavior_change": false,
       "tests": "full suite green before/after"

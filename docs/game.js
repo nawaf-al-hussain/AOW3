@@ -2292,6 +2292,17 @@
         this.visible[o].fill(0);
       for (let o = 1; o <= this.seatCount; o++) {
         const vis = this.visible[o - 1];
+        // [DECOMP] R7 pass 2 (Task 54): native reveal is a PRECOMPUTED
+        // per-radius row-extent table ("fog lines", sbyte[][] on
+        // BattleAlliance/Battle), membership |dx| < fogLines[r][|dy|]/D via
+        // AICommBuSet.$Ik 0x48E649C — client mirror is literally named
+        // IsCellInCircle; spans applied as orr/bic run-masks into packed
+        // int[][] per-alliance bitmaps (32 cells/int, BattleAlliance 0x30
+        // visible + 0x38 explored) by FogAct.$rd. Three-state fog:
+        // BattleCellFoggyState Clear/Fogged/Dark. Table BYTES are computed
+        // inside Obfuz-encrypted BattleSide.$iu — values pending R7 pass 3;
+        // until then the Euclidean disc below stays (native tables may be
+        // exactly this disc — evidence: reverse/evidence/vision/).
         const reveal = (x, y, r) => {
           const x0 = Math.max(0, Math.floor(x - r)), x1 = Math.min(MAP_W - 1, Math.ceil(x + r));
           const y0 = Math.max(0, Math.floor(y - r)), y1 = Math.min(MAP_H - 1, Math.ceil(y + r));

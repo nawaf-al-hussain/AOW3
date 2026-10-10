@@ -1,0 +1,119 @@
+  0x4644150: stp     x30, x23, [sp, #-0x30]!
+  0x4644154: stp     x22, x21, [sp, #0x10]
+  0x4644158: stp     x20, x19, [sp, #0x20]
+  0x464415c: adrp    x20, #0x9d11000
+  0x4644160: adrp    x19, #0x968e000
+  0x4644164: ldrb    w8, [x20, #0x662]
+  0x4644168: ldr     x19, [x19, #0x4d8]
+  0x464416c: tbnz    w8, #0, #0x46441a8
+  0x4644170: adrp    x0, #0x967a000
+  0x4644174: ldr     x0, [x0, #0x718]
+  0x4644178: bl      #0x3cc7948   ; call 0x3cc7948
+  0x464417c: adrp    x0, #0x968e000
+  0x4644180: ldr     x0, [x0, #0x4d8]
+  0x4644184: bl      #0x3cc7948   ; call 0x3cc7948
+  0x4644188: adrp    x0, #0x968e000
+  0x464418c: ldr     x0, [x0, #0x4e0]
+  0x4644190: bl      #0x3cc7948   ; call 0x3cc7948
+  0x4644194: adrp    x0, #0x968e000
+  0x4644198: ldr     x0, [x0, #0x4f0]
+  0x464419c: bl      #0x3cc7948   ; call 0x3cc7948
+  0x46441a0: mov     w8, #1
+  0x46441a4: strb    w8, [x20, #0x662]
+  0x46441a8: ldr     x0, [x19]
+  0x46441ac: adrp    x20, #0x967a000
+  0x46441b0: adrp    x21, #0x968e000
+  0x46441b4: ldr     x20, [x20, #0x718]
+  0x46441b8: ldr     w8, [x0, #0xe4]
+  0x46441bc: ldr     x21, [x21, #0x4e0]
+  0x46441c0: cbnz    w8, #0x46441cc
+  0x46441c4: bl      #0x3cc7ac8   ; call 0x3cc7ac8
+  0x46441c8: ldr     x0, [x19]
+  0x46441cc: ldr     x8, [x0, #0xb8]
+  0x46441d0: adrp    x14, #0x1b0a000
+  0x46441d4: ldr     x13, [x20]
+  0x46441d8: ldr     q1, [x14, #0xeb0]
+  0x46441dc: ldr     x0, [x21]
+  0x46441e0: adrp    x22, #0x968e000
+  0x46441e4: ldp     w9, w10, [x8, #4]
+  0x46441e8: ldp     w11, w12, [x8, #0xc]
+  0x46441ec: ldr     w8, [x8, #0x68]
+  0x46441f0: mul     w9, w10, w9
+  0x46441f4: eor     w10, w12, w11
+  0x46441f8: dup     v0.4s, w10
+  0x46441fc: cmp     w9, #0
+  0x4644200: ldr     x9, [x13, #0xb8]
+  0x4644204: cset    w13, ne
+  0x4644208: cmp     w11, w12
+  0x464420c: mul     v0.4s, v0.4s, v1.4s
+  0x4644210: cset    w11, ne
+  0x4644214: strb    w8, [x9, #2]
+  0x4644218: strb    w11, [x9, #1]
+  0x464421c: add     w11, w10, w10, lsl #1
+  0x4644220: lsl     w8, w10, #3
+  0x4644224: strb    w13, [x9]
+  0x4644228: str     w10, [x9, #4]
+  0x464422c: lsl     w11, w11, #1
+  0x4644230: sub     w23, w8, w10
+  0x4644234: stur    q0, [x9, #8]
+  0x4644238: ldr     w8, [x0, #0xe4]
+  0x464423c: ldr     x22, [x22, #0x4f0]
+  0x4644240: stp     w11, w23, [x9, #0x18]
+  0x4644244: cbnz    w8, #0x4644250
+  0x4644248: bl      #0x3cc7ac8   ; call 0x3cc7ac8
+  0x464424c: ldr     x0, [x21]
+  0x4644250: ldr     x8, [x0, #0xb8]
+  0x4644254: ldr     x4, [x22]
+  0x4644258: mov     w3, #0x8cbf
+  0x464425c: mov     w1, #0x2f4
+  0x4644260: mov     w2, #0x3d
+  0x4644264: movk    w3, #0x2742, lsl #16
+  0x4644268: ldr     x0, [x8, #0x800]
+  0x464426c: bl      #0x5265b74   ; call 0x5265b74
+  0x4644270: ldr     x8, [x19]
+  0x4644274: ldr     x10, [x21]
+  0x4644278: add     w11, w0, w23
+  0x464427c: ldr     x9, [x20]
+  0x4644280: ldr     x4, [x22]
+  0x4644284: mov     w3, #0x8cbf
+  0x4644288: ldr     x8, [x8, #0xb8]
+  0x464428c: ldr     x10, [x10, #0xb8]
+  0x4644290: mov     w1, #0x2f8
+  0x4644294: ldr     x9, [x9, #0xb8]
+  0x4644298: mov     w2, #0x3d
+  0x464429c: movk    w3, #0x2742, lsl #16
+  0x46442a0: ldp     w12, w13, [x8, #0xc]
+  0x46442a4: ldp     w14, w8, [x8, #0x18]
+  0x46442a8: ldr     x0, [x10, #0x800]
+  0x46442ac: str     w11, [x9, #0x20]
+  0x46442b0: eor     w12, w13, w12
+  0x46442b4: add     w8, w14, w8
+  0x46442b8: add     w12, w12, w11
+  0x46442bc: add     w21, w8, w11
+  0x46442c0: stp     w12, w21, [x9, #0x24]
+  0x46442c4: bl      #0x5265b74   ; call 0x5265b74
+  0x46442c8: ldr     x8, [x19]
+  0x46442cc: ldr     x9, [x20]
+  0x46442d0: add     w11, w0, w21
+  0x46442d4: ldp     x20, x19, [sp, #0x20]
+  0x46442d8: ldr     x8, [x8, #0xb8]
+  0x46442dc: ldr     x9, [x9, #0xb8]
+  0x46442e0: ldp     x22, x21, [sp, #0x10]
+  0x46442e4: ldp     w10, w8, [x8, #0xc]
+  0x46442e8: eor     w8, w8, w10
+  0x46442ec: add     w10, w8, w11
+  0x46442f0: stp     w11, w10, [x9, #0x2c]
+  0x46442f4: add     w10, w10, w8
+  0x46442f8: add     w11, w10, w8
+  0x46442fc: stp     w10, w11, [x9, #0x34]
+  0x4644300: add     w10, w11, w8
+  0x4644304: add     w11, w10, w8
+  0x4644308: stp     w10, w11, [x9, #0x3c]
+  0x464430c: add     w10, w11, w8
+  0x4644310: stp     w10, w8, [x9, #0x44]
+  0x4644314: ldp     x30, x23, [sp], #0x30
+  0x4644318: ret     
+  0x464431c: mov     x1, xzr
+  0x4644320: b       #0x8f91cdc
+  0x4644324: ldr     w0, [x0, #0x10]
+  0x4644328: ret     

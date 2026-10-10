@@ -1,0 +1,156 @@
+R7 pass 2 evidence: sight/visibility kernel jump-table decode (AOW3 v6.9.18)
+================================================================================
+Provenance: libil2cpp.so sha256 8ace05bb..., dump.cs sha256 0050e67d...
+Method: Capstone ARM64 linear disasm + PC-relative jump-table extraction
+        (adr base; ldrh w,[rodata,idx,lsl #1]; add base,w,lsl #2; br) with
+        u16 entry decode from .rodata; numpy BL-xref scan over 22.8M insn words.
+Labels per AGENTS.md section 9. Companion note:
+reverse/notes/sight-visibility-native-analysis.md
+
+--------------------------------------------------------------------------------
+[1] FOG TYPE SYSTEM [DECOMP] (dump.cs:262733)
+--------------------------------------------------------------------------------
+public enum BattleCellFoggyState { Clear = 0, Fogged = 1, Dark = 2 }
+- FogUpdate(BattleCellFoggyState[,] fog)  (renderer consumer, dump.cs:262562)
+- IsVisibleCell(Point2i) / IsVisibleCell(Vector3)  (dump.cs:252404/252408)
+- Fog-state enum is 3-state: visible-now / explored-not-visible / never-seen.
+
+--------------------------------------------------------------------------------
+[2] FOGACT STATIC KERNEL — function table [NATIVE] (dump.cs:424563 FogAct)
+--------------------------------------------------------------------------------
+$nd(Battle)                                  0x472ED8C  (0x588 B)  tick driver
+$Nd(Battle)                                  0x472F314  (0x40C)
+$od(Battle, BattleAlliance)                  0x472F720  (0x304)
+$Od(Battle)                                  0x472FA24  (0x48E8)  per-tick fog act
+$pd(Battle, BattleMap, Unit, Dynamic)        0x4733968  (0x570)   per-unit sight
+$Pd(Battle)                                  0x4734914  (0xD58)
+$qd(Battle, int[][], sbyte, int,int,int, bool,bool)      0x473330C (0x3C8) row loop
+$Qd(Battle, int[][], sbyte, int,int,int,int, bool)       0x47336D4 (0x294) row loop
+$rd(Battle, BattleMap, int[][], sbyte, int,int,int, bool,bool) 0x473566C (0x788) cell writer
+$Rd(Battle, BattleAlliance)                  0x4733ED8  (0x7D8)
+$td(Battle, BattleAlliance)                  0x47346B0  (0x264)
+$sd(Battle, Bullet, sbyte)                   0x4735DF4  (0x534)   bullet reveal
+$Sd(Battle)                                  0x4736328  (0x4B0)
+All FogAct bodies use CONTROL-FLOW FLATTENING: dispatch loop re-reads a static
+state int each iteration (klass->static_fields + off); each arm selects the
+NEXT state slot via add x9, x9, #N; b dispatch. 7 true jump tables decoded:
+
+--------------------------------------------------------------------------------
+[3] JUMP TABLES DECODED [DECOMP] (u16 tables in .rodata 0x1B0D1F6..0x1B0D302)
+--------------------------------------------------------------------------------
+site        bounds  table       base       cases
+$nd  jt1    13      0x1B0D1F6   0x472EE64  13
+$Od  jt1    29      0x1B0D212   0x472FC88  30 (per-tick act dispatcher; arms call vtables 0x278/0x298/0x8E8/0xA88/0xAE8/0xB48/0xBA8/0x1008/0x1238, UnitAct.$Ih)
+$Od  jt2    ?       0x1B0D24E   0x4730D20  (second flattened dispatch)
+$Od  jt3    16      (reg)       0x4732BFC  17
+$Rd  jt1    18      (reg)       0x4733F8C  19
+$Pd  jt1    31      (reg)       0x47349EC  32
+$rd  jt1    18      0x1B0D302   0x473575C  20
+$rd case 1 (0x4735958) — run-mask computation:
+    w11 = 0xCB5E3C38                       ; Obfuz add-decode key
+    w9  = statics[0x30] + w11  -> BITMASK 31-family constant (bit offset mask)
+    w10 = statics[0x50] - (w9 & startCol)  ; span length in-int
+    w8  = eor-pair statics[0xC]
+    w21 = ((w8 << n) - w8) << (w9 & startCol)   ; = run of n ones at bit off
+$rd case 5 (0x47359A4) — reveal write (bounds-checked row[w27]):
+    orr w9, w9, w21 ; str w9, [row, #0x20]   ; SET bits  -> visibility
+$rd case 4 (0x4735864):
+    bic w9, w9, w21 ; str w9, [row, #0x20]   ; CLEAR bits -> un-reveal
+=> per-alliance visibility buffer = int[][] PACKED CELL BITMAP (32 cells per
+   int, row-major); reveal/un-reveal = run-mask ORR/BIC. BattleAlliance holds
+   TWO such buffers: int[][] $HE // 0x30 and int[][] $iE // 0x38
+   (dump.cs:419033 ff.) = current-visible vs explored (3-state derivation).
+
+--------------------------------------------------------------------------------
+[4] REVEAL DRIVERS — call graph [DECOMP] (numpy BL scan, 2,671,952 BLs)
+--------------------------------------------------------------------------------
+FogAct.$qd <- GAICommandFogOpener.execute +0x6B8 (0x45DEAC4)
+           <- FlagAct.$xC (flags carry sbyte Sight, dump.cs:45976D0)
+           <- FogAct.$Od x5 arms; FogAct.$Pd
+FogAct.$Qd <- GAICommandFogOpener.execute +0x5D4
+           <- FogAct.$Od x4 arms; FogAct.$pd +0x40C  (per-unit sight!)
+FogAct.$sd(Bullet,sbyte) <- UnitAct.$oh +0x2634    (bullets reveal)
+GAICommandFogOpener fields: int x,y,w,h,tick (dump.cs:407674) — RECT opens in
+the deterministic command stream; serialized by FogOpenerSTSerializer.
+
+--------------------------------------------------------------------------------
+[5] ROW-EXTENT SHAPE TABLES — the exact reveal shape [DECOMP]
+--------------------------------------------------------------------------------
+$qd structure (flattened): for each row offset in [-r..+r]:
+  case 7 (0x47335D4): x21 = x26[radius]           ; per-radius row array
+      x26 = Battle.<vt 0xA88>()                    ; fogLines provider
+  case 2/6: w19 = ±(loopVar - radius)              ; symmetric index |dy|
+  case 4 (0x4733520): w27 = (sbyte) x22[w19]       ; row half-extent byte
+      -> calls $rd(Battle, map, buffer, sbyte side,
+                   w4 = arg3 - (w27 >> eorShift),  ; row start col
+                   w5 = w28 + w23,                 ; row center/offset
+                   w6 = w27, ...)                  ; extent
+Shape-table carrier classes [NATIVE] (dump.cs):
+  Battle       sbyte[][] $kc // 0x2B8 ; sbyte[][] $Mc // 0x2D0  (415924)
+  BattleAlliance sbyte[][] $kE // 0x58 ; getter $hS / setter $HS (419054)
+  BattleMap    List<int[][]> $if // 0x30                          (419504)
+Producer: BattleSide.$iu writes Battle.$Mc at 0x469794C (str x20,[x19,#0x2D0]);
+  the value chain runs through Obfuz method-bridge calls (0x5265B74 with
+  encrypted ids e.g. (0x144,0x11,0x2927AB7E), (0x150,0x3D,0x27428CBF)) and
+  array allocs -> TABLE VALUES REQUIRE BRIDGE EMULATION (R7 pass 3).
+  NOT server-delivered: BattleAllianceDescriptionSTDeserializer.deserialize
+  reads exactly 3 ints, no arrays (out/foglines-origin-disasm.txt).
+
+--------------------------------------------------------------------------------
+[6] AICommBuSet.$Ik — THE membership test [DECOMP] (0x48E649C, dump.cs)
+--------------------------------------------------------------------------------
+public static bool $Ik(int x, int y, int cx, int cy, int radius, sbyte[][] fogLines)
+  w23 = |x - cx| ; w21 = |y - cy|                     (subs + cneg mi)
+  if (|dy| > radius) -> false                          (flattened states)
+  if (fogLines == null) -> TRUE                        (no fog = all visible)
+  w20 = (sbyte) fogLines[radius][|dy|]                 ; row half-extent
+  w19 = decode(static)                                 ; divisor D (obfuz)
+  w9  = w20 / w19                                      (sdiv)
+  return (w9 == 1 ? (rowExtent < |dx|) ? ... : ... )   ; |dx| vs extent compare
+  tail: cmp w9, w26; cset lt; cmp staticsProduct, w9; cset eq
+=> reveal shape = PRECOMPUTED PER-RADIUS ROW-EXTENT TABLE, membership
+   |dx| < fogLines[radius][|dy|]/D. Client mirror (same primitive):
+   ClientUnbuildZoneContainer.IsCellInCircle(Point2i, UnbuildZone,
+   sbyte[][] battleFogLines) tail-calls $Ik (0x8135110 b 0x48E649C).
+   Method LITERALLY NAMED IsCellInCircle — circle family, values pending.
+
+--------------------------------------------------------------------------------
+[7] CheckAndCalc.$ec — packed-bit variant [DECOMP] (0x46D2E7C, 33 callers)
+--------------------------------------------------------------------------------
+$ec(sbyte[][] fogLines, int x0, int y0, int x1, int y1) -> int
+  dx = x0 - x1 ; dy = y0 - y1            (normalized through flattened states)
+  state 5 (0x46D3100):
+    row = fogLines[statics[0x10]]                       ; row per radius lvl
+    idx = (R + dy) * S + (R + dx)                       ; madd (0x46D3178)
+          R = statics[0xD4] ^ 0x7FE0CA88                ; grid radius bound
+          S = statics[0x30] + 0xCB5E3C38                ; stride (= 2R+1 fam.)
+    bit = (ldsb row[idx] & (statics[0x400] ^ 0xB4092818)) >> statics[0x14]
+=> MULTIPLE RADIUS LEVELS BIT-PACKED PER BYTE; (R+dy)*S+(R+dx) centered-grid
+   indexing. 33 call sites across UnitAct(x15)/PathAct/FlagAct/BuildingAct/
+   BattleAct/CheckPointAct/SideAct/TransportAct/GAICommand{FlagRemove,
+   PickBuildings,PickUnits} — the sim's universal geometry service.
+
+--------------------------------------------------------------------------------
+[8] SIGHT STAT SURFACE [NATIVE] (dump.cs, rva_index)
+--------------------------------------------------------------------------------
+EStat FogRadius = 31 (dump.cs:168811); FogMask = 32 (262602)
+Unit.sight_curr : int // 0xBC (dump.cs:393303); get/set 0x45B134C/0x45B1354
+Unit.calcSightCurr 0x45B19F8 ; Unit.calcSightState(int) 0x45B1A98
+UnitStateType.Sight/SightInit 0x45B3634/0x45B36EC; Building.calcSight 0x458E708
+BuildingLevelType.Sight/SightInit 0x458F508/0x458F578
+Fraction.ForestSightDrop (sbyte) 0x4597EB0   — forest reduces sight
+Flag.Sight (sbyte) 0x45976D0; GAICommandFlag.Sight 0x45DBFB8
+ShieldFogRadius 0x459ACC0-family; HeroParam.BeholderSightInterval/Max/
+  DamageDelay 0x459ACC0-0x459ACE8 (hero fog ability)
+BattleAlliance const sbyte $hE = 16 (dump.cs:~419044) — radius table rung?
+CreateStatsForFog(unit, max, fraction, prototype) 0x7CB97B4 — fog stats built
+  from MaxStatValueProvider (Build J chain) + Fraction + prototype.
+
+--------------------------------------------------------------------------------
+[9] BROWSER PARITY STATE [BROWSER]
+--------------------------------------------------------------------------------
+docs/game.js updateVision reveal(): runtime Euclidean test
+  Math.hypot(gx-x, gy-y) <= r  (v=56 region ~L2281)
+Native: precomputed row-extent table lookup |dx| < fogLines[r][|dy|]/D.
+Difference observable ONLY if table bytes deviate from the Euclidean disc;
+values pending pass 3 (Obfuz bridge emulation). No behavior fold-in yet.

@@ -699,7 +699,7 @@ P4 = future/platform work.
 | H1 | **P2** | Hash blind spots: `sim.mines`, `u._chain` not in stateString | simulation | PARTIALLY CONFIRMED | stateString L670–694 |
 | H2 | **P2** | Hold-vs-stop native distinction approximated | commands | PARTIALLY CONFIRMED | phase5-missions note |
 | H3 | **P2** | Capture times 5 s/9 s have zero native evidence | economy/units | UNKNOWN | factions.js |
-| H4 | **P2** | Fog/visibility rules a design (radii tuned) | fog | APPROXIMATE | — |
+| H4 | **P2** | Fog/visibility rules a design (radii tuned) | fog | PARTIALLY CONFIRMED | sight-visibility-native-analysis (R7 pass 2: 3-state fog, packed bitmaps, fogLines row-extent tables; table bytes pending pass 3) |
 | H5 | **P2** | Turret slew (`rotate_diap/speed`) render-only; hull-arc fire gate stand-in | combat | PARTIALLY CONFIRMED | unit-state-machines §3 |
 | H6 | **P2** | Building prereq chain browser-designed | buildings | APPROXIMATE | factions.js |
 | H7 | **P2** | Post-processing/sky/material/lighting parity unknown | rendering | UNKNOWN | — |
@@ -731,7 +731,7 @@ P4 = future/platform work.
 | R4 | How is damage applied per hit (cadence, ordering, rounding)? | Validates `applyHit` reconstruction (B4) | live-sim events (server) | damage pipeline consumers | pipeline ends at UI (§3.5) | application semantics | controlled device experiments (Phase 24 scenarios A/B), frame-stepped video vs browser replay |
 | R5 | `$Pg` per-branch micro-logic (44,684 B) | Exact leash/defend/return behavior | full disasm exists | `$Pg`, UnitAct statics +0xC/+0x10 | 9 cmp-immediates; data-not-literal finding | branch-by-branch semantics | continue Capstone branch enumeration (Obfuz pool values now available — Task 42 — use them to pin branch constants) |
 | R6 | TakePositions 15-bit cell-class per-bit semantics | Exact formation/placement rules | `UnitTakePositionsManager` decode | occupancy masks 0x215F/0xFEE0/0xFEFD | masks + category rules CONFIRMED | per-bit cell meanings | targeted disasm + on-device observation of placement orders |
-| R7 | Native visibility/sight rules | Fog 1:1 (H4); matters for MP | `UnitStateType.sight/sight_curr` consumers | sight fields, spectator/observation code | fields exist | rule set | client-side observation code disasm + runtime experiments |
+| R7 | Native visibility/sight rules | Fog 1:1 (H4); matters for MP | `UnitStateType.sight/sight_curr` consumers | **pass 2 DONE (Task 54)**: 3-state fog, packed int[][] per-alliance bitmaps, fogLines row-extent tables, `$Ik`/`$ec` membership, drivers mapped (`evidence/vision/`) | architecture CONFIRMED `[DECOMP]` | fogLines table byte values | pass 3: Obfuz method-bridge emulation of `BattleSide.$iu` (offline; R2 technique family) |
 | R8 | `m_bulletTrajectoryType` / `m_gravity` semantics | Real projectile arcs (G10) | weapon schema consumers | `WeaponType` fields 0x3C/0x3E | schema extracted | consumer logic | xref scan of field offsets in weapon/spawn code |
 | R9 | Native client↔server battle protocol | informs authoritative-MP design (P4) | `AIComm*` serialization, connection classes | `SendCommand`, message factories, CRC flow | names + structure | wire format | on-device TLS-unpinning + traffic capture (if plain), or Frida message hooks |
 | R10 | Original camera/UI metrics | measured UI/camera reconstruction (H8/H9) | device screenshots/video | — | none | measurements | screen-record device gameplay; measure HUD proportions/camera pitch per dev plan Phase 18/20 |

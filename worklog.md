@@ -2078,3 +2078,25 @@ Stage Summary:
   committed AND reproducible from committed inputs — the stale "R2 constants
   fold-in" remaining-item is retired from the roadmap. Remaining: R1 operator
   device session (sole blocked capture), R8/H1/R6/R7-pass-2 (offline, queued).
+---
+Task ID: 56
+Agent: Super Z (main)
+Task: R7 sight-rules scan, pass 2 — jump-table decode → exact reveal shape (logged as Task 54 in the parallel session; renumbered during rebase over upstream Tasks 53-55)
+
+Work Log:
+- Sandbox had reset (external aow3-audit/ + scripts/ gone; only repo remained). Recovered native artifacts offline: XAPK was an LFS pointer blob (58faba3f) in git history → fetched via GitHub LFS batch API with repo token → sha256 1a41e033… VERIFIED; unpacked com.geargames.aow.apk + config.arm64_v8a.apk → libil2cpp.so 8ace05bb… VERIFIED, global-metadata.dat d2e8dd0d… VERIFIED; dump.cs re-extracted (0050e67d… VERIFIED); capstone installed into venv.
+- Pass 1 (compressed): dump.cs sight surface mapped — Unit.sight_curr int @0xBC, calcSightCurr/calcSightState, EStat FogRadius=31, Fraction.ForestSightDrop, Flag.Sight sbyte, ShieldFogRadius, Beholder hero params, CreateStatsForFog; BattleCellFoggyState {Clear=0,Fogged=1,Dark=2}.
+- Pass 2: FogAct static kernel (14 fns) disassembled (9,361 lines). All bodies control-flow-flattened (state chained through static-field slots). 7 true PC-relative jump tables decoded (adr+ldrh lsl#1+add lsl#2+br; u16 tables 0x1B0D1F6–0x1B0D302): $nd=13, $Od=30/17(+1), $Rd=19, $Pd=32, $rd=20 cases.
+- Kernel semantics decoded: per-alliance int[][] packed cell bitmaps (32 cells/int; BattleAlliance $HE 0x30 visible + $iE 0x38 explored); FogAct.$rd writes orr/bic run-of-ones span masks ((1<<n)-1)<<off computed in $rd case 1 with 0xCB5E3C38 add-decode key.
+- Exact reveal shape: precomputed per-radius row-extent sbyte[][] "fog lines" tables (Battle.$kc 0x2B8/$Mc 0x2D0, BattleAlliance.$kE 0x58); membership AICommBuSet.$Ik(x,y,cx,cy,r,fogLines) = |dx| < fogLines[r][|dy|]/D; client mirror literally named IsCellInCircle (tail-calls $Ik). Bit-packed variant CheckAndCalc.$ec (0x46D2E7C, 33 callers, (R+dy)*S+(R+dx) indexing, (byte&M)>>N multi-radius-per-byte).
+- Call graph via numpy BL scan (2.67M BLs): $pd→$Qd (unit sight), $Od×5 (tick), UnitAct.$oh→$sd (bullets), FlagAct.$xC (flags), GAICommandFogOpener.execute{x,y,w,h,tick}→$qd/$Qd (rect commands).
+- Table values NOT recovered by design-scope: producer BattleSide.$iu stores Battle.$Mc @0x469794C through Obfuz method-bridge calls (0x5265B74, encrypted ids) → pass 3 (R2 technique family). Proven battleAllianceDescription deserializer reads only 3 ints → tables NOT server-delivered.
+- Fold-in: comment-only provenance block on updateVision reveal kernel (docs/game.js ~L2280); v=56→v=57 (§35.1); registry.json R7 → PARTIALLY_CONFIRMED + new finding F-fog-visibility-architecture; roadmap snapshot + queue rewritten; audit §6 H4 → PARTIALLY CONFIRMED; §7 R7 row updated.
+- Fixed pre-existing sandbox artifact: 1,198 tracked files had flipped 100644→100755 (sandbox restore); restored HEAD modes via git ls-tree (4 legitimately-755 files kept).
+
+Stage Summary:
+- R7: UNKNOWN → PARTIALLY_CONFIRMED; H4: APPROXIMATE → PARTIALLY CONFIRMED.
+- Evidence: reverse/evidence/vision/{sight-jumptable-decode.txt + 9 raw artifacts}; note reverse/notes/sight-visibility-native-analysis.md.
+- Comment-only game.js delta; 877/877 green (8 suites); node --check OK.
+- Scripts preserved: /home/z/my-project/scripts/native/{fetch_lfs_xapk.sh, sight_act_disasm.py, fog_jumptable_decode.py, bl_xref_scan.py, attribute_callers.py, sight_helpers_disasm.py, foglines_origin_disasm.py, circle_primitive_disasm.py, fogtable_store_scan.py, battleside_fogtable_disasm.py, battle_cctor_disasm.py, assemble_evidence.py}.
+- Next: R7 pass 3 (Obfuz bridge emulation → fogLines values → possible reveal-shape fold-in), then R8.
