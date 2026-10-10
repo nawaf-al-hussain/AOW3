@@ -225,5 +225,47 @@ section('mulberry32 seed derivation');
   check('AI rng differs across owners', K.mulberry32((1 ^ Math.imul(1, 0x9E3779B9)) >>> 0)() !== seq1[0], true);
 }
 
+// ================= 9. H1 hash coverage: mines / unit timers / cmdSeq =================
+section('H1 hash coverage (mines M-lines, unit behavior timers, cmdSeq)');
+{
+  const { K } = loadKernel(4242);
+  const mk = () => {
+    const sim = new K.Sim(4242);
+    const mole = sim.spawn('mole', 1, 30, 80); // mineLayer hero (HeroTypes.Mole=4, lay cd 9)
+    const foe = sim.spawn('ilight', 2, 31.2, 80); // mine trigger fodder (1.2 tiles away)
+    return { sim, mole, foe };
+  };
+  const a = mk(), b = mk();
+  check('cmdSeq serialized in the T-line', /,cs\d+$/.test(a.sim.stateString().split('|')[0]), true);
+  check('U-line carries the H1 field block (cols 31..41 well-formed)',
+    a.sim.stateString().split('|').filter((l) => l.startsWith('U')).every((l) => {
+      const c = l.split(',');
+      return c.length >= 42
+        && c.slice(31, 39).every((t) => t === '-' || /^-?\d+$/.test(t))
+        && ['gun', 'melee', '-'].includes(c[39])
+        && /^-?\d+$/.test(c[40])
+        && [0, 1].includes(+(c[41][0]));
+    }), true);
+  run(a.sim, 700); run(b.sim, 700); // 35 s: mole lays mines every 9 s, armed mines seek foes
+  const lines = a.sim.stateString().split('|');
+  const mines = lines.filter((l) => l.startsWith('M'));
+  check('mine entities serialized as M-lines (owner,x,y,arm)',
+    mines.length > 0 && mines.every((l) => /^M\d+,-?\d+,-?\d+,\d+$/.test(l)), true);
+  check('mole abilCd ticking in the U-line (col 36 numeric after a lay)',
+    lines.some((l) => l.startsWith('U') && l.split(',')[1] === 'mole' && /^\d+$/.test(l.split(',')[36])), true);
+  check('mine-laying sim deterministic (hash equal across two seeds-same runs)',
+    a.sim.hashState() === b.sim.hashState(), true);
+  check('mine entities reproduced identically (M-line byte equality)',
+    lines.filter((l) => l.startsWith('M')).join('|')
+      === b.sim.stateString().split('|').filter((l) => l.startsWith('M')).join('|'), true);
+  // blind-spot probe: a mined field must move the hash (pre-H1 it could not)
+  check('M-lines actually feed the hash (removing them changes the digest)',
+    (() => {
+      const full = a.sim.hashState();
+      const stripped = lines.filter((l) => !l.startsWith('M')).join('|');
+      return K.fnv1a(stripped) !== full;
+    })(), true);
+}
+
 console.log(`\n${total - fail}/${total} assertions PASSED${fail ? ` — ${fail} FAILED` : ''}`);
 process.exit(fail ? 1 : 0);

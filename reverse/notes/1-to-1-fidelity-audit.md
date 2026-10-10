@@ -696,7 +696,7 @@ P4 = future/platform work.
 | G10 | **P1** | Trajectory types/gravity unmodeled (artillery arc fake) | combat | PARTIALLY CONFIRMED — structure recovered (R8 2026-10-10), values pending R1 | weapon-schema fields; trajectory-gravity-consumer-scan.txt |
 | G11 | **P1** | Burst data dormant (no shotCount anywhere) | combat | PARTIALLY CONFIRMED | weapons.js |
 | G12 | **P1** | Full `aiming` 6-class target mask reduced to antiAir boolean | combat | PARTIALLY CONFIRMED | weapon-type-surface note |
-| H1 | **P2** | Hash blind spots: `sim.mines`, `u._chain` not in stateString | simulation | PARTIALLY CONFIRMED | stateString L670–694 |
+| H1 | **P2** | Hash blind spots: `sim.mines`, `u._chain` not in stateString | simulation | **CLOSED (Task 58, 2026-10-10)**: stateString now serializes mines (M-lines owner/x/y/arm), `_chain`, the full behavior-timer block (slowT/burnT/burnDps/invulnT/heat/abilCd/repathCd/burstT), lastMode, orientDest, corpse dieT and cmdSeq; exclusions documented in-kernel (floats/booms/pops, explored/visible, grid/pf, stats; vx/vy + rotate = derived). 12 new determinism vectors; +exposed+fixed a real JIP archive hole (hub archived only while clients were attached — commands issued in a clientless window were lost from the JIP replay journal; lockstep-jip 86→88/88) | stateString L706+ |
 | H2 | **P2** | Hold-vs-stop native distinction approximated | commands | PARTIALLY CONFIRMED | phase5-missions note |
 | H3 | **P2** | Capture times 5 s/9 s have zero native evidence | economy/units | UNKNOWN | factions.js |
 | H4 | **P2** | Fog/visibility rules a design (radii tuned) | fog | PARTIALLY CONFIRMED | sight-visibility-native-analysis (R7 pass 2: 3-state fog, packed bitmaps, fogLines tables; pass 3: $Ik membership CONTRACT decoded — |dx| <= (sbyte)fogLines[r][|dy|]/2, D=2 half-cell fixed-point, $ec R=15/S=31/M=0xFF/N=3; table bytes blocked-static — virtual-setter producer, needs script.json/device) |
@@ -744,7 +744,7 @@ P4 = future/platform work.
 | # | Verified original behavior | Current browser behavior | Implementation change (when approved) | Dependencies | Risk |
 |---|---|---|---|---|---|
 | I1 | No crit system; no splash damage falloff; no veterancy mods; Shield = shield mechanic | crit ×mul; linear falloff; ±8/5% mods; heal aura (B5) | remove/gate inventions; implement ShieldStrength/Radius when semantics known | R1 (values) | low (removal), medium (Shield) |
-| I2 | (internal) hash should cover all gameplay state | mines + `_chain` unhashed | extend `stateString()`; re-baseline golden hashes | none | hash-churn across suites |
+| I2 | (internal) hash should cover all gameplay state | ~~mines + `_chain` unhashed~~ **DONE (Task 58, v=59)** | ~~extend `stateString()`; re-baseline golden hashes~~ shipped: full stored-state serialization + golden re-baseline (phase5 structure assertions moved to column-indexed form) + JIP archive fix it exposed | none | ~~hash-churn across suites~~ realized: commands-determinism 50→57, all 8 suites green |
 | I3 | — | salamander → missing `f2_veh_typhoon.glb` fallback | fix `UNIT_MODEL` mapping | none | none |
 | I4 | production cancel/refund; rally; repair; upgrade exist as native commands | all missing (G1–G4) | add command types + sim handlers + UI; journal from day one | R1 for numbers | medium (determinism care) |
 | I5 | water/naval walkability | water non-blocking (B8) | water layer in terrain grid; bridge walkability | B3/R11 for naval scope | medium |

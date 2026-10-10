@@ -705,13 +705,28 @@
     }
     stateString() {
       // Canonical quantized serialization of ALL behavior-affecting sim state
-      // (Phase 4 determinism). floats/booms/pops are presentation feedback and
-      // intentionally excluded. Quantization = 1/100 tile to absorb float drift.
+      // (Phase 4 determinism; H1/I2 hash-coverage extension). floats/booms/pops
+      // are presentation feedback and intentionally excluded, as are the client
+      // fog views (explored/visible), the static pathfinding infra (grid/pf) and
+      // the scoreboard-only stats counters. vx/vy are re-derived from position
+      // every tick (renderer anim input only); u.rotate is a spawn-constant
+      // fsmStat lookup (def-derived, transitively covered); dying units are
+      // removed the same tick they spawn their corpse, so only the corpse's
+      // stored dieT (cleanup timing, corpse filter) needs serializing. Every
+      // STORED field that can vary during play is present: unit timers that gate
+      // behavior (slowT cd-rate 0.72x, burnT/burnDps hp drain, invulnT damage
+      // gate, heat spin-up cooldown modifier, abilCd immortality/mine-layer
+      // gating, repathCd repath throttle, burstT inter-shot timer), the weapon
+      // mode memory (lastMode melee/gun), the pre-fire orientation target
+      // (orientDest -> facing), the chain-lightning re-entrancy guard (_chain),
+      // the proximity mine entities (M-lines: owner/x/y/arm) and the command
+      // issue counter (cmdSeq, replay journal ordering). Quantization = 1/100
+      // tile to absorb float drift.
       const q = (v) => Math.round((v || 0) * 100);
       const o = (v) => v === undefined || v === null ? "-" : String(q(v));
       const xy = (p) => p === undefined || p === null ? "-" : q(p.x) + ":" + q(p.y);
       const s = [];
-      s.push(`T${this.tick},t${q(this.time)},n${this.nextId},w${this.winner},r${this.rngState}`);
+      s.push(`T${this.tick},t${q(this.time)},n${this.nextId},w${this.winner},r${this.rngState},cs${this.cmdSeq}`);
       for (let i = 0; i < this.players.length; i++) {
         const p = this.players[i];
         s.push(`P${i},${q(p.funds)},${q(p.income)},${p.cpUsed},${p.cpCap},${p.alive ? 1 : 0}`);
@@ -719,13 +734,15 @@
           s.push(`Q${qq.defId},${q(qq.t)}`);
       }
       for (const u of this.units)
-        s.push(`U${u.id},${u.def.id},${u.owner},${q(u.x)},${q(u.y)},${q(u.hp)},${q(u.facing)},${u.order.kind},${o(u.order.x)},${o(u.order.y)},${o(u.order.depotId)},${o(u.targetId)},${o(u.preferredId)},${u.path.length},${xy(u.dest)},${xy(u.guard)},${u.grounded ? 1 : 0},${u.burstLeft},${q(u.aimT)},${q(u.cd)},${u.state},${u.kills},${q(u.captureT ?? -1)},${o(u.lastHitBy)},${o(u.lastTargetId)},${o(u.garrison)},${o(u.order.ax)},${o(u.order.ay)},${u.order.back ? 1 : 0},${u.hiding ? 1 : 0},${u.fireHold ? 1 : 0},${u.sameSpeed !== undefined ? 'ss' + q(u.sameSpeed) : '-'}${u.order.pts ? ',rt' + u.order.pts.map((p) => q(p.x) + '.' + q(p.y)).join('_') + ',lg' + (u.order.leg ?? 0) : ''}${u.siege ? ',sg' + u.siege.dir + '.' + u.siege.stage : ''}`);
+        s.push(`U${u.id},${u.def.id},${u.owner},${q(u.x)},${q(u.y)},${q(u.hp)},${q(u.facing)},${u.order.kind},${o(u.order.x)},${o(u.order.y)},${o(u.order.depotId)},${o(u.targetId)},${o(u.preferredId)},${u.path.length},${xy(u.dest)},${xy(u.guard)},${u.grounded ? 1 : 0},${u.burstLeft},${q(u.aimT)},${q(u.cd)},${u.state},${u.kills},${q(u.captureT ?? -1)},${o(u.lastHitBy)},${o(u.lastTargetId)},${o(u.garrison)},${o(u.order.ax)},${o(u.order.ay)},${u.order.back ? 1 : 0},${u.hiding ? 1 : 0},${u.fireHold ? 1 : 0},${o(u.slowT)},${o(u.burnT)},${o(u.burnDps)},${o(u.invulnT)},${o(u.heat)},${o(u.abilCd)},${o(u.repathCd)},${q(u.burstT)},${u.lastMode ?? '-'},${q(u.orientDest)},${u._chain ? 1 : 0}${u.sameSpeed !== undefined ? 'ss' + q(u.sameSpeed) : '-'}${u.order.pts ? ',rt' + u.order.pts.map((p) => q(p.x) + '.' + q(p.y)).join('_') + ',lg' + (u.order.leg ?? 0) : ''}${u.siege ? ',sg' + u.siege.dir + '.' + u.siege.stage : ''}`);
       for (const b of this.buildings)
         s.push(`B${b.id},${b.defId},${b.owner},${q(b.x)},${q(b.y)},${q(b.hp)},${b.built ? 1 : 0},${q(b.captureT)},${b.captureBy},${o(b.lastHitOwner)}`);
       for (const p of this.projectiles)
         s.push(`J${q(p.x)},${q(p.y)},${q(p.tx)},${q(p.ty)},${q(p.speed)},${p.dmg},${o(p.owner)},${o(p.srcId)},${o(p.targetId)},${p.airburst ? 1 : 0},${q(p.trail)},${p.dead ? 1 : 0}`);
+      for (const m of this.mines)
+        s.push(`M${m.owner},${q(m.x)},${q(m.y)},${q(m.arm)}`);
       for (const c of this.corpses)
-        s.push(`C${c.id},${c.defId},${c.owner},${c.kind},${q(c.x)},${q(c.y)},${q(c.t)}`);
+        s.push(`C${c.id},${c.defId},${c.owner},${c.kind},${q(c.x)},${q(c.y)},${q(c.t)},${q(c.dieT)}`);
       return s.join("|");
     }
     hashState() {
@@ -3003,15 +3020,20 @@
         const f = {};
         for (let s = 1; s <= this.seats; s++)
           f[s] = per && per[s] || [];
+        // archive EVERY command-bearing tick, not only while clients are
+        // attached (H1/JIP fix): commands issued during a fully-clientless
+        // window (last player left, next JIP has not joined) still advance
+        // sim.cmdSeq and the sim state on the hub — a later JIP snapshot that
+        // omitted them replayed with a short journal and diverged (caught by
+        // the cs field of the H1 stateString extension).
+        if (f[1].length || Object.keys(f).some((s) => +s >= 2 && f[s].length))
+          this.arch.set(tick, JSON.parse(JSON.stringify(f)));
         if (this.clients.size) {
           // frame field is `fr` — `f` collides with the transport envelope's
           // sender-rid field and would leak a rid string into the buf
           const cf = { a: "cf", t: tick, fr: f };
           for (const rid of this.clients.keys())
             this.sendTo(rid, cf);
-          const any = [...this.clients.keys()].length;
-          if (any && (f[1].length || Object.keys(f).some((s) => +s >= 2 && f[s].length)))
-            this.arch.set(tick, JSON.parse(JSON.stringify(f)));
         }
         for (let s = 1; s <= this.seats; s++)
           for (const c2 of f[s])

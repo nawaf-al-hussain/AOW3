@@ -2204,3 +2204,70 @@ Stage Summary:
   disassembly run, no re-search. Live = v=57 at session time (rebase note:
   remote had advanced to v=58 via R7 pass 2/3 in parallel; the next game.js
   change bumps to v=59).
+
+---
+Task ID: 58
+Agent: Super Z (main)
+Task: H1 hash-coverage extension — stateString() to mines + `_chain` + the full
+  stored-state blind-spot set; golden re-baseline; JIP archive hole it exposed
+  fixed (audit H1 + I2 closure, v=58 -> v=59)
+
+Work Log:
+- State rebuild: local was 1 commit ahead (R8 scan, rebased to f77978a over the
+  parallel session's R2 live-pool 4b0f9ab + R7 pass 2/3 f6c717f/d83f22c — Task-ID
+  collision resolved per convention, R8 entry renumbered 54b; registry/roadmap/
+  audit merged semantically, index.html kept the higher v=58).
+- Scope: audit H1 row ("sim.mines, u._chain not in stateString") + I2 mirror;
+  field-assignment census over the whole kernel (38 u.* write sites) classified
+  every uncovered field as stored-behavior vs derived:
+  INCLUDED — slowT (0.72x cd rate), burnT/burnDps (hp drain), invulnT (damage
+  gate), heat (spin-up cooldown modifier), abilCd (immortality/mine-layer
+  gating), repathCd (repath throttle), burstT (inter-shot timer), lastMode
+  (melee/gun memory), orientDest (drives facing), _chain (H1-named), sim.mines
+  (new M-lines: owner/x/y/arm, push order), corpse dieT (cleanup timing,
+  corpse filter), cmdSeq (replay journal ordering, T-line cs field).
+  EXCLUDED with in-kernel rationale — floats/booms/pops (presentation, per the
+  original header), explored/visible (client fog views), grid/pf (static
+  pathfinding infra), stats (scoreboard-only), vx/vy (re-derived per tick,
+  renderer-only consumer), u.rotate (spawn-constant fsmStat lookup, def-derived),
+  live-unit dieT (removed the same tick the corpse spawns).
+- stateString() extended (U-line +11 fixed columns after fireHold, M-loop after
+  projectiles, C-line +dieT, T-line +cs); exclusions/inclusion rationale folded
+  into the kernel header comment.
+- Golden re-baseline: NO pinned hash literals existed (all suite assertions are
+  cross-run equality); 3 phase5 structure assertions were tail-sensitive
+  (endsWith ',1,-' / ',1,0,-' / ',-') and were moved to column-indexed form
+  (cols 29/30/41) preserving their semantics; ',hold,' includes-check unaffected.
+- commands-determinism +7 vectors (section 9, 50 -> 57): T-line cs presence,
+  U-line H1 field-block well-formedness (cols 31..41), M-line format, mole
+  abilCd ticking, cross-run hash equality + M-line byte equality under active
+  mine-laying combat, and a M-lines-feed-the-hash probe (fnv1a of the
+  M-stripped string must differ).
+- REAL BUG FOUND AND FIXED (the determinism-protective value H1 promised):
+  lockstep-jip failed 86/2 after the extension — JIP player state hash != host.
+  Diagnosis (persisted probe scripts/h1_jip_probe.js): at equal ticks the
+  stateStrings differed ONLY in the T-line cs field (host cs10 vs jip cs9) —
+  the hub journalled a command issued during a fully-clientless window (guest
+  bye -> JIP hello) but archived frames only while clients were attached
+  (arch.set gated on this.clients.size), so the JIP replay journal was one
+  command short. Pre-H1 the lost command happened to be a state no-op, so the
+  old string masked the hole; cmdSeq serialization exposed it. Fix: hub apply()
+  archives every command-bearing tick regardless of client count (sparse map,
+  only command-bearing ticks stored; cf dispatch stays client-gated).
+  lockstep-jip 88/88.
+- Tests: node --check OK; 8/8 suites GREEN — commands-determinism 57/57,
+  phase5 236/236, replay 45/45, lockstep-jip 88/88, data-model 379, accuracy
+  all vectors, stat-caps 37/37, unit-fsm all vectors.
+- Docs: audit H1 -> CLOSED + I2 -> DONE; roadmap Priority B #4 + next-queue #3
+  struck; registry browser_foldins v59 added (behavior_change: true); cache bump
+  v=58 -> v=59 per the protocol (stateString + archive fix are behavior).
+
+Stage Summary:
+- H1/I2 closed: the determinism hash now covers every stored field that can vary
+  during play, with the exclusion list written into the kernel so future fields
+  land in the right bucket. 12 new assertions across two suites.
+- One latent lockstep bug fixed on the way: JIP snapshots after a clientless
+  window replay a complete journal (the cs field permanently guards it via
+  section 4 of lockstep-jip).
+- Next: R6 bit-name cross-ref (offline), R1 device run when the user supplies
+  the session; R8 numeric pass queued on APK re-acquisition.

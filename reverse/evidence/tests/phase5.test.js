@@ -734,8 +734,8 @@ section('same-seed determinism through defend + bombard + fire discipline + take
   };
   script(a.sim); script(b.sim);
   check('fireHold survives into the hash (foe holds fire)', a.sim.units[3].fireHold, true);
-  check('fireHold serialized in stateString (U-line tail bit, sameSpeed field appended)',
-    a.sim.stateString().split('|').some((l) => l.startsWith('U') && l.endsWith(',1,-')), true);
+  check("fireHold serialized in stateString (col 30 bit, sameSpeed marker '-')",
+    a.sim.stateString().split('|').some((l) => l.startsWith('U') && l.split(',')[30] === '1' && l.split(',')[41].endsWith('-')), true);
   run(a.sim, 400); run(b.sim, 400);
   check('hash equal across the new stances', a.sim.hashState() === b.sim.hashState(), true);
   const { sim: s2 } = loadKernel(5151);
@@ -836,8 +836,8 @@ section('hide: determinism + hash coverage');
   };
   const a = mk(6105), b = mk(6105);
   run(a.sim, 500); run(b.sim, 500);
-  check('hiding bit serialized in the U-line (before fireHold: hiding=1, fireHold=0)',
-    a.sim.stateString().split('|').some((l) => l.startsWith('U') && l.endsWith(',1,0,-')), true);
+  check('hiding bit serialized in the U-line (col 29=1, col 30=0: hiding, not fireHold)',
+    a.sim.stateString().split('|').some((l) => l.startsWith('U') && l.split(',')[29] === '1' && l.split(',')[30] === '0'), true);
   check('hiding state deterministic (hash equal)', a.sim.hashState() === b.sim.hashState(), true);
   check('both sims converge hidden-or-revealed identically', a.h.hiding === b.h.hiding, true);
 }
@@ -891,8 +891,8 @@ section('samespeed: release — new order / stop / arrival');
   sim.commandSameSpeed([fast.id, slow.id], 32, 80);
   sim.commandStop([fast.id, slow.id]);
   check('stop cancels the march cap', fast.sameSpeed === undefined && slow.sameSpeed === undefined, true);
-  check('stop hash field empty (every U-line tail = sameSpeed "-")',
-    sim.stateString().split('|').filter((l) => l.startsWith('U')).every((l) => l.endsWith(',-')), true);
+  check('stop hash field empty (every U-line sameSpeed marker "-", no rt/sg segments)',
+    sim.stateString().split('|').filter((l) => l.startsWith('U')).every((l) => l.split(',')[41].endsWith('-') && !l.includes(',rt') && !l.includes(',sg')), true);
   // arrival clears: short march, run until both idle
   sim.commandSameSpeed([fast.id, slow.id], 21.5, 80);
   let arrived = false;

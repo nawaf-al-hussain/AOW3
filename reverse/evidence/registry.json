@@ -313,6 +313,16 @@
         "updateVision reveal kernel comment: decoded $Ik membership contract (|dx| <= (sbyte)fogLines[r][|dy|]/2, D=2 half-cell fixed-point, inclusive via polarity gadget, null throws), $ec 31x31 grid constants (R=15/S=31/M=0xFF/N=3, 1/8-cell levels), BattleSide.$iu producer claim corrected (List<BuildingDestroyed> capacity, not Battle.$Mc), table bytes blocked-static note; comment-only, zero behavior delta"
       ],
       "behavior_change": false
+    },
+    "v59": {
+      "task": "Task 58 (this session)",
+      "changes": [
+        "H1/I2 hash-coverage: stateString() now serializes ALL stored behavior-affecting state \u2014 mines as M-lines (owner/x/y/arm), u._chain re-entrancy guard, behavior-timer block (slowT/burnT/burnDps/invulnT/heat/abilCd/repathCd/burstT), lastMode weapon-mode memory, orientDest pre-fire heading, corpse dieT (cleanup timing), cmdSeq issue counter in the T-line; exclusions documented in-kernel (floats/booms/pops, explored/visible fog views, grid/pf pathfinding infra, scoreboard stats, derived vx/vy/rotate)",
+        "JIP snapshot fix EXPOSED by the extension: the hub archived input frames only while clients were attached, so commands issued during a fully-clientless window were missing from a later JIP's replay journal (cmdSeq cs-field divergence, lockstep-jip 86/2); hub now archives every command-bearing tick regardless of client count",
+        "golden re-baseline: phase5 structure assertions moved from endsWith tails to column-indexed form; commands-determinism +7 vectors (M-line format, abilCd ticking, cross-run M-line equality, M-lines-feed-hash probe)"
+      ],
+      "behavior_change": true,
+      "tests": "8/8 suites green: commands-determinism 57/57, phase5 236/236, replay 45/45, lockstep-jip 88/88, data-model 379, accuracy all, stat-caps 37/37, unit-fsm all"
     }
   },
   "blockers_summary": {

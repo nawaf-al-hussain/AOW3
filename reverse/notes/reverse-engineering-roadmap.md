@@ -43,7 +43,7 @@ Ranked by fidelity impact per audit §7 and current residuals:
 2. **R8 trajectory/gravity consumers** — STRUCTURE RECOVERED (engine taxonomy Linear0..UpAndSelfDirected6, gravity/100, duration-triple sim timing); converts G10's structure now, numerics wait for .so.
 3. **G11 burst wire-up** — `shot_count/shot_int` machinery exists; values arrive with R1;
    ensure sim paths are burst-ready and hash-covered (audit I2/I7).
-4. **H1 hash blind spots** — extend `stateString()` to mines + `_chain`; re-baseline goldens.
+4. ~~**H1 hash blind spots**~~ — **DONE (Task 58, v=59)**: mines (M-lines) + `_chain` + behavior-timer block + cmdSeq serialized; golden structure assertions re-baselined; exposed + fixed the JIP clientless-window archive hole (lockstep-jip).
 5. **B7 path-slot system** — only after R5/R6-derived semantics; highest determinism risk;
    keep last in this priority.
 
@@ -84,7 +84,7 @@ Ranked by fidelity impact per audit §7 and current residuals:
    CLOSED at the statically-reachable limit, optional re-open gated on script.json.
 2. ~~R8 trajectory/gravity consumer scan~~ — **DONE (structural) 2026-10-10**;
    numeric .so pass queued on APK re-acquisition (392 RVA anchors ready).
-3. **H1 hash-coverage extension** (offline, small, determinism-protective).
+3. ~~**H1 hash-coverage extension**~~ — **DONE (Task 58, 2026-10-10)**; mined fields, chain guard, behavior timers and cmdSeq now hash-covered; JIP snapshot hole found + fixed on the way.
 4. **R6 bit-name cross-ref** (offline, map-prefab correlation).
 5. R1 device run when the user can supply the session (highest total value; converts B1).
 6. R7 re-open (optional, tooling-gated): Il2CppDumper script.json for vtable closure
