@@ -1071,15 +1071,31 @@
       // SendUnitsMove([unit], cell, UnitMoveStyle.Forced = 1, ...) 0x82d4a50
       // (Assault = 0 / Forced = 1, dump.cs:337622) — a strict march, no
       // en-route engagement. Occupancy masks (.cctor 0x81D4DF4):
-      // All = 0x215F, HelicopterBehaviour = 0xFEE0, Land = 0xFEFD (exact
-      // complements); GetUnitOccupancyMask 0x81D43BC keys on the type's
+      // All = 0x215F, HelicopterBehaviour = 0xFEE0, Land = 0xFEFD (All|Heli =
+      // All|Land = 0xFFFF — union-supersets, NOT bit-complements). R6 CLOSED
+      // (Task 59, notes/r6-bitname-crossref.md): the 15-bit space is
+      // ClientBattleCell.m_passMask (short @0x38) and CheckByMask(mask)
+      // (0x8054284) returns (mask & m_passMask) == 0 — the masks are
+      // BLOCKED-state masks. Bits (ClientBattleCell consts, dump.cs:262597):
+      // 0 Barrier, 1 Land, 2 Forest, 3 Shore, 4 Water, 5 Fog, 6 Dark,
+      // 7 reserved, 8 Building, 9 BuildingBand, 10 BuildingBarrier,
+      // 11 VisAndInvisUnit, 12 VisAndInvisEnemyUnit, 13 CameraInvisible,
+      // 14 reserved; passMask init = 0x2060 (FullInvisibleCellMask) |
+      // terrain LUT[0x1BFE5BC] kind0-4 = Land/Shore/Water/Barrier/Land|
+      // Forest | 0x400 when not crossable. Takepos arms == building-exit
+      // legality: infantry/vehicles 0x215D = LandBuildingExitCellMask
+      // (Land cells), ships 0x214F = WaterBuildingExitCellMask (Water
+      // cells), amphibian 0x2145 (Land+Shore+Water), helicopters 0x2040 =
+      // {Dark, CameraInvisible} only, fixed-wing 0x215F = never placeable.
+      // GetUnitOccupancyMask 0x81D43BC keys on the type's
       // UNIT_CATEGORY byte [type+0x288] (INFANTRY = 1 / VEHICLE = 2 /
       // AIRCRAFT = 3 / SHIP = 4, dump.cs:395462-395465): infantry -> All
       // (& Land adjustments), vehicles -> Land, aircraft -> HelicopterBehaviour
       // & All only when IsHelicopterBehaviour (0x8011840) else mask 0 (fixed
       // -wing fliers can NEVER take positions), ships -> 0xFFEF (amphibian
       // UNIT_TYPE 42 special 0xFFE5). m_cellsMask = AND over the remaining
-      // unsent units (CalculateCellsMask 0x81D4780, init 0x7FFF).
+      // unsent units (CalculateCellsMask 0x81D4780, init 0x7FFF) = the
+      // blocked-state intersection (coarse pre-filter).
       // Reconstruction: nearest-match assignment per spot in tile space
       // (the Forced move maps to the dedicated takepos order — no en-route
       // acquisition — with hold semantics at the taken spot); units whose

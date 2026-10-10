@@ -2271,3 +2271,63 @@ Stage Summary:
   section 4 of lockstep-jip).
 - Next: R6 bit-name cross-ref (offline), R1 device run when the user supplies
   the session; R8 numeric pass queued on APK re-acquisition.
+
+---
+Task ID: 59
+Agent: main (RE session)
+Task: R6 bit-name cross-reference (offline) — name the 15 TakePositions cell-class bits
+
+Work Log:
+- Located the bit space: NOT in UnitTakePositionsManager — it is ClientBattleCell.m_passMask
+  (short @0x38, dump.cs:262577). The consumer chain is CheckByMask(short) @0x8054284 =
+  4 instructions: return (mask & m_passMask) == 0 -> the takepos "occupancy masks" are
+  BLOCKED-state masks (cell legal iff no common bit). Evidence combat/r6-checkbymask-decode.txt
+  (tool r6_bitname_crossref.py; capstone re-installed into /home/z/.venv).
+- 13/15 bits NAMED from ClientBattleCell consts (dump.cs:262597-262621) with writer-level
+  confirmation via a whole-binary strh [x,#0x38] census + class-range decode
+  (r6-passmask-writers.txt, r6_lut_and_bits.py): 0 Barrier (AddBarrier orr 0x1; LUT kind 3),
+  1 Land (LUT 0), 2 Forest (LUT 4), 3 Shore (LUT 1), 4 Water (LUT 2), 5 Fog + 6 Dark (fog-state
+  clears), 8 Building (BuildingEnter/Leave), 9 BuildingBand (BuildingBandEnter/Leave + count),
+  10 BuildingBarrier (ctor non-crossable OR; SetUnbuild/RemoveUnbuild), 11 VisAndInvisUnit +
+  12 VisAndInvisEnemyUnit (UnitEnter/Leave own-vs-enemy), 13 CameraInvisible. Bits 7/14: no
+  const, no writer anywhere in the class -> reserved; 15-bit clamp 0x7FFF.
+- passMask lifecycle decoded: ctor init 0x2060 = FullInvisibleCellMask, then OR terrain LUT
+  @0x1BFE5BC (kinds 0-4 = Land/Shore/Water/Barrier/Land|Forest — the byte from the cell entity,
+  the only server-sourced input), then OR 0x400 when the cell is not crossable; level sbyte ->
+  m_level; everything else dynamic.
+- Takepos arms re-expressed with names and they coincide EXACTLY with the building-exit/mine
+  legality consts: infantry/vehicle/land-heroes 0x215D = LandBuildingExitCellMask (Land cells;
+  infantry sub-type 2 additionally allows Forest), ships 0x214F = WaterBuildingExitCellMask
+  (Water cells), amphibian UNIT_TYPE 42 + heroes {62,74} 0x2145 = Land+Shore+Water, helicopters
+  0x2040 = only Dark/CameraInvisible blocked, fixed-wing + cat-0 0x215F = never placeable.
+  m_cellsMask AND-reduce = intersection of blocked sets = coarse pre-filter.
+- CORRECTED: "Heli/Land are exact bit-complements of All" (takepos-native.txt + game.js comment)
+  — 0x215F ^ 0xFEE0 = 0xDFBF; they are union-supersets. Blocked-state semantics is the model.
+- Map-prefab cross-ref executed to its offline limit: map.prefab.bundle re-scanned
+  (r6-map-prefab-scan.txt) = geometry-only (6,777 Transforms, 7 render-side MonoScripts,
+  0 TextAssets, no cell component) -> the per-cell terrain-kind grid is server battle-setup
+  data (BattleCellBasic/BattleCell ST serializer family); empirical kind-vs-geometry overlay
+  recorded as the R6 residual, R1-session carryable. Prefab census still confirms the terrain
+  vocabulary (Ground 391 / Underbrush 229 / Border 734 / Stone+FlatRock 78+ / road 83 / Tasharen
+  Water).
+- Deliverables: note reverse/notes/r6-bitname-crossref.md (bit table, lifecycle, partition,
+  corrections, residuals); evidence r6-checkbymask-decode.txt / r6-passmask-writers.txt /
+  r6-map-prefab-scan.txt; tools r6_bitname_crossref.py / r6_lut_and_bits.py /
+  r6_passmask_writers.py / r6_map_prefab_scan.py. Cross-file updates: defend-chase-takepos-
+  decode.md §2.4 -> RESOLVED pointer; reverse/README.md row; registry R6 -> CONFIRMED (13/15
+  named) + browser_foldins v60; roadmap R6 row DONE + snapshot header + queue #4 struck + B7
+  note; audit §6 R6 row updated.
+- Comment-only fold-in: docs/game.js commandTakePositions block (blocked-state semantics +
+  bit names + corrections), NO behavior change; cache bump v=59 -> v=60 per protocol.
+- Tests: node --check OK; 8/8 suites GREEN — commands-determinism 57/57, phase5 236/236,
+  replay 45/45, lockstep-jip 88/88, data-model 379, accuracy all vectors, stat-caps 37/37,
+  unit-fsm all vectors.
+
+Stage Summary:
+- R6 CLOSED at the statically-reachable limit: the 15-bit takepos space is
+  ClientBattleCell.m_passMask with 13/15 bits named and writer-confirmed; takepos legality ==
+  building-exit legality per domain; masks are blocked-state masks. Registry R6 -> CONFIRMED.
+- Residual (device-gated, optional): per-cell terrain-kind overlay from a captured battle
+  setup; would also settle whether reserved bits 7/14 ever occur server-side.
+- Next: R1 device session (user-supplied; runbook S1-S4 ready; can carry the R6 overlay dump),
+  R8 numeric .so pass queued on APK re-acquisition.

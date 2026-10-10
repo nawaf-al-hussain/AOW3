@@ -1,0 +1,512 @@
+R6 phase 3 — m_passMask writer census (strh Wn,[Xm,#0x38])
+sha256 libil2cpp.so 8ace05bbaa2cdfda156e377cfbcb0c0a6fb223fa68188fa3df49f677f10e90c5
+
+== ? @ 0x0 — 103 site(s): 0x23675e0,0x396fc64,0x396fca4,0x3970de4,0x3970e24,0x3971254,0x3971294,0x3972860,0x39728b4,0x39731a0,0x39731e0,0x3973f40,0x3973f7c,0x3974384,0x39743c0,0x3976218,0x3976254,0x3976d24,0x3976d64,0x3977800,0x397783c,0x3977e9c,0x3977edc,0x397b1b0,0x397b1f0,0x397b3dc,0x397b41c,0x397ba68,0x397baa4,0x397c1d4,0x397c210,0x397c640,0x397c680,0x397c86c,0x397c8ac,0x397ca98,0x397cad8,0x397ccc4,0x397cd04,0x397cefc,0x397cf50,0x397d630,0x397d670,0x397df10,0x397df50,0x397e9c4,0x397ea04,0x397f2bc,0x397f2fc,0x397f94c,0x397f98c,0x397fb78,0x397fbb8,0x397fda4,0x397fde4,0x39801d0,0x3980210,0x39803fc,0x398043c,0x3980864,0x39808a4,0x3980a90,0x3980ad0,0x3980cbc,0x3980cfc,0x3981340,0x3981380,0x398156c,0x39815ac,0x39819d0,0x3981a10,0x3982954,0x3982994,0x3983530,0x3983570,0x39852d4,0x3985314,0x3985d18,0x3985d58,0x3987794,0x39877d4,0x3988ddc,0x3988e1c,0x3989238,0x3989278,0x398ba54,0x398ba94,0x398bc80,0x398bcc0,0x398f200,0x398f240,0x399443c,0x399447c,0x399b0ac,0x399b0ec,0x3bea7ec,0x3c16834,0x3c168b4,0x3c1944c,0x3c41250,0x3c713d4,0x3ca36d4,0x3d2215c
+== public virtual void set_Armor(short value) { } @ 0x458f3cc — 1 site(s): 0x458f3cc
+== public virtual void set_Life(short value) { } @ 0x459d74c — 1 site(s): 0x459d74c
+== public virtual void set_RoundLenAdd(short value) { } @ 0x45b6168 — 1 site(s): 0x45b6168
+== public override GAICommand cloneMe() { } @ 0x45cc0c4 — 1 site(s): 0x45cc148
+== public override GAICommand cloneMe() { } @ 0x45f416c — 1 site(s): 0x45f41e8
+== public override GAICommand cloneMe() { } @ 0x45fc5cc — 1 site(s): 0x45fc638
+== public virtual void $JfA() { } @ 0x48a0c64 — 1 site(s): 0x48a0c80
+== public virtual void $qMA(short 1) { } @ 0x48e29dc — 1 site(s): 0x48e29dc
+== public virtual void $mnA(short 1) { } @ 0x48f4d1c — 1 site(s): 0x48f4d1c
+== public virtual void $jNA(short 1) { } @ 0x48ffc64 — 1 site(s): 0x48ffc64
+== private static void .cctor() { } @ 0x49a6104 — 1 site(s): 0x49a61c8
+== public override string ToString() { } @ 0x4a71728 — 358 site(s): 0x4f1e7fc,0x4f1ec9c,0x4f1f134,0x4f1f5c8,0x4f1fa64,0x4f1fef8,0x4f20394,0x4f20828,0x4f20cbc,0x4f21150,0x4f215e8,0x4f21a7c,0x4f21f10,0x4f223a4,0x4f2288c,0x5128dbc,0x512cb38,0x512ed98,0x51619ec,0x5163074,0x5163d24,0x516418c,0x62e31b8,0x62ff284,0x6302adc,0x6302c40,0x6302cf8,0x63064a4,0x6306608,0x63066c0,0x6306870,0x63068b8,0x6306a98,0x6306c14,0x63073c0,0x6307524,0x63075dc,0x630a2a4,0x630a2ec,0x630a4cc,0x630a648,0x630b200,0x630b248,0x630b428,0x630b5a4,0x630bee8,0x630bfac,0x630da8c,0x630dbf0,0x630dca8,0x630fc78,0x630fcb8,0x630fe98,0x631082c,0x6310990,0x6310a40,0x63116b4,0x6311818,0x63118c8,0x6311a74,0x6311abc,0x6311c9c,0x6311e18,0x6314804,0x6314844,0x6314a24,0x6314ba0,0x6315690,0x63156d0,0x63158b0,0x6315a2c,0x631bfe8,0x631c028,0x631c208,0x631c384,0x631e5d4,0x631e61c,0x631e7fc,0x631e978,0x6320acc,0x6320b0c,0x6320cec,0x6320e68,0x632216c,0x63221b4,0x6322394,0x6322510,0x632cfc4,0x632d00c,0x632d1ec,0x632d368,0x632d730,0x632d778,0x632d958,0x632dad4,0x632ed68,0x632eda8,0x632ef88,0x632f104,0x6330a7c,0x6330abc,0x6330c9c,0x6330e18,0x63319c4,0x6331a0c,0x6331bec,0x6331d68,0x6332154,0x633219c,0x633237c,0x63324f8,0x63328e4,0x633292c,0x6332b0c,0x6332c88,0x6333074,0x63330bc,0x633329c,0x6333418,0x6333804,0x6333844,0x6333a24,0x63343b8,0x633451c,0x63345cc,0x6334f4c,0x6334f94,0x6335174,0x63352f0,0x6336a10,0x6336b74,0x6336c2c,0x6336ddc,0x6336e24,0x6337004,0x6337180,0x6338f10,0x6339074,0x6339124,0x63392d0,0x6339318,0x63394f8,0x6339674,0x633a5e0,0x633a744,0x633a7fc,0x633b150,0x633b198,0x633b378,0x633b4f4,0x633c858,0x633c8a0,0x633ca80,0x633cbfc,0x633cfe8,0x633d030,0x633d210,0x633d38c,0x633d778,0x633d7c0,0x633d9a0,0x633db1c,0x633e61c,0x633e664,0x633e844,0x633e9c0,0x633edb0,0x633edf8,0x633efd8,0x633f154,0x633fd04,0x633fd4c,0x633ff2c,0x63400a8,0x6340494,0x63404dc,0x63406bc,0x6340838,0x6340c24,0x6340c6c,0x6340e4c,0x6340fc8,0x63422a4,0x63422ec,0x63424cc,0x6342648,0x6342a34,0x6342a7c,0x6342c5c,0x6342dd8,0x63439a4,0x63439ec,0x6343bcc,0x6343d48,0x6345c30,0x6345d94,0x6345e4c,0x63463b8,0x634651c,0x63465d4,0x6370f48,0x6370f90,0x6371170,0x63712ec,0x6371a90,0x6371bf4,0x6371ca4,0x637373c,0x63738a0,0x6373950,0x6373afc,0x6373b44,0x6373d24,0x6373ea0,0x6374648,0x63747ac,0x6374864,0x6374dcc,0x6374f30,0x6374fe8,0x6375550,0x63756b4,0x637576c,0x6375cd4,0x6375e38,0x6375ef0,0x63765f4,0x63766b8,0x6377b50,0x6377cb4,0x6377d6c,0x63799ac,0x6379b10,0x6379bc8,0x6379d78,0x6379dc0,0x6379fa0,0x637a11c,0x637bda4,0x637bf08,0x637bfc0,0x637c170,0x637c1b8,0x637c398,0x637c514,0x637db9c,0x637dd00,0x637ddb8,0x637f294,0x637f3f8,0x637f4b0,0x637fa18,0x637fb7c,0x637fc34,0x638019c,0x6380300,0x63803b8,0x6380ff8,0x638115c,0x6381214,0x638177c,0x63818e0,0x6381998,0x6381b48,0x6381b90,0x6381d70,0x6381eec,0x6382690,0x63827f4,0x63828ac,0x6382e14,0x6382f78,0x6383030,0x6383598,0x63836fc,0x63837b4,0x6384bf8,0x6384d5c,0x6384e14,0x6385380,0x63854e4,0x638559c,0x63862d8,0x638643c,0x63864f4,0x63866a4,0x63866ec,0x63868cc,0x6386a48,0x63875f8,0x6387640,0x6387820,0x638799c,0x63896b4,0x6389818,0x63898d0,0x638c1fc,0x638c360,0x638c418,0x63900d0,0x6390118,0x63902f8,0x6390474,0x6390864,0x63908ac,0x6390a8c,0x6390c08,0x6392234,0x6392398,0x6392450,0x63945f0,0x6394754,0x639480c,0x6399e6c,0x6399fd0,0x639a088,0x639bee4,0x639bf2c,0x639c10c,0x639c288,0x639e7d0,0x639e934,0x639e9ec,0x639f710,0x639f874,0x639f92c,0x63a805c,0x63a81c0,0x63a8278,0x63a87e4,0x63a8948,0x63a8a00,0x63ad9ec,0x63ada34,0x63adc14,0x63add90,0x63b3bc0,0x63b3d24,0x63b3ddc,0x63c548c,0x63c55f0,0x63c56a8,0x63c588c,0x63c58d4,0x63c5ab4,0x63c5c30,0x66f42bc,0x66f498c,0x66f507c,0x66f54cc,0x66f58f4,0x66f5bb8,0x66f6350,0x6c4bc24,0x6c4c3c4,0x6c8a978,0x6ca4120,0x6e4e698
+== public void set_IsReference(bool value) { } @ 0x7621cd0 — 1 site(s): 0x7621d28
+== private void MoveNext() { } @ 0x76361e4 — 2 site(s): 0x76367c8,0x7636ca0
+== protected void .ctor() { } @ 0x765e918 — 1 site(s): 0x765e938
+== public void WriteSchema(JsonSchema schema) { } @ 0x76a9240 — 1 site(s): 0x76a98d4
+== private void MoveNext() { } @ 0x7733eac — 1 site(s): 0x7733f78
+== private void MoveNext() { } @ 0x77360dc — 1 site(s): 0x7736194
+== public void .ctor() { } @ 0x77f4110 — 1 site(s): 0x77f4128
+== public void set_target(MonoBehaviour value) { } @ 0x7971c48 — 1 site(s): 0x7971c70
+== public void set_methodName(string value) { } @ 0x7971ca8 — 1 site(s): 0x7971cd0
+== private bool ValidateColumn(MainMenuColumnInfo columnInfo) { } @ 0x79f1260 — 2 site(s): 0x79f12e8,0x79f1320
+== public void CloseAll() { } @ 0x7d41f98 — 1 site(s): 0x7d42064
+== public void .ctor() { } @ 0x7efadc0 — 1 site(s): 0x7efadc8
+== private bool SetCellFoggyState(int x, int y) { } @ 0x8053a9c — 1 site(s): 0x8053b4c
+== public bool SetFoggyState(BattleCellFoggyState foggyState) { } @ 0x8053b74 — 1 site(s): 0x8053bb0
+== public void .ctor(BattleCell cell, ClientBattleSurfaceRaycaster surfaceRaycaster @ 0x8053c2c — 3 site(s): 0x8053c5c,0x8053c98,0x8053cbc
+== public void AddBarrier() { } @ 0x8053d0c — 1 site(s): 0x8053d14
+== public void UnitEnter(ClientUnit unit) { } @ 0x8053d1c — 2 site(s): 0x8053eac,0x8053ec0
+== public void UnitLeave(ClientUnit unit) { } @ 0x8053f10 — 1 site(s): 0x805410c
+== public void BuildingBandEnter(ClientBuilding building) { } @ 0x80541ac — 1 site(s): 0x80541bc
+== public void BuildingLeave(ClientBuilding building) { } @ 0x80541c8 — 1 site(s): 0x8054248
+== public void BuildingBandLeave(ClientBuilding building) { } @ 0x805425c — 1 site(s): 0x805427c
+== public void set_IsCameraVisible(bool value) { } @ 0x8054294 — 1 site(s): 0x8054320
+== public void SetUnbuild() { } @ 0x8054460 — 1 site(s): 0x8054480
+== public void RemoveUnbuild() { } @ 0x8054488 — 1 site(s): 0x80544a8
+== public void FlagExit(ClientFlag flag) { } @ 0x80544c4 — 1 site(s): 0x8054554
+== protected void OnDisable() { } @ 0x81945ac — 1 site(s): 0x819468c
+== public void ClearStatisticFlag() { } @ 0x8195ce8 — 1 site(s): 0x8195ce8
+== protected void .ctor() { } @ 0x8212660 — 1 site(s): 0x8212668
+== public void .ctor() { } @ 0x82129c4 — 1 site(s): 0x82129cc
+== public void .ctor() { } @ 0x8212afc — 1 site(s): 0x8212b04
+== public override string get_ContentFmt() { } @ 0x82afc54 — 1 site(s): 0x82afd24
+== public override bool EnterNode(out Type type) { } @ 0x82f27e0 — 1 site(s): 0x82f2ca4
+== public override bool ExitNode() { } @ 0x82f2cb0 — 2 site(s): 0x82f2d58,0x82f2d84
+== public override bool EnterArray(out long length) { } @ 0x82f2dac — 1 site(s): 0x82f2fd4
+== public override bool ExitArray() { } @ 0x82f2fe0 — 2 site(s): 0x82f3084,0x82f30ac
+== public override bool ReadBoolean(out bool value) { } @ 0x82f30c8 — 1 site(s): 0x82f31a0
+== public override bool ReadInternalReference(out int id) { } @ 0x82f3238 — 1 site(s): 0x82f32ec
+== public override bool ReadExternalReference(out int index) { } @ 0x82f355c — 1 site(s): 0x82f3610
+== public override bool ReadExternalReference(out Guid guid) { } @ 0x82f36ac — 1 site(s): 0x82f37d0
+== public override bool ReadExternalReference(out string id) { } @ 0x82f3960 — 1 site(s): 0x82f3ad8
+== private void MarkEntryConsumed() { } @ 0x82f3af8 — 1 site(s): 0x82f3b38
+== public override bool ReadChar(out char value) { } @ 0x82f3b48 — 1 site(s): 0x82f3c0c
+== public override bool ReadString(out string value) { } @ 0x82f3cac — 1 site(s): 0x82f3d84
+== public override bool ReadGuid(out Guid value) { } @ 0x82f3e30 — 1 site(s): 0x82f3f04
+== public override bool ReadInt64(out long value) { } @ 0x82f4430 — 1 site(s): 0x82f4598
+== public override bool ReadUInt64(out ulong value) { } @ 0x82f49f0 — 1 site(s): 0x82f4b58
+== public override bool ReadDecimal(out Decimal value) { } @ 0x82f4c14 — 1 site(s): 0x82f4da8
+== public override bool ReadSingle(out float value) { } @ 0x82f4e68 — 1 site(s): 0x82f4fd4
+== public override bool ReadDouble(out double value) { } @ 0x82f5090 — 1 site(s): 0x82f51fc
+== public override bool ReadNull() { } @ 0x82f52b8 — 1 site(s): 0x82f5338
+== public override void PrepareNewSerializationSession() { } @ 0x82f5368 — 1 site(s): 0x82f53a0
+== protected override EntryType ReadToNextEntry() { } @ 0x82f55f0 — 1 site(s): 0x82f55f8
+== public void ReadToNextEntry(out string name, out string valueContent, out EntryT @ 0x82f90b4 — 2 site(s): 0x82f91fc,0x82f94f8
+== private void ConsumeCurrentEntry() { } @ 0x82fbcf4 — 1 site(s): 0x82fbd40
+== private static void .cctor() { } @ 0x83a9288 — 1 site(s): 0x83a9498
+== private void CreateHostString() { } @ 0x86975dc — 2 site(s): 0x8697628,0x8697738
+== internal void .ctor(NetworkStream networkStream, FtpWebRequest request, TriState @ 0x87507ac — 1 site(s): 0x8750874
+== private void System.Net.ICloseEx.CloseEx(CloseExState closeState) { } @ 0x8754734 — 1 site(s): 0x87548c8
+== private static void UpdateMouse() { } @ 0x8a46f90 — 1 site(s): 0x8a4709c
+== public void .ctor(IGooglePlayStoreService googlePlayStoreService) { } @ 0x8a8e018 — 1 site(s): 0x8a8e030
+== private void OnProductsRetrieved(List<ProductDescription> retrievedProducts, IGo @ 0x8a92b94 — 1 site(s): 0x8a92bfc
+== public void DisableSpriteOptimizations() { } @ 0x8b1ea58 — 1 site(s): 0x8b1ea58
+== public void RegisterAnimation(IValueAnimationUpdate anim) { } @ 0x8bc32f8 — 1 site(s): 0x8bc3348
+== public void RegisterAnimations(List<IValueAnimationUpdate> anims) { } @ 0x8bc335c — 1 site(s): 0x8bc3444
+== public void .ctor() { } @ 0x8bc387c — 1 site(s): 0x8bc3940
+== private void InternalSetDefaults() { } @ 0x8d23ee8 — 1 site(s): 0x8d23ef4
+== public void .ctor(string url) { } @ 0x8d23efc — 1 site(s): 0x8d23f4c
+== public void .ctor(string url, string method) { } @ 0x8d23fe4 — 1 site(s): 0x8d2403c
+== public void .ctor(Uri uri, string method) { } @ 0x8d241e4 — 1 site(s): 0x8d2423c
+== public void .ctor(string url, string method, DownloadHandler downloadHandler, Up @ 0x8d2434c — 1 site(s): 0x8d243b0
+== public void .ctor(Uri uri, string method, DownloadHandler downloadHandler, Uploa @ 0x8d2457c — 1 site(s): 0x8d245e0
+== public void .ctor() { } @ 0x8dc60c4 — 1 site(s): 0x8dc60e0
+== private static void .cctor() { } @ 0x8dc86dc — 2 site(s): 0x8dc8748,0x8dc8780
+== public void .ctor() { } @ 0x8dca834 — 1 site(s): 0x8dca848
+== public void .ctor() { } @ 0x8dcdd7c — 1 site(s): 0x8dcddb4
+== private static void .cctor() { } @ 0x8dd118c — 2 site(s): 0x8dd1218,0x8dd126c
+== public static Encoding get_Unicode() { } @ 0x8dd339c — 1 site(s): 0x8dd342c
+== public static Encoding get_BigEndianUnicode() { } @ 0x8dd346c — 1 site(s): 0x8dd3504
+== private void .ctor(int culture, bool useUserOverride, bool read_only) { } @ 0x8ee2400 — 2 site(s): 0x8ee2434,0x8ee24f4
+== public virtual ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationTok @ 0x8f17b3c — 1 site(s): 0x8f17ddc
+== private static bool TryFormatO(DateTime dateTime, TimeSpan offset, Span<char> de @ 0x8f39468 — 1 site(s): 0x8f39930
+
+-- site 0x8053b4c (in private bool SetCellFoggyState(int x, int y) { })
+    0x8053b34: orr      w12, w12, #0x20
+    0x8053b38: str      w13, [x8, #0x2c]
+    0x8053b3c: csel     w12, w14, w12, ne
+    0x8053b40: cmp      w9, #2
+    0x8053b44: csel     w12, w11, w12, eq
+    0x8053b48: mov      w11, #1
+    0x8053b4c: strh     w12, [x8, #0x38]
+    0x8053b50: strb     w11, [x0, #0x29]
+    0x8053b54: tbnz     w12, #0xd, #0x8053b5c
+    0x8053b58: strb     w11, [x0, #0x28]
+
+-- site 0x8053bb0 (in public bool SetFoggyState(BattleCellFoggyState foggyState) { })
+    0x8053b98: orr      w10, w10, #0x60
+    0x8053b9c: orr      w11, w11, #0x20
+    0x8053ba0: csel     w11, w12, w11, ne
+    0x8053ba4: cmp      w9, #2
+    0x8053ba8: csel     w10, w10, w11, eq
+    0x8053bac: mov      w11, #-1
+    0x8053bb0: strh     w10, [x0, #0x38]
+    0x8053bb4: str      w11, [x0, #0x2c]
+    0x8053bb8: cmp      w8, w9
+    0x8053bbc: cset     w0, ne
+
+-- site 0x8053c5c (in public void .ctor(BattleCell cell, ClientBattleSurfaceRaycaster surfac)
+    0x8053c44: mov      x20, x0
+    0x8053c48: str      w8, [x0, #0x2c]
+    0x8053c4c: bl       #0x8f91cdc
+    0x8053c50: mov      w8, #2
+    0x8053c54: mov      w9, #0x2060
+    0x8053c58: strb     w8, [x20, #0x28]
+    0x8053c5c: strh     w9, [x20, #0x38]
+    0x8053c60: cbz      x21, #0x8053cf0
+    0x8053c64: ldr      x8, [x21]
+    0x8053c68: mov      x0, x21
+
+-- site 0x8053c98 (in public void .ctor(BattleCell cell, ClientBattleSurfaceRaycaster surfac)
+    0x8053c80: and      x8, x0, #0xff
+    0x8053c84: adrp     x9, #0x1bfe000
+    0x8053c88: add      x9, x9, #0x5bc
+    0x8053c8c: ldrh     w8, [x9, x8, lsl #1]
+    0x8053c90: ldrh     w9, [x20, #0x38]
+    0x8053c94: orr      w8, w9, w8
+    0x8053c98: strh     w8, [x20, #0x38]
+    0x8053c9c: ldr      x8, [x21]
+    0x8053ca0: mov      x0, x21
+    0x8053ca4: ldr      x9, [x8, #0x278]
+
+-- site 0x8053cbc (in public void .ctor(BattleCell cell, ClientBattleSurfaceRaycaster surfac)
+    0x8053ca4: ldr      x9, [x8, #0x278]
+    0x8053ca8: ldr      x1, [x8, #0x280]
+    0x8053cac: blr      x9
+    0x8053cb0: tbnz     w0, #0, #0x8053cc0
+    0x8053cb4: ldrh     w8, [x20, #0x38]
+    0x8053cb8: orr      w8, w8, #0x400
+    0x8053cbc: strh     w8, [x20, #0x38]
+    0x8053cc0: ldr      x8, [x21]
+    0x8053cc4: mov      x0, x21
+    0x8053cc8: ldp      x9, x1, [x8, #0x1b8]
+
+-- site 0x8053d14 (in public void AddBarrier() { })
+    0x8053cfc: ldr      x0, [x0, #0x18]
+    0x8053d00: ret      
+    0x8053d04: ldr      x0, [x0, #0x20]
+    0x8053d08: ret      
+    0x8053d0c: ldrh     w8, [x0, #0x38]
+    0x8053d10: orr      w8, w8, #1
+    0x8053d14: strh     w8, [x0, #0x38]
+    0x8053d18: ret      
+    0x8053d1c: stp      x30, x23, [sp, #-0x30]!
+    0x8053d20: stp      x22, x21, [sp, #0x10]
+
+-- site 0x8053eac (in public void UnitEnter(ClientUnit unit) { })
+    0x8053e94: ldr      x2, [x8, #0x70]
+    0x8053e98: bl       #0x59ad75c
+    0x8053e9c: ldrh     w8, [x20, #0x38]
+    0x8053ea0: mov      x0, x19
+    0x8053ea4: mov      x1, xzr
+    0x8053ea8: orr      w8, w8, #0x800
+    0x8053eac: strh     w8, [x20, #0x38]
+    0x8053eb0: bl       #0x8273b1c
+    0x8053eb4: tbnz     w0, #0, #0x8053ec4
+    0x8053eb8: ldrh     w8, [x20, #0x38]
+
+-- site 0x8053ec0 (in public void UnitEnter(ClientUnit unit) { })
+    0x8053ea8: orr      w8, w8, #0x800
+    0x8053eac: strh     w8, [x20, #0x38]
+    0x8053eb0: bl       #0x8273b1c
+    0x8053eb4: tbnz     w0, #0, #0x8053ec4
+    0x8053eb8: ldrh     w8, [x20, #0x38]
+    0x8053ebc: orr      w8, w8, #0x1000
+    0x8053ec0: strh     w8, [x20, #0x38]
+    0x8053ec4: cbz      x19, #0x8053f0c
+    0x8053ec8: mov      x0, x19
+    0x8053ecc: mov      x1, xzr
+
+-- site 0x805410c (in public void UnitLeave(ClientUnit unit) { })
+    0x80540f4: add      x0, sp, #0x18
+    0x80540f8: ldr      x8, [x8, #0x9b8]
+    0x80540fc: ldr      x1, [x8]
+    0x8054100: bl       #0x736a6a8
+    0x8054104: ldrh     w8, [x19, #0x38]
+    0x8054108: and      w8, w8, #0xffffefff
+    0x805410c: strh     w8, [x19, #0x38]
+    0x8054110: ldp      x20, x19, [sp, #0x50]
+    0x8054114: ldr      x30, [sp, #0x30]
+    0x8054118: ldp      x22, x21, [sp, #0x40]
+
+-- site 0x80541bc (in public void BuildingBandEnter(ClientBuilding building) { })
+    0x80541a4: ldp      x30, x19, [sp], #0x10
+    0x80541a8: ret      
+    0x80541ac: ldrh     w8, [x0, #0x38]
+    0x80541b0: ldrb     w9, [x0, #0x3b]
+    0x80541b4: orr      w8, w8, #0x200
+    0x80541b8: add      w9, w9, #1
+    0x80541bc: strh     w8, [x0, #0x38]
+    0x80541c0: strb     w9, [x0, #0x3b]
+    0x80541c4: ret      
+    0x80541c8: str      x30, [sp, #-0x30]!
+
+-- site 0x8054248 (in public void BuildingLeave(ClientBuilding building) { })
+    0x8054230: mov      x0, x21
+    0x8054234: mov      x1, xzr
+    0x8054238: str      xzr, [x19, #0x18]
+    0x805423c: bl       #0x3cc78ec
+    0x8054240: ldrh     w8, [x19, #0x38]
+    0x8054244: and      w8, w8, #0xfffffeff
+    0x8054248: strh     w8, [x19, #0x38]
+    0x805424c: ldp      x20, x19, [sp, #0x20]
+    0x8054250: ldp      x22, x21, [sp, #0x10]
+    0x8054254: ldr      x30, [sp], #0x30
+
+-- site 0x805427c (in public void BuildingBandLeave(ClientBuilding building) { })
+    0x8054264: tst      w8, #0xff
+    0x8054268: strb     w8, [x0, #0x3b]
+    0x805426c: b.eq     #0x8054274
+    0x8054270: ret      
+    0x8054274: ldrh     w8, [x0, #0x38]
+    0x8054278: and      w8, w8, #0xfffffdff
+    0x805427c: strh     w8, [x0, #0x38]
+    0x8054280: ret      
+    0x8054284: ldrh     w8, [x0, #0x38]
+    0x8054288: tst      w1, w8
+
+-- site 0x8054320 (in public void set_IsCameraVisible(bool value) { })
+    0x8054308: mov      w9, #0x2000
+    0x805430c: and      w8, w8, #0xffffdfff
+    0x8054310: csel     w9, wzr, w9, ne
+    0x8054314: ldr      x0, [x20, #0x10]
+    0x8054318: orr      w8, w8, w9
+    0x805431c: mov      w9, #-1
+    0x8054320: strh     w8, [x20, #0x38]
+    0x8054324: str      w9, [x20, #0x2c]
+    0x8054328: cbz      x0, #0x80543a0
+    0x805432c: adrp     x8, #0x96ea000
+
+-- site 0x8054480 (in public void SetUnbuild() { })
+    0x8054468: tbz      w8, #0xa, #0x8054474
+    0x805446c: cbnz     w9, #0x8054474
+    0x8054470: ret      
+    0x8054474: add      w9, w9, #1
+    0x8054478: orr      w8, w8, #0x400
+    0x805447c: str      w9, [x0, #0x3c]
+    0x8054480: strh     w8, [x0, #0x38]
+    0x8054484: ret      
+    0x8054488: ldr      w8, [x0, #0x3c]
+    0x805448c: subs     w8, w8, #1
+
+-- site 0x80544a8 (in public void RemoveUnbuild() { })
+    0x8054490: b.lt     #0x805449c
+    0x8054494: str      w8, [x0, #0x3c]
+    0x8054498: b.eq     #0x80544a0
+    0x805449c: ret      
+    0x80544a0: ldrh     w8, [x0, #0x38]
+    0x80544a4: and      w8, w8, #0xfffffbff
+    0x80544a8: strh     w8, [x0, #0x38]
+    0x80544ac: ret      
+    0x80544b0: str      x1, [x0, #0x20]!
+    0x80544b4: ldrh     w8, [x0, #0x18]
+
+-- site 0x8054554 (in public void FlagExit(ClientFlag flag) { })
+    0x805453c: ldrh     w8, [x19, #0x38]
+    0x8054540: mov      x0, x21
+    0x8054544: str      xzr, [x19, #0x20]
+    0x8054548: ldp      x22, x21, [sp, #0x10]
+    0x805454c: mov      x1, xzr
+    0x8054550: and      w8, w8, #0xfffe
+    0x8054554: strh     w8, [x19, #0x38]
+    0x8054558: ldp      x20, x19, [sp, #0x20]
+    0x805455c: ldr      x30, [sp], #0x30
+    0x8054560: b        #0x3cc78ec
+
+
+==== ClientBattleCell method-range orr/bic constants feeding passMask ====
+  0x8053b28: and w12, w11, #0xffffffbf   (after ldrh 0x38 @0x8053b18)
+  0x8053b90: and w11, w10, #0xffffffbf   (after ldrh 0x38 @0x8053b84)
+  0x8053b94: and w12, w10, #0xffffff9f   (after ldrh 0x38 @0x8053b84)
+  0x8053cb8: orr w8, w8, #0x400   (after ldrh 0x38 @0x8053cb4)
+  0x8053d10: orr w8, w8, #1   (after ldrh 0x38 @0x8053d0c)
+  0x8053ea8: orr w8, w8, #0x800   (after ldrh 0x38 @0x8053e9c)
+  0x8053ebc: orr w8, w8, #0x1000   (after ldrh 0x38 @0x8053eb8)
+  0x80540e8: and w8, w8, #0xffffe7ff   (after ldrh 0x38 @0x80540e4)
+  0x8054108: and w8, w8, #0xffffefff   (after ldrh 0x38 @0x8054104)
+  0x80541b4: orr w8, w8, #0x200   (after ldrh 0x38 @0x80541ac)
+  0x8054244: and w8, w8, #0xfffffeff   (after ldrh 0x38 @0x8054240)
+  0x8054278: and w8, w8, #0xfffffdff   (after ldrh 0x38 @0x8054274)
+  0x80542f8: and w9, w8, #0x2000   (after ldrh 0x38 @0x80542ec)
+  0x80544a4: and w8, w8, #0xfffffbff   (after ldrh 0x38 @0x80544a0)
+
+==== AddBarrier @ 0x8053d0c (16 bytes) ====
+  0x8053d0c: ldrh     w8, [x0, #0x38]
+  0x8053d10: orr      w8, w8, #1
+  0x8053d14: strh     w8, [x0, #0x38]
+  0x8053d18: ret      
+
+==== BuildingEnter @ 0x8054184 (40 bytes) ====
+  0x8054184: stp      x30, x19, [sp, #-0x10]!
+  0x8054188: mov      x19, x0
+  0x805418c: str      x1, [x19, #0x18]!
+  0x8054190: mov      x0, x19
+  0x8054194: bl       #0x3cc78ec
+  0x8054198: ldrh     w8, [x19, #0x20]
+  0x805419c: orr      w8, w8, #0x100
+  0x80541a0: strh     w8, [x19, #0x20]
+  0x80541a4: ldp      x30, x19, [sp], #0x10
+  0x80541a8: ret      
+
+==== BuildingLeave @ 0x80541ac (28 bytes) ====
+  0x80541ac: ldrh     w8, [x0, #0x38]
+  0x80541b0: ldrb     w9, [x0, #0x3b]
+  0x80541b4: orr      w8, w8, #0x200
+  0x80541b8: add      w9, w9, #1
+  0x80541bc: strh     w8, [x0, #0x38]
+  0x80541c0: strb     w9, [x0, #0x3b]
+  0x80541c4: ret      
+
+==== BuildingBandEnter @ 0x80541c8 (148 bytes) ====
+  0x80541c8: str      x30, [sp, #-0x30]!
+  0x80541cc: stp      x22, x21, [sp, #0x10]
+  0x80541d0: stp      x20, x19, [sp, #0x20]
+  0x80541d4: adrp     x22, #0x9d22000
+  0x80541d8: adrp     x21, #0x9674000
+  0x80541dc: mov      x20, x1
+  0x80541e0: ldrb     w8, [x22, #0x4b0]
+  0x80541e4: ldr      x21, [x21, #0x5f0]
+  0x80541e8: mov      x19, x0
+  0x80541ec: tbnz     w8, #0, #0x8054204
+  0x80541f0: adrp     x0, #0x9674000
+  0x80541f4: ldr      x0, [x0, #0x5f0]
+  0x80541f8: bl       #0x3cc7948
+  0x80541fc: mov      w8, #1
+  0x8054200: strb     w8, [x22, #0x4b0]
+  0x8054204: ldr      x0, [x21]
+  0x8054208: mov      x21, x19
+  0x805420c: ldr      x22, [x21, #0x18]!
+  0x8054210: ldr      w8, [x0, #0xe4]
+  0x8054214: cbnz     w8, #0x805421c
+  0x8054218: bl       #0x3cc7ac8
+  0x805421c: mov      x0, x22
+  0x8054220: mov      x1, x20
+  0x8054224: mov      x2, xzr
+  0x8054228: bl       #0x89e5f18
+  0x805422c: tbnz     w0, #0, #0x805424c
+  0x8054230: mov      x0, x21
+  0x8054234: mov      x1, xzr
+  0x8054238: str      xzr, [x19, #0x18]
+  0x805423c: bl       #0x3cc78ec
+  0x8054240: ldrh     w8, [x19, #0x38]
+  0x8054244: and      w8, w8, #0xfffffeff
+  0x8054248: strh     w8, [x19, #0x38]
+  0x805424c: ldp      x20, x19, [sp, #0x20]
+  0x8054250: ldp      x22, x21, [sp, #0x10]
+  0x8054254: ldr      x30, [sp], #0x30
+  0x8054258: ret      
+
+==== BuildingBandLeave @ 0x805425c (40 bytes) ====
+  0x805425c: ldrb     w8, [x0, #0x3b]
+  0x8054260: sub      w8, w8, #1
+  0x8054264: tst      w8, #0xff
+  0x8054268: strb     w8, [x0, #0x3b]
+  0x805426c: b.eq     #0x8054274
+  0x8054270: ret      
+  0x8054274: ldrh     w8, [x0, #0x38]
+  0x8054278: and      w8, w8, #0xfffffdff
+  0x805427c: strh     w8, [x0, #0x38]
+  0x8054280: ret      
+
+==== UnitEnter @ 0x8053d1c (500 bytes) ====
+  0x8053d1c: stp      x30, x23, [sp, #-0x30]!
+  0x8053d20: stp      x22, x21, [sp, #0x10]
+  0x8053d24: stp      x20, x19, [sp, #0x20]
+  0x8053d28: adrp     x21, #0x9d22000
+  0x8053d2c: mov      x19, x1
+  0x8053d30: mov      x20, x0
+  0x8053d34: ldrb     w8, [x21, #0x4ae]
+  0x8053d38: tbnz     w8, #0, #0x8053d74
+  0x8053d3c: adrp     x0, #0x9674000
+  0x8053d40: ldr      x0, [x0, #0x5c8]
+  0x8053d44: bl       #0x3cc7948
+  0x8053d48: adrp     x0, #0x96ec000
+  0x8053d4c: ldr      x0, [x0, #0x400]
+  0x8053d50: bl       #0x3cc7948
+  0x8053d54: adrp     x0, #0x96dc000
+  0x8053d58: ldr      x0, [x0, #0xcd8]
+  0x8053d5c: bl       #0x3cc7948
+  0x8053d60: adrp     x0, #0x96eb000
+  0x8053d64: ldr      x0, [x0, #0x5d8]
+  0x8053d68: bl       #0x3cc7948
+  0x8053d6c: mov      w8, #1
+  0x8053d70: strb     w8, [x21, #0x4ae]
+  0x8053d74: mov      x0, x19
+  0x8053d78: mov      x1, xzr
+  0x8053d7c: bl       #0x8010b8c
+  0x8053d80: tbnz     w0, #0, #0x8053efc
+  0x8053d84: mov      x21, x20
+  0x8053d88: ldr      x0, [x21, #0x10]!
+  0x8053d8c: cbnz     x0, #0x8053e18
+  0x8053d90: adrp     x22, #0x9674000
+  0x8053d94: ldr      x22, [x22, #0x5c8]
+  0x8053d98: ldr      x0, [x22]
+  0x8053d9c: ldr      w8, [x0, #0xe4]
+  0x8053da0: cbnz     w8, #0x8053da8
+  0x8053da4: bl       #0x3cc7ac8
+  0x8053da8: adrp     x23, #0x9d22000
+  0x8053dac: ldrb     w8, [x23, #0x41d]
+  0x8053db0: cbnz     w8, #0x8053dc8
+  0x8053db4: adrp     x0, #0x9674000
+  0x8053db8: ldr      x0, [x0, #0x5c8]
+  0x8053dbc: bl       #0x3cc7948
+  0x8053dc0: mov      w8, #1
+  0x8053dc4: strb     w8, [x23, #0x41d]
+  0x8053dc8: ldr      x0, [x22]
+  0x8053dcc: ldr      w8, [x0, #0xe4]
+  0x8053dd0: cbnz     w8, #0x8053ddc
+  0x8053dd4: bl       #0x3cc7ac8
+  0x8053dd8: ldr      x0, [x22]
+  0x8053ddc: ldr      x8, [x0, #0xb8]
+  0x8053de0: ldr      x8, [x8, #0xd0]
+  0x8053de4: cbz      x8, #0x8053f0c
+  0x8053de8: ldr      x0, [x8, #0x48]
+  0x8053dec: cbz      x0, #0x8053f0c
+  0x8053df0: adrp     x8, #0x96ec000
+  0x8053df4: ldr      x8, [x8, #0x400]
+  0x8053df8: ldr      x1, [x8]
+  0x8053dfc: bl       #0x587a9ac
+  0x8053e00: mov      x1, x0
+  0x8053e04: str      x0, [x21]
+  0x8053e08: mov      x0, x21
+  0x8053e0c: bl       #0x3cc78ec
+  0x8053e10: ldr      x0, [x21]
+  0x8053e14: cbz      x0, #0x8053f0c
+  0x8053e18: adrp     x8, #0x96eb000
+  0x8053e1c: mov      x1, x19
+  0x8053e20: ldr      x8, [x8, #0x5d8]
+  0x8053e24: ldr      x2, [x8]
+  0x8053e28: bl       #0x59adaf8
+  0x8053e2c: tbnz     w0, #0, #0x8053e9c
+  0x8053e30: ldr      x0, [x21]
+  0x8053e34: cbz      x0, #0x8053f0c
+  0x8053e38: adrp     x9, #0x96dc000
+  0x8053e3c: ldr      x9, [x9, #0xcd8]
+  0x8053e40: ldr      w10, [x0, #0x1c]
+  0x8053e44: ldr      x8, [x0, #0x10]
+  0x8053e48: ldr      x9, [x9]
+  0x8053e4c: add      w10, w10, #1
+  0x8053e50: str      w10, [x0, #0x1c]
+  0x8053e54: cbz      x8, #0x8053f0c
+  0x8053e58: ldrsw    x10, [x0, #0x18]
+  0x8053e5c: ldr      w11, [x8, #0x18]
+  0x8053e60: cmp      w10, w11
+  0x8053e64: b.hs     #0x8053e88
+  0x8053e68: add      x8, x8, x10, lsl #3
+  0x8053e6c: add      w9, w10, #1
+  0x8053e70: mov      x1, x19
+  0x8053e74: str      w9, [x0, #0x18]
+  0x8053e78: str      x19, [x8, #0x20]!
+  0x8053e7c: mov      x0, x8
+  0x8053e80: bl       #0x3cc78ec
+  0x8053e84: b        #0x8053e9c
+  0x8053e88: ldr      x8, [x9, #0x20]
+  0x8053e8c: mov      x1, x19
+  0x8053e90: ldr      x8, [x8, #0xc0]
+  0x8053e94: ldr      x2, [x8, #0x70]
+  0x8053e98: bl       #0x59ad75c
+  0x8053e9c: ldrh     w8, [x20, #0x38]
+  0x8053ea0: mov      x0, x19
+  0x8053ea4: mov      x1, xzr
+  0x8053ea8: orr      w8, w8, #0x800
+  0x8053eac: strh     w8, [x20, #0x38]
+  0x8053eb0: bl       #0x8273b1c
+  0x8053eb4: tbnz     w0, #0, #0x8053ec4
+  0x8053eb8: ldrh     w8, [x20, #0x38]
+  0x8053ebc: orr      w8, w8, #0x1000
+  0x8053ec0: strh     w8, [x20, #0x38]
+  0x8053ec4: cbz      x19, #0x8053f0c
+  0x8053ec8: mov      x0, x19
+  0x8053ecc: mov      x1, xzr
+  0x8053ed0: bl       #0x807e8e0
+  0x8053ed4: tbz      w0, #0, #0x8053efc
+  0x8053ed8: ldrh     w8, [x20, #0x38]
+  0x8053edc: mov      x0, x19
+  0x8053ee0: mov      x2, xzr
+  0x8053ee4: ldp      x20, x19, [sp, #0x20]
+  0x8053ee8: ldp      x22, x21, [sp, #0x10]
+  0x8053eec: tst      w8, #0x2000
+  0x8053ef0: cset     w1, eq
+  0x8053ef4: ldp      x30, x23, [sp], #0x30
+  0x8053ef8: b        #0x807d5d8
+  0x8053efc: ldp      x20, x19, [sp, #0x20]
+  0x8053f00: ldp      x22, x21, [sp, #0x10]
+  0x8053f04: ldp      x30, x23, [sp], #0x30
+  0x8053f08: ret      
+  0x8053f0c: bl       #0x3cc7bf4
+

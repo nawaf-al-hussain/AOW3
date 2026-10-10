@@ -39,7 +39,7 @@
         "reverse/tools/obfuz_livepool_decode.py"
       ],
       "repro": "python3 reverse/tools/obfuz_static_decode.py (needs libil2cpp.so + global-metadata.dat from XAPK)",
-      "next_action": "keep both decoders reproducible; reuse values to pin new branch constants (live-pool materialization DONE \u2014 Task 55)"
+      "next_action": "keep both decoders reproducible; reuse values to pin new branch constants (live-pool materialization DONE — Task 55)"
     },
     "R3": {
       "question": "Native tick rate / timing grid",
@@ -79,13 +79,24 @@
     },
     "R6": {
       "question": "TakePositions 15-bit cell-class per-bit semantics",
-      "status": "PARTIALLY_CONFIRMED",
-      "result": "masks 0x215F/0xFEE0/0xFEFD + AND-reduce clamp + per-hero partition CONFIRMED; bit names INFERRED",
+      "status": "CONFIRMED (13/15 bits NAMED, Task 59; bits 7/14 reserved)",
+      "result": "bit space = ClientBattleCell.m_passMask (short @0x38, dump.cs:262577); CheckByMask(mask) = (mask & m_passMask)==0 (0x8054284) -> takepos masks are BLOCKED-state masks; bits 0-6/8-13 named by consts (Barrier, Land, Forest, Shore, Water, Fog, Dark, Building, BuildingBand, BuildingBarrier, VisAndInvisUnit, VisAndInvisEnemyUnit, CameraInvisible) each writer-confirmed (AddBarrier orr 0x1, BuildingEnter orr 0x100, UnitEnter orr 0x800/0x1000, fog clears 0x20/0x40, SetUnbuild/RemoveUnbuild 0x400, set_IsCameraVisible 0x2000); ctor passMask = 0x2060 (FullInvisibleCellMask) | terrain LUT[0x1BFE5BC] kind0-4 = {Land, Shore, Water, Barrier, Land|Forest} | 0x400 when not crossable; takepos arms == building-exit legality consts: infantry/vehicle/land-heroes 0x215D = LandBuildingExitCellMask, ships 0x214F = WaterBuildingExitCellMask (amphibian 42 + heroes {62,74} 0x2145 = Land+Shore+Water), heli 0x2040 = {Dark, CamInvis} only, fixed-wing/cat-0 0x215F = never placeable; bits 7/14 have no const and no client writer (reserved); map.prefab.bundle re-scanned = geometry-only (6777 transforms, 7 render-side MonoScripts, 0 TextAssets) -> per-cell terrain-kind grid is server battle-setup data (ST serializer family), empirical overlay needs device capture",
       "evidence": [
         "reverse/evidence/combat/takepos-cells-decode.txt",
-        "reverse/notes/defend-chase-takepos-decode.md"
+        "reverse/evidence/combat/r6-checkbymask-decode.txt",
+        "reverse/evidence/combat/r6-passmask-writers.txt",
+        "reverse/evidence/combat/r6-map-prefab-scan.txt",
+        "reverse/notes/defend-chase-takepos-decode.md",
+        "reverse/notes/r6-bitname-crossref.md"
       ],
-      "next_action": "bit-name cross-ref vs map prefab cell classes (offline)"
+      "tools": [
+        "reverse/tools/r6_bitname_crossref.py",
+        "reverse/tools/r6_lut_and_bits.py",
+        "reverse/tools/r6_passmask_writers.py",
+        "reverse/tools/r6_map_prefab_scan.py"
+      ],
+      "residual": "per-cell kind-vs-geometry overlay (server battle setup needed, R1-session carryable); infantry forest-variant sub-type identity (vt[0x348] field==2, INFERRED); hero ids 60-69/76 + unit 42 names",
+      "next_action": "CLOSED at the statically-reachable limit; fold-in = comment-only (game.js takepos block, blocked-state semantics + bit names, cache bump)"
     },
     "R7": {
       "question": "Native visibility/sight rules",
@@ -317,12 +328,20 @@
     "v59": {
       "task": "Task 58 (this session)",
       "changes": [
-        "H1/I2 hash-coverage: stateString() now serializes ALL stored behavior-affecting state \u2014 mines as M-lines (owner/x/y/arm), u._chain re-entrancy guard, behavior-timer block (slowT/burnT/burnDps/invulnT/heat/abilCd/repathCd/burstT), lastMode weapon-mode memory, orientDest pre-fire heading, corpse dieT (cleanup timing), cmdSeq issue counter in the T-line; exclusions documented in-kernel (floats/booms/pops, explored/visible fog views, grid/pf pathfinding infra, scoreboard stats, derived vx/vy/rotate)",
+        "H1/I2 hash-coverage: stateString() now serializes ALL stored behavior-affecting state — mines as M-lines (owner/x/y/arm), u._chain re-entrancy guard, behavior-timer block (slowT/burnT/burnDps/invulnT/heat/abilCd/repathCd/burstT), lastMode weapon-mode memory, orientDest pre-fire heading, corpse dieT (cleanup timing), cmdSeq issue counter in the T-line; exclusions documented in-kernel (floats/booms/pops, explored/visible fog views, grid/pf pathfinding infra, scoreboard stats, derived vx/vy/rotate)",
         "JIP snapshot fix EXPOSED by the extension: the hub archived input frames only while clients were attached, so commands issued during a fully-clientless window were missing from a later JIP's replay journal (cmdSeq cs-field divergence, lockstep-jip 86/2); hub now archives every command-bearing tick regardless of client count",
         "golden re-baseline: phase5 structure assertions moved from endsWith tails to column-indexed form; commands-determinism +7 vectors (M-line format, abilCd ticking, cross-run M-line equality, M-lines-feed-hash probe)"
       ],
       "behavior_change": true,
       "tests": "8/8 suites green: commands-determinism 57/57, phase5 236/236, replay 45/45, lockstep-jip 88/88, data-model 379, accuracy all, stat-caps 37/37, unit-fsm all"
+    },
+    "v60": {
+      "task": "Task 59 (this session)",
+      "changes": [
+        "R6 comment-only fold-in: commandTakePositions block corrected + extended - 'exact complements' retired (All|Heli = All|Land = 0xFFFF union-supersets), blocked-state semantics (CheckByMask 0x8054284 = (mask & m_passMask)==0), the 15 ClientBattleCell.m_passMask bits named (Barrier/Land/Forest/Shore/Water/Fog/Dark/reserved/Building/BuildingBand/BuildingBarrier/VisUnit/VisEnemy/CamInvisible/reserved), passMask lifecycle (0x2060 init + terrain LUT kinds 0-4 + 0x400 barrier-band), takepos arms == building-exit legality consts (0x215D land / 0x214F water / 0x2145 amphibian / 0x2040 heli)"
+      ],
+      "behavior_change": false,
+      "cache_bump": "v=59 -> v=60 (comment-only per protocol)"
     }
   },
   "blockers_summary": {

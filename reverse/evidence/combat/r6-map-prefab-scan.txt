@@ -1,0 +1,59 @@
+map.prefab.bundle object census:
+  Transform                6777
+  GameObject               6777
+  MeshFilter               6371
+  MeshRenderer             6371
+  ParticleSystemRenderer   222
+  ParticleSystem           222
+  MonoBehaviour            106
+  Mesh                     27
+  MeshCollider             26
+  MonoScript               7
+  Material                 3
+  Light                    1
+  AssetBundle              1
+  BoxCollider              1
+
+MonoBehaviours (name, path_id, script_pid, raw_bytes):
+  <noname>                                 pid=8544821184515419783 script=7872361391410027885 raw=252
+  <noname>                                 pid=5429984146085981831 script=-6333014652608085407 raw=68
+  <noname>                                 pid=-934791118048186745 script=5022830399482869375 raw=44
+  <noname>                                 pid=-9105044123223904633 script=895734303398726144 raw=40
+  <noname>                                 pid=-8839036955454919033 script=895734303398726144 raw=40
+  <noname>                                 pid=-8797814031773061497 script=895734303398726144 raw=40
+  <noname>                                 pid=-8742277561615503737 script=895734303398726144 raw=40
+  <noname>                                 pid=-8716507672839967097 script=2115343845477534645 raw=40
+  <noname>                                 pid=-8645403299949629817 script=895734303398726144 raw=40
+  <noname>                                 pid=-8486902604162650489 script=895734303398726144 raw=40
+  <noname>                                 pid=-8300181463386476921 script=2115343845477534645 raw=40
+  <noname>                                 pid=-8200869204236292473 script=895734303398726144 raw=40
+  <noname>                                 pid=-8161851079811387769 script=2115343845477534645 raw=40
+  <noname>                                 pid=-7532951247141130617 script=2115343845477534645 raw=40
+  <noname>                                 pid=-7440682312185926009 script=895734303398726144 raw=40
+  <noname>                                 pid=-7047977313723339129 script=895734303398726144 raw=40
+  <noname>                                 pid=-7022434979830485369 script=895734303398726144 raw=40
+  <noname>                                 pid=-6933863516569457017 script=2115343845477534645 raw=40
+  <noname>                                 pid=-6736792940234461561 script=895734303398726144 raw=40
+  <noname>                                 pid=-6517662947179483513 script=2115343845477534645 raw=40
+  <noname>                                 pid=-6275970830462341497 script=895734303398726144 raw=40
+  <noname>                                 pid=-6038921689141399929 script=895734303398726144 raw=40
+  <noname>                                 pid=-6007493444023538041 script=895734303398726144 raw=40
+  <noname>                                 pid=-5835084848171962745 script=895734303398726144 raw=40
+  <noname>                                 pid=-5672164126071640441 script=895734303398726144 raw=40
+  <noname>                                 pid=-5316331424310481273 script=895734303398726144 raw=40
+  <noname>                                 pid=-4931966253519851897 script=895734303398726144 raw=40
+  <noname>                                 pid=-4910351578921161081 script=895734303398726144 raw=40
+  <noname>                                 pid=-4490427934450372985 script=2115343845477534645 raw=40
+  <noname>                                 pid=-4389728038568251769 script=2115343845477534645 raw=40
+  <noname>                                 pid=-4345274650970018169 script=895734303398726144 raw=40
+  <noname>                                 pid=-4175464727916171641 script=2115343845477534645 raw=40
+  <noname>                                 pid=-4117759096811934073 script=895734303398726144 raw=40
+  <noname>                                 pid=-3686152039827493241 script=895734303398726144 raw=40
+  <noname>                                 pid=-3573711661931483513 script=895734303398726144 raw=40
+  <noname>                                 pid=-3458317863390728569 script=2115343845477534645 raw=40
+  <noname>                                 pid=-3335025096292422009 script=2115343845477534645 raw=40
+  <noname>                                 pid=-3292309783763538297 script=895734303398726144 raw=40
+  <noname>                                 pid=-3153887236141732217 script=2115343845477534645 raw=40
+  <noname>                                 pid=-3050873748605882745 script=895734303398726144 raw=40
+
+TextAssets:

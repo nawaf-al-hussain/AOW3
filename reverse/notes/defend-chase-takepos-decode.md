@@ -157,14 +157,17 @@ Naming (unit-type-ids.json): 70 COMMANDO, 71 SERAPHIM, 72 SOLARIS, 73 BEHOLDER,
 74 PSI_TANK, 75 ATLAS — SOLARIS (72) in the helicopter arm matches its flying
 behavior; the rest of 60–76 and id 42 are not in the committed 43-entry map.
 
-### 2.4 Per-bit meaning (INFERRED — unchanged status)
+### 2.4 Per-bit meaning (RESOLVED by Task 59 — see r6-bitname-crossref.md)
 
-Bits 0..14 index cell classes; the mask consumer chain that would name them
-(cell-class enum or terrain table → bit index) is not reachable from this class
-(get_CellsMask has no in-binary readers). The CONFIRMED surface is therefore:
-the three masks, the AND-reduce + 0x7FFF clamp, and the complete per-category /
-per-hero-type partition above — the tribute's takepos model (per-unit spots +
-category gates) stays as is.
+~~Bits 0..14 index cell classes; the mask consumer chain that would name them
+(cell-class enum or terrain table → bit index) is not reachable from this class.~~
+Task 59 located the bit space in **ClientBattleCell.m_passMask** (the mask
+`CheckByMask` tests): 13/15 bits named by in-binary consts (Barrier, Land,
+Forest, Shore, Water, Fog, Dark, Building, BuildingBand, BuildingBarrier,
+VisAndInvisUnit, VisAndInvisEnemyUnit, CameraInvisible), bits 7/14 reserved;
+`CheckByMask(mask) == ((mask & m_passMask) == 0)` — the takepos masks are
+BLOCKED-state masks. Full table + writers + corrections:
+`r6-bitname-crossref.md`. The takepos model itself is unchanged.
 
 ## 3. Tribute impact (no code change)
 
@@ -191,5 +194,6 @@ undecoded), so no numeric change lands. AOW3_VFX_TAXONOMY untouched.
   statics" (pg-leash-native.txt §3) — retired; UnitAct has no statics and the
   XOR pair is pool constants resolving to 1.
 - MEDIUM/INFERRED (bounded residuals): the band formula (17 enumerated stores),
-  the $UG/$yG chain-terminal full semantics, the cell-class bit names, hero ids
-  60–69/76 and unit id 42 naming.
+  the $UG/$yG chain-terminal full semantics, hero ids 60–69/76 and unit id 42
+  naming. (The cell-class bit names residual was RESOLVED by Task 59 —
+  r6-bitname-crossref.md.)
