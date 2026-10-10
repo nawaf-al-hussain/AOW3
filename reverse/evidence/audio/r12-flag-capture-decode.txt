@@ -1,0 +1,530 @@
+R12c flag-capture polarity + attack-feed decode — libil2cpp.so v6.9.18 (8ace05bb…)
+
+====================================================================================================
+ClientFlag.Capture(ClientBattleSide) — calls FlagIsCaptured@+0x148 / FlagIsLost@+0x154 @ 0x8072d10
+====================================================================================================
+  0x08072d10  bl       #0x816ea28                                       ; -> BattleUIEventHelper.public static void FlagIsCaptured() { }
+  0x08072d14  b        #0x8072d20                                    
+  0x08072d18  mov      x0, xzr                                       
+  0x08072d1c  bl       #0x816eba0                                       ; -> BattleUIEventHelper.public static void FlagIsLost() { }
+  0x08072d20  mov      x0, x21                                       
+  0x08072d24  mov      x1, x20                                       
+  0x08072d28  str      x20, [x21]                                    
+  0x08072d2c  bl       #0x3cc78ec                                       ; -> ??
+  0x08072d30  ldr      x0, [x22]                                     
+  0x08072d34  ldr      w8, [x0, #0xe4]                               
+  0x08072d38  cbnz     w8, #0x8072d40                                
+  0x08072d3c  bl       #0x3cc7ac8                                       ; -> ??
+  0x08072d40  adrp     x20, #0x9d10000                               
+  0x08072d44  ldrb     w8, [x20, #0x3f4]                             
+  0x08072d48  cbnz     w8, #0x8072d60                                
+  0x08072d4c  adrp     x0, #0x9674000                                
+  0x08072d50  ldr      x0, [x0, #0x5c8]                              
+  0x08072d54  bl       #0x3cc7948                                       ; -> ??
+  0x08072d58  mov      w8, #1                                        
+  0x08072d5c  strb     w8, [x20, #0x3f4]                             
+  0x08072d60  ldr      x0, [x22]                                     
+  0x08072d64  ldr      w8, [x0, #0xe4]                               
+  0x08072d68  cbnz     w8, #0x8072d74                                
+  0x08072d6c  bl       #0x3cc7ac8                                       ; -> ??
+  0x08072d70  ldr      x0, [x22]                                     
+  0x08072d74  ldr      x8, [x0, #0xb8]                               
+  0x08072d78  ldr      x20, [x8, #0xa8]                              
+  0x08072d7c  cbz      x20, #0x8072e08                               
+  0x08072d80  adrp     x10, #0x9674000                               
+  0x08072d84  ldr      x8, [x20]                                     
+  0x08072d88  ldr      x10, [x10, #0x5d8]                            
+  0x08072d8c  ldrh     w9, [x8, #0x12e]                              
+  0x08072d90  ldr      x1, [x10]                                     
+  0x08072d94  cbz      x9, #0x8072db8                                
+  0x08072d98  ldr      x10, [x8, #0xb0]                              
+  0x08072d9c  add      x10, x10, #8                                  
+  0x08072da0  ldur     x11, [x10, #-8]                               
+  0x08072da4  cmp      x11, x1                                       
+  0x08072da8  b.eq     #0x8072dc8                                    
+  0x08072dac  subs     x9, x9, #1                                    
+  0x08072db0  add      x10, x10, #0x10                               
+  0x08072db4  b.ne     #0x8072da0                                    
+  0x08072db8  mov      x0, x20                                       
+  0x08072dbc  mov      w2, #0x3e                                     
+  0x08072dc0  bl       #0x3d00398                                       ; -> ??
+  0x08072dc4  b        #0x8072dd8                                    
+  0x08072dc8  ldr      w9, [x10]                                     
+  0x08072dcc  add      w9, w9, #0x3e                                 
+  0x08072dd0  add      x8, x8, w9, sxtw #4                           
+  0x08072dd4  add      x0, x8, #0x138                                
+  0x08072dd8  ldp      x8, x1, [x0]                                  
+  0x08072ddc  mov      x0, x20                                       
+  0x08072de0  blr      x8                                            
+  0x08072de4  cbz      x0, #0x8072e08                                
+  0x08072de8  mov      x1, x19                                       
+  0x08072dec  mov      x2, xzr                                       
+  0x08072df0  bl       #0x8204794                                       ; -> GUIBattleMinimapRenderer.public void FlagChange(ClientFlag flag) { }
+  0x08072df4  strb     wzr, [x19, #0x75]                             
+  0x08072df8  ldp      x20, x19, [sp, #0x20]                         
+  0x08072dfc  ldp      x22, x21, [sp, #0x10]                         
+  0x08072e00  ldr      x30, [sp], #0x30                              
+  0x08072e04  ret                                                    
+  0x08072e08  bl       #0x3cc7bf4                                       ; -> ??
+  0x08072e0c  stp      x30, x19, [sp, #-0x10]!                       
+  0x08072e10  mov      x19, x0                                       
+  0x08072e14  ldr      x0, [x0, #0x48]                               
+  0x08072e18  cbz      x0, #0x8072e30                                
+  0x08072e1c  mov      x1, xzr                                       
+  0x08072e20  bl       #0x80b8a68                                       ; -> ClientFlagAreaComponent.public void HideCapture() { }
+  0x08072e24  strb     wzr, [x19, #0x74]                             
+  0x08072e28  ldp      x30, x19, [sp], #0x10                         
+  0x08072e2c  ret                                                    
+  0x08072e30  bl       #0x3cc7bf4                                       ; -> ??
+  0x08072e34  ldr      x0, [x0, #0x48]                               
+  0x08072e38  cbz      x0, #0x8072e44                                
+  0x08072e3c  mov      x1, xzr                                       
+  0x08072e40  b        #0x80b8b10                                    
+  0x08072e44  str      x30, [sp, #-0x10]!                            
+  0x08072e48  bl       #0x3cc7bf4                                       ; -> ??
+  0x08072e4c  ldr      x0, [x0, #0x48]                               
+  0x08072e50  cbz      x0, #0x8072e5c                                
+  0x08072e54  mov      x1, xzr                                       
+  0x08072e58  b        #0x80b8ad4                                    
+  0x08072e5c  str      x30, [sp, #-0x10]!                            
+  0x08072e60  bl       #0x3cc7bf4                                       ; -> ??
+  0x08072e64  mov      w0, #1                                        
+  0x08072e68  ret                                                    
+  0x08072e6c  str      x30, [sp, #-0x40]!                            
+  0x08072e70  stp      x24, x23, [sp, #0x10]                         
+  0x08072e74  stp      x22, x21, [sp, #0x20]                         
+  0x08072e78  stp      x20, x19, [sp, #0x30]                         
+  0x08072e7c  adrp     x21, #0x9d22000                               
+  0x08072e80  mov      x19, x1                                       
+  0x08072e84  mov      x20, x0                                       
+  0x08072e88  ldrb     w8, [x21, #0x5e6]                             
+  0x08072e8c  tbnz     w8, #0, #0x8072ea4                            
+  0x08072e90  adrp     x0, #0x9696000                                
+  0x08072e94  ldr      x0, [x0, #0xf28]                              
+  0x08072e98  bl       #0x3cc7948                                       ; -> ??
+  0x08072e9c  mov      w8, #1                                        
+  0x08072ea0  strb     w8, [x21, #0x5e6]                             
+  0x08072ea4  adrp     x24, #0x9696000                               
+  0x08072ea8  ldr      x24, [x24, #0xf28]                            
+  0x08072eac  ldr      x21, [x20, #0xc8]!                            
+  0x08072eb0  mov      x0, x21                                       
+  0x08072eb4  mov      x1, x19                                       
+  0x08072eb8  mov      x2, xzr                                       
+  0x08072ebc  bl       #0x8f95128                                       ; -> Delegate.public static Delegate Combine(Delegate a, Delegate b) { }
+  0x08072ec0  cbz      x0, #0x8072ee0                                
+  0x08072ec4  ldr      x23, [x24]                                    
+  0x08072ec8  mov      x22, x0                                       
+  0x08072ecc  mov      x1, x23                                       
+  0x08072ed0  bl       #0x3cc7acc                                       ; -> ??
+  0x08072ed4  mov      x1, x0                                        
+  0x08072ed8  cbnz     x0, #0x8072ee4                                
+  0x08072edc  b        #0x8072f10                                    
+  0x08072ee0  mov      x1, xzr                                       
+  0x08072ee4  mov      x0, x20                                       
+  0x08072ee8  mov      x2, x21                                       
+  0x08072eec  bl       #0x3cffbe8                                       ; -> ??
+  0x08072ef0  cmp      x0, x21                                       
+  0x08072ef4  mov      x21, x0                                       
+  0x08072ef8  b.ne     #0x8072eb0                                    
+  0x08072efc  ldp      x20, x19, [sp, #0x30]                         
+  0x08072f00  ldp      x22, x21, [sp, #0x20]                         
+  0x08072f04  ldp      x24, x23, [sp, #0x10]                         
+  0x08072f08  ldr      x30, [sp], #0x40                              
+  0x08072f0c  ret                                                    
+  0x08072f10  mov      x0, x22                                       
+  0x08072f14  mov      x1, x23                                       
+  0x08072f18  bl       #0x3cc7f74                                       ; -> ??
+  0x08072f1c  str      x30, [sp, #-0x40]!                            
+  0x08072f20  stp      x24, x23, [sp, #0x10]                         
+  0x08072f24  stp      x22, x21, [sp, #0x20]                         
+  0x08072f28  stp      x20, x19, [sp, #0x30]                         
+  0x08072f2c  adrp     x21, #0x9d22000                               
+  0x08072f30  mov      x19, x1                                       
+  0x08072f34  mov      x20, x0                                       
+  0x08072f38  ldrb     w8, [x21, #0x5e7]                             
+  0x08072f3c  tbnz     w8, #0, #0x8072f54                            
+  0x08072f40  adrp     x0, #0x9696000                                
+  0x08072f44  ldr      x0, [x0, #0xf28]                              
+  0x08072f48  bl       #0x3cc7948                                       ; -> ??
+  0x08072f4c  mov      w8, #1                                        
+  0x08072f50  strb     w8, [x21, #0x5e7]                             
+  0x08072f54  adrp     x24, #0x9696000                               
+  0x08072f58  ldr      x24, [x24, #0xf28]                            
+  0x08072f5c  ldr      x21, [x20, #0xc8]!                            
+  0x08072f60  mov      x0, x21                                       
+  0x08072f64  mov      x1, x19                                       
+  0x08072f68  mov      x2, xzr                                       
+  0x08072f6c  bl       #0x8f95314                                       ; -> Delegate.public static Delegate Remove(Delegate source, Delegate value) { }
+  0x08072f70  cbz      x0, #0x8072f90                                
+  0x08072f74  ldr      x23, [x24]                                    
+  0x08072f78  mov      x22, x0                                       
+  0x08072f7c  mov      x1, x23                                       
+  0x08072f80  bl       #0x3cc7acc                                       ; -> ??
+  0x08072f84  mov      x1, x0                                        
+  0x08072f88  cbnz     x0, #0x8072f94                                
+  0x08072f8c  b        #0x8072fc0                                    
+  0x08072f90  mov      x1, xzr                                       
+  0x08072f94  mov      x0, x20                                       
+  0x08072f98  mov      x2, x21                                       
+  0x08072f9c  bl       #0x3cffbe8                                       ; -> ??
+  0x08072fa0  cmp      x0, x21                                       
+  0x08072fa4  mov      x21, x0                                       
+  0x08072fa8  b.ne     #0x8072f60                                    
+  0x08072fac  ldp      x20, x19, [sp, #0x30]                         
+  0x08072fb0  ldp      x22, x21, [sp, #0x20]                         
+  0x08072fb4  ldp      x24, x23, [sp, #0x10]                         
+  0x08072fb8  ldr      x30, [sp], #0x40                              
+  0x08072fbc  ret                                                    
+  0x08072fc0  mov      x0, x22                                       
+  0x08072fc4  mov      x1, x23                                       
+  0x08072fc8  bl       #0x3cc7f74                                       ; -> ??
+  0x08072fcc  mov      w0, #1                                        
+  0x08072fd0  ret                                                    
+  0x08072fd4  mov      w0, #1                                        
+  0x08072fd8  ret                                                    
+  0x08072fdc  mov      w0, #1                                        
+  0x08072fe0  ret                                                    
+  0x08072fe4  stp      x30, x19, [sp, #-0x10]!                       
+  0x08072fe8  mov      x1, xzr                                       
+  0x08072fec  mov      x19, x0                                       
+  0x08072ff0  bl       #0x8045910                                       ; -> MonoBehaviourUsageCheckable.protected void .ctor() { }
+  0x08072ff4  mov      w8, #-1                                       
+  0x08072ff8  str      w8, [x19, #0x20]                              
+  0x08072ffc  ldp      x30, x19, [sp], #0x10                         
+  0x08073000  ret                                                    
+  0x08073004  cbz      x1, #0x807301c                                
+  0x08073008  mov      x8, x0                                        
+  0x0807300c  mov      x0, x1                                        
+
+====================================================================================================
+GUIBattleMinimapRenderer.UnitAttacked(ClientUnit) — feeds OurUnitIsUnderAttack(+0x9c)/Allied(+0xa8) @ 0x8206590
+====================================================================================================
+  0x08206590  bl       #0x816f4b8                                       ; -> BattleUIEventHelper.public static void OurUnitIsUnderAttack(ClientUnit unit) { }
+  0x08206594  b        #0x82065a0                                    
+  0x08206598  mov      x0, xzr                                       
+  0x0820659c  bl       #0x816f7cc                                       ; -> BattleUIEventHelper.public static void AlliedUnitIsUnderAttack() { }
+  0x082065a0  ldrsw    x8, [x19, #0x198]                             
+  0x082065a4  add      x8, x21, x8                                   
+  0x082065a8  ldp      x22, x21, [sp, #0x10]                         
+  0x082065ac  str      x8, [x19, #0x1c0]                             
+  0x082065b0  ldp      x20, x19, [sp, #0x20]                         
+  0x082065b4  ldr      x30, [sp], #0x30                              
+  0x082065b8  ret                                                    
+  0x082065bc  str      x30, [sp, #-0x30]!                            
+  0x082065c0  stp      x22, x21, [sp, #0x10]                         
+  0x082065c4  stp      x20, x19, [sp, #0x20]                         
+  0x082065c8  adrp     x21, #0x9d23000                               
+  0x082065cc  adrp     x22, #0x969e000                               
+  0x082065d0  mov      x20, x1                                       
+  0x082065d4  ldrb     w8, [x21, #0x4a4]                             
+  0x082065d8  ldr      x22, [x22, #0xac8]                            
+  0x082065dc  mov      x19, x0                                       
+  0x082065e0  tbnz     w8, #0, #0x82065f8                            
+  0x082065e4  adrp     x0, #0x969e000                                
+  0x082065e8  ldr      x0, [x0, #0xac8]                              
+  0x082065ec  bl       #0x3cc7948                                       ; -> ??
+  0x082065f0  mov      w8, #1                                        
+  0x082065f4  strb     w8, [x21, #0x4a4]                             
+  0x082065f8  ldr      x0, [x22]                                     
+  0x082065fc  ldr      w8, [x0, #0xe4]                               
+  0x08206600  cbnz     w8, #0x8206608                                
+  0x08206604  bl       #0x3cc7ac8                                       ; -> ??
+  0x08206608  mov      x0, xzr                                       
+  0x0820660c  bl       #0x8d355c8                                       ; -> TimeUtils.public static long GetMilliTicks() { }
+  0x08206610  ldr      x2, [x19, #0x80]                              
+  0x08206614  ldr      w3, [x19, #0x194]                             
+  0x08206618  mov      x21, x0                                       
+  0x0820661c  ldr      s0, [x19, #0x204]                             
+  0x08206620  ldr      x4, [x19, #0x158]                             
+  0x08206624  mov      x0, x19                                       
+  0x08206628  mov      x1, x20                                       
+  0x0820662c  bl       #0x82061c0                                       ; -> GUIBattleMinimapRenderer.private bool CreateEntityAction(IClientEntity entity, List<GUIBattleMinimapRenderer.Action
+  0x08206630  tbz      w0, #0, #0x8206664                            
+  0x08206634  ldr      x8, [x19, #0x1c8]                             
+  0x08206638  cmp      x21, x8                                       
+  0x0820663c  b.lt     #0x8206664                                    
+  0x08206640  mov      x0, x20                                       
+  0x08206644  mov      x1, xzr                                       
+  0x08206648  bl       #0x82739cc                                       ; -> BattleEntityUtils.public static bool IsOwnEntity(IClientEntityOwnable entity) { }
+  0x0820664c  tbz      w0, #0, #0x820665c                            
+  0x08206650  mov      x0, xzr                                       
+  0x08206654  bl       #0x816f654                                       ; -> BattleUIEventHelper.public static void OurBaseIsUnderAttack() { }
+  0x08206658  b        #0x8206664                                    
+  0x0820665c  mov      x0, xzr                                       
+  0x08206660  bl       #0x816f944                                       ; -> BattleUIEventHelper.public static void AlliedBaseIsUnderAttack() { }
+  0x08206664  ldrsw    x8, [x19, #0x198]                             
+  0x08206668  add      x8, x21, x8                                   
+  0x0820666c  ldp      x22, x21, [sp, #0x10]                         
+  0x08206670  str      x8, [x19, #0x1c8]                             
+  0x08206674  ldp      x20, x19, [sp, #0x20]                         
+  0x08206678  ldr      x30, [sp], #0x30                              
+  0x0820667c  ret                                                    
+  0x08206680  sub      sp, sp, #0x40                                 
+  0x08206684  stp      x30, x23, [sp, #0x10]                         
+  0x08206688  stp      x22, x21, [sp, #0x20]                         
+  0x0820668c  stp      x20, x19, [sp, #0x30]                         
+  0x08206690  adrp     x23, #0x9d23000                               
+  0x08206694  adrp     x22, #0x9674000                               
+  0x08206698  mov      x19, x2                                       
+  0x0820669c  ldrb     w8, [x23, #0x4b3]                             
+  0x082066a0  ldr      x22, [x22, #0x5c8]                            
+  0x082066a4  mov      x21, x1                                       
+  0x082066a8  mov      x20, x0                                       
+  0x082066ac  tbnz     w8, #0, #0x820673c                            
+  0x082066b0  adrp     x0, #0x9674000                                
+  0x082066b4  ldr      x0, [x0, #0x5c8]                              
+  0x082066b8  bl       #0x3cc7948                                       ; -> ??
+  0x082066bc  adrp     x0, #0x9674000                                
+  0x082066c0  ldr      x0, [x0, #0xea0]                              
+  0x082066c4  bl       #0x3cc7948                                       ; -> ??
+  0x082066c8  adrp     x0, #0x9698000                                
+  0x082066cc  ldr      x0, [x0, #0x810]                              
+
+====================================================================================================
+GUIBattleMinimapRenderer.BuildingAttacked(ClientBuilding) — feeds OurBaseIsUnderAttack(+0x98)/Allied(+0xa4) @ 0x8206654
+====================================================================================================
+  0x08206654  bl       #0x816f654                                       ; -> BattleUIEventHelper.public static void OurBaseIsUnderAttack() { }
+  0x08206658  b        #0x8206664                                    
+  0x0820665c  mov      x0, xzr                                       
+  0x08206660  bl       #0x816f944                                       ; -> BattleUIEventHelper.public static void AlliedBaseIsUnderAttack() { }
+  0x08206664  ldrsw    x8, [x19, #0x198]                             
+  0x08206668  add      x8, x21, x8                                   
+  0x0820666c  ldp      x22, x21, [sp, #0x10]                         
+  0x08206670  str      x8, [x19, #0x1c8]                             
+  0x08206674  ldp      x20, x19, [sp, #0x20]                         
+  0x08206678  ldr      x30, [sp], #0x30                              
+  0x0820667c  ret                                                    
+  0x08206680  sub      sp, sp, #0x40                                 
+  0x08206684  stp      x30, x23, [sp, #0x10]                         
+  0x08206688  stp      x22, x21, [sp, #0x20]                         
+  0x0820668c  stp      x20, x19, [sp, #0x30]                         
+  0x08206690  adrp     x23, #0x9d23000                               
+  0x08206694  adrp     x22, #0x9674000                               
+  0x08206698  mov      x19, x2                                       
+  0x0820669c  ldrb     w8, [x23, #0x4b3]                             
+  0x082066a0  ldr      x22, [x22, #0x5c8]                            
+  0x082066a4  mov      x21, x1                                       
+  0x082066a8  mov      x20, x0                                       
+  0x082066ac  tbnz     w8, #0, #0x820673c                            
+  0x082066b0  adrp     x0, #0x9674000                                
+  0x082066b4  ldr      x0, [x0, #0x5c8]                              
+  0x082066b8  bl       #0x3cc7948                                       ; -> ??
+  0x082066bc  adrp     x0, #0x9674000                                
+  0x082066c0  ldr      x0, [x0, #0xea0]                              
+  0x082066c4  bl       #0x3cc7948                                       ; -> ??
+  0x082066c8  adrp     x0, #0x9698000                                
+  0x082066cc  ldr      x0, [x0, #0x810]                              
+  0x082066d0  bl       #0x3cc7948                                       ; -> ??
+  0x082066d4  adrp     x0, #0x96eb000                                
+  0x082066d8  ldr      x0, [x0, #0xea0]                              
+  0x082066dc  bl       #0x3cc7948                                       ; -> ??
+  0x082066e0  adrp     x0, #0x96b7000                                
+  0x082066e4  ldr      x0, [x0, #0x568]                              
+  0x082066e8  bl       #0x3cc7948                                       ; -> ??
+  0x082066ec  adrp     x0, #0x96f4000                                
+  0x082066f0  ldr      x0, [x0, #0xcc8]                              
+  0x082066f4  bl       #0x3cc7948                                       ; -> ??
+  0x082066f8  adrp     x0, #0x9675000                                
+  0x082066fc  ldr      x0, [x0, #0xaf0]                              
+  0x08206700  bl       #0x3cc7948                                       ; -> ??
+  0x08206704  adrp     x0, #0x9675000                                
+  0x08206708  ldr      x0, [x0, #0xed0]                              
+  0x0820670c  bl       #0x3cc7948                                       ; -> ??
+  0x08206710  adrp     x0, #0x9674000                                
+  0x08206714  ldr      x0, [x0, #0x5f0]                              
+  0x08206718  bl       #0x3cc7948                                       ; -> ??
+  0x0820671c  adrp     x0, #0x96f4000                                
+  0x08206720  ldr      x0, [x0, #0xcd0]                              
+  0x08206724  bl       #0x3cc7948                                       ; -> ??
+  0x08206728  adrp     x0, #0x96f4000                                
+  0x0820672c  ldr      x0, [x0, #0xcd8]                              
+  0x08206730  bl       #0x3cc7948                                       ; -> ??
+  0x08206734  mov      w8, #1                                        
+  0x08206738  strb     w8, [x23, #0x4b3]                             
+  0x0820673c  ldr      x0, [x22]                                     
+  0x08206740  ldr      w8, [x0, #0xe4]                               
+  0x08206744  cbnz     w8, #0x820674c                                
+  0x08206748  bl       #0x3cc7ac8                                       ; -> ??
+  0x0820674c  adrp     x23, #0x9d22000                               
+  0x08206750  ldrb     w8, [x23, #0x428]                             
+  0x08206754  cbnz     w8, #0x820676c                                
+  0x08206758  adrp     x0, #0x9674000                                
+  0x0820675c  ldr      x0, [x0, #0x5c8]                              
+  0x08206760  bl       #0x3cc7948                                       ; -> ??
+  0x08206764  mov      w8, #1                                        
+  0x08206768  strb     w8, [x23, #0x428]                             
+  0x0820676c  ldr      x0, [x22]                                     
+  0x08206770  ldr      w8, [x0, #0xe4]                               
+  0x08206774  cbnz     w8, #0x8206780                                
+  0x08206778  bl       #0x3cc7ac8                                       ; -> ??
+  0x0820677c  ldr      x0, [x22]                                     
+  0x08206780  ldr      x8, [x0, #0xb8]                               
+  0x08206784  ldr      x0, [x8, #0x1e0]                              
+  0x08206788  cbz      x0, #0x82067c0                                
+  0x0820678c  mov      x1, xzr                                       
+  0x08206790  bl       #0x80e7554                                       ; -> ClientBattleLogicCommandContext.public GraphicsCurrents get_Graphics() { }
+
+====================================================================================================
+GUIBattleMinimapRenderer.EnemyDetected(IEntityDetectable) — feeds EnemyDetected(+0x158)/EnemyHiddenDetected(+0x148) @ 0x8203f40
+====================================================================================================
+  0x08203f40  ldr      x0, [x19, #0x38]                              
+  0x08203f44  str      xzr, [sp, #8]                                 
+  0x08203f48  cbz      x0, #0x820406c                                
+  0x08203f4c  adrp     x8, #0x96f4000                                
+  0x08203f50  adrp     x21, #0x969e000                               
+  0x08203f54  add      x2, sp, #8                                    
+  0x08203f58  ldr      x8, [x8, #0xb90]                              
+  0x08203f5c  ldr      x21, [x21, #0xac8]                            
+  0x08203f60  mov      x1, x20                                       
+  0x08203f64  ldr      x3, [x8]                                      
+  0x08203f68  bl       #0x71ca420                                       ; -> CommandLine.public override string ToString() { }+0x2758cf8
+  0x08203f6c  tbnz     w0, #0, #0x8203f74                            
+  0x08203f70  str      xzr, [sp, #8]                                 
+  0x08203f74  ldr      x0, [x21]                                     
+  0x08203f78  ldr      w8, [x0, #0xe4]                               
+  0x08203f7c  cbnz     w8, #0x8203f84                                
+  0x08203f80  bl       #0x3cc7ac8                                       ; -> ??
+  0x08203f84  mov      x0, xzr                                       
+  0x08203f88  bl       #0x8d355c8                                       ; -> TimeUtils.public static long GetMilliTicks() { }
+  0x08203f8c  ldr      x8, [sp, #8]                                  
+  0x08203f90  mov      x21, x0                                       
+  0x08203f94  cmp      x0, x8                                        
+  0x08203f98  b.lt     #0x8204050                                    
+  0x08203f9c  ldr      x2, [x19, #0x70]                              
+  0x08203fa0  ldr      w3, [x19, #0x188]                             
+  0x08203fa4  mov      x0, x19                                       
+  0x08203fa8  ldr      s0, [x19, #0x1fc]                             
+  0x08203fac  ldr      x4, [x19, #0x150]                             
+  0x08203fb0  mov      x1, x20                                       
+  0x08203fb4  bl       #0x82061c0                                       ; -> GUIBattleMinimapRenderer.private bool CreateEntityAction(IClientEntity entity, List<GUIBattleMinimapRenderer.Action
+  0x08203fb8  tbz      w0, #0, #0x8204050                            
+  0x08203fbc  ldr      x8, [x19, #0x1b8]                             
+  0x08203fc0  cmp      x21, x8                                       
+  0x08203fc4  b.lt     #0x8204050                                    
+  0x08203fc8  cbz      x20, #0x820406c                               
+  0x08203fcc  adrp     x10, #0x96f4000                               
+  0x08203fd0  ldr      x8, [x20]                                     
+  0x08203fd4  ldr      x10, [x10, #0xb98]                            
+  0x08203fd8  ldrh     w9, [x8, #0x12e]                              
+  0x08203fdc  ldr      x1, [x10]                                     
+  0x08203fe0  cbz      x9, #0x8204004                                
+  0x08203fe4  ldr      x10, [x8, #0xb0]                              
+  0x08203fe8  add      x10, x10, #8                                  
+  0x08203fec  ldur     x11, [x10, #-8]                               
+  0x08203ff0  cmp      x11, x1                                       
+  0x08203ff4  b.eq     #0x8204014                                    
+  0x08203ff8  subs     x9, x9, #1                                    
+  0x08203ffc  add      x10, x10, #0x10                               
+  0x08204000  b.ne     #0x8203fec                                    
+  0x08204004  mov      x0, x20                                       
+  0x08204008  mov      w2, #1                                        
+  0x0820400c  bl       #0x3d00398                                       ; -> ??
+  0x08204010  b        #0x8204024                                    
+  0x08204014  ldr      w9, [x10]                                     
+  0x08204018  add      w9, w9, #1                                    
+  0x0820401c  add      x8, x8, w9, sxtw #4                           
+  0x08204020  add      x0, x8, #0x138                                
+  0x08204024  ldp      x8, x1, [x0]                                  
+  0x08204028  mov      x0, x20                                       
+  0x0820402c  blr      x8                                            
+  0x08204030  tbz      w0, #0, #0x8204044                            
+  0x08204034  mov      x0, x20                                       
+  0x08204038  mov      x1, xzr                                       
+  0x0820403c  bl       #0x816f1a4                                       ; -> BattleUIEventHelper.public static void EnemyHiddenDetected(IEntityDetectable entity) { }
+  0x08204040  b        #0x8204050                                    
+  0x08204044  mov      x0, x20                                       
+  0x08204048  mov      x1, xzr                                       
+  0x0820404c  bl       #0x816f008                                       ; -> BattleUIEventHelper.public static void EnemyDetected(IEntityDetectable entity) { }
+  0x08204050  ldrsw    x8, [x19, #0x190]                             
+  0x08204054  add      x8, x21, x8                                   
+  0x08204058  ldp      x30, x21, [sp, #0x10]                         
+  0x0820405c  str      x8, [x19, #0x1b8]                             
+  0x08204060  ldp      x20, x19, [sp, #0x20]                         
+  0x08204064  add      sp, sp, #0x30                                 
+  0x08204068  ret                                                    
+  0x0820406c  bl       #0x3cc7bf4                                       ; -> ??
+  0x08204070  stp      x30, x21, [sp, #-0x20]!                       
+  0x08204074  stp      x20, x19, [sp, #0x10]                         
+  0x08204078  adrp     x21, #0x9d23000                               
+  0x0820407c  mov      x19, x1                                       
+  0x08204080  mov      x20, x0                                       
+  0x08204084  ldrb     w8, [x21, #0x490]                             
+  0x08204088  tbnz     w8, #0, #0x82040a0                            
+  0x0820408c  adrp     x0, #0x96f4000                                
+  0x08204090  ldr      x0, [x0, #0xb80]                              
+  0x08204094  bl       #0x3cc7948                                       ; -> ??
+  0x08204098  mov      w8, #1                                        
+  0x0820409c  strb     w8, [x21, #0x490]                             
+  0x082040a0  ldr      x21, [x20, #0x258]                            
+  0x082040a4  cbz      x21, #0x8204140                               
+  0x082040a8  adrp     x10, #0x96f4000                               
+  0x082040ac  ldr      x8, [x21]                                     
+  0x082040b0  ldr      x10, [x10, #0xb80]                            
+  0x082040b4  ldrh     w9, [x8, #0x12e]                              
+  0x082040b8  ldr      x1, [x10]                                     
+  0x082040bc  cbz      x9, #0x82040e0                                
+  0x082040c0  ldr      x10, [x8, #0xb0]                              
+  0x082040c4  add      x10, x10, #8                                  
+  0x082040c8  ldur     x11, [x10, #-8]                               
+  0x082040cc  cmp      x11, x1                                       
+  0x082040d0  b.eq     #0x82040f0                                    
+  0x082040d4  subs     x9, x9, #1                                    
+  0x082040d8  add      x10, x10, #0x10                               
+  0x082040dc  b.ne     #0x82040c8                                    
+  0x082040e0  mov      x0, x21                                       
+  0x082040e4  mov      w2, #3                                        
+  0x082040e8  bl       #0x3d00398                                       ; -> ??
+  0x082040ec  b        #0x8204100                                    
+  0x082040f0  ldr      w9, [x10]                                     
+  0x082040f4  add      w9, w9, #3                                    
+  0x082040f8  add      x8, x8, w9, sxtw #4                           
+  0x082040fc  add      x0, x8, #0x138                                
+  0x08204100  ldp      x8, x2, [x0]                                  
+  0x08204104  mov      x0, x21                                       
+  0x08204108  mov      x1, x19                                       
+  0x0820410c  blr      x8                                            
+  0x08204110  mov      x0, x19                                       
+  0x08204114  mov      x1, xzr                                       
+  0x08204118  bl       #0x8273b1c                                       ; -> BattleEntityUtils.public static bool IsAllyEntity(IClientEntityOwnable entity) { }
+  0x0820411c  tbz      w0, #0, #0x820412c                            
+  0x08204120  ldp      x20, x19, [sp, #0x10]                         
+  0x08204124  ldp      x30, x21, [sp], #0x20                         
+  0x08204128  ret                                                    
+  0x0820412c  mov      x0, x20                                       
+  0x08204130  mov      x1, x19                                       
+  0x08204134  ldp      x20, x19, [sp, #0x10]                         
+  0x08204138  ldp      x30, x21, [sp], #0x20                         
+  0x0820413c  b        #0x8204144                                    
+  0x08204140  bl       #0x3cc7bf4                                       ; -> ??
+  0x08204144  str      x30, [sp, #-0x30]!                            
+  0x08204148  stp      x22, x21, [sp, #0x10]                         
+  0x0820414c  stp      x20, x19, [sp, #0x20]                         
+  0x08204150  adrp     x21, #0x9d23000                               
+  0x08204154  adrp     x22, #0x969e000                               
+  0x08204158  mov      x19, x1                                       
+  0x0820415c  ldrb     w8, [x21, #0x4a2]                             
+  0x08204160  ldr      x22, [x22, #0xac8]                            
+  0x08204164  mov      x20, x0                                       
+  0x08204168  tbnz     w8, #0, #0x820418c                            
+  0x0820416c  adrp     x0, #0x96f4000                                
+  0x08204170  ldr      x0, [x0, #0xba0]                              
+  0x08204174  bl       #0x3cc7948                                       ; -> ??
+  0x08204178  adrp     x0, #0x969e000                                
+  0x0820417c  ldr      x0, [x0, #0xac8]                              
+  0x08204180  bl       #0x3cc7948                                       ; -> ??
+  0x08204184  mov      w8, #1                                        
+  0x08204188  strb     w8, [x21, #0x4a2]                             
+  0x0820418c  ldr      x0, [x22]                                     
+  0x08204190  ldr      w8, [x0, #0xe4]                               
+  0x08204194  cbnz     w8, #0x820419c                                
+  0x08204198  bl       #0x3cc7ac8                                       ; -> ??
+  0x0820419c  mov      x0, xzr                                       
+  0x082041a0  bl       #0x8d355c8                                       ; -> TimeUtils.public static long GetMilliTicks() { }
+  0x082041a4  ldr      x8, [x20, #0x38]                              
+  0x082041a8  cbz      x8, #0x82041d8                                
+  0x082041ac  adrp     x9, #0x96f4000                                
+  0x082041b0  mov      x1, x19                                       
+  0x082041b4  ldr      x9, [x9, #0xba0]                              
+  0x082041b8  ldrsw    x10, [x20, #0x18c]                            
+  0x082041bc  ldp      x20, x19, [sp, #0x20]                         
+

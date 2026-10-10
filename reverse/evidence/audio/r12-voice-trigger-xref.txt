@@ -1,0 +1,249 @@
+R12 voice-trigger xref — libil2cpp.so v6.9.18 (8ace05bb…)
+text: vaddr 0x38a8b20..0x8fd8e90  (91.4 MB)
+dump.cs function table: 162335 entries
+
+total BL instructions scanned: 2671952
+
+== TryPlayUnderAttackVoice @ 0x79f64d8 — 0 BL call site(s)
+   (no direct BL callers — vtable/virtual dispatch or delegate)
+
+== TryPlayUnderDamageVoice @ 0x79f6610 — 1 BL call site(s)
+   <- 0x815f248  LCUnitDamage.public override bool Execute(float deltaTime) { }+0x4f0
+
+== TryPlayExplodedOnMineVoice @ 0x79f68ac — 1 BL call site(s)
+   <- 0x815f168  LCUnitDamage.public override bool Execute(float deltaTime) { }+0x410
+
+== TryPlayEnemyDestroyedVoice @ 0x79f6a04 — 2 BL call site(s)
+   <- 0x8138e34  LCBuildingDestroy.public override bool Execute(float deltaTime) { }+0x30c
+   <- 0x815f774  LCUnitDie.public override bool Execute(float deltaTime) { }+0x4a0
+
+== TryPlayEnemySpottedVoice @ 0x79f6da8 — 0 BL call site(s)
+   (no direct BL callers — vtable/virtual dispatch or delegate)
+
+== TryPlayMineSpottedVoice @ 0x79f6ff4 — 0 BL call site(s)
+   (no direct BL callers — vtable/virtual dispatch or delegate)
+
+== TryPlayFogDetectedVoice @ 0x79f70dc — 2 BL call site(s)
+   <- 0x8160968  LCUnitFogVisibleChanged.public override bool Execute(float deltaTime) { }+0x3e4
+   <- 0x8160c60  LCUnitFoggerOn.public override bool Execute(float deltaTime) { }+0x1c4
+
+== TryPlayShieldDetectedVoice @ 0x79f72d4 — 2 BL call site(s)
+   <- 0x8160854  LCUnitFogVisibleChanged.public override bool Execute(float deltaTime) { }+0x2d0
+   <- 0x816319c  LCUnitShieldOn.public override bool Execute(float deltaTime) { }+0x190
+
+== TryPlayContainerDetectedVoice @ 0x79f73e4 — 0 BL call site(s)
+   (no direct BL callers — vtable/virtual dispatch or delegate)
+
+== TryPlayFlagCapturedVoice @ 0x79f74d0 — 1 BL call site(s)
+   <- 0x814a23c  LCFlagCaptured.public override bool Execute(float deltaTime) { }+0x2b8
+
+== TryPlayUnitOutOfFuelVoice @ 0x79f7678 — 1 BL call site(s)
+   <- 0x816291c  LCUnitOutOfFuel.public override bool Execute(float deltaTime) { }+0x164
+
+== TryPlayBomberAfterBombingVoice @ 0x79f77ac — 0 BL call site(s)
+   (no direct BL callers — vtable/virtual dispatch or delegate)
+
+== TryPlayAviaHitVoice @ 0x79f789c — 1 BL call site(s)
+   <- 0x815f8c0  LCUnitDie.public override bool Execute(float deltaTime) { }+0x5ec
+
+== TryPlayAircraftRebaseVoiceToSelectedUnits @ 0x79f7928 — 1 BL call site(s)
+   <- 0x829e894  GHUnitAircraftsRebase.protected override void OnBattleMapClick(Gesture gesture) { }+0x418
+
+== TryPlayMoveVoiceToSelectedUnits @ 0x79f79dc — 0 BL call site(s)
+   (no direct BL callers — vtable/virtual dispatch or delegate)
+
+== TryPlayUnitMoveVoice @ 0x79f7b0c — 1 BL call site(s)
+   <- 0x82a8460  GHUnitTakePositions.protected override void OnBattleMapClick(Gesture gesture) { }+0x4b0
+
+== TryPlayAttackVoiceToSelectedUnits @ 0x79f80d4 — 2 BL call site(s)
+   <- 0x8272abc  AICommandVisualizerHelper.public static void SendSelectedUnitsAttackToUnit(ClientUnit targetUnit, UnitSpeedMoveStyle+0x470
+   <- 0x8272f70  AICommandVisualizerHelper.public static void SendSelectedUnitsAttackToBuilding(ClientBuilding targetBuilding, UnitSp+0x45c
+
+== TryPlayZombieSpottedVoice @ 0x79f865c — 1 BL call site(s)
+   <- 0x8160938  LCUnitFogVisibleChanged.public override bool Execute(float deltaTime) { }+0x3b4
+
+== TryPlayZombieMoveVoice @ 0x79f881c — 1 BL call site(s)
+   <- 0x81625b8  LCUnitMove.public override bool Execute(float deltaTime) { }+0x210
+
+== TryPlayZombieImpactVoice @ 0x79f8828 — 1 BL call site(s)
+   <- 0x8141644  LCBulletExplode.public override bool Execute(float deltaTime) { }+0x694
+
+== TryPlayBeholderSpecialVoice @ 0x79f8834 — 0 BL call site(s)
+   (no direct BL callers — vtable/virtual dispatch or delegate)
+
+== TryPlayAtlasSpecialVoice @ 0x79f8840 — 1 BL call site(s)
+   <- 0x80c1a08  AtlasEffectController.<ToImmortalityVoiceDelayAsync>d__26.private void MoveNext() { }+0x360
+
+== TryPlayAtlasDeathVoice @ 0x79f884c — 1 BL call site(s)
+   <- 0x80c10fc  AtlasEffectController.<ToDeathVoiceDelayAsync>d__27.private void MoveNext() { }+0x368
+
+== TryPlayStopVoiceToSelectedUnits @ 0x79f8858 — 0 BL call site(s)
+   (no direct BL callers — vtable/virtual dispatch or delegate)
+
+== TryPlaySelectVoiceToSelectedUnits @ 0x79f890c — 0 BL call site(s)
+   (no direct BL callers — vtable/virtual dispatch or delegate)
+
+== TryPlayPatrolVoiceToSelectedUnits @ 0x79f89c0 — 2 BL call site(s)
+   <- 0x82a4f20  GHUnitMultiplePointPatrolTargeting.private void TapHandler(Gesture gesture) { }+0x400
+   <- 0x82a6d14  GHUnitPatrolTargeting.public override void OnTapEnded(Gesture gesture) { }+0x430
+
+== TryPlayHoldPositionVoiceToSelectedUnits @ 0x79f8acc — 1 BL call site(s)
+   <- 0x81d2294  GUIBattleActionUnitSpecHoldPosition.protected void OnButtonClick() { }+0x100
+
+== TryPlayBombardVoiceToSelectedUnits @ 0x79f8b80 — 0 BL call site(s)
+   (no direct BL callers — vtable/virtual dispatch or delegate)
+
+== TryPlayAttackAreaVoiceToSelectedUnits @ 0x79f8c34 — 0 BL call site(s)
+   (no direct BL callers — vtable/virtual dispatch or delegate)
+
+== TryPlayAttackAreaVoiceToUnits @ 0x79f8ce8 — 1 BL call site(s)
+   <- 0x829f4f0  GHUnitBombardTargeting.protected override void OnBattleMapClick(Gesture gesture) { }+0xbc0
+
+== TryPlaySiegeModeVoiceToSelectedUnits @ 0x79f8e4c — 0 BL call site(s)
+   (no direct BL callers — vtable/virtual dispatch or delegate)
+
+== TryPlayActivateShieldVoiceToSelectedUnits @ 0x79f8f00 — 0 BL call site(s)
+   (no direct BL callers — vtable/virtual dispatch or delegate)
+
+== TryPlayScanningMinesVoiceToSelectedUnits @ 0x79f8fb4 — 1 BL call site(s)
+   <- 0x82a18ec  GHUnitDemining.protected override void OnBattleMapClick(Gesture gesture) { }+0x3d4
+
+== TryPlayActivateFogVoiceToSelectedUnits @ 0x79f9068 — 0 BL call site(s)
+   (no direct BL callers — vtable/virtual dispatch or delegate)
+
+== TryPlayDeployingMinesVoiceToSelectedUnits @ 0x79f911c — 1 BL call site(s)
+   <- 0x81fe1a4  GUIBattleUnitMiningOk.protected void OnClick() { }+0x3e0
+
+== TryPlayHeroUnitCreated @ 0x79f91d0 — 1 BL call site(s)
+   <- 0x807a794  ClientUnit.public void Birth(ClientBuilding trainer) { }+0x5b8
+
+== TryPlayHeroUnitDied @ 0x79f92e8 — 1 BL call site(s)
+   <- 0x807af74  ClientUnit.public void Kill(ClientDamageType deathType) { }+0x1ec
+
+== TryPlayHeroShootActiveAbility @ 0x79f9470 — 1 BL call site(s)
+   <- 0x814cf38  LCHeroAbilityActiveActivate.public override bool Execute(float deltaTime) { }+0x34c
+
+== TryPlayHeroCDActiveAbility @ 0x79f9550 — 0 BL call site(s)
+   (no direct BL callers — vtable/virtual dispatch or delegate)
+
+== TryPlayHeroReadyActiveAbility @ 0x79f9630 — 0 BL call site(s)
+   (no direct BL callers — vtable/virtual dispatch or delegate)
+
+== TryPlayHeroPassiveAbilityStarted @ 0x79f9710 — 1 BL call site(s)
+   <- 0x814eaa0  LCHeroAbilityPassiveActivate.public override bool Execute(float deltaTime) { }+0x3b8
+
+== TryPlayHeroMeleeAttack @ 0x79f97f0 — 1 BL call site(s)
+   <- 0x81634b0  LCUnitShoot.public override bool Execute(float deltaTime) { }+0x29c
+
+== TryPlayHeroSpecToVoice @ 0x79f98d0 — 1 BL call site(s)
+   <- 0x8163e90  LCUnitSpecialTo.public override bool Execute(float deltaTime) { }+0x4b4
+
+== TryPlayHeroSpecFromVoice @ 0x79f99b0 — 1 BL call site(s)
+   <- 0x8163850  LCUnitSpecialFrom.public override bool Execute(float deltaTime) { }+0x324
+
+== TryPlayHeroOutOfRangeActiveVoice @ 0x79f9a90 — 0 BL call site(s)
+   (no direct BL callers — vtable/virtual dispatch or delegate)
+
+== Utils.GetGroupCombatType @ 0x77ed4fc — 3 BL call site(s)
+   <- 0x79f8084  AudioBattleVoicesPlayer.private void PlayMoveVoiceToUnitsGroup(IList<ClientUnit> units, Point2i targetCell) { }+0x1b0
+   <- 0x79f8564  AudioBattleVoicesPlayer.private void PlayAttackVoiceToUnitsGroup(IList<ClientUnit> units) { }+0x1b4
+   <- 0x79fa0e4  AudioBattleVoicesPlayer.private void PlayStopVoiceToUnitsGroup(IList<ClientUnit> units) { }+0xa8
+
+== Utils.GetUnitCombatType @ 0x77ed614 — 2 BL call site(s)
+   <- 0x79f631c  AudioBattleVoicesPlayer.private bool CheckEventTimeouts(ClientUnit unit) { }+0xd0
+   <- 0x7a008a4  AudioBattleVoicesPlayer.<>c__DisplayClass66_0.internal void <TryPlayUnitMoveVoice>b__0() { }+0x17c
+
+== Utils.GetVoiceCategoriesForGroup @ 0x77ed968 — 11 BL call site(s)
+   <- 0x79f7de8  AudioBattleVoicesPlayer.private void PlayMoveFlagVoiceToUnitsGroup(IList<ClientUnit> units, Point2i targetCell) { +0x78
+   <- 0x79f7f60  AudioBattleVoicesPlayer.private void PlayMoveVoiceToUnitsGroup(IList<ClientUnit> units, Point2i targetCell) { }+0x8c
+   <- 0x79f8364  AudioBattleVoicesPlayer.private void PlayAttackFlagVoiceToUnitsGroup(IList<ClientUnit> units) { }+0x68
+   <- 0x79f8428  AudioBattleVoicesPlayer.private void PlayAttackVoiceToUnitsGroup(IList<ClientUnit> units) { }+0x78
+   <- 0x79f8610  AudioBattleVoicesPlayer.private void PlayOutAreaAttackVoiceToUnitsGroup(IList<ClientUnit> units) { }+0x68
+   <- 0x79f9ffc  AudioBattleVoicesPlayer.private void PlayAircraftRebaseVoiceToUnitsGroup(IList<ClientUnit> units) { }+0x54
+   <- 0x79fa0b8  AudioBattleVoicesPlayer.private void PlayStopVoiceToUnitsGroup(IList<ClientUnit> units) { }+0x7c
+   <- 0x79fa184  AudioBattleVoicesPlayer.private void PlaySelectVoiceToUnitsGroup(IList<ClientUnit> units) { }+0x60
+   <- 0x79fadbc  AudioBattleVoicesPlayer.private void PlayPatrolVoiceToUnitsGroup(IList<ClientUnit> units, Point2i targetCell) { }+0x78
+   <- 0x79faf44  AudioBattleVoicesPlayer.private void PlayHoldPositionVoiceToUnitsGroup(IList<ClientUnit> units) { }+0x9c
+   <- 0x79fb350  AudioBattleVoicesPlayer.private void PlayAttackAreaVoiceToUnitsGroup(IList<ClientUnit> units) { }+0x60
+
+== Utils.GetRandomCategoryFromSet @ 0x77edbb0 — 9 BL call site(s)
+   <- 0x79f7df0  AudioBattleVoicesPlayer.private void PlayMoveFlagVoiceToUnitsGroup(IList<ClientUnit> units, Point2i targetCell) { +0x80
+   <- 0x79f7fb4  AudioBattleVoicesPlayer.private void PlayMoveVoiceToUnitsGroup(IList<ClientUnit> units, Point2i targetCell) { }+0xe0
+   <- 0x79f836c  AudioBattleVoicesPlayer.private void PlayAttackFlagVoiceToUnitsGroup(IList<ClientUnit> units) { }+0x70
+   <- 0x79f8430  AudioBattleVoicesPlayer.private void PlayAttackVoiceToUnitsGroup(IList<ClientUnit> units) { }+0x80
+   <- 0x79f8618  AudioBattleVoicesPlayer.private void PlayOutAreaAttackVoiceToUnitsGroup(IList<ClientUnit> units) { }+0x70
+   <- 0x79fa0c0  AudioBattleVoicesPlayer.private void PlayStopVoiceToUnitsGroup(IList<ClientUnit> units) { }+0x84
+   <- 0x79fa2c4  AudioBattleVoicesPlayer.private void PlaySelectVoiceToUnitsGroup(IList<ClientUnit> units) { }+0x1a0
+   <- 0x79fadc4  AudioBattleVoicesPlayer.private void PlayPatrolVoiceToUnitsGroup(IList<ClientUnit> units, Point2i targetCell) { }+0x80
+   <- 0x79fb18c  AudioBattleVoicesPlayer.private void PlayHoldPositionVoiceToUnitsGroup(IList<ClientUnit> units) { }+0x2e4
+
+== Utils.GetVoiceCategoryForSingleUnit @ 0x77edcd8 — 9 BL call site(s)
+   <- 0x79f6598  AudioBattleVoicesPlayer.private void PlayUnitUnderAttackVoice(ClientUnit unit) { }+0x60
+   <- 0x79f6754  AudioBattleVoicesPlayer.private void PlayUnitUnderDamageVoice(ClientUnit unit, IShooter shooter, ClientDamageType +0x6c
+   <- 0x79f6978  AudioBattleVoicesPlayer.private void PlayExplodedOnMineVoice(ClientUnit unit) { }+0x6c
+   <- 0x79f6c7c  AudioBattleVoicesPlayer.private void PlayEnemyDestroyedVoice(IClientEntityOwnable enemyEntity, ClientUnit unit) { +0x88
+   <- 0x79f6f04  AudioBattleVoicesPlayer.private void PlayEnemySpottedVoice(ClientUnit unit, IClientEntity entity) { }+0x74
+   <- 0x79f7260  AudioBattleVoicesPlayer.private void PlayVoiceByUnitCategory(ClientUnit unit, Dictionary<VoiceCategory, AudioFile.+0x74
+   <- 0x79f7620  AudioBattleVoicesPlayer.private void PlayFlagCapturedVoice(ClientUnit unit) { }+0x6c
+   <- 0x79f93e8  AudioBattleVoicesPlayer.public void TryPlayHeroUnitDied(ClientUnit unit) { }+0x100
+   <- 0x7a007b4  AudioBattleVoicesPlayer.<>c__DisplayClass66_0.internal void <TryPlayUnitMoveVoice>b__0() { }+0x8c
+
+== Utils.GetSpottedEnemyTypeForEntity @ 0x77edd30 — 1 BL call site(s)
+   <- 0x79f6f84  AudioBattleVoicesPlayer.private void PlayEnemySpottedVoice(ClientUnit unit, IClientEntity entity) { }+0xf4
+
+== Utils.IsUnitsGroupHideInForest @ 0x77edeac — 2 BL call site(s)
+   <- 0x79f7f70  AudioBattleVoicesPlayer.private void PlayMoveVoiceToUnitsGroup(IList<ClientUnit> units, Point2i targetCell) { }+0x9c
+   <- 0x79fa3a0  AudioBattleVoicesPlayer.private void PlaySelectVoiceToInfUnitsGroup(IList<ClientUnit> units) { }+0x78
+
+== Utils.IsPointNearFlag @ 0x77ee17c — 2 BL call site(s)
+   <- 0x79f7c80  AudioBattleVoicesPlayer.private void PlaySelectedUnitsMoveVoice(Vector3 position, Point2i targetCell) { }+0x84
+   <- 0x79f81d0  AudioBattleVoicesPlayer.public void TryPlayAttackVoiceToSelectedUnits(Vector3 position) { }+0xfc
+
+== Utils.IsPointInShotDistanceToGroup @ 0x77ee560 — 1 BL call site(s)
+   <- 0x79f8224  AudioBattleVoicesPlayer.public void TryPlayAttackVoiceToSelectedUnits(Vector3 position) { }+0x150
+
+== Utils.GetSpotterUnit @ 0x77ee838 — 2 BL call site(s)
+   <- 0x79f6e1c  AudioBattleVoicesPlayer.public void TryPlayEnemySpottedVoice(IEntityDetectable entity) { }+0x74
+   <- 0x79f7458  AudioBattleVoicesPlayer.public void TryPlayContainerDetectedVoice(ClientBonusBox container) { }+0x74
+
+== PlaySoundById<Int32Enum> 3arg @ 0x4db6ed4 — 2 BL call site(s)
+   <- 0x7a01d48  AudioGroups.private void TryPlaySound(Vector3 position, float currentDuration, ClientBattleCell battle+0x288
+   <- 0x816263c  LCUnitMove.public override bool Execute(float deltaTime) { }+0x294
+
+== PlaySoundById<Nullable<Int32Enum>> 3arg @ 0x4db6e60 — 0 BL call site(s)
+   (no direct BL callers — vtable/virtual dispatch or delegate)
+
+== PlaySoundById<Int32Enum> 4arg+cell @ 0x4db7070 — 1 BL call site(s)
+   <- 0x7a01cd4  AudioGroups.private void TryPlaySound(Vector3 position, float currentDuration, ClientBattleCell battle+0x214
+
+== PlaySoundById<Int32Enum> 6arg+cell @ 0x4db7768 — 0 BL call site(s)
+   (no direct BL callers — vtable/virtual dispatch or delegate)
+
+== PlaySoundById<Int32Enum> 6arg @ 0x4db722c — 0 BL call site(s)
+   (no direct BL callers — vtable/virtual dispatch or delegate)
+
+== PlayLimitedSoundById<Int32Enum> 3arg @ 0x4db63f4 — 2 BL call site(s)
+   <- 0x7a01ca4  AudioGroups.private void TryPlaySound(Vector3 position, float currentDuration, ClientBattleCell battle+0x1e4
+   <- 0x80d12ec  UnitShootSoundEffector.public void ToShoot(int weaponIndex) { }+0x70
+
+== PlayLimitedSoundById<Int32Enum> 4arg+cell @ 0x4db6590 — 1 BL call site(s)
+   <- 0x7a01bcc  AudioGroups.private void TryPlaySound(Vector3 position, float currentDuration, ClientBattleCell battle+0x10c
+
+== PlayLimitedSoundById<Int32Enum> 6arg+cell @ 0x4db6b78 — 0 BL call site(s)
+   (no direct BL callers — vtable/virtual dispatch or delegate)
+
+== PlayLimitedSoundById<Int32Enum> 6arg @ 0x4db674c — 0 BL call site(s)
+   (no direct BL callers — vtable/virtual dispatch or delegate)
+
+== PlayAudioItem 4arg+cell @ 0x77ec6dc — 1 BL call site(s)
+   <- 0x7a01dc4  AudioGroups.private void TryPlaySound(Vector3 position, float currentDuration, ClientBattleCell battle+0x304
+
+== PlayAudioItem 3arg @ 0x77ec7b8 — 1 BL call site(s)
+   <- 0x7a01dec  AudioGroups.private void TryPlaySound(Vector3 position, float currentDuration, ClientBattleCell battle+0x32c
+
+== PlayLimitedAudioItem 4arg+cell @ 0x77ec8b4 — 1 BL call site(s)
+   <- 0x7a01c74  AudioGroups.private void TryPlaySound(Vector3 position, float currentDuration, ClientBattleCell battle+0x1b4
+
+== PlayLimitedAudioItem 3arg @ 0x77ec990 — 1 BL call site(s)
+   <- 0x7a01d98  AudioGroups.private void TryPlaySound(Vector3 position, float currentDuration, ClientBattleCell battle+0x2d8
+

@@ -39993,6 +39993,26 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       acc -= stepDt;
       steps++;
     }
+    // R12 announcer — UI-layer observer over sim snapshots (audio only, zero
+    // sim-state writes; spectator/replay gate per BattleUIEventHelper
+    // get_IsSpectator/get_IsReplay [DECOMP]). Runs once per frame after the
+    // sim-step loop; JIP catch-up collapses intermediate transitions, which
+    // the per-channel throttles make inaudible anyway.
+    if (window.__announcer) {
+      const ms = mySlot();
+      window.__announcer.update({
+        now,
+        spectator: !!Net.spectator || (Net.mode === "lockstep" && Net.session && Net.session.role === "spec"),
+        me: ms,
+        viewSlot: sim.viewSlot || ms || 1,
+        hostile: (a, b) => sim.hostile(a, b),
+        mapW: MAP_W,
+        flags: sim.buildings.filter((b) => b.defId === "depot").map((b) => ({ id: b.id, owner: b.owner })),
+        buildings: sim.buildings,
+        units: sim.units,
+        visible: sim.visible,
+      });
+    }
     const panSpeed = cam.dist * 0.85 * dt2;
     // V1-b: pan is screen-relative, so the world-axis WASD vector rotates with
     // yaw — right = (cos yaw, −sin yaw), forward = (−sin yaw, −cos yaw) on the
@@ -40289,6 +40309,159 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
     const len = Math.hypot(dx, dz) || 1;
     return Math.max(-1, Math.min(1, (dx * e[0] + dz * e[2]) / len));
   };
+  // ---- ANNOUNCER BEGIN
+  // R12 announcer wiring (reverse/notes/announcer-voice-native-analysis.md;
+  // evidence reverse/evidence/audio/r12-*.txt; 6.9.18 libil2cpp.so 8ace05bb…).
+  // [DECOMP] Two native announcer systems: (1) AudioBattleVoicesPlayer
+  // (dump.cs:80813) — per-unit-category radio voices keyed by VoiceType
+  // (FlagCaptured=59, EnemySpotted=72, UnderAttack=73, FogDetected=62 …),
+  // triggered from LC logic commands (LCUnitDamage/LCUnitDie/LCFlagCaptured/
+  // LCUnitFogVisibleChanged … — the same server LC stream R7 decoded) and GH
+  // gesture handlers; (2) BattleUIEventHelper (dump.cs:296691) — global
+  // AudioFile.BattleEvent announcements (OurBaseUnderAttack=2,
+  // EnemyDetected=8, FlagCaptured=12, FlagLost=13, BldComplete=14 …). The
+  // browser ann_* cues are the second system's register.
+  // [DECOMP] Spectator/replay gate: BattleUIEventHelper.get_IsSpectator
+  // 0x816C294 / get_IsReplay 0x816C2E4 (+ AreUIEventsAllowed 0x816C6B8
+  // ClientUIEventSwitchers) — spec/replay clients announce nothing.
+  // [DECOMP] Flag polarity — ClientFlag.Capture(side) 0x8072CBC: m_side ==
+  // side -> no-op (no announce); announce only when m_inProgress (progress
+  // capture; init-time ownership grants are silent); capturer side
+  // BattleEntityUtils.IsAllySide 0x8261618 -> FlagIsCaptured (ann_captured)
+  // else FlagIsLost (ann_flag_lost). Prior owner is NOT consulted — a
+  // progress-completed capture of a NEUTRAL flag announces too.
+  // [DECOMP] Under-attack feed — GUIBattleMinimapRenderer.UnitAttacked
+  // 0x82064F4 / BuildingAttacked 0x82065BC: CreateEntityAction filter gate +
+  // per-channel next-allowed-time throttle (nextAllowed = TimeUtils.
+  // GetMilliTicks 0x8D355C8 + delay int — fields @0x198/0x1C0/0x1C8 are
+  // prefab-serialized [RUNTIME] values, not static), then
+  // BattleEntityUtils.IsOwnEntity 0x82739CC -> Our* vs Allied* variants.
+  // [DECOMP] Enemy detection chain — fog detection -> minimap.EnemyDetected
+  // 0x8203EF4 -> BattleUIEventHelper.EnemyDetected 0x816F008 ->
+  // ItemMsgEnemyDetected=8 (ann_enemy); announced on NEW detection.
+  // [INFERRED] flags_lost: native fires PlayerControlsFlags/EnemyControlsFlags
+  // (ItemMsg 18/19) from LCCommonMessage (server common message — payload
+  // opaque statically); browser trigger approximates "one alliance owns every
+  // flag" evaluated after each completed capture.
+  // [BROWSER] throttle defaults (native delays are prefab ints, unmeasured):
+  // base-under-attack 20s, enemy-detected 15s, enemy-flags 30s. Flags have NO
+  // throttle (native calls FlagIsCaptured/FlagIsLost directly per capture).
+  // Native events with no browser cue stay unwired (OurUnitIsUnderAttack,
+  // ItemMsgOurBldDestroyed=7, TroopActivated=28/TroopArrived=29 — transports
+  // out of browser scope; PlayerControlsFlags=18; ContractCompleted
+  // <- LCSideDailyUpdate — no contracts in browser scope).
+  // UI-layer observer only — reads sim snapshots, never writes sim state
+  // (kernel hash untouched; deterministic suites unaffected).
+  class Announcer {
+    constructor() {
+      this.play = null;
+      this.COOLDOWN = { base: 20000, enemy: 15000, flags: 30000 };
+      this.reset();
+    }
+    reset() {
+      this.prevFlagOwner = new Map();
+      this.prevBldHp = new Map();
+      this.prevEnemyVis = new Set();
+      this.nextOk = { base: 0, enemy: 0, flags: 0 };
+      this.sawWorld = false;
+    }
+    allied(owner, me, hostile) {
+      return owner !== 0 && !hostile(owner, me);
+    }
+    update(w) {
+      if (!this.play || !w || w.spectator) {
+        if (w && w.spectator)
+          this.reset();
+        return;
+      }
+      const me = w.viewSlot || w.me || 1;
+      const hostile = w.hostile || ((a, b) => a !== b);
+      const first = !this.sawWorld;
+      this.sawWorld = true;
+      // --- flags (depots): capture polarity per ClientFlag.Capture [DECOMP]
+      let captured = false;
+      for (const f of w.flags) {
+        const prev = this.prevFlagOwner.get(f.id);
+        this.prevFlagOwner.set(f.id, f.owner);
+        if (first || prev === undefined || prev === f.owner)
+          continue;
+        if (f.owner !== 0) {
+          if (this.allied(f.owner, me, hostile)) {
+            captured = true;
+            this.play("ann_captured", { vol: 0.85 });
+          } else {
+            captured = true;
+            this.play("ann_flag_lost", { vol: 0.85 });
+          }
+        }
+      }
+      // --- all-flags control [INFERRED] (LCCommonMessage payload opaque)
+      if (w.flags.length && !first) {
+        const n = w.flags.length;
+        const own = w.flags.filter((f) => this.allied(f.owner, me, hostile)).length;
+        const foe = w.flags.filter((f) => f.owner !== 0 && hostile(f.owner, me)).length;
+        if (foe === n && w.now >= this.nextOk.flags) {
+          this.play("ann_flags_lost", { vol: 0.85 });
+          this.nextOk.flags = w.now + this.COOLDOWN.flags;
+        } else if (own === n) {
+          // native PlayerControlsFlags (ItemMsgYouControlFlags=18) — no browser cue
+        }
+      }
+      // --- base under attack: allied non-flag buildings, hp-drop + per-channel
+      // throttle (native UnitAttacked/BuildingAttacked model) [DECOMP logic]
+      for (const b of w.buildings) {
+        const prev = this.prevBldHp.get(b.id);
+        this.prevBldHp.set(b.id, b.hp);
+        if (first || prev === undefined || b.defId === "depot" || b.owner === 0)
+          continue;
+        if (this.allied(b.owner, me, hostile) && b.hp < prev && w.now >= this.nextOk.base) {
+          this.play("ann_base_attack", { vol: 0.8 });
+          this.nextOk.base = w.now + this.COOLDOWN.base;
+        }
+      }
+      // --- enemy detected: NEW cell-visible transition per enemy entity
+      // (fog detection chain; native announces on the detection event) [DECOMP]
+      if (w.visible) {
+        const vis = w.visible[(w.viewSlot || 1) - 1];
+        if (vis) {
+          const seen = new Set();
+          let detected = false;
+          for (const u of w.units) {
+            if (!hostile(u.owner, me) || u.garrison !== undefined)
+              continue;
+            const key = "u" + u.id;
+            const v = !!vis[Math.round(u.y) * w.mapW + Math.round(u.x)];
+            if (v)
+              seen.add(key);
+            if (!first && v && !this.prevEnemyVis.has(key))
+              detected = true;
+          }
+          for (const b of w.buildings) {
+            if (!hostile(b.owner, me) || b.owner === 0)
+              continue;
+            const key = "b" + b.id;
+            const v = !!vis[Math.round(b.y) * w.mapW + Math.round(b.x)];
+            if (v)
+              seen.add(key);
+            if (!first && v && !this.prevEnemyVis.has(key))
+              detected = true;
+          }
+          this.prevEnemyVis = seen;
+          if (detected && w.now >= this.nextOk.enemy) {
+            this.play("ann_enemy", { vol: 0.85 });
+            this.nextOk.enemy = w.now + this.COOLDOWN.enemy;
+          }
+        }
+      }
+    }
+  }
+  window.__announcer = new Announcer();
+  window.__announcer.play = (name, opts) => {
+    try {
+      window.__sfx.play(name, opts);
+    } catch (e) {}
+  };
+  // ---- ANNOUNCER END
   {
     const kick = () => {
       try {

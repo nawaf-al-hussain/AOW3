@@ -707,7 +707,7 @@ P4 = future/platform work.
 | H9 | **P2** | UI layout unmeasured vs original (fonts, panels, scaling) | UI | APPROXIMATE | dev plan Phase 18 |
 | H10 | **P2** | Difficulty settings absent | AI | MISSING | AI audit |
 | H11 | **P2** | Veterancy/upgrade growth (mega tiers) unmodeled | units/economy | MISSING | estat tiers |
-| M1 | **P3** | 7 announcer cues loaded but untriggered | audio | PARTIALLY CONFIRMED | Sfx load list |
+| M1 | **P3** | 7 announcer cues loaded but untriggered | audio | **CONFIRMED** (R12 Task 60: native trigger system decoded — BattleUIEventHelper global register dump.cs:296691 + AudioBattleVoicesPlayer dump.cs:80813; 5 cues wired v61, 2 dormant with decoded triggers) | announcer-voice-native-analysis.md + evidence/audio/r12-* |
 | M2 | **P3** | Music missing | audio | MISSING | — |
 | M3 | **P3** | Weapon→sound mapping heuristic | audio | APPROXIMATE | Sfx pools |
 | M4 | **P3** | Salamander → missing GLB silent fallback (bug) | assets | PARTIALLY CONFIRMED | game.js L35597 |
@@ -736,6 +736,7 @@ P4 = future/platform work.
 | R9 | Native client↔server battle protocol | informs authoritative-MP design (P4) | `AIComm*` serialization, connection classes | `SendCommand`, message factories, CRC flow | names + structure | wire format | on-device TLS-unpinning + traffic capture (if plain), or Frida message hooks |
 | R10 | Original camera/UI metrics | measured UI/camera reconstruction (H8/H9) | device screenshots/video | — | none | measurements | screen-record device gameplay; measure HUD proportions/camera pitch per dev plan Phase 18/20 |
 | R11 | Do naval/aircraft/hero prefabs exist in downloadable Addressables content? | B2 asset acquisition | `assets/aa/catalog.json` on device | catalog entries (vfx note proves access pattern) | APK-side absence proven | content-catalog presence | pull catalog + bundles from device storage; re-run `unpack_bundles.py` |
+| R12 | Who plays which announcer cue when? (M1/I10) | audio fidelity; converts the 7 silent ann_* cues | `BattleUIEventHelper` (dump.cs:296691) + `AudioBattleVoicesPlayer` (dump.cs:80813) | **DONE (Task 60)**: full trigger wiring via whole-binary BL xref (LC logic commands + GH gesture handlers + minimap feed); flag polarity (ClientFlag.Capture 0x8072CBC), per-channel throttles, spec/replay gate; 5 cues wired v61 + 10-vector test (`announcer-voice-native-analysis.md`, `evidence/audio/r12-*`) | trigger wiring + enum registers CONFIRMED `[DECOMP]` | audio clip inventory + prefab throttle values (bundle-bound) | closed at the statically-reachable limit; optional per-unit VoiceType layer + M3 weapon-sound table |
 
 ---
 
@@ -752,7 +753,7 @@ P4 = future/platform work.
 | I7 | burst rounds (`shot_count/shot_int`) | dormant machinery | wire values when captured | R1 | low |
 | I8 | EnergyProduction/**EnergyNeed** | flat bonus, no shortage (G6) | consumption + brownout rules | R1/R7 for rules | medium |
 | I9 | control groups, pause/settings | missing (M5) | UI + command plumbing | none | low |
-| I10 | announcer events (enemy sighted, base attacked, flag lost…) | 7 cues silent (M1) | wire triggers to sim events | none | low |
+| I10 | announcer events (enemy sighted, base attacked, flag lost…) | ~~7 cues silent (M1)~~ **DONE (R12, Task 60, v61)**: ann_captured/ann_flag_lost (flag polarity per ClientFlag.Capture 0x8072CBC [DECOMP]), ann_flags_lost (all-flags-hostile [INFERRED]), ann_enemy (new fog-detection transitions [DECOMP chain]), ann_base_attack (allied building hp drop, per-channel throttle [DECOMP logic, delay BROWSER]); spectator gate [DECOMP]; UI-layer observer — zero sim-state writes; announcer.test.js 10 vectors | shipped | none | low |
 | I11 | unknown (perf target) | per-unit clones, per-frame mixers, O(n²) scans | instancing/throttle/spatial index — **only after stress data** (Phase 23) | measurements | medium (behavior-neutral requirement) |
 | I12 | (architecture) versioned schemas + clean boundary | ad-hoc command objects in monolith | extract kernel to own module; version commands/state | none | medium (mechanical) |
 | I13 | server-authoritative MP with fog (P4 scope) | P2P lockstep, full state everywhere | server build of the same core (roadmap Phases G–H) | I12, R9 | high |

@@ -1,0 +1,117 @@
+R12b BattleUIEventHelper trigger-site xref — libil2cpp.so v6.9.18 (8ace05bb…)
+total BL instructions scanned: 2671952
+
+== BattleUIEventHelper.InsufficientResources @ 0x816c52c — 5 BL call site(s)
+   <- 0x791a120  GUIBattleListUpgradeItem.private void OnClick() { }+0x74
+   <- 0x8194838  GUIBattleListConstructionItem.protected void OnClick() { }+0x198
+   <- 0x8223c34  GUIBattleBuildingSpecButtonUpgrade.private void OnClick() { }+0x168
+   <- 0x82264e0  GUIBattleSpawnOrderButton.private bool CheckHasGold() { }+0x60
+   <- 0x828ed50  GHBuildingSet.public void ButtonOkClick() { }+0x1f0
+
+== BattleUIEventHelper.InsufficientEnergy @ 0x816c708 — 1 BL call site(s)
+   <- 0x791a194  GUIBattleListUpgradeItem.private void OnClick() { }+0xe8
+
+== BattleUIEventHelper.UnitLimitReached @ 0x816c894 — 0 BL call site(s)
+   (no direct BL callers)
+
+== BattleUIEventHelper.OurBuildingIsDestroyed @ 0x816caf8 — 1 BL call site(s)
+   <- 0x8138d6c  LCBuildingDestroy.public override bool Execute(float deltaTime) { }+0x244
+
+== BattleUIEventHelper.BuildingComplete @ 0x816cd90 — 1 BL call site(s)
+   <- 0x813ba50  LCBuildingProcessCompleted.public override bool Execute(float deltaTime) { }+0x120
+
+== BattleUIEventHelper.BuildingUpgradeComplete @ 0x816cda8 — 1 BL call site(s)
+   <- 0x813baa4  LCBuildingProcessCompleted.public override bool Execute(float deltaTime) { }+0x174
+
+== BattleUIEventHelper.ResourceContainerIsDetected @ 0x816e4c8 — 1 BL call site(s)
+   <- 0x8136e38  LCBonusBoxCreate.public override bool Execute(float deltaTime) { }+0x298
+
+== BattleUIEventHelper.ResourceReceived @ 0x816e818 — 1 BL call site(s)
+   <- 0x813718c  LCBonusBoxTake.public override bool Execute(float deltaTime) { }+0x17c
+
+== BattleUIEventHelper.FlagIsCaptured @ 0x816ea28 — 1 BL call site(s)
+   <- 0x8072d10  ClientFlag.public void Capture(ClientBattleSide side) { }+0x148
+
+== BattleUIEventHelper.FlagIsLost @ 0x816eba0 — 1 BL call site(s)
+   <- 0x8072d1c  ClientFlag.public void Capture(ClientBattleSide side) { }+0x154
+
+== BattleUIEventHelper.PlayerControlsFlags @ 0x816ed18 — 1 BL call site(s)
+   <- 0x8146f60  LCCommonMessage.public override bool Execute(float deltaTime) { }+0x1c
+
+== BattleUIEventHelper.EnemyControlsFlags @ 0x816ee90 — 1 BL call site(s)
+   <- 0x8146f6c  LCCommonMessage.public override bool Execute(float deltaTime) { }+0x28
+
+== BattleUIEventHelper.EnemyDetected @ 0x816f008 — 1 BL call site(s)
+   <- 0x820404c  GUIBattleMinimapRenderer.private void EnemyDetected(IEntityDetectable entity) { }+0x158
+
+== BattleUIEventHelper.EnemyHiddenDetected @ 0x816f1a4 — 1 BL call site(s)
+   <- 0x820403c  GUIBattleMinimapRenderer.private void EnemyDetected(IEntityDetectable entity) { }+0x148
+
+== BattleUIEventHelper.OurHiddenUnitDetected @ 0x816f340 — 1 BL call site(s)
+   <- 0x820619c  GUIBattleMinimapRenderer.public void OurHiddenUnitDetected(ClientUnit unit) { }+0xcc
+
+== BattleUIEventHelper.OurUnitIsUnderAttack @ 0x816f4b8 — 1 BL call site(s)
+   <- 0x8206590  GUIBattleMinimapRenderer.public void UnitAttacked(ClientUnit unit) { }+0x9c
+
+== BattleUIEventHelper.OurBaseIsUnderAttack @ 0x816f654 — 1 BL call site(s)
+   <- 0x8206654  GUIBattleMinimapRenderer.public void BuildingAttacked(ClientBuilding building) { }+0x98
+
+== BattleUIEventHelper.AlliedUnitIsUnderAttack @ 0x816f7cc — 1 BL call site(s)
+   <- 0x820659c  GUIBattleMinimapRenderer.public void UnitAttacked(ClientUnit unit) { }+0xa8
+
+== BattleUIEventHelper.AlliedBaseIsUnderAttack @ 0x816f944 — 1 BL call site(s)
+   <- 0x8206660  GUIBattleMinimapRenderer.public void BuildingAttacked(ClientBuilding building) { }+0xa4
+
+== BattleUIEventHelper.OurUnitExplodedOnMine @ 0x816fabc — 1 BL call site(s)
+   <- 0x8206afc  GUIBattleMinimapRenderer.private void InternalUnitExplodedOnMine(ClientUnit unit, List<GUIBattleMinimapRenderer.Act+0x94
+
+== BattleUIEventHelper.MineDetected @ 0x816fc34 — 1 BL call site(s)
+   <- 0x8206c0c  GUIBattleMinimapRenderer.private void InternalMineDetected(ClientMine mine, List<GUIBattleMinimapRenderer.ActionInf+0x98
+
+== BattleUIEventHelper.SpaceSystemIsReadyForStrike @ 0x816fdd0 — 1 BL call site(s)
+   <- 0x813dfcc  LCBuildingSuperWeaponReady.public override bool Execute(float deltaTime) { }+0x13c
+
+== BattleUIEventHelper.NuclearMissileIsReadyForLaunch @ 0x816ff48 — 1 BL call site(s)
+   <- 0x813dfd8  LCBuildingSuperWeaponReady.public override bool Execute(float deltaTime) { }+0x148
+
+== BattleUIEventHelper.SpaceStrikeIsDetected @ 0x81700c0 — 1 BL call site(s)
+   <- 0x813dc84  LCBuildingSuperWeaponLaunchDetected.public override bool Execute(float deltaTime) { }+0x264
+
+== BattleUIEventHelper.NuclearLaunchIsDetected @ 0x8170240 — 1 BL call site(s)
+   <- 0x813dc90  LCBuildingSuperWeaponLaunchDetected.public override bool Execute(float deltaTime) { }+0x270
+
+== BattleUIEventHelper.SpaceStrikeIsRejected @ 0x81703c0 — 1 BL call site(s)
+   <- 0x813de30  LCBuildingSuperWeaponLaunchRejected.public override bool Execute(float deltaTime) { }+0x164
+
+== BattleUIEventHelper.NuclearLaunchIsRejected @ 0x817051c — 1 BL call site(s)
+   <- 0x813de3c  LCBuildingSuperWeaponLaunchRejected.public override bool Execute(float deltaTime) { }+0x170
+
+== BattleUIEventHelper.DeployBegin @ 0x8170678 — 1 BL call site(s)
+   <- 0x8154ecc  LCSideDeployMode.<DeployBeginCoroutine>d__8.private bool MoveNext() { }+0x1a4
+
+== BattleUIEventHelper.PlaceBuilding @ 0x817070c — 0 BL call site(s)
+   (no direct BL callers)
+
+== BattleUIEventHelper.BoostAdded @ 0x8170798 — 1 BL call site(s)
+   <- 0x8152284  LCSideBoostAdd.public override bool Execute(float deltaTime) { }+0x100
+
+== BattleUIEventHelper.BoostApply @ 0x81707dc — 1 BL call site(s)
+   <- 0x81526c8  LCSideBoostApply.public override bool Execute(float deltaTime) { }+0x114
+
+== BattleUIEventHelper.BoostReject @ 0x8170870 — 1 BL call site(s)
+   <- 0x8152f04  LCSideBoostReject.public override bool Execute(float deltaTime) { }+0xa0
+
+== BattleUIEventHelper.ContractCompleted @ 0x8170dd4 — 1 BL call site(s)
+   <- 0x81547bc  LCSideDailyUpdate.public override bool Execute(float deltaTime) { }+0x1a8
+
+== BattleUIEventHelper.ThereIsAllyUnit @ 0x81709e8 — 1 BL call site(s)
+   <- 0x82985d8  GHIdle.SelectionModeReplaceClickHandler.public override void ClickOnAllyUnitAtNoneSelection(ClientUnit unit, Vector3 point) { }+0x54
+
+== BattleUIEventHelper.ThereIsAllyBuilding @ 0x8170b00 — 2 BL call site(s)
+   <- 0x8298cf0  GHIdle.SelectionModeReplaceClickHandler.public override void ClickOnAllyBuildingAtNoneSelection(ClientBuilding building, Vector3 p+0x44
+   <- 0x829d0d4  GHSpectatorIdle.private void BuildingTapHandle(ClientBuilding clickedBuilding) { }+0xb8
+
+== BattleUIEventHelper.ShowInfoMessage @ 0x8170c18 — 2 BL call site(s)
+   <- 0x8146f84  LCCommonMessage.public override bool Execute(float deltaTime) { }+0x40
+   <- 0x8148730  LCDialogShow.public override bool Execute(float deltaTime) { }+0x7a8
+

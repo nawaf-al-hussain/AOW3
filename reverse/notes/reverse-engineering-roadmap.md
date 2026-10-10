@@ -10,7 +10,7 @@ Game version of record: **6.9.18** (`libil2cpp.so` sha256 `8ace05bb…`, metadat
 dump.cs `0050e67d…`). Evidence labels per AGENTS.md §9 / mission vocabulary:
 `[NATIVE] [DECOMP] [RUNTIME] [ASSET] [SERVER-DATA] [BROWSER] [INFERRED] [SPECULATIVE]`.
 
-## Status snapshot (2026-10-10, R6 closed / Task 59)
+## Status snapshot (2026-10-10, R12 closed / Task 60)
 
 | Audit ID | Question | Status | Evidence anchor | Next concrete action |
 |---|---|---|---|---|
@@ -25,6 +25,7 @@ dump.cs `0050e67d…`). Evidence labels per AGENTS.md §9 / mission vocabulary:
 | R9 | Client↔server battle protocol | BLOCKED (device) | AIComm class names | TLS-unpin + capture, or Frida hooks |
 | R10 | Camera/UI metrics | BLOCKED (device captures) | V8 A/B harness exists | record device gameplay; calibrate v2 pitch ramp |
 | R11 | Addressables DLC scan (naval/air prefabs) | BLOCKED (device storage) | APK-side absence proven | pull catalog+bundles from device, re-run `unpack_bundles.py` |
+| R12 | Native announcer/voice trigger system | **CONFIRMED** (trigger wiring decoded: BattleUIEventHelper global register + AudioBattleVoicesPlayer LC/GH wiring; flag polarity, throttles, spec gate; fold-in wired ann_captured/flag_lost/flags_lost/enemy/base_attack v61) | `notes/announcer-voice-native-analysis.md`, `evidence/audio/r12-*.txt` | closed at static limit for the global register; optional: per-unit VoiceType voice layer (note §2), M3 weapon-sound table from audio bundles |
 
 ## Priorities (mission §6 mapped to sequencing)
 
@@ -91,3 +92,8 @@ Ranked by fidelity impact per audit §7 and current residuals:
    can carry the R6 per-cell overlay dump).
 6. R7 re-open (optional, tooling-gated): Il2CppDumper script.json for vtable closure
    ($ZM/$Pn/$HS callers) → fogLines bytes → reveal-shape fold-in if hand-tuned.
+7. ~~**I10/M1 announcer cue triggers**~~ — **DONE (R12, Task 60, 2026-10-10)**: trigger
+   wiring decoded from BattleUIEventHelper/AudioBattleVoicesPlayer; 5 silent cues wired
+   (ann_captured/flag_lost/flags_lost/enemy/base_attack) as UI-layer observer + 10-vector
+   test; ann_arrived/ann_achievement decoded-but-dormant (transports/contracts out of
+   scope); per-unit VoiceType voice layer and M3 weapon-sound table remain optional.

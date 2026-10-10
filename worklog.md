@@ -2331,3 +2331,36 @@ Stage Summary:
   setup; would also settle whether reserved bits 7/14 ever occur server-side.
 - Next: R1 device session (user-supplied; runbook S1-S4 ready; can carry the R6 overlay dump),
   R8 numeric .so pass queued on APK re-acquisition.
+
+---
+Task ID: 60
+Agent: main (RE session, orthogonal-workstream — sim-RE queue intentionally avoided, R7-R8-H1-R6 owned by the parallel session)
+Task: R12 — native announcer/voice trigger system decode + browser fold-in (converts audit M1/I10; audio domain disjoint from the other agent's sim-kernel sprint)
+
+Work Log:
+- Repo sync: remote had moved to c125f00 (other agent's R7 passes 1-3, R8, H1, R6 — the whole prior queue); local 1201-file mode-noise (umask artifact) resolved via core.fileMode false; pulled ff-only; 8/8 suites green baseline. Environment reset re-recovered: XAPK re-downloaded via LFS media endpoint (sha256 1a41e033… MATCH), libil2cpp.so 8ace05bb… + global-metadata.dat d2e8dd0d… re-pinned, dump.cs + stringliteral.json re-extracted, capstone 5.0.7 reinstalled.
+- Located the two native announcer systems in dump.cs: AudioBattleVoicesPlayer (80813, ~46 Try*/Play* entry points, voice dictionaries keyed VoiceCategory x DamageFrom/DestroyedEnemyType/SpottedEnemyType, Light/Hard timeout lanes + command-voice timeout + last-voice dedup) and BattleUIEventHelper (296691, static global register over AudioFile.BattleEvent — 38 ids recovered dump.cs:81440). Enum registers recovered: VoiceType (83222, 45 ids), VoiceCategory flags (80390, 10 heroes), SpottedEnemyType (Sniper=5/Mine=6), DestroyedEnemyType, AudioFile.BattleGUI (ItemIntTimerBattleStart=20/ItemIntVictory=24/ItemIntDefeat=25), DamageFrom.
+- Wrote r12_voice_trigger_xref.py (whole-binary BL scan, 2,671,952 call sites, type-qualified caller resolution): voice triggers ride the LC logic-command stream (same server stream R7 decoded) — LCUnitDamage->UnderDamage+ExplodedOnMine, LCUnitDie->EnemyDestroyed+AviaHit, LCBuildingDestroy->EnemyDestroyed, LCUnitFogVisibleChanged/LCUnitFoggerOn->FogDetected, LCUnitShieldOn->ShieldDetected, LCFlagCaptured->FlagCapturedVoice, LCUnitOutOfFuel, LCUnitMove->ZombieMove, LCBulletExplode->ZombieImpact, LCUnitShoot->HeroMeleeAttack, LCHeroAbilityActive/PassiveActivate, LCUnitSpecialTo/From, ClientUnit.Birth/Kill->HeroCreated/Died; command acknowledgements fire from GH gesture handlers (GHUnitTakePositions.OnBattleMapClick->move, GHUnitPatrolTargeting, GHUnitBombardTargeting, GHUnitDemining, GUIBattleUnitMiningOk, GUIBattleActionUnitSpecHoldPosition, AICommandVisualizerHelper attack sends). Evidence audio/r12-voice-trigger-xref.txt.
+- Wrote r12_battleui_event_xref.py: every BattleUIEventHelper method pinned to its trigger — LCBuildingProcessCompleted->BldComplete/UpgComplete, LCBonusBoxCreate/Take->ContDetected/ResReceived, ClientFlag.Capture->FlagIsCaptured/FlagIsLost, LCCommonMessage->PlayerControlsFlags/EnemyControlsFlags, GUIBattleMinimapRenderer.EnemyDetected/UnitAttacked/BuildingAttacked/OurHiddenUnitDetected/InternalUnitExplodedOnMine/InternalMineDetected -> the detection/under-attack family, LCBuildingSuperWeaponReady/LaunchDetected/LaunchRejected -> Space/Nuclear, LCSideDeployMode->DeployBegin, LCSideBoostAdd/Apply/Reject, LCSideDailyUpdate->ContractCompleted, GUI click handlers->InsufficientResources/Energy. Evidence audio/r12-battleui-event-xref.txt.
+- Flag polarity decoded (r12_flag_capture_decode.py, ClientFlag.Capture 0x8072CBC from function start): m_side==side no-op -> announce only when m_inProgress (0x75) -> BattleEntityUtils.IsAllySide (0x8261618) ? FlagIsCaptured : FlagIsLost; prior owner NOT consulted (neutral progress-capture announces); continuation = minimap.FlagChange + ShowCapture/HideCapture. Under-attack feed decoded: GUIBattleMinimapRenderer.UnitAttacked 0x82064F4 / BuildingAttacked 0x82065BC = CreateEntityAction filter (0x82061C0) + per-channel next-allowed-time throttle (TimeUtils.GetMilliTicks 0x8D355C8 + prefab int delay; units/buildings separate channels) + IsOwnEntity (0x82739CC) Our/Allied split. Evidence audio/r12-flag-capture-decode.txt.
+- Fold-in (docs/game.js, behavior, v=60 -> v=61): ANNOUNCER block — UI-layer Announcer observer + per-frame snapshot feed after the sim-step loop. Wired the 5 mappable silent cues: ann_captured/ann_flag_lost (flag polarity per decoded ClientFlag.Capture), ann_flags_lost (all-flags-hostile after capture, INFERRED — LCCommonMessage payload opaque), ann_enemy (NEW enemy cell-visible transitions — the R7 fog-detection chain's audio consumer), ann_base_attack (allied non-flag building hp drop, per-channel throttle, delay BROWSER 20s native-prefab-unmeasured). ann_arrived (TroopArrived=29) and ann_achievement (ContractCompleted) documented dormant — transports/contracts out of browser scope; no invented triggers. Spectator/replay gate per BattleUIEventHelper get_IsSpectator/get_IsReplay. Kernel untouched — zero sim-state writes, zero hash impact.
+- Tests: new reverse/evidence/tests/announcer.test.js (10 vectors; extracts the shipped ANNOUNCER block verbatim — flag polarity incl. neutral-capture-announces, no-flag-throttle, all-flags-lost cooldown, base-attack throttle window, depot-exclusion, enemy-detected transition-only, spectator gate + state reset, shipped cooldown constants).
+- Cross-file updates: note reverse/notes/announcer-voice-native-analysis.md (architecture, both wiring tables, polarity, fold-in map, residuals); registry R12 entry (CONFIRMED; converts M1+I10; M3 anchor recorded); roadmap snapshot header + R12 row + queue item 7 struck-done; audit §6 M1 -> CONFIRMED, §7 R12 row added, §8 I10 -> DONE; reverse/README.md recovered-areas row.
+- Tools: r12_voice_trigger_xref.py / r12_battleui_event_xref.py / r12_flag_capture_decode.py (harness lineage r6_bitname_crossref.py).
+- Tests: node --check OK; 9 suites GREEN — 8 prior suites unchanged (commands-determinism 57/57, phase5 236/236, replay 45/45, lockstep-jip 88/88, data-model 379, accuracy, stat-caps 37/37, unit-fsm) + announcer 10/10.
+
+Stage Summary:
+- R12 CONFIRMED: the complete native announcer trigger system is decoded — the global
+  BattleEvent register (BattleUIEventHelper) and the per-unit voice register
+  (AudioBattleVoicesPlayer) with their LC/GH/minimap trigger sites, flag-capture
+  polarity, throttle model and spectator gate. M1 CLOSED, I10 DONE.
+- Browser: the 7 silent cues resolved — 5 wired (ann_captured, ann_flag_lost,
+  ann_flags_lost, ann_enemy, ann_base_attack), 2 decoded-but-dormant
+  (ann_arrived, ann_achievement) with their exact native triggers recorded for the
+  day transports/contracts exist in scope.
+- Residual (bundle-bound): audio clip inventory + prefab throttle values;
+  TryPlayEnemySpottedVoice delegate call site; per-unit VoiceType voice layer and
+  M3 weapon-sound table left optional in the registry.
+- Next: R1 device session remains the highest-value unblock (user-supplied); optional
+  offline items: per-unit voice layer from note §2, M3 weapon->sound table from audio
+  bundles, B7 path-slot system (deliberately last).

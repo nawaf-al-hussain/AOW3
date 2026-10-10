@@ -183,6 +183,39 @@
         "B3"
       ],
       "next_action": "pull assets/aa/catalog.json + bundles, re-run pipeline/tools/unpack_bundles.py"
+    },
+    "R12": {
+      "question": "Native announcer/voice trigger system (who plays which cue when)",
+      "status": "CONFIRMED (trigger wiring decoded; clip inventory + prefab delay values RUNTIME)",
+      "converts_gaps": [
+        "M1",
+        "I10"
+      ],
+      "key_findings": [
+        "two systems: AudioBattleVoicesPlayer (dump.cs:80813, per-unit-category voices keyed VoiceCategory x DamageFrom/DestroyedEnemyType/SpottedEnemyType; VoiceType enum dump.cs:83222 = 45 numbered voice events) and BattleUIEventHelper (dump.cs:296691, global AudioFile.BattleEvent announcements, dump.cs:81440 = 38 ids incl. OurBaseUnderAttack=2/EnemyDetected=8/FlagCaptured=12/FlagLost=13/BldComplete=14/EnemyControlsFlags=19/TroopArrived=29)",
+        "voice triggers ride the LC logic-command stream (same server stream R7 decoded): LCUnitDamage->UnderDamage+Mine, LCUnitDie->EnemyDestroyed+AviaHit, LCUnitFogVisibleChanged->FogDetected/ShieldDetected/ZombieSpotted, LCFlagCaptured->FlagCapturedVoice, LCUnitShoot->HeroMeleeAttack, ClientUnit.Birth/Kill->HeroCreated/Died; command acknowledgements fire from GH gesture handlers (GHUnitTakePositions.OnBattleMapClick->move voice)",
+        "strategic announcements: LCBuildingProcessCompleted->BldComplete/UpgComplete, ClientFlag.Capture->FlagIsCaptured/FlagIsLost, LCCommonMessage->PlayerControlsFlags/EnemyControlsFlags, minimap.EnemyDetected/UnitAttacked/BuildingAttacked->EnemyDetected/OurUnit/Allied/OurBase under-attack family, LCBuildingSuperWeapon*->Space/Nuclear events, LCSideDailyUpdate->ContractCompleted",
+        "flag polarity [DECOMP] (ClientFlag.Capture 0x8072CBC): m_side==side no-op; announce only when m_inProgress; capturer BattleEntityUtils.IsAllySide 0x8261618 -> FlagIsCaptured else FlagIsLost; prior owner NOT consulted (neutral progress-capture announces); no throttle",
+        "under-attack feed [DECOMP logic]: CreateEntityAction filter + per-channel next-allowed-time throttle (GetMilliTicks + prefab int delay; units/buildings separate channels) + IsOwnEntity 0x82739CC Our-vs-Allied split; flags are not ClientBuildings",
+        "anti-spam [DECOMP logic, values RUNTIME]: CheckEventTimeouts Light/Hard lanes via GetUnitCombatType + random per-lane timeouts + command-voice timeout + last-voice dedup; spectator/replay gate get_IsSpectator 0x816C294/get_IsReplay 0x816C2E4",
+        "M3 anchor: UnitShootSoundEffector.ToShoot(int weaponIndex) 0x80D12EC -> PlayLimitedSoundById (per-weapon table bundle-bound, left open)"
+      ],
+      "evidence": [
+        "reverse/notes/announcer-voice-native-analysis.md",
+        "reverse/evidence/audio/r12-voice-trigger-xref.txt",
+        "reverse/evidence/audio/r12-battleui-event-xref.txt",
+        "reverse/evidence/audio/r12-flag-capture-decode.txt"
+      ],
+      "tools": [
+        "reverse/tools/r12_voice_trigger_xref.py",
+        "reverse/tools/r12_battleui_event_xref.py",
+        "reverse/tools/r12_flag_capture_decode.py"
+      ],
+      "browser_foldins": [
+        "v61: Announcer UI-layer observer (docs/game.js ANNOUNCER block) — ann_captured/ann_flag_lost (flag polarity per ClientFlag.Capture), ann_flags_lost (all-flags-hostile, INFERRED), ann_enemy (new fog-detection transitions), ann_base_attack (allied building hp drop, throttled); spectator gate; ann_arrived/ann_achievement decoded-but-dormant (transports/contracts out of browser scope); kernel untouched, zero hash impact; announcer.test.js 10 vectors"
+      ],
+      "residual": "audio clip inventory + prefab throttle values (scene/asset-bundle serialized, R11-adjacent); TryPlayEnemySpottedVoice static call site (delegate-driven); per-unit VoiceType voice layer not modeled in browser (wiring table recorded in note §2)",
+      "next_action": "closed at the statically-reachable limit for the global announcer register; optional: per-unit voice layer fold-in from note §2 table, M3 weapon-sound table from audio bundles"
     }
   },
   "findings": {
