@@ -2127,3 +2127,80 @@ Stage Summary:
 - H4 stays PARTIALLY CONFIRMED with the decoded contract recorded; R7 next_action = CLOSED at static limit (re-open gated on script.json).
 - game.js comment-only; v=58; 877/877 green (8 suites); node --check OK.
 - Next: R8 trajectory/gravity consumer scan (->G10), then H1 hash coverage, R6 bit-name cross-ref; R1 awaits the user device session.
+
+---
+Task ID: 54b
+Agent: Super Z (main)
+Task: R8 ballistic/gravity consumer scan (offline structural pass; registry R8, converts G10)
+
+Work Log:
+- State rebuild: repo @ 68165b4 (local = remote), R8 definition from roadmap +
+  registry: xref scan of WeaponType trajectory/gravity consumers. libil2cpp.so
+  NOT on disk (XAPK stub is a 134-byte placeholder; work tree cleaned) —
+  scope narrowed to dump.cs structural xref + RVA anchoring for a future .so pass.
+- Extracted dump.cs (sha256 0050e67d… — matches all prior native-note pins) to a
+  session work dir; four persisted scan scripts (scripts/r8_dump_inventory.py,
+  r8_class_surfaces.py, r8_bridge_surfaces.py, r8_rva_anchors.py + evidence
+  assembler r8_assemble_evidence.py).
+- FINDING 1 (twin surfaces): WeaponTypeMapEditorConfig m_bulletTrajectoryType
+  sbyte 0x3C / m_gravity short 0x3E (dump.cs:256582/256584) <-> runtime WeaponType
+  bulletTrajectoryType sbyte 0x9E / gravity short 0xA0 / accelerating bool 0xA2
+  / bul_type 0xA4 / boom_type 0xA8 (dump.cs:396971..); R1 prototype keys bind to
+  the RUNTIME offsets (browser-comparison.md L62 mapping CONFIRMED). Getter RVAs
+  recorded (get/set_BulletTrajectoryType 0x45B62EC/F4, get/set_Gravity
+  0x45B63AC/B4, get/set_Accelerating 0x45B632C/34, get/set_BoomType 0x45B637C/84).
+- FINDING 2 (engine taxonomy): BulletEngineType consts Linear=0 / Ballistic=1 /
+  Ballistic_High=2 / SelfDirected=3 / ChainLighting=4 / Melee=5 /
+  UpAndSelfDirected=6 (dump.cs:378800) — one engine class per family
+  (AbstractBallisticBulletEngine base 276251; Ballistic/BallisticHigh/Linear/
+  SelfDirected/ChainLighting + AdjustableBallistic retarget subclass +
+  LeviaphanNuclearRocket hero subclass w/ AnimationCurves + distance-scaled
+  gravity dividers [Min(0.5)]/[Min(1)]). SelfDirected: CurveMode enum
+  Clear0/Straight1/Single2/Double3, ACCELERATION_MULTIPLIER=10, Hermite-style
+  pos0/1/2+vel0/1/2 buffers, MissTargeting(offset, durationLeftFrom).
+- FINDING 3 (gravity unit): AbstractBallisticBulletEngine
+  GRAVITY_DIVIDER = 100 (dump.cs:276256) — gravity field enters arcs as
+  field/100; CalculateGravity virtual (0x80B25A8), height parametric in
+  duration via CalculateHeightCoefficients(int) (0x80B2050) — matches sim-side
+  absence of vel_z.
+- FINDING 4 (sim Bullet): Bullet : Entity (dump.cs:378393) carries we_type
+  WeaponType @0x18, fixed-point init/vel/target kinematics 0x28..0x54, THREE
+  durations (duration 0x5A / duration_next 0x5C / duration_long 0x5E — multi-leg
+  flight matching LCBulletTargeting payload), lowing sbyte @0x97 (descending
+  phase), missed/on_target/target_precise_hit 0x94..0x96, needing_guidance 0xAA
+  + virtual AccelerateAndGuide (0x458FD60), explosion_radius 0xAC + damaged books.
+- FINDING 5 (bridge): LCBulletCreate passes m_prototype WeaponType @0x28 to the
+  client (muzzle placement + ClientBulletVisibleStyle); ClientBullet keeps
+  prototype @0x48 + engine @0x58; LCBulletMissed dispatches miss flight BY
+  FAMILY (BallisticBulletExecute / SelfDirectedBulletExecute,
+  MISSED_FLIGTH_DISTANCE, DURATION_TIME_SCALER); LCBulletExplode named weapon
+  specials ThorBombWeaponId=66 / AlbatrossBombWeaponId=166.
+- Negative evidence: stringliteral.json sweep — ZERO trajectory/ballistic/arc/
+  engine literals (prefab/const-wired); BaseParams.ContentGravity = Unity UI
+  scroll gravity (unrelated); BulletMagnet = magnet-catch component.
+- Evidence: reverse/evidence/combat/trajectory-gravity-consumer-scan.txt
+  (5 parts, 1,142 lines, 466 dump.cs refs, 392 RVA anchors incl. per-engine
+  get_EngineType one-liners for the future .so pass).
+- Note: reverse/notes/r8-trajectory-gravity-consumers.md (provenance, 5 findings,
+  verdict, browser tribute guidance, 6 .so-blocked unknowns).
+- Updates: registry.json R8 UNKNOWN -> PARTIAL w/ 6 key findings; roadmap R8 row
+  + Priority B #2 + immediate queue; audit Projectile-travel row (MEDIUM->LOW
+  residual), G10 row, R8 row.
+- Browser fold-in (comment-only, d634560 precedent): fireShell + updateProjectiles
+  provenance comments (engine taxonomy, gravity/100, duration-triple timing,
+  linear fallback rationale); cache bump v=56 -> v=57 per §35.1.
+- Tests: node --check OK; 8/8 suites GREEN with baseline-identical counts
+  (accuracy all vectors, commands-determinism 50/50, data-model 379, lockstep-jip
+  88, phase5 236/236, replay 45/45, stat-caps 37/37, unit-fsm all vectors) —
+  comment-only delta proven zero-behavior.
+- Commits: this docs+comment commit (single; no pipeline changes).
+
+Stage Summary:
+- R8 converted from UNKNOWN to PARTIAL (structural): trajectory type = client
+  engine selector (7 families, final table), gravity = field/100 arc input,
+  sim timing = duration triple + lowing; browser artillery-arc model is now
+  R1-value-ready (keys mapped, structure final). Numeric arc math remains
+  .so-blocked with 392 RVA anchors recorded — the future pass is a straight
+  disassembly run, no re-search. Live = v=57 at session time (rebase note:
+  remote had advanced to v=58 via R7 pass 2/3 in parallel; the next game.js
+  change bumps to v=59).

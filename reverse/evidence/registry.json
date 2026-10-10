@@ -118,14 +118,24 @@
     },
     "R8": {
       "question": "m_bulletTrajectoryType / m_gravity consumer semantics",
-      "status": "UNKNOWN",
+      "status": "PARTIAL (structure recovered offline; numeric arc math needs .so)",
       "evidence": [
+        "reverse/evidence/combat/trajectory-gravity-consumer-scan.txt",
+        "reverse/notes/r8-trajectory-gravity-consumers.md",
         "reverse/evidence/data-model/weapon-schema.json"
       ],
       "converts_gaps": [
         "G10"
       ],
-      "next_action": "xref scan of WeaponType fields 0x3C/0x3E in weapon/spawn code (offline-startable)"
+      "key_findings": [
+        "trajectory type = client engine selector: BulletEngineType Linear=0/Ballistic=1/Ballistic_High=2/SelfDirected=3/ChainLighting=4/Melee=5/UpAndSelfDirected=6 (dump.cs:378800), one engine class per family",
+        "gravity unit fact: AbstractBallisticBulletEngine.GRAVITY_DIVIDER=100 -> field/100 = arc gravity (dump.cs:276256)",
+        "height is parametric in duration (CalculateHeightCoefficients), sim Bullet has NO vel_z; sim timing = duration/duration_next/duration_long triple + lowing @0x97 + needing_guidance @0xAA",
+        "twin surfaces: MapEditorConfig 0x3C/0x3E <-> runtime WeaponType 0x9E/0xA0/0xA2 (+accelerating 0xA2, bul_type 0xA4, boom_type 0xA8); R1 keys bind to the runtime offsets",
+        "LCBulletMissed dispatches miss flight by engine family (BallisticBulletExecute/SelfDirectedBulletExecute)",
+        "392 RVA anchors recorded for the future libil2cpp.so disassembly pass"
+      ],
+      "next_action": "numeric pass when libil2cpp.so re-acquired (anchors ready); browser arc model can be built structurally now, values drop in with R1"
     },
     "R9": {
       "question": "Native client-server battle wire protocol",
@@ -317,7 +327,7 @@
     "offline_open": [
       "R6",
       "R7",
-      "R8"
+      "R8 (structural done 2026-10-10)"
     ],
     "note": "See reverse/notes/reverse-engineering-roadmap.md for sequencing rationale"
   }

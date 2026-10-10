@@ -1,0 +1,1142 @@
+==============================================================================
+R8 consumer scan — m_bulletTrajectoryType / m_gravity surfaces (6.9.18, OFFLINE)
+source: dump.cs (Il2CppDumper v6.7.46) sha256 0050e67d23f898588f0771c69ba7f30f9122cd6eccd66674c0f7c87b7f24714b
+method: dump.cs structural xref — field decls, enum values, class surfaces,
+        RVA anchors (scripts r8_dump_inventory.py / r8_class_surfaces.py /
+        r8_bridge_surfaces.py / r8_rva_anchors.py, persisted at repo-root
+        scripts/ in the working session; see worklog Task 54).
+scope:  libil2cpp.so NOT on disk this session (XAPK stub is a placeholder) —
+        method BODIES out of scope; RVAs anchor the future .so pass.
+negative evidence: stringliteral.json sweep found ZERO trajectory/ballistic/
+        arc/engine literals (engines are prefab/const-wired, not string-wired).
+        BaseParams.ContentGravity (dump.cs:1524415) = Unity UI scroll gravity,
+        UNRELATED. BulletMagnet (257893) = magnet-catch component for
+        Adjustable/SelfDirected engines, not a trajectory holder.
+==============================================================================
+
+==============================================================================
+PART 1 — trajectory/gravity/accelerating field declarations (all holders)
+==============================================================================
+
+==============================================================================
+dump.cs:  256582  [WeaponTypeMapEditorConfig]  private sbyte m_bulletTrajectoryType; // 0x3C
+dump.cs:  256584  [WeaponTypeMapEditorConfig]  private short m_gravity; // 0x3E
+dump.cs:  276261  [AbstractBallisticBulletEngine]  private bool m_accelerating; // 0x90
+dump.cs:  396971  [WeaponType]  private sbyte bulletTrajectoryType; // 0x9E
+dump.cs:  396972  [WeaponType]  private short gravity; // 0xA0
+dump.cs:  396973  [WeaponType]  private bool accelerating; // 0xA2
+dump.cs:  396974  [WeaponType]  private int bul_type; // 0xA4
+dump.cs:  396975  [WeaponType]  private int boom_type; // 0xA8
+dump.cs:  396993  [WeaponType]  public sbyte BulletTrajectoryType { get; set; }
+dump.cs:  396997  [WeaponType]  public virtual bool Accelerating { get; set; }
+dump.cs:  397005  [WeaponType]  public short Gravity { get; set; }
+dump.cs: 1524415  [BaseParams]  public BaseParams.ContentGravity Gravity { get; set; }
+
+==============================================================================
+
+==============================================================================
+PART 2 — trajectory-relevant enums (values inline)
+==============================================================================
+
+--- dump.cs:276872  private enum SelfDirectedBulletEngine.CurveMode // TypeDefIndex: 6907
+    dump.cs:  276873  {
+    dump.cs:  276874  // Fields
+    dump.cs:  276875  public byte value__; // 0x0
+    dump.cs:  276876  public const SelfDirectedBulletEngine.CurveMode CurveModeClear = 0;
+    dump.cs:  276877  public const SelfDirectedBulletEngine.CurveMode CurveModeStraight = 1;
+    dump.cs:  276878  public const SelfDirectedBulletEngine.CurveMode CurveModeSingle = 2;
+    dump.cs:  276879  public const SelfDirectedBulletEngine.CurveMode CurveModeDouble = 3;
+    dump.cs:  276880  }
+
+--- dump.cs:266237  public enum ClientBulletVisibleStyle // TypeDefIndex: 6643
+    dump.cs:  266238  {
+    dump.cs:  266239  // Fields
+    dump.cs:  266240  public byte value__; // 0x0
+    dump.cs:  266241  public const ClientBulletVisibleStyle VisibleIfNotFogged = 0;
+    dump.cs:  266242  public const ClientBulletVisibleStyle VisibleAlways = 1;
+    dump.cs:  266243  }
+
+(BulletEngineType engine-id consts are class-level — see PART 3.)
+
+==============================================================================
+PART 3 — engine/bullet class surfaces (fields + methods, values inline)
+==============================================================================
+
+--- BulletMagnet (dump.cs:257893) ---
+
+--- ChainBulletParams (dump.cs:262373) ---
+    262374  {
+    262376  public readonly bool FirstInChain; // 0x10
+    262381  public void .ctor(bool firstInChain) { }
+    262382  }
+
+--- AbstractBallisticBulletEngine (dump.cs:276251) ---
+    276256  private const float GRAVITY_DIVIDER = 100;
+    276261  private bool m_accelerating; // 0x90
+    276276  public override void EngineInitiate(IEntityWeaponOwner shooter, Vector3 originalPosition, bool missed) { }
+    276294  protected virtual float CalculateGravity() { }
+    276303  private void CalculateHeightCoefficients(int duration) { }
+
+--- AbstractBulletComponent (dump.cs:276310) ---
+    276311  {
+    276313  [Nullable(1)]
+    276314  private ClientBullet m_bullet; // 0x20
+    276317  [Nullable(1)]
+    276318  [NotNull]
+    276319  public ClientBullet Bullet { get; }
+    276324  public virtual void Create() { }
+    276327  public virtual void Destroy() { }
+    276329  [NullableContext(1)]
+    276331  public virtual void Initiate(ClientBullet bullet) { }
+    276333  [NullableContext(1)]
+    276335  public ClientBullet get_Bullet() { }
+    276338  protected void .ctor() { }
+    276339  }
+
+--- AbstractBulletEngine (dump.cs:276344) ---
+    276345  {
+    276347  private Vector3 m_originalPosition; // 0x28
+    276348  private Vector3 m_targetPosition; // 0x34
+    276349  private Vector3 m_rawTargetPosition; // 0x40
+    276350  private long m_startTime; // 0x50
+    276351  private int m_duration; // 0x58
+    276352  private int m_durationLong; // 0x5C
+    276353  private bool m_missed; // 0x60
+    276354  private IEntityInfo m_shooterInfo; // 0x68
+    276355  [CanBeNull]
+    276356  private IEntityInfo m_targetInfo; // 0x70
+    276359  public Vector3 OriginalPosition { get; set; }
+    276360  public Vector3 TargetPosition { get; set; }
+    276361  public Vector3 RawTargetPosition { get; }
+    276362  public long StartTime { get; }
+    276363  public int Duration { get; }
+    276364  public int DurationLong { get; }
+    276365  public bool Missed { get; }
+    276366  [NotNull]
+    276367  public IEntityInfo ShooterInfo { get; }
+    276368  [CanBeNull]
+    276369  public IEntityInfo TargetInfo { get; }
+    276370  public abstract sbyte EngineType { get; }
+    276371  protected static int TickDuration { get; }
+    276375  [UsedImplicitly]
+    276377  protected void Awake() { }
+    276380  public override void Create() { }
+    276383  public override void Destroy() { }
+    276386  public override void Initiate(ClientBullet bullet) { }
+    276389  public Vector3 get_OriginalPosition() { }
+    276392  protected void set_OriginalPosition(Vector3 value) { }
+    276395  public Vector3 get_TargetPosition() { }
+    276398  protected void set_TargetPosition(Vector3 value) { }
+    276401  public Vector3 get_RawTargetPosition() { }
+    276404  public long get_StartTime() { }
+    276407  public int get_Duration() { }
+    276410  public int get_DurationLong() { }
+    276413  public bool get_Missed() { }
+    276416  public IEntityInfo get_ShooterInfo() { }
+    276419  public IEntityInfo get_TargetInfo() { }
+    276422  public abstract sbyte get_EngineType();
+    276425  protected static int get_TickDuration() { }
+    276428  public virtual void EngineInitiate(IEntityWeaponOwner shooter, Vector3 originalPosition, bool missed) { }
+    276431  public virtual void Targeting(IEntityLiving target, Vector3 rawTargetPosition, int duration, int durationLong, bool onTarget, Vector3 rawTargetPositio
+    276434  public void MissedRetargeting(IEntityLiving target, Vector3 rawTargetPosition, int duration, int durationLong, bool onTarget, Vector3 rawTargetPositio
+    276437  protected virtual Vector3 CalculateTargetPosition(IEntityLiving target, Vector3 rawTargetPosition, bool onTarget) { }
+    276440  public abstract void GetExplosionPoint(IEntityLiving hitDynamic, out Vector3 point, out Quaternion rotation);
+    276443  protected void GetExplosionPointOnCollider(IEntityLiving hitDynamic, out Vector3 point, out Quaternion rotation) { }
+    276446  protected void .ctor() { }
+    276447  }
+
+--- AdjustableBallisticBulletEngine (dump.cs:276452) ---
+    276453  {
+    276455  [CanBeNull]
+    276456  private IEntityLiving m_target; // 0xA8
+    276457  private long m_originalStartTime; // 0xB0
+    276460  public override sbyte EngineType { get; }
+    276465  public override sbyte get_EngineType() { }
+    276468  public override void Create() { }
+    276471  public override void Destroy() { }
+    276474  public override void Targeting(IEntityLiving target, Vector3 rawTargetPosition, int duration, int durationLong, bool onTarget, Vector3 rawTargetPositi
+    276477  protected override float CalculateElapsedTime() { }
+    276480  protected override Vector3 CalculateTargetPosition(IEntityLiving target, Vector3 rawTargetPosition, bool onTarget) { }
+    276483  protected override void CalculateCurrentPosition() { }
+    276486  public override void GetExplosionPoint(IEntityLiving hitDynamic, out Vector3 point, out Quaternion rotation) { }
+    276489  private bool TryGetPointOnDynamic(IEntityLiving hitDynamic, out Vector3 point) { }
+    276492  private bool TryGetBulletMagnetPosition(out Vector3 position) { }
+    276495  private void Reset() { }
+    276498  public void .ctor() { }
+    276499  }
+
+--- BallisticBulletEngine (dump.cs:276504) ---
+    276505  {
+    276507  public override sbyte EngineType { get; }
+    276512  public override sbyte get_EngineType() { }
+    276515  protected override Vector3 CalculateTargetPosition(IEntityLiving target, Vector3 rawTargetPosition, bool onTarget) { }
+    276518  public override void GetExplosionPoint(IEntityLiving hitDynamic, out Vector3 point, out Quaternion rotation) { }
+    276521  public void .ctor() { }
+    276522  }
+
+--- BallisticHighBulletEngine (dump.cs:276527) ---
+    276528  {
+    276530  [SerializeField]
+    276531  private Vector3 m_overrideStartRotation; // 0xA8
+    276534  public override sbyte EngineType { get; }
+    276539  public override sbyte get_EngineType() { }
+    276542  public override void EngineInitiate(IEntityWeaponOwner shooter, Vector3 originalPosition, bool missed) { }
+    276545  protected override Vector3 CalculateTargetPosition(IEntityLiving target, Vector3 rawTargetPosition, bool onTarget) { }
+    276548  public override void GetExplosionPoint(IEntityLiving hitDynamic, out Vector3 point, out Quaternion rotation) { }
+    276551  public void .ctor() { }
+    276552  }
+
+--- ChainLightingBulletEngine (dump.cs:276688) ---
+    276689  {
+    276691  private Vector3 m_randomMagnetPoint; // 0x78
+    276692  [SerializeField]
+    276693  private List<LightningShootController> m_lightingControllers; // 0x88
+    276694  [SerializeField]
+    276695  private GameObject m_bulletObject; // 0x90
+    276696  private ChainBulletParams m_chainBulletParams; // 0x98
+    276699  public override sbyte EngineType { get; }
+    276704  public override sbyte get_EngineType() { }
+    276707  public override void Create() { }
+    276710  public void SetChainBulletParams(ChainBulletParams chainBulletParams) { }
+    276713  public override void EngineInitiate(IEntityWeaponOwner shooter, Vector3 originalPosition, bool missed) { }
+    276716  public override void GetExplosionPoint(IEntityLiving hitDynamic, out Vector3 point, out Quaternion rotation) { }
+    276719  protected override Vector3 CalculateTargetPosition(IEntityLiving target, Vector3 rawTargetPosition, bool onTarget) { }
+    276722  public override void Targeting(IEntityLiving target, Vector3 rawTargetPosition, int duration, int durationLong, bool onTarget, Vector3 rawTargetPositi
+    276725  private void SetupBulletVisibility() { }
+    276727  [UsedImplicitly]
+    276729  private void LateUpdate() { }
+    276732  public void .ctor() { }
+    276733  }
+
+--- LeviaphanNuclearRocketBallisticBulletEngine (dump.cs:276754) ---
+    276755  {
+    276757  [SerializeField]
+    276758  private AnimationCurve m_positionCurve; // 0xB8
+    276759  [SerializeField]
+    276760  private AnimationCurve m_heightCurve; // 0xC0
+    276761  [SerializeField]
+    276762  [Min(0.5)]
+    276763  private float m_minDistanceGravityDivider; // 0xC8
+    276764  [SerializeField]
+    276765  [Min(1)]
+    276766  private float m_maxDistanceGravityDivider; // 0xCC
+    276771  protected override float CalculateGravity() { }
+    276774  protected override float CalculatePositionTime(float elapsedTime) { }
+    276777  protected override float CalculateAltitudeTime(float elapsedTime) { }
+    276780  private float GetClamped01Time(float elapsedTime) { }
+    276783  public void .ctor() { }
+    276784  }
+
+--- LinearBulletEngine (dump.cs:276789) ---
+    276790  {
+    276792  private Vector3 m_randomMagnetPoint; // 0x78
+    276793  [SerializeField]
+    276794  private bool m_isLookingUpwards; // 0x84
+    276797  public override sbyte EngineType { get; }
+    276802  public override void Create() { }
+    276805  public override sbyte get_EngineType() { }
+    276808  public override void Targeting(IEntityLiving target, Vector3 rawTargetPosition, int duration, int durationLong, bool onTarget, Vector3 rawTargetPositi
+    276811  protected override Vector3 CalculateTargetPosition(IEntityLiving target, Vector3 rawTargetPosition, bool onTarget) { }
+    276813  [UsedImplicitly]
+    276815  protected void Update() { }
+    276818  public override void GetExplosionPoint(IEntityLiving hitDynamic, out Vector3 point, out Quaternion rotation) { }
+    276821  public void .ctor() { }
+    276822  }
+
+--- PsiTankBulletSettings (dump.cs:276853) ---
+    276854  {
+    276856  private const float TICKS_PER_SEC = 10;
+    276857  private const float RADIUS_TO_DIAMETER_FACTOR = 2;
+    276858  [SerializeField]
+    276859  private List<ParticleSystem> m_particleSystems; // 0x28
+    276864  public override void Initiate(ClientBullet bullet) { }
+    276867  public void .ctor() { }
+    276868  }
+
+--- SelfDirectedBulletEngine (dump.cs:276885) ---
+    276886  {
+    276888  private const float ACCELERATION_MULTIPLIER = 10;
+    276889  private BulletMagnet m_targetMagnet; // 0x78
+    276890  private bool m_isTargeting; // 0x80
+    276891  private bool m_onTarget; // 0x81
+    276892  private Nullable<float> m_h; // 0x84
+    276893  private Vector3 m_pos0; // 0x8C
+    276894  private Vector3 m_pos1; // 0x98
+    276895  private Vector3 m_pos2; // 0xA4
+    276896  private Vector3 m_vel0; // 0xB0
+    276897  private Vector3 m_vel1; // 0xBC
+    276898  private Vector3 m_vel2; // 0xC8
+    276899  private Vector3 m_posCurr; // 0xD4
+    276900  private Vector3 m_velCurr; // 0xE0
+    276901  private SelfDirectedBulletEngine.CurveMode m_curveMode; // 0xEC
+    276902  private Vector3 m_targetOffset; // 0xF0
+    276903  private int m_durationLeftFrom; // 0xFC
+    276904  private Vector3 m_randomTargetOffset; // 0x100
+    276907  public override sbyte EngineType { get; }
+    276912  public override void Create() { }
+    276915  public override void Destroy() { }
+    276918  public override sbyte get_EngineType() { }
+    276921  public override void Targeting(IEntityLiving target, Vector3 rawTargetPosition, int duration, int durationLong, bool onTarget, Vector3 rawTargetPositi
+    276924  protected override Vector3 CalculateTargetPosition(IEntityLiving target, Vector3 rawTargetPosition, bool onTarget) { }
+    276926  [UsedImplicitly]
+    276928  protected void Update() { }
+    276931  public override void GetExplosionPoint(IEntityLiving hitDynamic, out Vector3 point, out Quaternion rotation) { }
+    276934  public void MissTargeting(Vector3 targetOffset, int durationLeftFrom) { }
+    276937  private bool BulletMagnetRaycast(BulletMagnet bulletMagnet, out Vector3 point, out Vector3 normal) { }
+    276940  protected bool SetCurrentPositionAndVelocity(long millisecs) { }
+    276942  [NullableContext(0)]
+    276944  private ValueTuple<Vector3, Vector3> CalculateCurrentPositionAndVelocity(long millisecs) { }
+    276947  private void TargetingCurveModeClear(IEntityLiving target, Vector3 rawTargetPosition, int duration, int durationLong, bool onTarget, Vector3 rawTarget
+    276950  private void TargetingCurveModeNotClear(IEntityLiving target, Vector3 rawTargetPosition, int duration, int durationLong, bool onTarget, Vector3 rawTar
+    276953  public void .ctor() { }
+    276954  }
+
+--- BulletEngineType (dump.cs:378800) ---
+    378801  {
+    378803  public const sbyte Linear = 0;
+    378804  public const sbyte Ballistic = 1;
+    378805  public const sbyte Ballistic_High = 2;
+    378806  public const sbyte SelfDirected = 3;
+    378807  public const sbyte ChainLighting = 4;
+    378808  public const sbyte Melee = 5;
+    378809  public const sbyte UpAndSelfDirected = 6;
+    378814  protected void .ctor() { }
+    378815  }
+
+--- Bullet : Entity (dump.cs:378393) — trajectory-relevant members ---
+    378409  private int target_x; // 0x44
+    378410  private int target_y; // 0x48
+    378411  private int target_h; // 0x4C
+    378412  private int target_x_next; // 0x50
+    378413  private int target_y_next; // 0x54
+    378429  private bool missed; // 0x94
+    378430  private bool on_target; // 0x95
+    378431  private bool target_precise_hit; // 0x96
+
+(stringliteral.json sweep: ZERO trajectory/ballistic/arc/engine literals —
+ engines are prefab/const-wired, not string-wired; negative evidence.)
+
+==============================================================================
+PART 4 — sim-side Bullet : Entity full map + LC bullet bridge commands + ClientBullet
+==============================================================================
+
+--- Bullet : Entity (FULL) (dump.cs:378393..378818) ---
+    378393  public class Bullet : Entity // TypeDefIndex: 11359
+    378394  {
+    378396  private short type; // 0x14
+    378397  private sbyte category; // 0x16
+    378398  private WeaponType we_type; // 0x18
+    378399  private short flag_attack_bonus; // 0x20
+    378400  private short x; // 0x22
+    378401  private short y; // 0x24
+    378402  private int init_x; // 0x28
+    378403  private int init_y; // 0x2C
+    378404  private int init_h; // 0x30
+    378405  private int dx; // 0x34
+    378406  private int dy; // 0x38
+    378407  private int vel_x; // 0x3C
+    378408  private int vel_y; // 0x40
+    378409  private int target_x; // 0x44
+    378410  private int target_y; // 0x48
+    378411  private int target_h; // 0x4C
+    378412  private int target_x_next; // 0x50
+    378413  private int target_y_next; // 0x54
+    378414  private short orient; // 0x58
+    378415  private short duration; // 0x5A
+    378416  private short duration_next; // 0x5C
+    378417  private short duration_long; // 0x5E
+    378418  private sbyte tick; // 0x60
+    378419  private short pos; // 0x62
+    378420  private short prepos; // 0x64
+    378421  private sbyte alliance; // 0x66
+    378422  private BattleSide side; // 0x68
+    378423  private Dynamic subj; // 0x70
+    378424  private Ability ability; // 0x78
+    378425  private Dynamic obj; // 0x80
+    378426  private int hit_id; // 0x88
+    378427  private sbyte occupation; // 0x8C
+    378428  private int obj_id; // 0x90
+    378429  private bool missed; // 0x94
+    378430  private bool on_target; // 0x95
+    378431  private bool target_precise_hit; // 0x96
+    378432  private sbyte lowing; // 0x97
+    378433  private sbyte skillBonus; // 0x98
+    378434  private Dynamic obj_stat; // 0xA0
+    378435  private short killed; // 0xA8
+    378436  private bool needing_guidance; // 0xAA
+    378437  private bool fogOpened; // 0xAB
+    378438  private int explosion_radius; // 0xAC
+    378439  private Dictionary<int, Dynamic> damaged; // 0xB0
+    378440  private Dictionary<int, int> damagedPerc; // 0xB8
+    378443  public virtual bool AccelerateAndGuide { get; }
+    378444  public virtual sbyte Alliance { get; set; }
+    378445  public virtual sbyte Category { get; set; }
+    378446  public virtual short Duration { get; set; }
+    378447  public virtual short DurationNext { get; set; }
+    378448  public virtual short DurationLong { get; set; }
+    378449  public virtual int Dx { get; set; }
+    378450  public virtual int Dy { get; set; }
+    378451  public virtual short FlagAttackBonus { get; set; }
+    378452  public virtual int HitId { get; set; }
+    378453  public virtual int InitH { get; set; }
+    378454  public virtual int InitX { get; set; }
+    378455  public virtual int InitY { get; set; }
+    378456  public virtual short Killed { get; set; }
+    378457  public virtual sbyte Lowing { get; set; }
+    378458  public virtual bool Missed { get; set; }
+    378459  public virtual bool NeedingGuidance { get; set; }
+    378460  public virtual Dynamic Obj { get; set; }
+    378461  public virtual int ObjId { get; set; }
+    378462  public virtual Dynamic ObjStat { get; set; }
+    378463  public virtual sbyte Occupation { get; set; }
+    378464  public virtual bool OnTarget { get; set; }
+    378465  public virtual short Orient { get; set; }
+    378466  public virtual short Pos { get; set; }
+    378467  public virtual short Prepos { get; set; }
+    378468  public virtual BattleSide Side { get; set; }
+    378469  public virtual sbyte SkillBonus { get; set; }
+    378470  public virtual Dynamic Subj { get; set; }
+    378471  public virtual Ability Ability { get; set; }
+    378472  public virtual int TargetH { get; set; }
+    378473  public virtual int TargetX { get; set; }
+    378474  public virtual int TargetY { get; set; }
+    378475  public virtual int TargetXNext { get; set; }
+    378476  public virtual int TargetYNext { get; set; }
+    378477  public virtual bool TargetPreciseHit { get; set; }
+    378478  public virtual sbyte Tick { get; set; }
+    378479  public virtual short Type { get; set; }
+    378480  public virtual int VelX { get; set; }
+    378481  public virtual int VelY { get; set; }
+    378482  public virtual short X { get; set; }
+    378483  public virtual short Y { get; set; }
+    378484  public virtual int XLogic { get; }
+    378485  public virtual int YLogic { get; }
+    378486  public virtual WeaponType WeType { get; set; }
+    378487  public virtual Dictionary<int, Dynamic> Damaged { get; set; }
+    378488  public virtual Dictionary<int, int> DamagedPerc { get; set; }
+    378489  public virtual int ExplosionRadius { get; set; }
+    378490  public virtual bool FogOpened { get; set; }
+    378491  public override int EntityType { get; }
+    378496  public void .ctor() { }
+    378499  public virtual void init() { }
+    378502  public virtual void reset() { }
+    378505  public virtual Dictionary<int, int> calcDamagedPerc() { }
+    378508  public virtual bool get_AccelerateAndGuide() { }
+    378511  public virtual sbyte get_Alliance() { }
+    378514  public virtual void set_Alliance(sbyte value) { }
+    378517  public virtual sbyte get_Category() { }
+    378520  public virtual void set_Category(sbyte value) { }
+    378523  public virtual short get_Duration() { }
+    378526  public virtual void set_Duration(short value) { }
+    378529  public virtual short get_DurationNext() { }
+    378532  public virtual void set_DurationNext(short value) { }
+    378535  public virtual short get_DurationLong() { }
+    378538  public virtual void set_DurationLong(short value) { }
+    378541  public virtual int get_Dx() { }
+    378544  public virtual void set_Dx(int value) { }
+    378547  public virtual int get_Dy() { }
+    378550  public virtual void set_Dy(int value) { }
+    378553  public virtual short get_FlagAttackBonus() { }
+    378556  public virtual void set_FlagAttackBonus(short value) { }
+    378559  public virtual int get_HitId() { }
+    378562  public virtual void set_HitId(int value) { }
+    378565  public virtual int get_InitH() { }
+    378568  public virtual void set_InitH(int value) { }
+    378571  public virtual int get_InitX() { }
+    378574  public virtual void set_InitX(int value) { }
+    378577  public virtual int get_InitY() { }
+    378580  public virtual void set_InitY(int value) { }
+    378583  public virtual short get_Killed() { }
+    378586  public virtual void set_Killed(short value) { }
+    378589  public virtual sbyte get_Lowing() { }
+    378592  public virtual void set_Lowing(sbyte value) { }
+    378595  public virtual bool get_Missed() { }
+    378598  public virtual void set_Missed(bool value) { }
+    378601  public virtual bool get_NeedingGuidance() { }
+    378604  public virtual void set_NeedingGuidance(bool value) { }
+    378607  public virtual Dynamic get_Obj() { }
+    378610  public virtual void set_Obj(Dynamic value) { }
+    378613  public virtual int get_ObjId() { }
+    378616  public virtual void set_ObjId(int value) { }
+    378619  public virtual Dynamic get_ObjStat() { }
+    378622  public virtual void set_ObjStat(Dynamic value) { }
+    378625  public virtual sbyte get_Occupation() { }
+    378628  public virtual void set_Occupation(sbyte value) { }
+    378631  public virtual bool get_OnTarget() { }
+    378634  public virtual void set_OnTarget(bool value) { }
+    378637  public virtual short get_Orient() { }
+    378640  public virtual void set_Orient(short value) { }
+    378643  public virtual short get_Pos() { }
+    378646  public virtual void set_Pos(short value) { }
+    378649  public virtual short get_Prepos() { }
+    378652  public virtual void set_Prepos(short value) { }
+    378655  public virtual BattleSide get_Side() { }
+    378658  public virtual void set_Side(BattleSide value) { }
+    378661  public virtual sbyte get_SkillBonus() { }
+    378664  public virtual void set_SkillBonus(sbyte value) { }
+    378667  public virtual Dynamic calcSubj() { }
+    378670  public virtual IShooter calcShooter() { }
+    378673  public virtual Dynamic get_Subj() { }
+    378676  public virtual void set_Subj(Dynamic value) { }
+    378679  public virtual Ability get_Ability() { }
+    378682  public virtual void set_Ability(Ability value) { }
+    378685  public virtual int get_TargetH() { }
+    378688  public virtual void set_TargetH(int value) { }
+    378691  public virtual int get_TargetX() { }
+    378694  public virtual void set_TargetX(int value) { }
+    378697  public virtual int get_TargetY() { }
+    378700  public virtual void set_TargetY(int value) { }
+    378703  public virtual int get_TargetXNext() { }
+    378706  public virtual void set_TargetXNext(int value) { }
+    378709  public virtual int get_TargetYNext() { }
+    378712  public virtual void set_TargetYNext(int value) { }
+    378715  public virtual bool get_TargetPreciseHit() { }
+    378718  public virtual void set_TargetPreciseHit(bool value) { }
+    378721  public virtual sbyte get_Tick() { }
+    378724  public virtual void set_Tick(sbyte value) { }
+    378727  public virtual short get_Type() { }
+    378730  public virtual void set_Type(short value) { }
+    378733  public virtual int get_VelX() { }
+    378736  public virtual void set_VelX(int value) { }
+    378739  public virtual int get_VelY() { }
+    378742  public virtual void set_VelY(int value) { }
+    378745  public virtual short get_X() { }
+    378748  public virtual void set_X(short value) { }
+    378751  public virtual short get_Y() { }
+    378754  public virtual void set_Y(short value) { }
+    378757  public virtual int get_XLogic() { }
+    378760  public virtual int get_YLogic() { }
+    378763  public virtual WeaponType get_WeType() { }
+    378766  public virtual void set_WeType(WeaponType value) { }
+    378769  public virtual Dictionary<int, Dynamic> get_Damaged() { }
+    378772  public virtual void set_Damaged(Dictionary<int, Dynamic> value) { }
+    378775  public virtual Dictionary<int, int> get_DamagedPerc() { }
+    378778  public virtual void set_DamagedPerc(Dictionary<int, int> value) { }
+    378781  public virtual int get_ExplosionRadius() { }
+    378784  public virtual void set_ExplosionRadius(int value) { }
+    378787  public virtual bool get_FogOpened() { }
+    378790  public virtual void set_FogOpened(bool value) { }
+    378793  public override int get_EntityType() { }
+    378796  public override string ToString() { }
+    378797  }
+    378800  public abstract class BulletEngineType // TypeDefIndex: 11360
+    378801  {
+    378803  public const sbyte Linear = 0;
+    378804  public const sbyte Ballistic = 1;
+    378805  public const sbyte Ballistic_High = 2;
+    378806  public const sbyte SelfDirected = 3;
+    378807  public const sbyte ChainLighting = 4;
+    378808  public const sbyte Melee = 5;
+    378809  public const sbyte UpAndSelfDirected = 6;
+    378814  protected void .ctor() { }
+    378815  }
+    378818  public class BulletStack // TypeDefIndex: 11361
+
+--- LCBulletCreate (FULL) (dump.cs:289909..289963) ---
+    289909  public class LCBulletCreate : AbstractLogicCommand // TypeDefIndex: 7261
+    289910  {
+    289912  private int m_bulletId; // 0x1C
+    289913  private int m_shooterId; // 0x20
+    289914  private int m_targetId; // 0x24
+    289915  private WeaponType m_prototype; // 0x28
+    289916  private int m_weaponIndex; // 0x30
+    289917  private bool m_missed; // 0x34
+    289918  private long m_bulletIndex; // 0x38
+    289919  private int m_chainBulletId; // 0x40
+    289920  private Weapon m_weapon; // 0x48
+    289921  private Point2i m_bulletLogicPos; // 0x50
+    289922  private bool m_isIgnoreBullet; // 0x58
+    289927  public override void Create() { }
+    289930  public override void Destroy() { }
+    289933  public void Initiate(Bullet bullet, Weapon weapon, int chainBulletId) { }
+    289936  public override bool Execute(float deltaTime) { }
+    289940  private ClientWeaponMuzzle TryGetMuzzle(AbstractClientWeapon weapon, IEntityLivingWeaponOwner shooter) { }
+    289943  private ClientBulletVisibleStyle GetVisibleStyle(IEntityLivingWeaponOwner shooter) { }
+    289947  private static ValueTuple<Vector3, Quaternion> GetBulletPositionAndRotation(ClientWeaponMuzzle muzzle) { }
+    289951  private ValueTuple<Vector3, Quaternion> GetChainBulletPositionAndRotation() { }
+    289954  private ClientBullet CreateBullet(Vector3 position, Quaternion rotation) { }
+    289957  public void .ctor() { }
+    289958  }
+    289963  private sealed class LCBulletExplode.<>c // TypeDefIndex: 7262
+
+--- LCBulletExplode (FULL) (dump.cs:289999..290065) ---
+    289999  public class LCBulletExplode : AbstractLogicCommand // TypeDefIndex: 7263
+    290000  {
+    290002  private const int ThorBombWeaponId = 66;
+    290003  private const int AlbatrossBombWeaponId = 166;
+    290004  private const int SERAPHIM_DEPART_STATE_INDEX = 0;
+    290005  private const int SERAPHIM_LANDING_STATE_INDEX = 1;
+    290006  private int m_bulletId; // 0x1C
+    290007  private int m_hitDynamicId; // 0x20
+    290008  private sbyte m_targetType; // 0x24
+    290009  private Vector3 m_logicBulletPosition; // 0x28
+    290014  public override void Create() { }
+    290017  public override void Destroy() { }
+    290020  public void Initiate(Bullet bullet, sbyte targetType) { }
+    290023  public override bool Execute(float deltaTime) { }
+    290026  private void TryPlayBomberVoice(ClientBullet bullet) { }
+    290029  private void TryToExplode(ExplodeAndFunnelAnimationStyles animationStyles, ClientBullet bullet) { }
+    290032  private ValueTuple<Vector3, Quaternion> GetExplosionPositionAndRotation(ClientBullet bullet, AbstractBulletEngine bulletEngine) { }
+    290035  private Vector3 AdjustExplosionPosition(Vector3 position, ClientBullet bullet) { }
+    290038  private IEntityLiving GetHitDynamic(ClientBullet bullet) { }
+    290041  private static bool IsWithoutExplosion(AbstractBulletEngine bulletEngine) { }
+    290044  private static void BulletExplode(ClientBullet bullet) { }
+    290047  private static bool IsCoilTankPassiveAbilityBullet(ClientBullet bullet) { }
+    290050  private static sbyte GetTargetType(Bullet bullet, sbyte targetType) { }
+    290053  private static bool IsCerberVehicleImpactOverride(ClientUnit targetUnit) { }
+    290056  private static bool IsLandedSeraphimAircraftImpact(ClientUnit targetUnit, sbyte targetType) { }
+    290059  public void .ctor() { }
+    290060  }
+    290065  public class LCBulletMissed : AbstractLogicCommand // TypeDefIndex: 7264
+
+--- LCBulletMissed (FULL) (dump.cs:290065..290116) ---
+    290065  public class LCBulletMissed : AbstractLogicCommand // TypeDefIndex: 7264
+    290066  {
+    290068  private int DURATION_TIME_SCALER; // 0x1C
+    290069  private float MISSED_FLIGTH_DISTANCE; // 0x20
+    290070  private Bullet m_bullet; // 0x28
+    290071  private int m_ticksToFly; // 0x30
+    290072  private int m_bulletId; // 0x34
+    290073  private ClientBullet m_clientBullet; // 0x38
+    290074  private Vector3 m_targetOffset; // 0x40
+    290075  private int m_durationLeftFrom; // 0x4C
+    290078  private static int TickDuration { get; }
+    290083  private static int get_TickDuration() { }
+    290086  public override void Create() { }
+    290089  public void Initiate(Bullet bullet, int ticksToFly, int dx, int dy, int dz, int durationLeftFrom) { }
+    290092  public override void Destroy() { }
+    290095  public override bool Execute(float deltaTime) { }
+    290098  private void RetargetingBullet() { }
+    290101  private Vector3 GetFinalOffset(int dx, int dy, int dz) { }
+    290104  private void BallisticBulletExecute() { }
+    290107  private void SelfDirectedBulletExecute() { }
+    290110  public void .ctor() { }
+    290111  }
+    290116  public class LCBulletTargeting : AbstractLogicCommand // TypeDefIndex: 7265
+
+--- LCBulletTargeting (FULL) (dump.cs:290116..290190) ---
+    290116  public class LCBulletTargeting : AbstractLogicCommand // TypeDefIndex: 7265
+    290117  {
+    290119  private int m_bulletId; // 0x1C
+    290120  private int m_targetId; // 0x20
+    290121  private Vector3 m_rawTargetPosition; // 0x24
+    290122  private int m_duration; // 0x30
+    290123  private Vector3 m_rawTargetPositionNext; // 0x34
+    290124  private int m_durationNext; // 0x40
+    290125  private int m_durationLong; // 0x44
+    290126  private bool m_onTarget; // 0x48
+    290127  private bool m_isIgnoreBullet; // 0x49
+    290130  private static int TickDuration { get; }
+    290135  private static int get_TickDuration() { }
+    290138  public override void Create() { }
+    290141  public override void Destroy() { }
+    290144  public void Initiate(Bullet bullet) { }
+    290147  public override bool Execute(float deltaTime) { }
+    290150  private void AddBulletToIgnoreList(Bullet bullet) { }
+    290153  public void .ctor() { }
+    290154  }
+    290159  public class LCChatMessageSend : AbstractLogicCommand // TypeDefIndex: 7266
+    290160  {
+    290162  private int m_sideId; // 0x1C
+    290163  private int m_stringId; // 0x20
+    290164  private int m_substringId; // 0x24
+    290165  private int m_markerId; // 0x28
+    290166  private Point2i m_cell; // 0x2C
+    290168  private string m_text; // 0x38
+    290173  public override void Create() { }
+    290176  public override void Destroy() { }
+    290179  public void Initiate(BattleSide side, int stringId, int substringId, int markerId, Point2i cell, string text) { }
+    290182  public override bool Execute(float deltaTime) { }
+    290185  public void .ctor() { }
+    290186  }
+    290189  public class LCCheckPointCaptureAreaVisibleChanged : AbstractLogicCommand // TypeDefIndex: 7267
+    290190  {
+
+--- ClientBullet (FULL) (dump.cs:266137..266237) ---
+    266137  public class ClientBullet : ClientEntity, IEntityVisable, IEntityCameraVisable, IClientEntity, IEntity, IEntityFogVisable, IEntityPrototypical // TypeDefIndex: 
+    266138  {
+    266140  private WeaponType m_prototype; // 0x48
+    266141  private BulletPrefabSettings m_prefabSettings; // 0x50
+    266142  private AbstractBulletEngine m_bulletEngine; // 0x58
+    266143  private ComponentEventExecutor<IBulletComponent> m_eventExecutor; // 0x60
+    266144  private ClientBulletVisibleStyle m_visibleStyle; // 0x68
+    266145  private bool m_isFogVisible; // 0x69
+    266148  private Action<bool> OnFogVisibleChanged; // 0x70
+    266152  public WeaponType Prototype { get; }
+    266153  private Prototype com.geargames.aow.scenes.battle.entities.IEntityPrototypical.Prototype { get; }
+    266155  public BulletPrefabSettings PrefabSettings { get; }
+    266157  public AbstractBulletEngine BulletEngine { get; }
+    266158  public ClientBulletVisibleStyle VisibleStyle { get; }
+    266159  public bool IsVisible { get; }
+    266160  public bool IsCameraVisible { get; }
+    266161  public bool IsFogVisible { get; }
+    266162  public bool IsVisibleForUser { get; }
+    266167  private T CheckedGetComponentOnce<T>(GetterComponentOption option) { }
+    266168  /* GenericInstMethod :
+    266169  |
+    266170  |-RVA: 0x4E16A88 Offset: 0x4E12A88 VA: 0x4E16A88
+    266171  |-ClientBullet.CheckedGetComponentOnce<object>
+    266172  */
+    266175  public override void Create() { }
+    266178  public override void Destroy() { }
+    266181  public void Initiate(int id, IEntityWeaponOwner shooter, WeaponType prototype, ClientBulletVisibleStyle visibleStyle, Vector3 originalPosition, bool missed, Cha
+    266184  public void Free() { }
+    266187  public void ForcedReset() { }
+    266190  public WeaponType get_Prototype() { }
+    266193  private Prototype com.geargames.aow.scenes.battle.entities.IEntityPrototypical.get_Prototype() { }
+    266196  public BulletPrefabSettings get_PrefabSettings() { }
+    266199  public AbstractBulletEngine get_BulletEngine() { }
+    266202  public bool SetFogVisible(bool fogVisible) { }
+    266205  private void DoSetFogVisible(bool fogVisible) { }
+    266208  public ClientBulletVisibleStyle get_VisibleStyle() { }
+    266211  public bool get_IsVisible() { }
+    266214  public bool get_IsCameraVisible() { }
+    266219  public void add_OnFogVisibleChanged(Action<bool> value) { }
+    266224  public void remove_OnFogVisibleChanged(Action<bool> value) { }
+    266227  public bool get_IsFogVisible() { }
+    266230  public bool get_IsVisibleForUser() { }
+    266233  public void .ctor() { }
+    266234  }
+    266237  public enum ClientBulletVisibleStyle // TypeDefIndex: 6643
+
+==============================================================================
+PART 5 — RVA anchors for the future libil2cpp.so pass (392 methods)
+==============================================================================
+
+Key anchors (getter/dispatch/gravity core; full list follows):
+
+  AbstractBallisticBulletEngine                  RVA=0x80B1BC8  dump.cs:276276   public override void EngineInitiate(IEntityWeaponOwner shooter, Vector3 originalPosition, bool missed) { }
+  AbstractBallisticBulletEngine                  RVA=0x80B1DBC  dump.cs:276279   public override void Targeting(IEntityLiving target, Vector3 rawTargetPosition, int duration, int durationLong
+  AbstractBallisticBulletEngine                  RVA=0x80B219C  dump.cs:276285   protected virtual float CalculateElapsedTime() { }
+  AbstractBallisticBulletEngine                  RVA=0x80B25A8  dump.cs:276294   protected virtual float CalculateGravity() { }
+  AbstractBallisticBulletEngine                  RVA=0x80B25DC  dump.cs:276297   protected virtual float CalculatePositionTime(float elapsedTime) { }
+  AbstractBallisticBulletEngine                  RVA=0x80B2604  dump.cs:276300   protected virtual float CalculateAltitudeTime(float elapsedTime) { }
+  AbstractBallisticBulletEngine                  RVA=0x80B2050  dump.cs:276303   private void CalculateHeightCoefficients(int duration) { }
+  AbstractBulletEngine                           RVA=0x80B1C40  dump.cs:276428   public virtual void EngineInitiate(IEntityWeaponOwner shooter, Vector3 originalPosition, bool missed) { }
+  AbstractBulletEngine                           RVA=0x80B1E7C  dump.cs:276431   public virtual void Targeting(IEntityLiving target, Vector3 rawTargetPosition, int duration, int durationLong,
+  AdjustableBallisticBulletEngine                RVA=0x80B2B30  dump.cs:276465   public override sbyte get_EngineType() { }
+  AdjustableBallisticBulletEngine                RVA=0x80B2B8C  dump.cs:276474   public override void Targeting(IEntityLiving target, Vector3 rawTargetPosition, int duration, int durationLong
+  AdjustableBallisticBulletEngine                RVA=0x80B2BB0  dump.cs:276477   protected override float CalculateElapsedTime() { }
+  BallisticBulletEngine                          RVA=0x80B3558  dump.cs:276512   public override sbyte get_EngineType() { }
+  BallisticHighBulletEngine                      RVA=0x80B36EC  dump.cs:276539   public override sbyte get_EngineType() { }
+  BallisticHighBulletEngine                      RVA=0x80B36F4  dump.cs:276542   public override void EngineInitiate(IEntityWeaponOwner shooter, Vector3 originalPosition, bool missed) { }
+  ChainLightingBulletEngine                      RVA=0x80B4FDC  dump.cs:276704   public override sbyte get_EngineType() { }
+  ChainLightingBulletEngine                      RVA=0x80B5048  dump.cs:276713   public override void EngineInitiate(IEntityWeaponOwner shooter, Vector3 originalPosition, bool missed) { }
+  ChainLightingBulletEngine                      RVA=0x80B5590  dump.cs:276722   public override void Targeting(IEntityLiving target, Vector3 rawTargetPosition, int duration, int durationLong
+  LeviaphanNuclearRocketBallisticBulletEngine    RVA=0x80B5A18  dump.cs:276771   protected override float CalculateGravity() { }
+  LeviaphanNuclearRocketBallisticBulletEngine    RVA=0x80B5BBC  dump.cs:276774   protected override float CalculatePositionTime(float elapsedTime) { }
+  LeviaphanNuclearRocketBallisticBulletEngine    RVA=0x80B5BF4  dump.cs:276777   protected override float CalculateAltitudeTime(float elapsedTime) { }
+  LeviaphanNuclearRocketBallisticBulletEngine    RVA=0x80B5BE4  dump.cs:276780   private float GetClamped01Time(float elapsedTime) { }
+  LinearBulletEngine                             RVA=0x80B5CAC  dump.cs:276805   public override sbyte get_EngineType() { }
+  LinearBulletEngine                             RVA=0x80B5CB4  dump.cs:276808   public override void Targeting(IEntityLiving target, Vector3 rawTargetPosition, int duration, int durationLong
+  SelfDirectedBulletEngine                       RVA=0x80B6A80  dump.cs:276918   public override sbyte get_EngineType() { }
+  SelfDirectedBulletEngine                       RVA=0x80B6A88  dump.cs:276921   public override void Targeting(IEntityLiving target, Vector3 rawTargetPosition, int duration, int durationLong
+  SelfDirectedBulletEngine                       RVA=0x80B7E28  dump.cs:276934   public void MissTargeting(Vector3 targetOffset, int durationLeftFrom) { }
+  SelfDirectedBulletEngine                       RVA=0x80B7A98  dump.cs:276940   protected bool SetCurrentPositionAndVelocity(long millisecs) { }
+  SelfDirectedBulletEngine                       RVA=0x80B7E40  dump.cs:276944   private ValueTuple<Vector3, Vector3> CalculateCurrentPositionAndVelocity(long millisecs) { }
+  SelfDirectedBulletEngine                       RVA=0x80B6D24  dump.cs:276947   private void TargetingCurveModeClear(IEntityLiving target, Vector3 rawTargetPosition, int duration, int durati
+  SelfDirectedBulletEngine                       RVA=0x80B6FC4  dump.cs:276950   private void TargetingCurveModeNotClear(IEntityLiving target, Vector3 rawTargetPosition, int duration, int dur
+  LCBulletMissed                                 RVA=0x81429DC  dump.cs:290098   private void RetargetingBullet() { }
+  Bullet                                         RVA=0x458FD60  dump.cs:378508   public virtual bool get_AccelerateAndGuide() { }
+  WeaponType                                     RVA=0x45B62EC  dump.cs:397081   public sbyte get_BulletTrajectoryType() { }
+  WeaponType                                     RVA=0x45B62F4  dump.cs:397084   public void set_BulletTrajectoryType(sbyte value) { }
+  WeaponType                                     RVA=0x45B632C  dump.cs:397105   public virtual bool get_Accelerating() { }
+  WeaponType                                     RVA=0x45B6334  dump.cs:397108   public virtual void set_Accelerating(bool value) { }
+  WeaponType                                     RVA=0x45B637C  dump.cs:397135   public int get_BoomType() { }
+  WeaponType                                     RVA=0x45B63AC  dump.cs:397153   public short get_Gravity() { }
+  WeaponType                                     RVA=0x45B63B4  dump.cs:397156   public void set_Gravity(short value) { }
+
+--- full anchor list (392) ---
+
+WeaponTypeMapEditorConfig                      RVA=0x80250C8  dump.cs:256620   public int get_WeaponTableId() { }
+WeaponTypeMapEditorConfig                      RVA=0x8022574  dump.cs:256623   public void .ctor(WeaponType weaponType) { }
+WeaponTypeMapEditorConfig                      RVA=0x8022834  dump.cs:256626   public void OverrideWeapon(WeaponType weaponType) { }
+ClientBullet                                   RVA=0x806ECCC  dump.cs:266175   public override void Create() { }
+ClientBullet                                   RVA=0x806ED24  dump.cs:266178   public override void Destroy() { }
+ClientBullet                                   RVA=0x806EDCC  dump.cs:266181   public void Initiate(int id, IEntityWeaponOwner shooter, WeaponType prototype, ClientBulletVisibleStyle visibl
+ClientBullet                                   RVA=0x806F7B0  dump.cs:266184   public void Free() { }
+ClientBullet                                   RVA=0x806F860  dump.cs:266187   public void ForcedReset() { }
+ClientBullet                                   RVA=0x806F864  dump.cs:266190   public WeaponType get_Prototype() { }
+ClientBullet                                   RVA=0x806F86C  dump.cs:266193   private Prototype com.geargames.aow.scenes.battle.entities.IEntityPrototypical.get_Prototype() { }
+ClientBullet                                   RVA=0x806F874  dump.cs:266196   public BulletPrefabSettings get_PrefabSettings() { }
+ClientBullet                                   RVA=0x806F87C  dump.cs:266199   public AbstractBulletEngine get_BulletEngine() { }
+ClientBullet                                   RVA=0x806F884  dump.cs:266202   public bool SetFogVisible(bool fogVisible) { }
+ClientBullet                                   RVA=0x806F5E4  dump.cs:266205   private void DoSetFogVisible(bool fogVisible) { }
+ClientBullet                                   RVA=0x806F8B0  dump.cs:266208   public ClientBulletVisibleStyle get_VisibleStyle() { }
+ClientBullet                                   RVA=0x806F8B8  dump.cs:266211   public bool get_IsVisible() { }
+ClientBullet                                   RVA=0x806F8C0  dump.cs:266214   public bool get_IsCameraVisible() { }
+ClientBullet                                   RVA=0x806F8C8  dump.cs:266219   public void add_OnFogVisibleChanged(Action<bool> value) { }
+ClientBullet                                   RVA=0x806F978  dump.cs:266224   public void remove_OnFogVisibleChanged(Action<bool> value) { }
+ClientBullet                                   RVA=0x806FA28  dump.cs:266227   public bool get_IsFogVisible() { }
+ClientBullet                                   RVA=0x806FA30  dump.cs:266230   public bool get_IsVisibleForUser() { }
+ClientBullet                                   RVA=0x806FA38  dump.cs:266233   public void .ctor() { }
+AbstractBallisticBulletEngine                  RVA=0x80B1A14  dump.cs:276270   private void Update() { }
+AbstractBallisticBulletEngine                  RVA=0x80B1A8C  dump.cs:276273   public override void Create() { }
+AbstractBallisticBulletEngine                  RVA=0x80B1BC8  dump.cs:276276   public override void EngineInitiate(IEntityWeaponOwner shooter, Vector3 originalPosition, bool missed) { }
+AbstractBallisticBulletEngine                  RVA=0x80B1DBC  dump.cs:276279   public override void Targeting(IEntityLiving target, Vector3 rawTargetPosition, int duration, int durationLong
+AbstractBallisticBulletEngine                  RVA=0x80B20A8  dump.cs:276282   protected override Vector3 CalculateTargetPosition(IEntityLiving target, Vector3 rawTargetPosition, bool onTar
+AbstractBallisticBulletEngine                  RVA=0x80B219C  dump.cs:276285   protected virtual float CalculateElapsedTime() { }
+AbstractBallisticBulletEngine                  RVA=0x80B2200  dump.cs:276288   protected virtual void CalculateCurrentPosition() { }
+AbstractBallisticBulletEngine                  RVA=0x80B2568  dump.cs:276291   private bool ShouldSkipUpdate(Vector3 direction, float elapsedTimeDelta) { }
+AbstractBallisticBulletEngine                  RVA=0x80B25A8  dump.cs:276294   protected virtual float CalculateGravity() { }
+AbstractBallisticBulletEngine                  RVA=0x80B25DC  dump.cs:276297   protected virtual float CalculatePositionTime(float elapsedTime) { }
+AbstractBallisticBulletEngine                  RVA=0x80B2604  dump.cs:276300   protected virtual float CalculateAltitudeTime(float elapsedTime) { }
+AbstractBallisticBulletEngine                  RVA=0x80B2050  dump.cs:276303   private void CalculateHeightCoefficients(int duration) { }
+AbstractBallisticBulletEngine                  RVA=0x80B261C  dump.cs:276306   protected void .ctor() { }
+AbstractBulletEngine                           RVA=0x80B265C  dump.cs:276377   protected void Awake() { }
+AbstractBulletEngine                           RVA=0x80B1B08  dump.cs:276380   public override void Create() { }
+AbstractBulletEngine                           RVA=0x80B2668  dump.cs:276383   public override void Destroy() { }
+AbstractBulletEngine                           RVA=0x80B26A0  dump.cs:276386   public override void Initiate(ClientBullet bullet) { }
+AbstractBulletEngine                           RVA=0x80B26C4  dump.cs:276389   public Vector3 get_OriginalPosition() { }
+AbstractBulletEngine                           RVA=0x80B26D0  dump.cs:276392   protected void set_OriginalPosition(Vector3 value) { }
+AbstractBulletEngine                           RVA=0x80B26DC  dump.cs:276395   public Vector3 get_TargetPosition() { }
+AbstractBulletEngine                           RVA=0x80B26E8  dump.cs:276398   protected void set_TargetPosition(Vector3 value) { }
+AbstractBulletEngine                           RVA=0x80B26F4  dump.cs:276401   public Vector3 get_RawTargetPosition() { }
+AbstractBulletEngine                           RVA=0x80B2700  dump.cs:276404   public long get_StartTime() { }
+AbstractBulletEngine                           RVA=0x80B2708  dump.cs:276407   public int get_Duration() { }
+AbstractBulletEngine                           RVA=0x80B2710  dump.cs:276410   public int get_DurationLong() { }
+AbstractBulletEngine                           RVA=0x80B2718  dump.cs:276413   public bool get_Missed() { }
+AbstractBulletEngine                           RVA=0x80B2720  dump.cs:276416   public IEntityInfo get_ShooterInfo() { }
+AbstractBulletEngine                           RVA=0x80B2728  dump.cs:276419   public IEntityInfo get_TargetInfo() { }
+AbstractBulletEngine                           RVA=0x80B2614  dump.cs:276425   protected static int get_TickDuration() { }
+AbstractBulletEngine                           RVA=0x80B1C40  dump.cs:276428   public virtual void EngineInitiate(IEntityWeaponOwner shooter, Vector3 originalPosition, bool missed) { }
+AbstractBulletEngine                           RVA=0x80B1E7C  dump.cs:276431   public virtual void Targeting(IEntityLiving target, Vector3 rawTargetPosition, int duration, int durationLong,
+AbstractBulletEngine                           RVA=0x80B2730  dump.cs:276434   public void MissedRetargeting(IEntityLiving target, Vector3 rawTargetPosition, int duration, int durationLong,
+AbstractBulletEngine                           RVA=0x80B2138  dump.cs:276437   protected virtual Vector3 CalculateTargetPosition(IEntityLiving target, Vector3 rawTargetPosition, bool onTarg
+AbstractBulletEngine                           RVA=0x80B2764  dump.cs:276443   protected void GetExplosionPointOnCollider(IEntityLiving hitDynamic, out Vector3 point, out Quaternion rotatio
+AbstractBulletEngine                           RVA=0x80B2624  dump.cs:276446   protected void .ctor() { }
+AdjustableBallisticBulletEngine                RVA=0x80B2B30  dump.cs:276465   public override sbyte get_EngineType() { }
+AdjustableBallisticBulletEngine                RVA=0x80B2B38  dump.cs:276468   public override void Create() { }
+AdjustableBallisticBulletEngine                RVA=0x80B2B68  dump.cs:276471   public override void Destroy() { }
+AdjustableBallisticBulletEngine                RVA=0x80B2B8C  dump.cs:276474   public override void Targeting(IEntityLiving target, Vector3 rawTargetPosition, int duration, int durationLong
+AdjustableBallisticBulletEngine                RVA=0x80B2BB0  dump.cs:276477   protected override float CalculateElapsedTime() { }
+AdjustableBallisticBulletEngine                RVA=0x80B2C14  dump.cs:276480   protected override Vector3 CalculateTargetPosition(IEntityLiving target, Vector3 rawTargetPosition, bool onTar
+AdjustableBallisticBulletEngine                RVA=0x80B30A4  dump.cs:276483   protected override void CalculateCurrentPosition() { }
+AdjustableBallisticBulletEngine                RVA=0x80B30E4  dump.cs:276486   public override void GetExplosionPoint(IEntityLiving hitDynamic, out Vector3 point, out Quaternion rotation) {
+AdjustableBallisticBulletEngine                RVA=0x80B3220  dump.cs:276489   private bool TryGetPointOnDynamic(IEntityLiving hitDynamic, out Vector3 point) { }
+AdjustableBallisticBulletEngine                RVA=0x80B2C9C  dump.cs:276492   private bool TryGetBulletMagnetPosition(out Vector3 position) { }
+AdjustableBallisticBulletEngine                RVA=0x80B2B5C  dump.cs:276495   private void Reset() { }
+AdjustableBallisticBulletEngine                RVA=0x80B3548  dump.cs:276498   public void .ctor() { }
+BallisticBulletEngine                          RVA=0x80B3558  dump.cs:276512   public override sbyte get_EngineType() { }
+BallisticBulletEngine                          RVA=0x80B2EEC  dump.cs:276515   protected override Vector3 CalculateTargetPosition(IEntityLiving target, Vector3 rawTargetPosition, bool onTar
+BallisticBulletEngine                          RVA=0x80B3560  dump.cs:276518   public override void GetExplosionPoint(IEntityLiving hitDynamic, out Vector3 point, out Quaternion rotation) {
+BallisticBulletEngine                          RVA=0x80B3550  dump.cs:276521   public void .ctor() { }
+BallisticHighBulletEngine                      RVA=0x80B36EC  dump.cs:276539   public override sbyte get_EngineType() { }
+BallisticHighBulletEngine                      RVA=0x80B36F4  dump.cs:276542   public override void EngineInitiate(IEntityWeaponOwner shooter, Vector3 originalPosition, bool missed) { }
+BallisticHighBulletEngine                      RVA=0x80B3814  dump.cs:276545   protected override Vector3 CalculateTargetPosition(IEntityLiving target, Vector3 rawTargetPosition, bool onTar
+BallisticHighBulletEngine                      RVA=0x80B3AC0  dump.cs:276548   public override void GetExplosionPoint(IEntityLiving hitDynamic, out Vector3 point, out Quaternion rotation) {
+BallisticHighBulletEngine                      RVA=0x80B3E0C  dump.cs:276551   public void .ctor() { }
+ChainLightingBulletEngine                      RVA=0x80B4FDC  dump.cs:276704   public override sbyte get_EngineType() { }
+ChainLightingBulletEngine                      RVA=0x80B4FE4  dump.cs:276707   public override void Create() { }
+ChainLightingBulletEngine                      RVA=0x80B5040  dump.cs:276710   public void SetChainBulletParams(ChainBulletParams chainBulletParams) { }
+ChainLightingBulletEngine                      RVA=0x80B5048  dump.cs:276713   public override void EngineInitiate(IEntityWeaponOwner shooter, Vector3 originalPosition, bool missed) { }
+ChainLightingBulletEngine                      RVA=0x80B5080  dump.cs:276716   public override void GetExplosionPoint(IEntityLiving hitDynamic, out Vector3 point, out Quaternion rotation) {
+ChainLightingBulletEngine                      RVA=0x80B5464  dump.cs:276719   protected override Vector3 CalculateTargetPosition(IEntityLiving target, Vector3 rawTargetPosition, bool onTar
+ChainLightingBulletEngine                      RVA=0x80B5590  dump.cs:276722   public override void Targeting(IEntityLiving target, Vector3 rawTargetPosition, int duration, int durationLong
+ChainLightingBulletEngine                      RVA=0x80B57A0  dump.cs:276725   private void SetupBulletVisibility() { }
+ChainLightingBulletEngine                      RVA=0x80B57FC  dump.cs:276729   private void LateUpdate() { }
+ChainLightingBulletEngine                      RVA=0x80B5990  dump.cs:276732   public void .ctor() { }
+LeviaphanNuclearRocketBallisticBulletEngine    RVA=0x80B5A18  dump.cs:276771   protected override float CalculateGravity() { }
+LeviaphanNuclearRocketBallisticBulletEngine    RVA=0x80B5BBC  dump.cs:276774   protected override float CalculatePositionTime(float elapsedTime) { }
+LeviaphanNuclearRocketBallisticBulletEngine    RVA=0x80B5BF4  dump.cs:276777   protected override float CalculateAltitudeTime(float elapsedTime) { }
+LeviaphanNuclearRocketBallisticBulletEngine    RVA=0x80B5BE4  dump.cs:276780   private float GetClamped01Time(float elapsedTime) { }
+LeviaphanNuclearRocketBallisticBulletEngine    RVA=0x80B5C3C  dump.cs:276783   public void .ctor() { }
+LinearBulletEngine                             RVA=0x80B5C50  dump.cs:276802   public override void Create() { }
+LinearBulletEngine                             RVA=0x80B5CAC  dump.cs:276805   public override sbyte get_EngineType() { }
+LinearBulletEngine                             RVA=0x80B5CB4  dump.cs:276808   public override void Targeting(IEntityLiving target, Vector3 rawTargetPosition, int duration, int durationLong
+LinearBulletEngine                             RVA=0x80B5EEC  dump.cs:276811   protected override Vector3 CalculateTargetPosition(IEntityLiving target, Vector3 rawTargetPosition, bool onTar
+LinearBulletEngine                             RVA=0x80B63BC  dump.cs:276815   protected void Update() { }
+LinearBulletEngine                             RVA=0x80B6530  dump.cs:276818   public override void GetExplosionPoint(IEntityLiving hitDynamic, out Vector3 point, out Quaternion rotation) {
+LinearBulletEngine                             RVA=0x80B6590  dump.cs:276821   public void .ctor() { }
+SelfDirectedBulletEngine                       RVA=0x80B68F8  dump.cs:276912   public override void Create() { }
+SelfDirectedBulletEngine                       RVA=0x80B6A14  dump.cs:276915   public override void Destroy() { }
+SelfDirectedBulletEngine                       RVA=0x80B6A80  dump.cs:276918   public override sbyte get_EngineType() { }
+SelfDirectedBulletEngine                       RVA=0x80B6A88  dump.cs:276921   public override void Targeting(IEntityLiving target, Vector3 rawTargetPosition, int duration, int durationLong
+SelfDirectedBulletEngine                       RVA=0x80B7270  dump.cs:276924   protected override Vector3 CalculateTargetPosition(IEntityLiving target, Vector3 rawTargetPosition, bool onTar
+SelfDirectedBulletEngine                       RVA=0x80B7864  dump.cs:276928   protected void Update() { }
+SelfDirectedBulletEngine                       RVA=0x80B7C4C  dump.cs:276931   public override void GetExplosionPoint(IEntityLiving hitDynamic, out Vector3 point, out Quaternion rotation) {
+SelfDirectedBulletEngine                       RVA=0x80B7E28  dump.cs:276934   public void MissTargeting(Vector3 targetOffset, int durationLeftFrom) { }
+SelfDirectedBulletEngine                       RVA=0x80B7420  dump.cs:276937   private bool BulletMagnetRaycast(BulletMagnet bulletMagnet, out Vector3 point, out Vector3 normal) { }
+SelfDirectedBulletEngine                       RVA=0x80B7A98  dump.cs:276940   protected bool SetCurrentPositionAndVelocity(long millisecs) { }
+SelfDirectedBulletEngine                       RVA=0x80B7E40  dump.cs:276944   private ValueTuple<Vector3, Vector3> CalculateCurrentPositionAndVelocity(long millisecs) { }
+SelfDirectedBulletEngine                       RVA=0x80B6D24  dump.cs:276947   private void TargetingCurveModeClear(IEntityLiving target, Vector3 rawTargetPosition, int duration, int durati
+SelfDirectedBulletEngine                       RVA=0x80B6FC4  dump.cs:276950   private void TargetingCurveModeNotClear(IEntityLiving target, Vector3 rawTargetPosition, int duration, int dur
+SelfDirectedBulletEngine                       RVA=0x80B80CC  dump.cs:276953   public void .ctor() { }
+LCBulletCreate                                 RVA=0x813F6C8  dump.cs:289927   public override void Create() { }
+LCBulletCreate                                 RVA=0x813F720  dump.cs:289930   public override void Destroy() { }
+LCBulletCreate                                 RVA=0x813F750  dump.cs:289933   public void Initiate(Bullet bullet, Weapon weapon, int chainBulletId) { }
+LCBulletCreate                                 RVA=0x813FB20  dump.cs:289936   public override bool Execute(float deltaTime) { }
+LCBulletCreate                                 RVA=0x813FEF4  dump.cs:289940   private ClientWeaponMuzzle TryGetMuzzle(AbstractClientWeapon weapon, IEntityLivingWeaponOwner shooter) { }
+LCBulletCreate                                 RVA=0x8140BF8  dump.cs:289943   private ClientBulletVisibleStyle GetVisibleStyle(IEntityLivingWeaponOwner shooter) { }
+LCBulletCreate                                 RVA=0x8140078  dump.cs:289947   private static ValueTuple<Vector3, Quaternion> GetBulletPositionAndRotation(ClientWeaponMuzzle muzzle) { }
+LCBulletCreate                                 RVA=0x8140188  dump.cs:289951   private ValueTuple<Vector3, Quaternion> GetChainBulletPositionAndRotation() { }
+LCBulletCreate                                 RVA=0x8140464  dump.cs:289954   private ClientBullet CreateBullet(Vector3 position, Quaternion rotation) { }
+LCBulletCreate                                 RVA=0x8140D5C  dump.cs:289957   public void .ctor() { }
+LCBulletExplode                                RVA=0x8140D64  dump.cs:290014   public override void Create() { }
+LCBulletExplode                                RVA=0x8140DC4  dump.cs:290017   public override void Destroy() { }
+LCBulletExplode                                RVA=0x8140DC8  dump.cs:290020   public void Initiate(Bullet bullet, sbyte targetType) { }
+LCBulletExplode                                RVA=0x8140FB0  dump.cs:290023   public override bool Execute(float deltaTime) { }
+LCBulletExplode                                RVA=0x8141684  dump.cs:290026   private void TryPlayBomberVoice(ClientBullet bullet) { }
+LCBulletExplode                                RVA=0x814192C  dump.cs:290029   private void TryToExplode(ExplodeAndFunnelAnimationStyles animationStyles, ClientBullet bullet) { }
+LCBulletExplode                                RVA=0x8141CBC  dump.cs:290032   private ValueTuple<Vector3, Quaternion> GetExplosionPositionAndRotation(ClientBullet bullet, AbstractBulletEng
+LCBulletExplode                                RVA=0x8141FD0  dump.cs:290035   private Vector3 AdjustExplosionPosition(Vector3 position, ClientBullet bullet) { }
+LCBulletExplode                                RVA=0x8141DA4  dump.cs:290038   private IEntityLiving GetHitDynamic(ClientBullet bullet) { }
+LCBulletExplode                                RVA=0x8141A40  dump.cs:290041   private static bool IsWithoutExplosion(AbstractBulletEngine bulletEngine) { }
+LCBulletExplode                                RVA=0x8141A20  dump.cs:290044   private static void BulletExplode(ClientBullet bullet) { }
+LCBulletExplode                                RVA=0x81420C0  dump.cs:290047   private static bool IsCoilTankPassiveAbilityBullet(ClientBullet bullet) { }
+LCBulletExplode                                RVA=0x8140EAC  dump.cs:290050   private static sbyte GetTargetType(Bullet bullet, sbyte targetType) { }
+LCBulletExplode                                RVA=0x81420EC  dump.cs:290053   private static bool IsCerberVehicleImpactOverride(ClientUnit targetUnit) { }
+LCBulletExplode                                RVA=0x8142194  dump.cs:290056   private static bool IsLandedSeraphimAircraftImpact(ClientUnit targetUnit, sbyte targetType) { }
+LCBulletExplode                                RVA=0x81422B8  dump.cs:290059   public void .ctor() { }
+LCBulletMissed                                 RVA=0x8142504  dump.cs:290083   private static int get_TickDuration() { }
+LCBulletMissed                                 RVA=0x814250C  dump.cs:290086   public override void Create() { }
+LCBulletMissed                                 RVA=0x8142538  dump.cs:290089   public void Initiate(Bullet bullet, int ticksToFly, int dx, int dy, int dz, int durationLeftFrom) { }
+LCBulletMissed                                 RVA=0x8142650  dump.cs:290092   public override void Destroy() { }
+LCBulletMissed                                 RVA=0x8142654  dump.cs:290095   public override bool Execute(float deltaTime) { }
+LCBulletMissed                                 RVA=0x81429DC  dump.cs:290098   private void RetargetingBullet() { }
+LCBulletMissed                                 RVA=0x81425B8  dump.cs:290101   private Vector3 GetFinalOffset(int dx, int dy, int dz) { }
+LCBulletMissed                                 RVA=0x814299C  dump.cs:290104   private void BallisticBulletExecute() { }
+LCBulletMissed                                 RVA=0x814290C  dump.cs:290107   private void SelfDirectedBulletExecute() { }
+LCBulletMissed                                 RVA=0x8142B24  dump.cs:290110   public void .ctor() { }
+LCBulletTargeting                              RVA=0x8142B38  dump.cs:290135   private static int get_TickDuration() { }
+LCBulletTargeting                              RVA=0x8142B40  dump.cs:290138   public override void Create() { }
+LCBulletTargeting                              RVA=0x8142BBC  dump.cs:290141   public override void Destroy() { }
+LCBulletTargeting                              RVA=0x8142BC4  dump.cs:290144   public void Initiate(Bullet bullet) { }
+LCBulletTargeting                              RVA=0x8143044  dump.cs:290147   public override bool Execute(float deltaTime) { }
+LCBulletTargeting                              RVA=0x8142F14  dump.cs:290150   private void AddBulletToIgnoreList(Bullet bullet) { }
+LCBulletTargeting                              RVA=0x8143320  dump.cs:290153   public void .ctor() { }
+Bullet                                         RVA=0x458FB5C  dump.cs:378496   public void .ctor() { }
+Bullet                                         RVA=0x458FB64  dump.cs:378499   public virtual void init() { }
+Bullet                                         RVA=0x458FBE4  dump.cs:378502   public virtual void reset() { }
+Bullet                                         RVA=0x458FCD8  dump.cs:378505   public virtual Dictionary<int, int> calcDamagedPerc() { }
+Bullet                                         RVA=0x458FD60  dump.cs:378508   public virtual bool get_AccelerateAndGuide() { }
+Bullet                                         RVA=0x458FD80  dump.cs:378511   public virtual sbyte get_Alliance() { }
+Bullet                                         RVA=0x458FD88  dump.cs:378514   public virtual void set_Alliance(sbyte value) { }
+Bullet                                         RVA=0x458FD90  dump.cs:378517   public virtual sbyte get_Category() { }
+Bullet                                         RVA=0x458FD98  dump.cs:378520   public virtual void set_Category(sbyte value) { }
+Bullet                                         RVA=0x458FDA0  dump.cs:378523   public virtual short get_Duration() { }
+Bullet                                         RVA=0x458FDA8  dump.cs:378526   public virtual void set_Duration(short value) { }
+Bullet                                         RVA=0x458FDB0  dump.cs:378529   public virtual short get_DurationNext() { }
+Bullet                                         RVA=0x458FDB8  dump.cs:378532   public virtual void set_DurationNext(short value) { }
+Bullet                                         RVA=0x458FDC0  dump.cs:378535   public virtual short get_DurationLong() { }
+Bullet                                         RVA=0x458FDC8  dump.cs:378538   public virtual void set_DurationLong(short value) { }
+Bullet                                         RVA=0x458FDD0  dump.cs:378541   public virtual int get_Dx() { }
+Bullet                                         RVA=0x458FDD8  dump.cs:378544   public virtual void set_Dx(int value) { }
+Bullet                                         RVA=0x458FDE0  dump.cs:378547   public virtual int get_Dy() { }
+Bullet                                         RVA=0x458FDE8  dump.cs:378550   public virtual void set_Dy(int value) { }
+Bullet                                         RVA=0x458FDF0  dump.cs:378553   public virtual short get_FlagAttackBonus() { }
+Bullet                                         RVA=0x458FDF8  dump.cs:378556   public virtual void set_FlagAttackBonus(short value) { }
+Bullet                                         RVA=0x458FE00  dump.cs:378559   public virtual int get_HitId() { }
+Bullet                                         RVA=0x458FE08  dump.cs:378562   public virtual void set_HitId(int value) { }
+Bullet                                         RVA=0x458FE10  dump.cs:378565   public virtual int get_InitH() { }
+Bullet                                         RVA=0x458FE18  dump.cs:378568   public virtual void set_InitH(int value) { }
+Bullet                                         RVA=0x458FE20  dump.cs:378571   public virtual int get_InitX() { }
+Bullet                                         RVA=0x458FE28  dump.cs:378574   public virtual void set_InitX(int value) { }
+Bullet                                         RVA=0x458FE30  dump.cs:378577   public virtual int get_InitY() { }
+Bullet                                         RVA=0x458FE38  dump.cs:378580   public virtual void set_InitY(int value) { }
+Bullet                                         RVA=0x458FE40  dump.cs:378583   public virtual short get_Killed() { }
+Bullet                                         RVA=0x458FE48  dump.cs:378586   public virtual void set_Killed(short value) { }
+Bullet                                         RVA=0x458FE50  dump.cs:378589   public virtual sbyte get_Lowing() { }
+Bullet                                         RVA=0x458FE58  dump.cs:378592   public virtual void set_Lowing(sbyte value) { }
+Bullet                                         RVA=0x458FE60  dump.cs:378595   public virtual bool get_Missed() { }
+Bullet                                         RVA=0x458FE68  dump.cs:378598   public virtual void set_Missed(bool value) { }
+Bullet                                         RVA=0x458FE70  dump.cs:378601   public virtual bool get_NeedingGuidance() { }
+Bullet                                         RVA=0x458FE78  dump.cs:378604   public virtual void set_NeedingGuidance(bool value) { }
+Bullet                                         RVA=0x458FE80  dump.cs:378607   public virtual Dynamic get_Obj() { }
+Bullet                                         RVA=0x458FE88  dump.cs:378610   public virtual void set_Obj(Dynamic value) { }
+Bullet                                         RVA=0x458FE90  dump.cs:378613   public virtual int get_ObjId() { }
+Bullet                                         RVA=0x458FE98  dump.cs:378616   public virtual void set_ObjId(int value) { }
+Bullet                                         RVA=0x458FEA0  dump.cs:378619   public virtual Dynamic get_ObjStat() { }
+Bullet                                         RVA=0x458FEA8  dump.cs:378622   public virtual void set_ObjStat(Dynamic value) { }
+Bullet                                         RVA=0x458FEB0  dump.cs:378625   public virtual sbyte get_Occupation() { }
+Bullet                                         RVA=0x458FEB8  dump.cs:378628   public virtual void set_Occupation(sbyte value) { }
+Bullet                                         RVA=0x458FEC0  dump.cs:378631   public virtual bool get_OnTarget() { }
+Bullet                                         RVA=0x458FEC8  dump.cs:378634   public virtual void set_OnTarget(bool value) { }
+Bullet                                         RVA=0x458FED0  dump.cs:378637   public virtual short get_Orient() { }
+Bullet                                         RVA=0x458FED8  dump.cs:378640   public virtual void set_Orient(short value) { }
+Bullet                                         RVA=0x458FEE0  dump.cs:378643   public virtual short get_Pos() { }
+Bullet                                         RVA=0x458FEE8  dump.cs:378646   public virtual void set_Pos(short value) { }
+Bullet                                         RVA=0x458FEF0  dump.cs:378649   public virtual short get_Prepos() { }
+Bullet                                         RVA=0x458FEF8  dump.cs:378652   public virtual void set_Prepos(short value) { }
+Bullet                                         RVA=0x458FF00  dump.cs:378655   public virtual BattleSide get_Side() { }
+Bullet                                         RVA=0x458FF08  dump.cs:378658   public virtual void set_Side(BattleSide value) { }
+Bullet                                         RVA=0x458FF10  dump.cs:378661   public virtual sbyte get_SkillBonus() { }
+Bullet                                         RVA=0x458FF18  dump.cs:378664   public virtual void set_SkillBonus(sbyte value) { }
+Bullet                                         RVA=0x458FF20  dump.cs:378667   public virtual Dynamic calcSubj() { }
+Bullet                                         RVA=0x458FF4C  dump.cs:378670   public virtual IShooter calcShooter() { }
+Bullet                                         RVA=0x459002C  dump.cs:378673   public virtual Dynamic get_Subj() { }
+Bullet                                         RVA=0x4590034  dump.cs:378676   public virtual void set_Subj(Dynamic value) { }
+Bullet                                         RVA=0x459003C  dump.cs:378679   public virtual Ability get_Ability() { }
+Bullet                                         RVA=0x4590044  dump.cs:378682   public virtual void set_Ability(Ability value) { }
+Bullet                                         RVA=0x459004C  dump.cs:378685   public virtual int get_TargetH() { }
+Bullet                                         RVA=0x4590054  dump.cs:378688   public virtual void set_TargetH(int value) { }
+Bullet                                         RVA=0x459005C  dump.cs:378691   public virtual int get_TargetX() { }
+Bullet                                         RVA=0x4590064  dump.cs:378694   public virtual void set_TargetX(int value) { }
+Bullet                                         RVA=0x459006C  dump.cs:378697   public virtual int get_TargetY() { }
+Bullet                                         RVA=0x4590074  dump.cs:378700   public virtual void set_TargetY(int value) { }
+Bullet                                         RVA=0x459007C  dump.cs:378703   public virtual int get_TargetXNext() { }
+Bullet                                         RVA=0x4590084  dump.cs:378706   public virtual void set_TargetXNext(int value) { }
+Bullet                                         RVA=0x459008C  dump.cs:378709   public virtual int get_TargetYNext() { }
+Bullet                                         RVA=0x4590094  dump.cs:378712   public virtual void set_TargetYNext(int value) { }
+Bullet                                         RVA=0x459009C  dump.cs:378715   public virtual bool get_TargetPreciseHit() { }
+Bullet                                         RVA=0x45900A4  dump.cs:378718   public virtual void set_TargetPreciseHit(bool value) { }
+Bullet                                         RVA=0x45900AC  dump.cs:378721   public virtual sbyte get_Tick() { }
+Bullet                                         RVA=0x45900B4  dump.cs:378724   public virtual void set_Tick(sbyte value) { }
+Bullet                                         RVA=0x45900BC  dump.cs:378727   public virtual short get_Type() { }
+Bullet                                         RVA=0x45900C4  dump.cs:378730   public virtual void set_Type(short value) { }
+Bullet                                         RVA=0x45900CC  dump.cs:378733   public virtual int get_VelX() { }
+Bullet                                         RVA=0x45900D4  dump.cs:378736   public virtual void set_VelX(int value) { }
+Bullet                                         RVA=0x45900DC  dump.cs:378739   public virtual int get_VelY() { }
+Bullet                                         RVA=0x45900E4  dump.cs:378742   public virtual void set_VelY(int value) { }
+Bullet                                         RVA=0x45900EC  dump.cs:378745   public virtual short get_X() { }
+Bullet                                         RVA=0x45900F4  dump.cs:378748   public virtual void set_X(short value) { }
+Bullet                                         RVA=0x45900FC  dump.cs:378751   public virtual short get_Y() { }
+Bullet                                         RVA=0x4590104  dump.cs:378754   public virtual void set_Y(short value) { }
+Bullet                                         RVA=0x459010C  dump.cs:378757   public virtual int get_XLogic() { }
+Bullet                                         RVA=0x4590120  dump.cs:378760   public virtual int get_YLogic() { }
+Bullet                                         RVA=0x4590134  dump.cs:378763   public virtual WeaponType get_WeType() { }
+Bullet                                         RVA=0x459013C  dump.cs:378766   public virtual void set_WeType(WeaponType value) { }
+Bullet                                         RVA=0x4590144  dump.cs:378769   public virtual Dictionary<int, Dynamic> get_Damaged() { }
+Bullet                                         RVA=0x459014C  dump.cs:378772   public virtual void set_Damaged(Dictionary<int, Dynamic> value) { }
+Bullet                                         RVA=0x4590154  dump.cs:378775   public virtual Dictionary<int, int> get_DamagedPerc() { }
+Bullet                                         RVA=0x459015C  dump.cs:378778   public virtual void set_DamagedPerc(Dictionary<int, int> value) { }
+Bullet                                         RVA=0x4590164  dump.cs:378781   public virtual int get_ExplosionRadius() { }
+Bullet                                         RVA=0x459016C  dump.cs:378784   public virtual void set_ExplosionRadius(int value) { }
+Bullet                                         RVA=0x4590174  dump.cs:378787   public virtual bool get_FogOpened() { }
+Bullet                                         RVA=0x459017C  dump.cs:378790   public virtual void set_FogOpened(bool value) { }
+Bullet                                         RVA=0x4590184  dump.cs:378793   public override int get_EntityType() { }
+Bullet                                         RVA=0x459018C  dump.cs:378796   public override string ToString() { }
+BulletEngineType                               RVA=0x45901E8  dump.cs:378814   protected void .ctor() { }
+WeaponType                                     RVA=0x45B61C0  dump.cs:397060   public void .ctor() { }
+WeaponType                                     RVA=0x45B2E6C  dump.cs:397063   public void init() { }
+WeaponType                                     RVA=0x45B61C8  dump.cs:397066   public virtual void tuning(Battle battle) { }
+WeaponType                                     RVA=0x45B621C  dump.cs:397069   public virtual bool get_ConeFire() { }
+WeaponType                                     RVA=0x45B622C  dump.cs:397072   public virtual bool usingObjTerritory() { }
+WeaponType                                     RVA=0x45B6268  dump.cs:397075   public virtual bool canBombard() { }
+WeaponType                                     RVA=0x45B6274  dump.cs:397078   public virtual bool get_AntiAirOnly() { }
+WeaponType                                     RVA=0x45B62EC  dump.cs:397081   public sbyte get_BulletTrajectoryType() { }
+WeaponType                                     RVA=0x45B62F4  dump.cs:397084   public void set_BulletTrajectoryType(sbyte value) { }
+WeaponType                                     RVA=0x45B62FC  dump.cs:397087   public virtual AuraType get_Aura() { }
+WeaponType                                     RVA=0x45B6304  dump.cs:397090   public virtual void set_Aura(AuraType value) { }
+WeaponType                                     RVA=0x45B630C  dump.cs:397093   public virtual short get_Name() { }
+WeaponType                                     RVA=0x45B6314  dump.cs:397096   public virtual void set_Name(short value) { }
+WeaponType                                     RVA=0x45B631C  dump.cs:397099   public virtual short get_NameAdd() { }
+WeaponType                                     RVA=0x45B6324  dump.cs:397102   public virtual void set_NameAdd(short value) { }
+WeaponType                                     RVA=0x45B632C  dump.cs:397105   public virtual bool get_Accelerating() { }
+WeaponType                                     RVA=0x45B6334  dump.cs:397108   public virtual void set_Accelerating(bool value) { }
+WeaponType                                     RVA=0x45B633C  dump.cs:397111   public short get_AccuracyDynamic() { }
+WeaponType                                     RVA=0x45B6344  dump.cs:397114   public void set_AccuracyDynamic(short value) { }
+WeaponType                                     RVA=0x45B634C  dump.cs:397117   public short get_AccuracyStatic() { }
+WeaponType                                     RVA=0x45B6354  dump.cs:397120   public void set_AccuracyStatic(short value) { }
+WeaponType                                     RVA=0x45B635C  dump.cs:397123   public short get_AccuracyWalk() { }
+WeaponType                                     RVA=0x45B6364  dump.cs:397126   public void set_AccuracyWalk(short value) { }
+WeaponType                                     RVA=0x45B636C  dump.cs:397129   public virtual bool get_AirAiming() { }
+WeaponType                                     RVA=0x45B6374  dump.cs:397132   public virtual void set_AirAiming(bool value) { }
+WeaponType                                     RVA=0x45B637C  dump.cs:397135   public int get_BoomType() { }
+WeaponType                                     RVA=0x45B6384  dump.cs:397138   public void set_BoomType(int value) { }
+WeaponType                                     RVA=0x45B638C  dump.cs:397141   public int get_BulType() { }
+WeaponType                                     RVA=0x45B6394  dump.cs:397144   public void set_BulType(int value) { }
+WeaponType                                     RVA=0x45B639C  dump.cs:397147   public sbyte get_Category() { }
+WeaponType                                     RVA=0x45B63A4  dump.cs:397150   public void set_Category(sbyte value) { }
+WeaponType                                     RVA=0x45B63AC  dump.cs:397153   public short get_Gravity() { }
+WeaponType                                     RVA=0x45B63B4  dump.cs:397156   public void set_Gravity(short value) { }
+WeaponType                                     RVA=0x45B63BC  dump.cs:397159   public sbyte get_Guided() { }
+WeaponType                                     RVA=0x45B63C4  dump.cs:397162   public void set_Guided(sbyte value) { }
+WeaponType                                     RVA=0x45B63CC  dump.cs:397165   public virtual sbyte get_GuidedRotateSpeed() { }
+WeaponType                                     RVA=0x45B63D4  dump.cs:397168   public virtual void set_GuidedRotateSpeed(sbyte value) { }
+WeaponType                                     RVA=0x45B63DC  dump.cs:397171   public virtual short get_GuidedRocketLife() { }
+WeaponType                                     RVA=0x45B63E4  dump.cs:397174   public virtual void set_GuidedRocketLife(short value) { }
+WeaponType                                     RVA=0x45B63EC  dump.cs:397177   public int get_Velocity() { }
+WeaponType                                     RVA=0x45B63F4  dump.cs:397180   public void set_Velocity(int value) { }
+WeaponType                                     RVA=0x45B63FC  dump.cs:397183   public int get_DamageLight() { }
+WeaponType                                     RVA=0x45B6404  dump.cs:397186   public void set_DamageLight(int value) { }
+WeaponType                                     RVA=0x45B640C  dump.cs:397189   public int get_DamageHeavy() { }
+WeaponType                                     RVA=0x45B6414  dump.cs:397192   public void set_DamageHeavy(int value) { }
+WeaponType                                     RVA=0x45B641C  dump.cs:397195   public int get_DamageMedium() { }
+WeaponType                                     RVA=0x45B6424  dump.cs:397198   public void set_DamageMedium(int value) { }
+WeaponType                                     RVA=0x45B642C  dump.cs:397201   public virtual int get_DamageLightInit() { }
+WeaponType                                     RVA=0x45B6434  dump.cs:397204   public virtual void set_DamageLightInit(int value) { }
+WeaponType                                     RVA=0x45B643C  dump.cs:397207   public virtual int get_DamageMediumInit() { }
+WeaponType                                     RVA=0x45B6444  dump.cs:397210   public virtual void set_DamageMediumInit(int value) { }
+WeaponType                                     RVA=0x45B644C  dump.cs:397213   public virtual int get_DamageHeavyInit() { }
+WeaponType                                     RVA=0x45B6454  dump.cs:397216   public virtual void set_DamageHeavyInit(int value) { }
+WeaponType                                     RVA=0x45B645C  dump.cs:397219   public virtual sbyte[] get_DamagePriority() { }
+WeaponType                                     RVA=0x45B6464  dump.cs:397222   public virtual void set_DamagePriority(sbyte[] value) { }
+WeaponType                                     RVA=0x45B646C  dump.cs:397225   public int get_Distance() { }
+WeaponType                                     RVA=0x45B6474  dump.cs:397228   public void set_Distance(int value) { }
+WeaponType                                     RVA=0x45B647C  dump.cs:397231   public virtual int get_DistanceMin() { }
+WeaponType                                     RVA=0x45B6484  dump.cs:397234   public virtual void set_DistanceMin(int value) { }
+WeaponType                                     RVA=0x45B648C  dump.cs:397237   public virtual int get_DistanceOriginal() { }
+WeaponType                                     RVA=0x45B6494  dump.cs:397240   public virtual void set_DistanceOriginal(int value) { }
+WeaponType                                     RVA=0x45B649C  dump.cs:397243   public virtual int get_DistanceOriginalInit() { }
+WeaponType                                     RVA=0x45B64A4  dump.cs:397246   public virtual void set_DistanceOriginalInit(int value) { }
+WeaponType                                     RVA=0x45B64AC  dump.cs:397249   public sbyte get_ExplosionDecr() { }
+WeaponType                                     RVA=0x45B64B4  dump.cs:397252   public void set_ExplosionDecr(sbyte value) { }
+WeaponType                                     RVA=0x45B64BC  dump.cs:397255   public int get_ExplosionRadius() { }
+WeaponType                                     RVA=0x45B64C4  dump.cs:397258   public void set_ExplosionRadius(int value) { }
+WeaponType                                     RVA=0x45B64CC  dump.cs:397261   public virtual int get_ExplosionRadiusInit() { }
+WeaponType                                     RVA=0x45B64D4  dump.cs:397264   public virtual void set_ExplosionRadiusInit(int value) { }
+WeaponType                                     RVA=0x45B64DC  dump.cs:397267   public virtual sbyte get_HitBonus() { }
+WeaponType                                     RVA=0x45B64E4  dump.cs:397270   public virtual void set_HitBonus(sbyte value) { }
+WeaponType                                     RVA=0x45B64EC  dump.cs:397273   public sbyte get_ShellType() { }
+WeaponType                                     RVA=0x45B64F4  dump.cs:397276   public void set_ShellType(sbyte value) { }
+WeaponType                                     RVA=0x45B64FC  dump.cs:397279   public virtual short get_ShotStart() { }
+WeaponType                                     RVA=0x45B6504  dump.cs:397282   public virtual void set_ShotStart(short value) { }
+WeaponType                                     RVA=0x45B650C  dump.cs:397285   public virtual short get_ShotInt() { }
+WeaponType                                     RVA=0x45B6514  dump.cs:397288   public virtual void set_ShotInt(short value) { }
+WeaponType                                     RVA=0x45B651C  dump.cs:397291   public virtual short get_FlarePrepare() { }
+WeaponType                                     RVA=0x45B6524  dump.cs:397294   public virtual void set_FlarePrepare(short value) { }
+WeaponType                                     RVA=0x45B652C  dump.cs:397297   public sbyte get_ShotCount() { }
+WeaponType                                     RVA=0x45B6534  dump.cs:397300   public void set_ShotCount(sbyte value) { }
+WeaponType                                     RVA=0x45B653C  dump.cs:397303   public short get_RoundLen() { }
+WeaponType                                     RVA=0x45B6544  dump.cs:397306   public void set_RoundLen(short value) { }
+WeaponType                                     RVA=0x45B654C  dump.cs:397309   public short get_ShotLength() { }
+WeaponType                                     RVA=0x45B6554  dump.cs:397312   public void set_ShotLength(short value) { }
+WeaponType                                     RVA=0x45B655C  dump.cs:397315   public short[] get_ShotTick() { }
+WeaponType                                     RVA=0x45B6564  dump.cs:397318   public void set_ShotTick(short[] value) { }
+WeaponType                                     RVA=0x45B656C  dump.cs:397321   public short get_RotateSpeed() { }
+WeaponType                                     RVA=0x45B6574  dump.cs:397324   public void set_RotateSpeed(short value) { }
+WeaponType                                     RVA=0x45B657C  dump.cs:397327   public short get_RotateDiap() { }
+WeaponType                                     RVA=0x45B6584  dump.cs:397330   public void set_RotateDiap(short value) { }
+WeaponType                                     RVA=0x45B658C  dump.cs:397333   public short get_Type() { }
+WeaponType                                     RVA=0x45B6594  dump.cs:397336   public void set_Type(short value) { }
+WeaponType                                     RVA=0x45B659C  dump.cs:397339   public sbyte get_Aiming() { }
+WeaponType                                     RVA=0x45B65A4  dump.cs:397342   public void set_Aiming(sbyte value) { }
+WeaponType                                     RVA=0x45B65AC  dump.cs:397345   public sbyte get_Priority() { }
+WeaponType                                     RVA=0x45B65B4  dump.cs:397348   public void set_Priority(sbyte value) { }
+WeaponType                                     RVA=0x45B65BC  dump.cs:397351   public sbyte get_WalkingShot() { }
+WeaponType                                     RVA=0x45B65C4  dump.cs:397354   public void set_WalkingShot(sbyte value) { }
+WeaponType                                     RVA=0x45B65CC  dump.cs:397357   public virtual short get_ConeAngle() { }
+WeaponType                                     RVA=0x45B65D4  dump.cs:397360   public virtual void set_ConeAngle(short value) { }
+WeaponType                                     RVA=0x45B65DC  dump.cs:397363   public virtual short get_ConeDuration() { }
+WeaponType                                     RVA=0x45B65E4  dump.cs:397366   public virtual void set_ConeDuration(short value) { }
+WeaponType                                     RVA=0x45B65EC  dump.cs:397369   public virtual short get_ConeBaseLine() { }
+WeaponType                                     RVA=0x45B65F4  dump.cs:397372   public virtual void set_ConeBaseLine(short value) { }
+WeaponType                                     RVA=0x45B65FC  dump.cs:397375   public virtual int[] get_DmgUnModificator() { }
+WeaponType                                     RVA=0x45B6604  dump.cs:397378   public virtual void set_DmgUnModificator(int[] value) { }
+WeaponType                                     RVA=0x45B660C  dump.cs:397381   public virtual int[] get_DmgBldModificator() { }
+WeaponType                                     RVA=0x45B6614  dump.cs:397384   public virtual void set_DmgBldModificator(int[] value) { }
+WeaponType                                     RVA=0x45B661C  dump.cs:397387   public FireType get_Visual() { }
+WeaponType                                     RVA=0x45B6624  dump.cs:397390   public void set_Visual(FireType value) { }
+WeaponType                                     RVA=0x45B662C  dump.cs:397393   public virtual int[] get_OffTargetDamage() { }
+WeaponType                                     RVA=0x45B6634  dump.cs:397396   public virtual void set_OffTargetDamage(int[] value) { }
+WeaponType                                     RVA=0x45B6644  dump.cs:397399   public virtual int[] get_OffTargetImpacts() { }
+WeaponType                                     RVA=0x45B664C  dump.cs:397402   public virtual void set_OffTargetImpacts(int[] value) { }
+WeaponType                                     RVA=0x45B6654  dump.cs:397405   public virtual int[] get_TargetDamage() { }
+WeaponType                                     RVA=0x45B665C  dump.cs:397408   public virtual void set_TargetDamage(int[] value) { }
+WeaponType                                     RVA=0x45B6664  dump.cs:397411   public virtual int[] get_TargetImpacts() { }
+WeaponType                                     RVA=0x45B666C  dump.cs:397414   public virtual void set_TargetImpacts(int[] value) { }
+WeaponType                                     RVA=0x45B6674  dump.cs:397417   public virtual int[] get_ShotsMade() { }
+WeaponType                                     RVA=0x45B667C  dump.cs:397420   public virtual void set_ShotsMade(int[] value) { }
+WeaponType                                     RVA=0x45B6684  dump.cs:397423   public virtual int[] get_RoundsMade() { }
+WeaponType                                     RVA=0x45B668C  dump.cs:397426   public virtual void set_RoundsMade(int[] value) { }
+WeaponType                                     RVA=0x45B6694  dump.cs:397429   public virtual string get_Icon() { }
+WeaponType                                     RVA=0x45B669C  dump.cs:397432   public virtual void set_Icon(string value) { }
+WeaponType                                     RVA=0x45B66A4  dump.cs:397435   public virtual int[] get_OffTargetImpactsPrecise() { }
+WeaponType                                     RVA=0x45B66AC  dump.cs:397438   public virtual void set_OffTargetImpactsPrecise(int[] value) { }
+WeaponType                                     RVA=0x45B66BC  dump.cs:397441   public virtual int[] get_TargetImpactsPrecise() { }
+WeaponType                                     RVA=0x45B66C4  dump.cs:397444   public virtual void set_TargetImpactsPrecise(int[] value) { }
+WeaponType                                     RVA=0x45B66CC  dump.cs:397447   public virtual int get_PvpBldPoints() { }
+WeaponType                                     RVA=0x45B66D4  dump.cs:397450   public virtual void set_PvpBldPoints(int value) { }
+WeaponType                                     RVA=0x45B66DC  dump.cs:397453   public override int get_EntityType() { }
+WeaponType                                     RVA=0x45B66E4  dump.cs:397456   public override string ToString() { }

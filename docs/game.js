@@ -1895,6 +1895,15 @@
         u.burstT = u.def.weapon.shotInt ?? 0.2;
       }
     }
+    // R8 trajectory/gravity consumers (dump.cs structural scan, reverse/notes/
+    // r8-trajectory-gravity-consumers.md): native BulletEngineType families are
+    // Linear=0 / Ballistic=1 / Ballistic_High=2 / SelfDirected=3 / ChainLighting=4 /
+    // Melee=5 / UpAndSelfDirected=6 — trajectoryType selects the client arc engine;
+    // gravity enters as field/100 (AbstractBallisticBulletEngine.GRAVITY_DIVIDER),
+    // height is parametric in the flight duration, and sim timing is the
+    // duration/duration_next/duration_long triple (Bullet @0x5A..0x5E). Browser:
+    // linear speed·dt flight stays authoritative-timing-driven; per-family arcs
+    // + gravity/100 land when R1 per-weapon values arrive (keys mapped, zero-index).
     fireShell(u, tx, ty, tgt, d) {
       if (this.nativeTask(u) === TASK_DONT_SHOOT)
         return;
@@ -2120,6 +2129,10 @@
       }
     }
     updateProjectiles(dt) {
+      // R8: native render engines interpolate a parametric height curve over the
+      // sim-supplied duration triple (no vel_z anywhere — Bullet @0x28..0x54 is
+      // fixed-point horizontal kinematics only); this linear path is the
+      // trajectory-less fallback until R1 values land (see fireShell note).
       for (const p of this.projectiles) {
         const dx = p.tx - p.x, dy = p.ty - p.y;
         const d = Math.hypot(dx, dy);
