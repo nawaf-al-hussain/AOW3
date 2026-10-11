@@ -10,7 +10,7 @@ Game version of record: **6.9.18** (`libil2cpp.so` sha256 `8ace05bb…`, metadat
 dump.cs `0050e67d…`). Evidence labels per AGENTS.md §9 / mission vocabulary:
 `[NATIVE] [DECOMP] [RUNTIME] [ASSET] [SERVER-DATA] [BROWSER] [INFERRED] [SPECULATIVE]`.
 
-## Status snapshot (2026-10-10, R12 closed / Task 60)
+## Status snapshot (2026-10-11, R13 closed / Task 62)
 
 | Audit ID | Question | Status | Evidence anchor | Next concrete action |
 |---|---|---|---|---|
@@ -26,6 +26,7 @@ dump.cs `0050e67d…`). Evidence labels per AGENTS.md §9 / mission vocabulary:
 | R10 | Camera/UI metrics | BLOCKED (device captures) | V8 A/B harness exists | record device gameplay; calibrate v2 pitch ramp |
 | R11 | Addressables DLC scan (naval/air prefabs) | BLOCKED (device storage) | APK-side absence proven | pull catalog+bundles from device, re-run `unpack_bundles.py` |
 | R12 | Native announcer/voice trigger system | **CONFIRMED** (trigger wiring decoded: BattleUIEventHelper global register + AudioBattleVoicesPlayer LC/GH wiring; flag polarity, throttles, spec gate; fold-in wired ann_captured/flag_lost/flags_lost/enemy/base_attack v61) | `notes/announcer-voice-native-analysis.md`, `evidence/audio/r12-*.txt` | closed at static limit for the global register; optional: per-unit VoiceType voice layer (note §2), M3 weapon-sound table from audio bundles |
+| R13 | Building/production command suite (cancel/rally/repair/upgrade) | **CONFIRMED** (structure; offline dump.cs decode 2026-10-11 — binary LFS/tooling-gated session, no disassembly claims: AIComm payload shapes + Send* facade + plain-named LC application commands; cancel names a UNIT TYPE; repair/upgrade durations SERVER-delivered; BuildingLevelType→UpgradeLevel config chain; refund rule has NO native surface) | `notes/building-commands-native-decode.md`, `evidence/commands/building-commands-decode.txt` | CLOSED at the offline-reachable limit; per-level repair_price/upg_lvl values + refund fraction ride R1; $CMA validators + get_Type ids ride the script.json tooling-gate |
 
 ## Priorities (mission §6 mapped to sequencing)
 
@@ -46,8 +47,7 @@ Ranked by fidelity impact per audit §7 and current residuals:
    k=duration/200); engine ids confirmed, taxonomy corrected (slot 6 = Adjustable);
    AccelerateAndGuide predicate pinned; converts G10's structure AND math — only
    per-weapon VALUES remain (R1).
-3. **G11 burst wire-up** — `shot_count/shot_int` machinery exists; values arrive with R1;
-   ensure sim paths are burst-ready and hash-covered (audit I2/I7).
+3. ~~**G11 burst wire-up**~~ — **dormant-complete** (verified 2026-10-11): burst machinery shipped (`shotCount ?? 1` burst paths + burstLeft/burstT state) and hash-covered by H1 (Task 58); only per-weapon VALUES remain (R1).
 4. ~~**H1 hash blind spots**~~ — **DONE (Task 58, v=59)**: mines (M-lines) + `_chain` + behavior-timer block + cmdSeq serialized; golden structure assertions re-baselined; exposed + fixed the JIP clientless-window archive hole (lockstep-jip).
 5. ~~**B7 path-slot system** — only after R5/R6-derived semantics~~ — R6 semantics now CLOSED (Task 59); B7 remains highest determinism risk, keep last in this priority.
 
@@ -102,3 +102,10 @@ Ranked by fidelity impact per audit §7 and current residuals:
    (ann_captured/flag_lost/flags_lost/enemy/base_attack) as UI-layer observer + 10-vector
    test; ann_arrived/ann_achievement decoded-but-dormant (transports/contracts out of
    scope); per-unit VoiceType voice layer and M3 weapon-sound table remain optional.
+8. ~~**G1–G4/I4 building-command suite**~~ — **DONE (R13, Task 62, 2026-10-11)**:
+   payload shapes + Send* facade + LC application commands decoded (cancel names a
+   UNIT TYPE; repair/upgrade durations SERVER-delivered; BuildingLevelType→UpgradeLevel
+   config chain); browser fold-in v63: produceCancel/rally/repair/upgrade kernel commands
+   (repair/upgrade config-gated dormant until R1 data — no invented balance),
+   stateString/lockstep/journal parity, 49-check suite; refund fraction [INFERRED 100%]
+   recorded as an R1-session question.

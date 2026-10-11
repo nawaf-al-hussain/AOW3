@@ -34,6 +34,14 @@
   var BUILDINGS_ORDER = D0.buildingsOrder;
   var PRODUCER_OF = D0.producers;
   var ECONOMY = D0.economy;
+  // Building-command suite (G1-G4/I4, Task 62) — native decode:
+  // reverse/notes/building-commands-native-decode.md. PRODUCER_SET = the
+  // rally-capable building set (native IsRallyPointAllowed analog).
+  var PRODUCER_SET = new Set(Object.values(PRODUCER_OF));
+  var RALLY_MAX_CELLS = 16; // [BROWSER] waypoint cap; native cap [AWAITING BINARY]
+  var REPAIR_DURATION_FULL_S = 8; // [BROWSER] seconds for a full-hp rebuild at missing=max —
+  // native duration is SERVER-delivered (LCBuildingRepairInitiate startTick+duration),
+  // so there is no client formula to recover; R1-session question.
 
   // src/game/data/formulas.ts
   var ARMOR_CONST_MIN = 0.1;
@@ -590,7 +598,10 @@
     }
     addBuilding(defId, owner, x, y, instant = true) {
       const def = defId === "hq" ? HQ : defId === "depot" ? DEPOT : BLD[defId];
-      const b = { id: this.nextId++, defId, owner, x, y, radius: def.radius, hp: def.health, maxHp: def.health, captureT: 0, captureBy: 0, built: instant };
+      // level: native per-level BuildingLevelType prototypes (dump.cs:377885);
+      // LCBuildingProcessCompleted carries m_upgradeLevel + m_health — the level
+      // state is journaled/hashed now, stat rebase awaits R1 per-level data.
+      const b = { id: this.nextId++, defId, owner, x, y, radius: def.radius, hp: def.health, maxHp: def.health, captureT: 0, captureBy: 0, built: instant, level: 1 };
       if (!instant) {
         b.buildT = 0;
         b.buildTotal = def.buildTime;
@@ -736,7 +747,14 @@
       for (const u of this.units)
         s.push(`U${u.id},${u.def.id},${u.owner},${q(u.x)},${q(u.y)},${q(u.hp)},${q(u.facing)},${u.order.kind},${o(u.order.x)},${o(u.order.y)},${o(u.order.depotId)},${o(u.targetId)},${o(u.preferredId)},${u.path.length},${xy(u.dest)},${xy(u.guard)},${u.grounded ? 1 : 0},${u.burstLeft},${q(u.aimT)},${q(u.cd)},${u.state},${u.kills},${q(u.captureT ?? -1)},${o(u.lastHitBy)},${o(u.lastTargetId)},${o(u.garrison)},${o(u.order.ax)},${o(u.order.ay)},${u.order.back ? 1 : 0},${u.hiding ? 1 : 0},${u.fireHold ? 1 : 0},${o(u.slowT)},${o(u.burnT)},${o(u.burnDps)},${o(u.invulnT)},${o(u.heat)},${o(u.abilCd)},${o(u.repathCd)},${q(u.burstT)},${u.lastMode ?? '-'},${q(u.orientDest)},${u._chain ? 1 : 0}${u.sameSpeed !== undefined ? 'ss' + q(u.sameSpeed) : '-'}${u.order.pts ? ',rt' + u.order.pts.map((p) => q(p.x) + '.' + q(p.y)).join('_') + ',lg' + (u.order.leg ?? 0) : ''}${u.siege ? ',sg' + u.siege.dir + '.' + u.siege.stage : ''}`);
       for (const b of this.buildings)
-        s.push(`B${b.id},${b.defId},${b.owner},${q(b.x)},${q(b.y)},${q(b.hp)},${b.built ? 1 : 0},${q(b.captureT)},${b.captureBy},${o(b.lastHitOwner)}`);
+        s.push(`B${b.id},${b.defId},${b.owner},${q(b.x)},${q(b.y)},${q(b.hp)},${b.built ? 1 : 0},${q(b.captureT)},${b.captureBy},${o(b.lastHitOwner)}` +
+          // G1-G4 building-command state (Task 62; H1 column discipline —
+          // appended, never reordered): level (G4), rally waypoints (G2),
+          // upgrade + repair progress/escrow (G4/G3).
+          `,lv${b.level ?? 1}` +
+          (b.rally ? ",ra" + b.rally.map((c) => q(c.x) + "." + q(c.y)).join("_") : "") +
+          (b.upgT !== undefined ? ",ug" + q(b.upgT) + "." + q(b.upgTotal) : "") +
+          (b.repairT !== undefined ? ",rp" + q(b.repairT) + "." + q(b.repairTotal) + "." + o(b.repairFrom) + "." + o(b.repairGain) + "." + o(b.repairPaid) : ""));
       for (const p of this.projectiles)
         s.push(`J${q(p.x)},${q(p.y)},${q(p.tx)},${q(p.ty)},${q(p.speed)},${p.dmg},${o(p.owner)},${o(p.srcId)},${o(p.targetId)},${p.airburst ? 1 : 0},${q(p.trail)},${p.dead ? 1 : 0}`);
       for (const m of this.mines)
@@ -1278,6 +1296,100 @@
       this.refreshEconomy();
       return true;
     }
+    // G1 cancel: native AICommCancelBuyUnit(buildingId, unitPrototype) names a
+    // UNIT TYPE — application mirror LCBuildingUnitTrainingCancel{m_buildingId,
+    // m_unitType} decrements a type-bucket in the per-building count-stacked
+    // queue (UnitTrainingQueueItem{Prototype, Count}). The browser queue is
+    // per-player (documented approximation), so the newest matching entry is
+    // cancelled. Refund fraction has NO native surface (evidence file §NEGATIVES)
+    // — 100% [INFERRED], R1-session question.
+    produceCancel(defId, owner) {
+      const p = this.players[owner - 1];
+      const def = UNITS[defId];
+      if (!def || !p || !p.alive)
+        return false;
+      let idx = -1;
+      for (let i = p.queue.length - 1; i >= 0; i--)
+        if (p.queue[i].defId === defId) { idx = i; break; }
+      if (idx < 0)
+        return false;
+      p.queue.splice(idx, 1);
+      p.funds += def.price;
+      this.refreshEconomy();
+      return true;
+    }
+    // G2 rally: native AICommBuildingRallyPoint carries Coordinate[]{x,y,crosscell}
+    // waypoints + buildingId; application LCBuildingRallyPoint{m_buildingId,
+    // m_cells: List<Point2i>} with single-cell and waypoint-array Initiate
+    // overloads. Rally is production-building scoped (IsRallyPointAllowed;
+    // ground/air engines separate — browser ships the ground set).
+    commandRally(buildingId, cells, owner) {
+      const b = this.buildings.find((v) => v.id === buildingId);
+      if (!b || b.owner !== owner || !b.built || b.hp <= 0)
+        return false;
+      if (!PRODUCER_SET.has(b.defId))
+        return false;
+      if (!Array.isArray(cells) || !cells.length || cells.length > RALLY_MAX_CELLS)
+        return false;
+      for (const c of cells)
+        if (!c || !isFinite(c.x) || !isFinite(c.y) || c.x < 1 || c.y < 1 || c.x > MAP_W - 2 || c.y > MAP_H - 2)
+          return false;
+      b.rally = cells.map((c) => ({ x: c.x, y: c.y }));
+      return true;
+    }
+    // G3 repair: native AICommBuildingRepair(buildingId, price) — the CLIENT
+    // sends the computed price (calcRepairPrice(repairPrice, life, maxLife),
+    // dump.cs:338564); the duration is SERVER-delivered (LCBuildingRepairInitiate
+    // Initiate(building, startTick, duration)). Browser: price = ceil(repairPrice
+    // × missing/max) [INFERRED arithmetic — signature-proportional], escrow
+    // upfront [INFERRED], deterministic local duration rule [BROWSER]. Config-
+    // gated: dormant until per-building repair_price data lands (R1).
+    commandRepair(buildingId, owner) {
+      const b = this.buildings.find((v) => v.id === buildingId);
+      if (!b || b.owner !== owner || !b.built || b.hp <= 0 || b.hp >= b.maxHp)
+        return false;
+      if (b.upgT !== undefined || b.repairT !== undefined)
+        return false; // no concurrent jobs [INFERRED — IsBuildingUpgrading gate analog]
+      const def = BLD[b.defId];
+      if (!def || def.repairPrice === undefined)
+        return false;
+      const missing = b.maxHp - b.hp;
+      const price = Math.ceil((def.repairPrice * missing) / b.maxHp);
+      const p = this.players[owner - 1];
+      if (!p || p.funds < price)
+        return false;
+      p.funds -= price;
+      b.repairFrom = b.hp;
+      b.repairGain = missing;
+      b.repairPaid = price;
+      b.repairT = 0;
+      b.repairTotal = REPAIR_DURATION_FULL_S * (missing / b.maxHp);
+      this.refreshEconomy();
+      return true;
+    }
+    // G4 upgrade: native AICommBuildingUpgrade(buildingId); economics live in
+    // BuildingLevelType.upg_lvl (UpgradeLevel{cost_c, time}, dump.cs:396156);
+    // duration SERVER-delivered (LCBuildingStartUpgrade); completion event
+    // LCBuildingProcessCompleted{m_buildingId, m_upgradeLevel, m_health} proves
+    // health rebases per level — browser level bump only, stat rebase [AWAITING R1].
+    commandUpgrade(buildingId, owner) {
+      const b = this.buildings.find((v) => v.id === buildingId);
+      if (!b || b.owner !== owner || !b.built || b.hp <= 0)
+        return false;
+      if (b.upgT !== undefined || b.repairT !== undefined)
+        return false;
+      const def = BLD[b.defId];
+      if (!def || !def.upg)
+        return false;
+      const p = this.players[owner - 1];
+      if (!p || p.funds < def.upg.price)
+        return false;
+      p.funds -= def.upg.price;
+      b.upgT = 0;
+      b.upgTotal = def.upg.time;
+      this.refreshEconomy();
+      return true;
+    }
     step(dt) {
       if (this.winner !== null)
         return;
@@ -1296,7 +1408,13 @@
             if (prod) {
               const dir = o % 2 ? 1 : -1; // spawn toward the open half (1/3 -> +x, 2/4 -> -x)
               const u = this.spawn(q.defId, o, prod.x + dir * (prod.radius + 1), prod.y + (this.rng() * 3 - 1.5));
-              u.order = { kind: "move", x: prod.x + dir * (prod.radius + 4.5), y: u.y };
+              // G2: rally follow on spawn — native applies rally cells to the
+              // building (LCBuildingRallyPoint) and spawns follow; traversal of
+              // INTERMEDIATE waypoints [AWAITING BINARY] — browser uses the last
+              // cell as the destination (cells stored verbatim for the contract).
+              const rc = prod.rally && prod.rally.length ? prod.rally[prod.rally.length - 1] : null;
+              u.order = rc ? { kind: "move", x: rc.x, y: rc.y }
+                : { kind: "move", x: prod.x + dir * (prod.radius + 4.5), y: u.y };
               u.path = this.pf.find(u.x, u.y, u.order.x, u.order.y, u.def.kind === "aircraft" && !u.grounded) ?? [];
             }
             this.refreshEconomy();
@@ -2264,6 +2382,35 @@
           if (b.buildT >= b.buildTotal)
             b.built = true;
         }
+        // G3 repair progress: deterministic linear rule [BROWSER] — native
+        // duration is server-delivered (LCBuildingRepairInitiate); hp is
+        // monotonic during repair (damage dips allowed, repair never loses
+        // ground). Completion per LCBuildingRepairCompleted.
+        if (b.repairT !== undefined && b.hp > 0) {
+          b.repairT += dt;
+          const target = Math.min(b.maxHp, b.repairFrom + b.repairGain * (b.repairT / b.repairTotal));
+          if (target > b.hp)
+            b.hp = target;
+          if (b.repairT >= b.repairTotal) {
+            b.hp = Math.min(b.maxHp, b.repairFrom + b.repairGain);
+            b.repairT = undefined;
+            b.repairTotal = undefined;
+            b.repairFrom = undefined;
+            b.repairGain = undefined;
+            b.repairPaid = undefined;
+          }
+        }
+        // G4 upgrade progress: completion raises the level (LCBuildingProcess-
+        // Completed carries m_upgradeLevel + m_health); health/stat rebase
+        // awaits R1 per-level prototypes — no invented multipliers.
+        if (b.upgT !== undefined && b.hp > 0) {
+          b.upgT += dt;
+          if (b.upgT >= b.upgTotal) {
+            b.level = (b.level ?? 1) + 1;
+            b.upgT = undefined;
+            b.upgTotal = undefined;
+          }
+        }
         const wdef = BLD[b.defId] && BLD[b.defId].weapon;
         // native ClientBunkerWeapon: the bunker's weapon is crew-served — it
         // fires only while garrisoned infantry man it (empty bunker = silent)
@@ -2314,6 +2461,17 @@
           for (const u of this.units)
             if (u.garrison !== undefined && deadBunkers.has(u.garrison))
               this.exitGarrison(u);
+        // repair escrow refund when the building dies mid-repair [INFERRED —
+        // no native rule surface; see building-commands note §4]
+        for (const b of this.buildings)
+          if (b.hp <= 0 && b.repairT !== undefined && b.owner > 0 && b.repairPaid) {
+            this.players[b.owner - 1].funds += b.repairPaid;
+            b.repairT = undefined;
+            b.repairTotal = undefined;
+            b.repairFrom = undefined;
+            b.repairGain = undefined;
+            b.repairPaid = undefined;
+          }
         this.buildings = this.buildings.filter((b) => b.hp > 0 || b.defId === "hq");
         this.refreshEconomy();
       }
@@ -2441,7 +2599,7 @@
   // Gameplay command types that must be replicated in lockstep multiplayer.
   // select/cancel are issuer-local UI state (per-player selection) and never
   // travel on the wire.
-  var LOCKSTEP_NET_TYPES = new Set(["move", "patrol", "garrison", "ungarrison", "attack", "stop", "hold", "defend", "bombard", "dontshoot", "canshoot", "takepos", "hide", "samespeed", "siege", "capture", "build", "produce", "special"]);
+  var LOCKSTEP_NET_TYPES = new Set(["move", "patrol", "garrison", "ungarrison", "attack", "stop", "hold", "defend", "bombard", "dontshoot", "canshoot", "takepos", "hide", "samespeed", "siege", "capture", "build", "produce", "produceCancel", "rally", "repair", "upgrade", "special"]);
   class Commands {
     constructor(sim = null, sel = new Set()) {
       this.sim = sim;
@@ -2601,6 +2759,31 @@
           break;
         case "produce":
           if (!sim || !cmd.defId || !sim.enqueue(cmd.defId, cmd.owner ?? 1))
+            return false;
+          break;
+        case "produceCancel":
+          // G1: native AICommCancelBuyUnit(buildingId, unitPrototype) — cancel
+          // names a UNIT TYPE (LCBuildingUnitTrainingCancel mirror); browser
+          // per-player queue cancels the newest matching entry, refund [INFERRED]
+          if (!sim || !cmd.defId || !sim.produceCancel(cmd.defId, cmd.owner ?? 1))
+            return false;
+          break;
+        case "rally":
+          // G2: native AICommBuildingRallyPoint (Coordinate[] waypoints +
+          // buildingId); LCBuildingRallyPoint applies the cell list
+          if (!sim || cmd.buildingId === undefined || !sim.commandRally(cmd.buildingId, cmd.cells, cmd.owner ?? 1))
+            return false;
+          break;
+        case "repair":
+          // G3: native AICommBuildingRepair(buildingId, price) — duration
+          // SERVER-delivered; browser local rule, config-gated (dormant until R1)
+          if (!sim || cmd.buildingId === undefined || !sim.commandRepair(cmd.buildingId, cmd.owner ?? 1))
+            return false;
+          break;
+        case "upgrade":
+          // G4: native AICommBuildingUpgrade(buildingId) — upg_lvl{cost_c,time}
+          // config (dormant until R1); completion = LCBuildingProcessCompleted
+          if (!sim || cmd.buildingId === undefined || !sim.commandUpgrade(cmd.buildingId, cmd.owner ?? 1))
             return false;
           break;
         case "special":
@@ -39302,6 +39485,9 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       b.innerHTML = `<img src="${d.card}${d.card.startsWith("data:") ? "" : "?v=2"}" alt="${d.name}"/><div class="nm">${d.name.split('"')[0]}</div>
       <div class="pr">${d.price}¤<span class="cp">CP${d.cp}</span></div>`;
       b.onclick = () => cmd.issue({ type: "produce", defId: id, owner: mySlot() });
+      // G1: right-click a card cancels one queued unit of that type (native
+      // cancel targets the unitType — AICommCancelBuyUnit/LCBuildingUnitTrainingCancel)
+      b.oncontextmenu = (ev) => { ev.preventDefault(); cmd.issue({ type: "produceCancel", defId: id, owner: mySlot() }); };
       cards.appendChild(b);
     }
     for (const id of HERO_ORDER) {
@@ -39318,7 +39504,7 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
     }
   }
   var BLD_ICON = { herobld: '<img class="bimg" src="assets/ui/bld-hero.png" draggable="false">', barracks: '<img class="bimg" src="assets/ui/bld-barracks.png" draggable="false">', factory: '<img class="bimg" src="assets/ui/bld-factory.png" draggable="false">', heavyfactory: '<img class="bimg" src="assets/ui/bld-heavyfactory.png" draggable="false">', power: '<img class="bimg" src="assets/ui/bld-power.png" draggable="false">', turret: '<img class="bimg" src="assets/ui/bld-turret.png" draggable="false">', bunker: '<img class="bimg" src="assets/ui/bld-bunker.png" draggable="false">' };
-  var HINT_DEFAULT = "drag = select \u00B7 right-click / long-press = move \u00B7 ctrl+right-click = attack-move \u00B7 attack \u00B7 capture \u00B7 H hold \u00B7 D defend \u00B7 X bombard \u00B7 T positions \u00B7 F hold fire \u00B7 P patrol \u00B7 minimap right-click = move \u00B7 wheel / pinch = zoom \u00B7 WASD = pan";
+  var HINT_DEFAULT = "drag = select \u00B7 right-click / long-press = move \u00B7 ctrl+right-click = attack-move \u00B7 attack \u00B7 capture \u00B7 H hold \u00B7 D defend \u00B7 X bombard \u00B7 T positions \u00B7 F hold fire \u00B7 P patrol \u00B7 right-click card = cancel queue \u00B7 right-click barracks/factory = rally \u00B7 minimap right-click = move \u00B7 wheel / pinch = zoom \u00B7 WASD = pan";
   var placing = null;
   function startPlacing(defId) {
     placing = defId;
@@ -39593,6 +39779,24 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
           r3d.mark(t.x, t.y, "move");
         }
         return;
+      }
+      // G2 rally hook: right-click an own built production building with no
+      // units selected (native GUIBattleLayoutBuildingRallyPointSet flow;
+      // SendBuildingRallyPointSet(building, List<Point2i>))
+      if (!sel.size && sim && r3d) {
+        const t = r3d.screenToTile(p.x, p.y);
+        if (t) {
+          const rb = sim.buildings.find((b) => b.owner === mySlot() && b.built && b.hp > 0 &&
+            PRODUCER_SET.has(b.defId) && Math.hypot(b.x - t.x, b.y - t.y) < (b.radius || 1.6) + 1.2);
+          if (rb) {
+            if (cmd.issue({ type: "rally", buildingId: rb.id, cells: [{ x: Math.max(1, Math.min(MAP_W - 2, t.x)), y: Math.max(1, Math.min(MAP_H - 2, t.y)) }], owner: mySlot() })) {
+              r3d.mark(t.x, t.y, "move");
+              if ($("prodhint"))
+                $("prodhint").textContent = "Rally point set — new units will move there";
+            }
+            return;
+          }
+        }
       }
       orderAt(p.x, p.y, e.ctrlKey);
       return;

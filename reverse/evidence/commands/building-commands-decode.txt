@@ -1,0 +1,349 @@
+================================================================================
+AOW3 6.9.18 — building/production command suite decode (G1-G4 / I4) — Task 62
+================================================================================
+Date: 2026-10-11
+Method: OFFLINE dump.cs structural decode ONLY (Il2CppDumper v6.7.46 output).
+  libil2cpp.so was NOT available this session (XAPK blobs are git-LFS pointers;
+  no git-lfs / dotnet / Il2CppDumper in the environment — the same tooling-gate
+  recorded for the R7 fogLines re-open). All claims below are therefore
+  structure-level [NATIVE] from dump.cs + stringliteral.json; NO disassembly
+  claims. Behavior internals ($CMA validators, LC Execute bodies) remain
+  binary-gated and are labeled [AWAITING BINARY] / [INFERRED].
+
+Provenance:
+  dump.cs            sha256 0050e67d23f898588f0771c69ba7f30f9122cd6eccd66674c0f7c87b7f24714b
+                     (re-extracted this session from reverse/dump.cs.zip; pin matches
+                     every prior native note)
+  stringliteral.json sha256-pinned corpus, extracted from reverse/stringliteral.json.zip
+  source             dump.cs lines quoted verbatim below with line numbers
+
+Layer map (who carries what):
+  [1] INTENT   AIComm*  (client -> server, journaled commands)   dump.cs ~431706-432500
+  [2] SENDER   Send* facade (constructs + transmits AIComm)      dump.cs ~337700-337890
+  [3] APPLY    LC* AbstractLogicCommand (server -> client sim)    dump.cs ~288654-289700
+  [4] CONFIG   BuildingLevelType / UpgradeLevel prototypes        dump.cs ~377885 / 396156
+  [5] MIRROR   ClientBuilding client-side state fields            dump.cs ~264655-264800
+  [6] UI RULES GUI.BuildingList validators + rally layouts        dump.cs ~57100-57140 / 253708+
+
+--------------------------------------------------------------------------------
+[1] INTENT LAYER — AIComm payload shapes (dump.cs:431706-432500)
+--------------------------------------------------------------------------------
+
+Base class (dump.cs:431706):
+
+  public abstract class AIComm : Message // TypeDefIndex: 11985
+  {
+      private int $mp;   // 0x20
+      private int $Mp;   // 0x24
+      private int $np;   // 0x28
+      private bool $Np;  // 0x2C
+      // ctor overloads:
+      // RVA: 0x48DF0CC  public void .ctor(int senderTick, int side)   <- tick-stamped
+      // RVA: 0x48DF1C4  public void .ctor()
+      // Slot 9: public abstract short $CMA(Battle 1);   <- per-command validator/executor stub
+      // Slot 4: public abstract int get_Type();
+  }
+
+  -> header = senderTick + side (+ 2 more ints + bool) exactly as recorded in
+     command-system-native-analysis.md ("commands are tick-stamped").
+  -> Subclass own fields start at 0x2E (short-aligned) or 0x30 (int-aligned).
+
+AICommBuyUnit (dump.cs:432223, TypeDefIndex 11996):
+  private int $aP; // 0x30
+  private int $AP; // 0x34
+  -> two ints; roles pinned by sender param list [2]: (buildingId, unitPrototype).
+
+AICommCancelBuyUnit (dump.cs:432406, TypeDefIndex 12000):
+  private int $eP; // 0x30
+  private int $EP; // 0x34
+  -> two ints; roles pinned by sender param list [2]: (buildingId, unitPrototype).
+  -> Application mirror LCBuildingUnitTrainingCancel{m_buildingId, m_unitType} [3]
+     proves the second int is the UNIT TYPE (cancel targets a type, not a slot).
+
+AICommBuildingRepair (dump.cs:432147, TypeDefIndex 11994):
+  private int $Yp; // 0x30
+  private int $zp; // 0x34
+  -> two ints; roles pinned by sender param list [2]: (buildingId, price).
+  -> The CLIENT sends the computed repair price with the intent; the server is
+     free to validate it. Price inputs: calcRepairPrice + BuildingLevelType.repair_price [4].
+
+AICommBuildingUpgrade (dump.cs:432189, TypeDefIndex 11995):
+  private int $Zp; // 0x30
+  -> one int: buildingId (sender SendBuildingUpgrade(building) has no other args).
+
+AICommBuildingRemove (dump.cs:432113, TypeDefIndex 11993):
+  private int $yp; // 0x30
+  -> one int: buildingId.
+
+AICommBuildingRallyPoint (dump.cs:432055, TypeDefIndex 11992):
+  private short $wp;          // 0x2E
+  private short $Wp;          // 0x30
+  private Coordinate[] $xp;   // 0x38
+  private int $Xp;            // 0x40
+  -> Coordinate[] $xp = the waypoint list (Coordinate = {int x; int y; bool crosscell},
+     dump.cs:379914) — multi-waypoint rally confirmed at the payload level.
+  -> int $Xp = buildingId [INFERRED field-order; single-int fields on
+     Remove/Upgrade/Repair all sit at 0x30 and map to the building arg].
+  -> the two shorts at 0x2E/0x30 are NOT resolvable from dump.cs alone
+     (candidates: first-cell x/y fast path, or cell count) [AWAITING BINARY].
+     Group variant SendBuildingsRallyPointSet(IList<ClientBuilding>, List<Point2i>)
+     shows one intent can serve MULTIPLE buildings — consistent with a
+     count/first-cell prefix + shared array.
+
+Payload->sender calibration example (proves the mapping method):
+  SendBuildingSet(BuildingType prototype, bool isRedeploy, Point2i cell, int angle,
+                  int requestId)                        dump.cs:3377xx
+  AICommBuSet fields:                                   dump.cs:431966
+  private int  $tp; // 0x30  -> prototype
+  private int  $Tp; // 0x34  -> requestId     (param order NOT field order!)
+  private short $up; // 0x38 -> cell.x
+  private short $Up; // 0x3A -> cell.y
+  private short $vp; // 0x3C -> angle
+  private bool  $Vp; // 0x3E -> isRedeploy
+  -> field count+types match param count+types 1:1; ORDER cannot be assumed
+     from parameters — only count/type alignment is dump.cs-provable. For the
+     two-int commands the (buildingId, X) role split is settled by the LC
+     mirrors and sender signatures, not by order.
+
+--------------------------------------------------------------------------------
+[2] SENDER FACADE (dump.cs:337700-337890, plain-named public API)
+--------------------------------------------------------------------------------
+
+  public static void SendBuildingBuyUnit(ClientBuilding building, UnitType prototype)      // 0x82D754C
+  public static void SendBuildingCancelBuyUnit(ClientBuilding building, UnitType prototype)// 0x82D7684
+  public static void SendBuildingRepair(ClientBuilding building, int price)                // 0x82D7488
+  public static void SendBuildingUpgrade(ClientBuilding building)                          // 0x82D6E1C
+  public static void SendBuildingRemove(ClientBuilding building)                           // 0x82D77BC
+  public static void SendBuildingRallyPointSet(ClientBuilding building, List<Point2i> cells)// 0x82D6B94
+  public static void SendBuildingsRallyPointSet(IList<ClientBuilding>, List<Point2i> cells)// 0x82D68F8  (GROUP)
+  public static void SendBuildingSet(BuildingType prototype, bool isRedeploy, Point2i cell,
+                                     int angle, int requestId)                             // 0x82D67B0
+  public static void SendBuildingAttack(ClientBuilding building, ClientEntity target)      // 0x82D785C
+  ... plus SendCommand(AIComm) / PerformCommand(AIComm) / InitiateAICommand(AIComm) trio.
+
+--------------------------------------------------------------------------------
+[3] APPLICATION LAYER — LC logic commands (server -> client), PLAIN-NAMED fields
+--------------------------------------------------------------------------------
+
+LCBuildingUnitTrainingCancel (dump.cs:289650, TypeDefIndex 7251):
+  private int m_buildingId; // 0x1C
+  private UnitType m_unitType; // 0x20
+  Initiate(Building building, UnitType unitType); Execute(float deltaTime);
+
+LCBuildingUnitTrainingCompleted (dump.cs:289676, TypeDefIndex 7252):
+  private int m_buildingId; // 0x1C
+  private UnitType m_unitPrototype; // 0x20
+
+LCBuildingRepairInitiate (dump.cs:289367, TypeDefIndex 7240):
+  private int m_buildingId;    // 0x1C
+  private int m_repairDuration; // 0x20
+  Initiate(IBuilding building, int startTick, int duration);
+  -> THE REPAIR DURATION IS SERVER-COMPUTED AND DELIVERED. The client never
+     derives it; it stores it verbatim (ClientBuilding.m_repairDuration 0x1A8 [5]).
+     Browser equivalent must pick its own deterministic duration rule [BROWSER].
+
+LCBuildingRepairCompleted (dump.cs:289342, TypeDefIndex 7239):
+  private int m_buildingId; // 0x1C
+
+LCBuildingStartUpgrade (dump.cs:289467, TypeDefIndex 7244):
+  private int m_buildingId; // 0x1C
+  private int m_duration;   // 0x20
+  Initiate(Building building, int startTick, int duration);
+  -> upgrade duration also server-delivered (same pattern as repair).
+
+LCBuildingProcessCompleted (dump.cs:289156, TypeDefIndex 7232):
+  private int m_buildingId;  // 0x1C
+  private int m_upgradeLevel; // 0x20
+  private int m_health;       // 0x24
+  Initiate(IBuilding building);
+  private static bool TryBuildingGroundFree(ClientBuilding building); // 0x813BCEC
+  -> completion event carries the NEW LEVEL and the NEW HEALTH — proof that a
+     level-up rebases building health (values = per-level prototypes [4], R1 data).
+
+LCBuildingRallyPoint (dump.cs:289263, TypeDefIndex 7236):
+  private int m_buildingId;       // 0x1C
+  private List<Point2i> m_cells;  // 0x20
+  Initiate(Building building, Point2i cell);        // single-cell fast path
+  Initiate(Building building, Coordinate[] cells);  // full waypoint list
+
+LCBuildingErase (dump.cs:288877, TypeDefIndex 7222):
+  private int m_buildingId; // 0x1C   (pairs with AICommBuildingRemove intent)
+
+Production progress control (context):
+  LCBuildingProgress        (dump.cs:289185)
+  LCBuildingProgressPause   (dump.cs:289211)
+  LCBuildingProgressResume  (dump.cs:289236)
+  LCBuildingCreate / CreateReject / GroundCreate / SetPlace / SetRestrict / MarkSet / MarkRemove
+  LCBuildingEnergyOn / EnergyOff (G6/I8 energy shortage surface — separate gap)
+
+--------------------------------------------------------------------------------
+[4] CONFIG LAYER — BuildingLevelType (per-level prototype), dump.cs:377885
+--------------------------------------------------------------------------------
+
+  public class BuildingLevelType : Prototype // TypeDefIndex: 11356
+  {
+      public const sbyte NOT_AVAILABLE = 0;
+      public const sbyte AVAILABLE     = 1;
+      public const sbyte RESEARCHED    = 2;
+      public const sbyte ARMOR_TYPE_LIGHT = 0; MEDIUM = 1; HEAVY = 2;
+      private List<WeaponType> weapons;   // 0x18
+      private List<UnitType>   barracks;  // 0x20   <- production roster of this building
+      private sbyte available;            // 0x28   <- level availability state machine
+      private int  rank_pvp;              // 0x2C
+      private short life;                 // 0x30
+      private int  lifeInt;               // 0x34
+      private short armor;                // 0x38
+      private short armor_bonus;          // 0x3A
+      private sbyte armor_type;           // 0x3C
+      private int  sight;                 // 0x40
+      private int  sight_init;            // 0x44
+      private int  radar;                 // 0x48
+      private short regen;                // 0x4C
+      private short regen_init;           // 0x4E
+      private sbyte open_ground;          // 0x50
+      private sbyte open_water;           // 0x51   (B8 naval anchors)
+      private sbyte open_air;             // 0x52
+      private sbyte[] opens;              // 0x58
+      private short energy;               // 0x60   (G6/I8 anchor)
+      private short energy_init;          // 0x62
+      private int  time_constr;           // 0x64
+      private int  time_constr_init;      // 0x68
+      private int  price;                 // 0x6C
+      private int  score;                 // 0x70
+      private string contrib;             // 0x78
+      private short repair_price;         // 0x80   <- input to calcRepairPrice
+      private int  repair_pause;          // 0x84   <- semantics [AWAITING BINARY]
+      private int[] hq_count;             // 0x88
+      private UpgradeLevel upg_lvl;       // 0x90   <- upgrade cost/time definition
+      private List<Contribution> parsed_contribs; // 0x98
+      private string[] mesh;              // 0xA0
+  }
+
+  -> BuildingLevelType is PER-LEVEL: life/armor/energy/... are that level's stats;
+     upg_lvl carries the upgrade economics for reaching it.
+
+UpgradeLevel (the upg_lvl target), dump.cs:396156:
+  public class UpgradeLevel : Entity // TypeDefIndex: 11536
+  {
+      private string desc;               // 0x18
+      private int cost_c;                // 0x20   <- upgrade cost (credits)
+      private int time;                  // 0x24   <- upgrade duration (server-side input)
+      private int xp;                    // 0x28
+      private int coef_rush;             // 0x2C
+      private UpgradeLevel[] contrib_upl;// 0x30
+      private int contrib_level;         // 0x38
+      private ProfileRank contrib_rank;  // 0x40   (meta-progression coupling)
+      private Upgrade owner;             // 0x48
+      private int cardId;                // 0x50   (card/collection coupling)
+      private int cardAmount;            // 0x54
+      private int upgCountContrib;       // 0x58
+  }
+  -> cardId/cardAmount + ProfileRank indicate UpgradeLevel doubles as the
+     meta-progression rung; the IN-BATTLE surface is (cost_c, time) [INFERRED
+     mapping — consistent with LCBuildingStartUpgrade's server-delivered duration].
+
+Repair price function, dump.cs:338564:
+  public static int calcRepairPrice(short repairPrice, int life, int maxLife) { }
+  -> [NATIVE SIGNATURE] — takes the per-level repair_price + current/max life.
+  -> Arithmetic [AWAITING BINARY]; proportionality to MISSING life is the only
+     reading consistent with the parameter set (life==maxLife must price 0).
+     [INFERRED] price ~ repairPrice * (maxLife - life) / maxLife, rounding unknown.
+
+--------------------------------------------------------------------------------
+[5] MIRROR LAYER — ClientBuilding client-side state, dump.cs:264655-264800
+--------------------------------------------------------------------------------
+
+  private BuildingTrainerEngine m_buildingTrainerEngineAir; // 0xD8  (separate AIR trainer)
+  private BuildingTrainerEngine m_activeTrainingEngine;     // 0xE0
+  private IUnitTrainingLarva m_unitTrainingLarva;           // 0xE8
+  private readonly List<UnitTrainingQueueItem> m_trainingQueue; // 0xF0
+  private int   m_trainingQueueIndex;                       // 0xF8
+  private float m_trainingProgress;                         // 0xFC
+  private List<Point2i> m_rallyPointsCells;                 // 0x100
+  private List<Vector3> m_rallyPoints;                      // 0x108
+  private int   m_health;                                   // 0x118
+  private Point2i m_cell;                                   // 0x11C
+  private float m_angle;                                    // 0x124
+  private int   m_damageLastTick;                           // 0x1A0
+  private int   m_repairLastTick;                           // 0x1A4
+  private int   m_repairDuration;                           // 0x1A8
+  private UnitType <LastTrainedButNotCreatedUnit>k__BackingField; // 0x1E0
+
+  Queue item struct (dump.cs:265567):
+    public struct UnitTrainingQueueItem // TypeDefIndex: 6630
+    {
+        public readonly UnitType Prototype; // 0x0
+        public int Count;                   // 0x8
+    }
+  -> THE NATIVE PRODUCTION QUEUE IS PER-BUILDING and STACKS SAME-TYPE ENTRIES
+     WITH A COUNT (queue = [(type,count)...] + index + progress). The browser's
+     per-player flat queue (max 8) is a documented approximation (audit G row
+     "Production ... CONFIRMED (structure)"; command-system note). Cancel's
+     (building, unitType) payload is exactly what a count-stacked queue needs:
+     decrement the matching bucket.
+
+  Destroy taxonomy (dump.cs:265577):
+    public enum ClientBuildingDestroyType { Normal = 0, Remove = 1, RemoveSilent = 2 }
+  -> AICommBuildingRemove maps to the Remove/RemoveSilent destroy variants
+     [INFERRED mapping] — deliberate demolition, distinct from combat death.
+
+  Rally state flags:
+    ClientBuildingStates.RallyPointIsSet = 16384 (0x4000)   dump.cs:265490
+    ClientBuildingChanges.RallyPoint = 1                    dump.cs:265537
+
+  Visual upgrade level transformer (dump.cs:275559-275640):
+    BuildingUpgradeLevelTransformerDefault / ClientBuildingUpgradeLevelTransformer
+    .m_upgrades: UpgradeLevel[]{ m_meshes: Transform[] }  — VISUAL-ONLY (mesh swaps
+    per level). Gameplay stat deltas live in per-level BuildingLevelType prototypes.
+
+--------------------------------------------------------------------------------
+[6] UI RULES + RALLY SURFACES
+--------------------------------------------------------------------------------
+
+  GUI.BuildingList validators (dump.cs:57100-57140):
+    public static bool CanBuildingUpgrade(ClientBuilding building)      // 0x7918778
+    public static bool IsLackEnergy(ClientBuilding building)            // 0x7919B40
+    public static bool IsLackResources(ClientBuilding building)         // 0x7919C80
+    public static bool IsBuildingUpgrading(ClientBuilding building)     // 0x7918764
+    public static bool CanShowUpgradeButton()                           // 0x7919514
+    public static void GetAllUpgradableBuildings(List<ClientBuilding>)  // 0x791889C
+  -> upgrade gate taxonomy: not-while-upgrading + energy lack + resource lack.
+     Energy-shortage gate is dormant in the browser until G6/I8 exist.
+
+  Rally helpers (dump.cs:253708-253711):
+    public static bool IsRallyPointAllowed(ClientBuilding building)
+    public static bool IsExistBuildingWithRallyPointForGround()
+  -> rally is building-scoped and GROUND/AWARE (separate air rally engine
+     m_buildingTrainerEngineAir [5]); GUIBattleLayoutBuildingRallyPointSet
+     (dump.cs:303335) drives the multi-waypoint placement UI
+     (SetRallyPoints(List<Point2i> cells, List<Vector3> points), dump.cs:265289).
+
+  Localization anchors (LocalizationStringIds, dump.cs:85973 block):
+    DefineRallyPoint = 501 (dump.cs:86217), RallyPointWasSet = 513 (dump.cs:86229)
+  -> these are UI STRING ids, NOT network event ids (same class also carries the
+     301-326 announcer-adjacent strings). Labeled accordingly; do not confuse
+     with the R12 AudioFile.BattleEvent id space.
+
+--------------------------------------------------------------------------------
+NEGATIVES / OPEN QUESTIONS
+--------------------------------------------------------------------------------
+
+1. REFUND RULE: no named refund surface exists in dump.cs (only IAP
+   GooglePurchaseState.Refunded and localization REFUNDORDER). stringliteral.json
+   has an isolated lowercase "refund" @0x9969AA8 — a bare token, no enclosing
+   format string recoverable offline. Refund fraction on cancel = UNKNOWN
+   [AWAITING BINARY/device]. Browser ships 100% refund labeled [INFERRED].
+2. AICommBuildingRallyPoint's two shorts @0x2E/0x30 role [AWAITING BINARY].
+3. calcRepairPrice exact arithmetic + rounding [AWAITING BINARY].
+4. repair_pause (BuildingLevelType@0x84) semantics [AWAITING BINARY].
+5. Whether upgrade may run concurrently with production training
+   (LCBuildingProcessCompleted fires for both; dispatcher bodies binary-gated).
+6. $CMA(Battle) per-command validators (short return) — the native
+   validate-before-apply rule set — binary-gated for ALL five commands.
+7. Native numeric command-type ids (get_Type) — binary-gated; the browser
+   commands are semantic strings mapped by class (existing convention).
+
+REPRODUCE:
+  unzip reverse/dump.cs.zip; sha256sum dump.cs  # 0050e67d...
+  sed -n '<line>' dump.cs  # any quote above
+================================================================================
