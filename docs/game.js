@@ -2536,12 +2536,21 @@
         // BattleCellFoggyState Clear/Fogged/Dark. Companion packed query:
         // CheckAndCalc.$ec = 31x31 grid, (R+dy)*31+(R+dx), returns
         // (byte & 0xFF) >> 3 — R = 15, S = 31 = 2R+1 (Battle consts $cc/$Cc),
-        // 1/8-cell levels. Table BYTES are runtime battle-init data (virtual
-        // setter dispatch; no static producer — see
-        // reverse/evidence/vision/ik-ec-constants-decode.txt §4); for a
+        // 1/8-cell levels. Table BYTES provenance (R7 pass 4 re-open, Task 63):
+        // the virtual-setter closure is RESOLVED — the tables are SERIALIZATION-
+        // STREAM DELIVERED by the server: BattleSTDeserializer.deserialize
+        // (0x4625218) reads per table: int rowCount (guard <= 10000) -> array_new
+        // -> $Pn(outer) [$kc 0x2B8] / $ZM(outer) [$Mc 0x2D0], then per-row
+        // deserializeInt len + deserializeByte fill via the $pn/$zM getter
+        // refetch; BattleAllianceSTDeserializer does the same for $kE via $HS
+        // (0x4517B20). No client-side producer exists (pass 2's "not
+        // server-delivered" corrected — the access is virtual-only, invisible to
+        // field-store scans). Bytes are [SERVER-DATA] (R1-session hook can dump
+        // them: $Pn 0x463F714 / $ZM 0x463F57C / $HS 0x468F434). See
+        // reverse/evidence/vision/foglines-stream-decode.txt; for a
         // consistently-built Euclidean table the membership above is provably
         // identical to the integer-cell disc below, so the Euclidean test
-        // stays until the bytes are recovered (delta risk: hand-tuned extents).
+        // stays (delta risk: server hand-tuned extents only).
         const reveal = (x, y, r) => {
           const x0 = Math.max(0, Math.floor(x - r)), x1 = Math.min(MAP_W - 1, Math.ceil(x + r));
           const y0 = Math.max(0, Math.floor(y - r)), y1 = Math.min(MAP_H - 1, Math.ceil(y + r));

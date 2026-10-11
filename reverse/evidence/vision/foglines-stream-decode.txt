@@ -1,0 +1,160 @@
+R7 fogLines RE-OPEN — the virtual-setter closure resolved: fogLines tables are
+SERIALIZATION-STREAM DELIVERED (BattleSTDeserializer / BattleAllianceSTDeserializer)
+=====================================================================================
+Game: AOW3 6.9.18 (com.geargames.aow). Task 63 session ("R7 fogLines re-open").
+Blocker lifted (R7 pass 3, ik-ec-constants-decode.txt §[4]): the static call-graph
+closure of the fogLines setters ($ZM/$Pn/$HS callvirt) needed Il2CppDumper
+script.json. Both binaries re-extracted and sha-pin verified byte-identical to the
+committed evidence chain:
+  XAPK              sha256 1a41e033cce3f7e8595a0aa1dac07e90799d21a92793faaebbc13d3378b32c3e
+                    (git-LFS pointer 134 B in-repo; object fetched WITHOUT git-lfs via the
+                     public LFS batch API: POST …/info/lfs/objects/batch {operation:download}
+                     -> signed URL -> curl. Reproducible in any env with curl + unzip.)
+  libil2cpp.so      sha256 8ace05bbaa2cdfda156e377cfbcb0c0a6fb223fa68188fa3df49f677f10e90c5  == pin
+  global-metadata   sha256 d2e8dd0dfe1b82337d2399edeec967ba382593fedf0c46acc8d6a80e92697e9e  == pin
+  dump.cs (re-run)  sha256 0050e67d23f898588f0771c69ba7f30f9122cd6eccd66674c0f7c87b7f24714b
+                    == committed reverse/dump.cs pin (Il2CppDumper 6.7.46, metadata v31)
+  script.json       177,021,612 B — RECOVERED (ScriptMethod 366,304 entries) — the artifact
+                    pass 3 declared missing.
+
+--------------------------------------------------------------------------------
+[1] METHOD — vtable-slot callvirt xref (whole .text, numpy word scan)
+--------------------------------------------------------------------------------
+script.json alone does not list call sites; the closure was resolved by scanning the
+executable segment for the binary's virtual-call idiom. Idiom learned from sampled
+BLR sites (r7f_blr_sample):
+  direct virtual:   ldr xK,[xR] ; ldr xM,[xK,#off] ; [ldr xT,[xK,#off+8] ;] blr xM
+  low-slot variant: … ldp xM,xT,[xK,#off] ; blr xM
+  interface path:   ldrsw x9,[x10] ; add x8,x8,x9,lsl #4 ; add x0,x8,#0x138 ; ldp …
+Il2CppClass layout (dumper il2cpp.h, metadata v31): vtable[] at offset 0x138,
+VirtualInvokeData = 16 B {methodPtr, method} -> slot S lives at klass + 0x138 + S*16,
+and LDR imm12 = (0x138 + S*16)/8 = 39 + 2S. Interface dispatch computes offsets as
+N*16 + 0x138 (lsl #4 + add #0x138) — independently confirming base 0x138 / stride 16.
+
+Slot map (dump.cs, Battle TypeDefIndex 11868 / BattleAlliance 11871):
+  Battle.$zM  get sbyte[][]  slot 149  RVA 0x463F574  imm12 337 (off 0xA88)
+  Battle.$ZM  set sbyte[][]  slot 150  RVA 0x463F57C  imm12 339 (off 0xA98) -> str [x0,#0x2D0] = $Mc
+  Battle.$pn  get sbyte[][]  slot 181  RVA 0x463F70C  imm12 401 (off 0xC88)
+  Battle.$Pn  set sbyte[][]  slot 182  RVA 0x463F714  imm12 403 (off 0xC98) -> str [x0,#0x2B8] = $kc
+  BattleAlliance.$hS get     slot  30  RVA 0x468F42C  imm12  99 (off 0x318)
+  BattleAlliance.$HS set     slot  31  RVA 0x468F434  imm12 101 (off 0x328) -> str [x0,#0x58]! = $kE
+Setter/getter bodies (verbatim, tail-call write barrier 0x3CC78EC):
+  $ZM: mov x8,x0 ; add x0,x0,#0x2d0 ; str x1,[x8,#0x2d0] ; b 0x3cc78ec
+  $Pn: mov x8,x0 ; add x0,x0,#0x2b8 ; str x1,[x8,#0x2b8] ; b 0x3cc78ec
+  $HS: str x1,[x0,#0x58]! ; b 0x3cc78ec
+NOTE the slot->field mapping: $Pn fills $kc (0x2B8), $ZM fills $Mc (0x2D0).
+
+Scan output (r7f_callvirt_xref.py, full JSON r7f_callvirt_sites.json in session
+tool-results): blr-chained sites per imm12: 486/591/1020/209/263/11 for
+$hS/$HS/$zM/$ZM/$pn/$Pn. Slot index is PER-CLASS, so most hits belong to other
+classes' same-index methods (UnityEngine.UIElements, Domains.*, OSA, DG.Tweening…).
+True positives were separated by ARGUMENT-SHAPE at the call site
+(Battle.$Pn(sbyte[][]) passes x1 = table object, x2 = MethodInfo; FP shapes: int arg
+`mul w1,w8,w9` idiom, no-arg x1=MethodInfo, class-init usage runs).
+
+--------------------------------------------------------------------------------
+[2] THE DECODE — tables are read from the battle serialization stream
+--------------------------------------------------------------------------------
+BattleSTDeserializer : EntityDeserializer (dump.cs:344114)
+  public virtual Entity deserialize(GearGamesByteBuffer buffer, SerializationContext
+                                    context, SerializationLogger logger)   // RVA 0x4625218, Slot 5
+Whole-body scan: contains EXACTLY ONE slot-150 site and ONE slot-182 site (plus their
+getter counterparts), and NO other fog-table accessors:
+  $Pn set (fills Battle.$kc): 0x462708C      $pn get (refetch to fill): 0x462716C
+  $ZM set (fills Battle.$Mc): 0x4629E18      $zM get (refetch to fill): 0x4629EF8
+
+$Pn site verbatim (fill loop continues to 0x46271A4):
+  0x462702C  adrp x8,#0x9676000 ; ldr x8,[x8,#0x6e0] ; ldr x0,[x8]     ; class-init preamble
+  0x4627044  mov x0,x29 ; mov x1,xzr
+  0x462704C  bl  #0x3DFEFA4                                            ; SimpleDeserializer.deserializeInt
+  0x4627050  mov w8,#0x2712 ; add w9,w0,#1 ; cmp w9,w8 ; b.hs #0x4631890  ; N <= 10000 guard
+  0x4627068  tbnz w0,#0x1f,#0x46271A4                                  ; N < 0 -> skip
+  0x4627074  ldr x8,[x8,#0x360] ; ldr x0,[x8]
+  0x462707C  bl  #0x3CC7A38                                            ; runtime-internal array_new(outer, N)
+  0x4627080  ldr x8,[x26] ; mov x1,x0 ; mov x0,x26
+  0x462708C  ldr x9,[x8,#0xC98] ; ldr x2,[x8,#0xCA0] ; blr x9          ; battle.$Pn(outer)   [$kc]
+  ---- fill loop (row r = 0..N-1) ----
+  0x46270C8  mov x0,x29 ; bl #0x3DFEFA4                                ; M = deserializeInt (cap 0x2712)
+  0x46270EC  ldr x0,[x21] ; mov w1,w22 ; bl #0x3CC7A38                 ; row = new sbyte[M]
+  0x4627128  bl #0x3E01CA0                                             ; SimpleDeserializer.deserializeByte
+  0x4627148  strb w0,[x19,x25]                                         ; row[j] = byte (j from 0x20 elem base)
+  0x462716C  ldr x9,[x8,#0xC88] ; ldr x1,[x8,#0xC90] ; blr x9          ; battle.$pn() -> refetch $kc
+  0x4627188  add x0,x0,x20,lsl #3 ; str x19,[x0,#0x20]!                ; outer[r] = row (+write barrier 0x3CC78EC)
+$ZM site 0x4629E18: byte-identical protocol (deserializeInt guard -> array_new ->
+  battle.$ZM(outer) [$Mc] -> $zM()-refetch row fill).
+Stream order: $kc block FIRST (0x4627…), $Mc block SECOND (0x4629…).
+
+BattleAllianceSTDeserializer : EntityDeserializer (dump.cs:343193)
+  public virtual Entity deserialize(...)   // RVA 0x4516074, Slot 5
+  $HS set site 0x4517B20 verbatim:
+  0x4517AFC  adrp x8,#0x9676000 ; mov w1,w26 ; ldr x8,[x8,#0x360] ; ldr x0,[x8]
+  0x4517B0C  bl  #0x3CC7A38                                            ; array_new(outer, N)
+  0x4517B10  ldr x10,[sp,#0x20] ; mov x1,x0 ; ldr x8,[x10] ; mov x0,x10
+  0x4517B20  ldr x9,[x8,#0x328] ; ldr x2,[x8,#0x330] ; blr x9          ; alliance.$HS(outer)  [$kE]
+  0x4517B5C  bl #0x3DFEFA4 …                                           ; same per-row int+len+bytes fill
+  ($hS get site 0x4517BFC refetches the table for the fill loop.)
+
+Serialize side (symmetry): BattleSTSerializer.serialize @0x476E8DC reads the tables
+via $zM ×3 (0x4772B68/0x4772B80/0x4772BA8) and $pn ×5 (0x476ECA8/0x477056C/0x4770584/
+0x47705AC/0x4777FE4), null-checks, length at [array+0x18], SimpleSerializer.
+serializeInt (0x3DFF53C) per row — the exact inverse wire format.
+
+WIRE FORMAT (per table, [DECOMP] from the loops above):
+  int32 rowCount N        (SimpleDeserializer.deserializeInt, guarded N in [0,10000])
+  for r in 0..N-1:
+    int32 len M           (guarded M in [0,10000])
+    M × sbyte             (deserializeByte -> strb)
+  No header magic; row lengths are per-row variable (consistent with per-radius rows
+  whose extent varies with |dy| — row count == 2r+1 for a radius-r table if the
+  server mirrors $ec's S=2R+1 geometry; row count itself is stream data).
+
+--------------------------------------------------------------------------------
+[3] FALSE-POSITIVE LEDGER (slot-index noise, verified by argument shape)
+--------------------------------------------------------------------------------
+  BattleAchievementsSTSerializer.serialize 0x43C7104: x1 = MethodInfo (no-arg
+    slot-182 method on its receiver) -> NOT Battle.$Pn.
+  PathAct.$ce 0x47514F4/0x4755368, UnitAct.$Ag 0x47ECB30: `mul w1,w8,w9` int arg ->
+    (int) method on another class sharing slot 182.
+  FlagAct.$Dd 0x4702560: 3-arg shape (x1 = obj, w2 = int) -> different signature.
+  BattleSTDeserializer 0x4625544 / 0x462F414 / 0x462AADC: class-init usage-slot runs
+    and slots 176/89 on other receivers — init preamble noise, not vtable loads.
+  UIElements/Domains/OSA/DG.Tweening hits: other classes' same-slot methods.
+TRUE POSITIVES: BattleSTDeserializer $Pn 0x462708C + $ZM 0x4629E18;
+BattleAllianceSTDeserializer $HS 0x4517B20.
+
+--------------------------------------------------------------------------------
+[4] PASS-2 NEGATIVE — CORRECTED
+--------------------------------------------------------------------------------
+Pass 2 (sight-jumptable-decode.txt §[4]) concluded "ST serializer/deserializer never
+touch $kc/$Mc -> still NOT server-delivered". That scan looked for 0x2B8/0x2D0
+ENTITY-FIELD access and byte-grid writers. Both scans are structurally blind to this
+path: the deserializer touches the fields ONLY through the virtual setters/getters
+(callvirt, register-indirect), and its strb row-fill writes target freshly-allocated
+stream arrays (post-index #1 stride, not the scanned madd pattern) — AFTER the tables
+are already attached. Correction: **the tables ARE in the battle serialization
+stream**, delivered by the server; there is NO client-side producer anywhere (which
+is exactly why pass 2/3 could not find one).
+
+--------------------------------------------------------------------------------
+[5] CONSEQUENCE
+--------------------------------------------------------------------------------
+1. Classification upgrade: fogLines byte VALUES move [BLOCKED-STATIC] ->
+   **[SERVER-DATA]** (battle-stream payloads; BattleSessionRestoreAnswerSTDeserializer
+   : MessageDeserializer is the message-level carrier). Same data class as the R1
+   prototype dictionary: offline-decodable structure, offline-undecodable values.
+2. Browser fold-in UNCHANGED in behavior: the pass-3 proof (Euclidean disc ==
+   membership contract for consistently-built tables) stands; the residual risk
+   (hand-tuned ±1 extents) is now a SERVER-data question, not a client-RE question.
+   game.js updateVision provenance comment refreshed (comment-only, §35.1 bump).
+3. R1-session carryable (one Frida hook dumps everything):
+   hook Battle.$Pn 0x463F714 / $ZM 0x463F57C / BattleAlliance.$HS 0x468F434
+   (x1 = outer sbyte[][], read [arr+0x18] len then rows) — or capture the
+   deserializeInt/deserializeByte prefix of the $kc/$Mc/$kE stream blocks.
+4. Tooling restored for the whole RE lane: dotnet 6.0.36 + Il2CppDumper 6.7.46
+   re-established in-env; script.json ScriptMethod (366,304 methods) enables
+   function attribution for any future callvirt xref (r7f_callvirt_xref.py is
+   committed as reverse/tools/r7f_foglines_stream_decode.py).
+
+Repro: python3 reverse/tools/r7f_foglines_stream_decode.py <libil2cpp.so> <script.json>
+Inputs pinned: XAPK 1a41e033… / libil2cpp.so 8ace05bb… / metadata d2e8dd0d… /
+dump.cs 0050e67d… (re-run byte-identical).

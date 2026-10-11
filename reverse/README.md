@@ -48,6 +48,7 @@ XAPK ──unzip──> config.arm64_v8a.apk ──> lib/arm64-v8a/libil2cpp.so 
 
 | Area | Status | Key facts | Primary evidence / note |
 |---|---|---|---|
+| Sight/visibility (fog) rules | CONFIRMED (R7) | 3-state fog over packed per-alliance int[][] bitmaps; reveal = per-radius row-extent fogLines tables, membership |dx| <= (sbyte)fogLines[r][|dy|]/2 (D=2 half-cell, inclusive); tables SERIALIZATION-STREAM DELIVERED by BattleSTDeserializer/BattleAllianceSTDeserializer (set->refetch-fill protocol decoded) = [SERVER-DATA]; calcSightCurr = sight - in_forest + boost[3]; browser Euclidean disc provably equivalent for consistently-built tables | `notes/sight-visibility-native-analysis.md`, `evidence/vision/foglines-stream-decode.txt` |
 | Damage-vs-armor curve | CONFIRMED | `CalculateWeaponArmorDamage` 0x7cc1c18: mitigation ∈ [0.1, 1.0], 0.9/0.1 constants; sole mitigation site (surface re-verified) | `notes/combat-stats.md` §1, `notes/armor-stat-helper-native-analysis.md` |
 | Weapon counter-triad | CONFIRMED | three damage ints (0x28/0x2c/0x30) vs Light/Medium/Heavy armor triad (EStat 7/8/9) | `notes/combat-stats.md` §2 |
 | EStat schema (78 stats) | CONFIRMED | full enum + 45 IStatModel classes pinned; tier caps extracted 72/78 | `notes/units/estat-stat-models.md`, `evidence/data-model/estat.json` |

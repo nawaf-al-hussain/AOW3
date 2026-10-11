@@ -106,17 +106,12 @@ correctly excluded — not jump tables.
   from a mix of committed (0x2820 → 2, the DEFEND key family) and uncommitted
   segments.
 
-**Still open (fogLines byte VALUES)** — `[BLOCKED-STATIC]`, precisely bounded:
-- No client-side producer: field stores = setter bodies only; setter BL callers
-  = 0; byte-grid writers absent; Battle init surface (`$HL` 0x5C84 B, `$ju`,
-  `$iu`, `$Iu`, `$fb`) has no `array_new`; pool strings carry no tables; the ST
-  serializer/deserializer never touch `$kc/$Mc` (→ still NOT server-delivered;
-  `BattleAllianceDescription` reads 3 ints — pass 2, holds).
-- The tables are therefore filled through **virtual setter dispatch
-  (`$ZM/$Pn/$HS` callvirt)** whose static closure needs Il2CppDumper
-  `script.json` (not recovered) or a device dump. Membership equivalence with
-  the browser's Euclidean disc is PROVED for consistently-built tables — the
-  residual risk is only hand-tuned extents (±1 edge cells per row).
+**Re-open RESOLVED (Task 63, [`../evidence/vision/foglines-stream-decode.txt`](../evidence/vision/foglines-stream-decode.txt))** — the fogLines byte VALUES question is closed as **[SERVER-DATA]**, and the pass-2/3 producer picture is CORRECTED:
+- The tooling gate broke: the XAPK LFS object is fetchable without git-lfs (public LFS batch API → signed URL → curl); binaries re-extracted with all sha pins byte-identical (`8ace05bb…` / `d2e8dd0d…`, re-run dump.cs = committed `0050e67d…`), and **script.json was recovered** (177 MB, 366,304 ScriptMethods).
+- The virtual-setter closure was resolved by a vtable-slot callvirt xref (whole-.text word scan; Il2CppClass.vtable @ 0x138, VirtualInvokeData 16 B → imm12 = 39+2·slot; interface paths confirm base/stride via `lsl #4; add #0x138`). Setter bodies verbatim: `$Pn` → `str x1,[x0,#0x2B8]` ($kc), `$ZM` → `str x1,[x0,#0x2D0]` ($Mc), `$HS` → `str x1,[x0,#0x58]!` ($kE).
+- **Only argument-shape-verified callers: the ST deserializers.** `BattleSTDeserializer.deserialize` (0x4625218) holds the `$Pn` site (0x462708C, fills $kc) and `$ZM` site (0x4629E18, fills $Mc); `BattleAllianceSTDeserializer.deserialize` (0x4516074) holds the `$HS` site (0x4517B20, $kE). Protocol per table: `N = SimpleDeserializer.deserializeInt` (guard 0 ≤ N ≤ 10000, 0x2712) → `array_new` → `setter(outer)` → refill loop: per-row `deserializeInt` length → `new sbyte[M]` → `SimpleDeserializer.deserializeByte`×M → getter-refetch (`$pn`/`$zM`/`$hS`) → `outer[r] = row`. Serialize side mirrors (`SimpleSerializer.serializeInt`, `$zM`×3 / `$pn`×5 in `BattleSTSerializer.serialize` 0x476E8DC).
+- **Pass-2 negative corrected**: "ST serializer/deserializer never touch `$kc/$Mc`" was a field-store-scan artifact — the access is virtual-only (callvirt), and the strb row-fill targets freshly-allocated stream arrays (post-index stride, not the scanned madd pattern). There is NO client-side producer anywhere — which is why passes 2–3 could not find one.
+- Consequence: table bytes ride the battle serialization stream (`BattleSessionRestoreAnswerSTDeserializer` message family) = the R1-dictionary data class. Browser keeps the Euclidean disc (§5 proof stands); R1-session carryable now includes one-hook table dumps (`$Pn` 0x463F714 / `$ZM` 0x463F57C / `$HS` 0x468F434, x1 = outer sbyte[][]).
 
 ## 5. Browser parity state & fold-in decision
 
@@ -124,20 +119,26 @@ correctly excluded — not jump tables.
 (`Math.hypot(gx−x, gy−y) <= r`). Native uses the table lookup
 `|dx| <= (sbyte) fogLines[r][|dy|] / 2`. For a consistently-built Euclidean
 table (extent ∈ {2·⌊√(r²−dy²)⌋, 2·⌊√(r²−dy²)⌋+1}) the two are PROVABLY
-identical on integer cells; the observable delta exists only if the runtime
-tables hand-tune extents — and the bytes are `[BLOCKED-STATIC]` (§4).
+identical on integer cells; the observable delta exists only if the server
+hand-tunes extents — and the bytes are `[SERVER-DATA]` (§4 re-open resolution:
+stream-delivered via the ST deserializers; one Frida hook dumps them).
 **Decision (fold-in protocol):** comment-only provenance annotation on the
-reveal kernel (updated with the decoded contract); **no behavior change** —
-any change before table values are recovered would be `[SPECULATIVE]`.
-Cache bumped `v=57 → v=58` per §35.1 (comment change in game.js).
+reveal kernel (updated with the decoded contract + stream-delivery provenance);
+**no behavior change** — table values are server data, not a client-RE item.
+Cache bumped `v=57 → v=58` (Task 57) and `v=63 → v=64` (Task 63 provenance
+refresh) per §35.1, both comment-only.
 
 ## 6. Labels
 
 Everything in §2/§3 is `[DECOMP]` (Capstone decode of `8ace05bb…` bytes) except
 where marked `[NATIVE]` (dump.cs metadata facts) and the `BattleAlliance.$hE=16`
 rung guess (`[INFERRED]`). §4 pass-3 items are `[DECOMP]` (decoded via the
-shared R2 Obfuz core + operand scans); the fogLines byte values and `$ec`'s
-rowIdx/aux bounds are `[BLOCKED-STATIC]`/PENDING as marked. Repro:
+shared R2 Obfuz core + operand scans); the §4 re-open resolution (Task 63:
+deserializer closure + stream protocol) is `[DECOMP]` (Capstone on `8ace05bb…`
+bytes + script.json attribution); the fogLines byte values themselves are
+`[SERVER-DATA]`; `$ec`'s rowIdx/aux bounds remain PENDING as marked. Repro:
 `reverse/tools/r7_ik_ec_constants_decode.py` (pass-3 constants, emits
-`reverse/evidence/vision/ik-ec-constants.json`) and the pass-1/2 script set at
-`/home/z/my-project/scripts/native/` mirrored by the committed evidence outputs.
+`reverse/evidence/vision/ik-ec-constants.json`),
+`reverse/tools/r7f_foglines_stream_decode.py` (Task 63 callvirt xref), and the
+pass-1/2 script set at `/home/z/my-project/scripts/native/` mirrored by the
+committed evidence outputs.
