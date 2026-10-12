@@ -112,12 +112,23 @@ Ranked by fidelity impact per audit §7 and current residuals:
    (repair/upgrade config-gated dormant until R1 data — no invented balance),
    stateString/lockstep/journal parity, 49-check suite; refund fraction [INFERRED 100%]
    recorded as an R1-session question.
-9. **R14 pass 2 — slot-behavior value domains** (startable offline): statics-aware
-   flow decode of `UnitAct.$cg/$uG/$CG` + `BattleAct.$ZA/$J` + `PathAct.$ce/$Qe`
-   for the wait_for_moving/walk_state value domains and the dispersal period;
-   `b7_handler_disasm.py` is the entry tool. Alternative shortcut: R1 SlipInfo/
-   PathUnitInfo march dump (one Frida hook each).
-10. **R13 residual — $CMA validators + get_Type ids** (startable offline since
-   Task 63): script.json is recovered; bounded decode.
-11. **M3 weapon-sound table from audio bundles** (R12 optional, offline): clip
-   inventory exists; per-weapon table from bundle scan.
+9. ~~**R14 pass 2 — slot-behavior value domains**~~ — **DONE (Task 65, 2026-10-12)**:
+   wait_for_moving = wait-cycle counter (set 1 / +1 per wait / clear 0; $Qe
+   arbitration `pool-const × occupant.speed_curr > mover.wait`); walk_state
+   binary (single writer $J `old^1` + tick reset); forced cleared on wait
+   entry; pass-1 $ZA/$yi/$Ag/$ce set_WalkState claims corrected to FPs;
+   dispersal accessors virtual + serializer-carried ([SERVER-DATA]). Residual:
+   the $Qe inline-pool constant (third holder segment) + R1 march dump.
+10. ~~**R13 residual — $CMA validators + get_Type ids**~~ — **DONE (Task 65,
+   2026-10-12)**: validator architecture decoded (jump-table dispatch →
+   entity-dict lookup → membership/state checks → BattleAct.$Eb verdict);
+   get_Type id register 36/49 into a clean sequential enum (5300-5312 unit ops,
+   5400-5406 building suite, 5500-5563 meta, 5701-5710 integrity); 13 ids ride
+   the fourth Obfuz form (inline accessor, third segment — bounded).
+11. ~~**M3 weapon-sound table from audio bundles**~~ — **MECHANISM DONE (Task 65,
+   2026-10-12)**: dispatch chain decoded (LCUnitShoot{unitId,weaponIndex} →
+   IUnitShootable.ToShoot gate → serialized SoundGroups id →
+   PlayLimitedSoundById); SoundGroups register (153 values), AudioGroups asset
+   register (50), 111 sound-effector components + 1,677-clip inventory
+   extracted via the globalgamemanagers.assets script-PPtr route; remaining =
+   standard-unit per-weapon SoundGroups table (gun-prefab scan, recipe proven).

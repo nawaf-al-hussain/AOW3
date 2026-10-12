@@ -1,0 +1,865 @@
+[
+ {
+  "bundle": "0a1b1d0adddd1ee4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_hero_solaris",
+  "tailLen": 24,
+  "dwords": [
+   1600,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "0cb7ad0c08d67994",
+  "class": "UnitHelicopterMoveSoundEffector",
+  "go": "f1_avia_ufo",
+  "tailLen": 4
+ },
+ {
+  "bundle": "0cb7ad0c08d67994",
+  "class": "UnitDeathSoundEffector",
+  "go": "f1_avia_ufo",
+  "tailLen": 4
+ },
+ {
+  "bundle": "0d1d5379ebc21344",
+  "class": "UnitAircraftMoveSoundEffector",
+  "go": "f1_avia_fighter",
+  "tailLen": 12,
+  "dwords": [
+   340,
+   341,
+   350
+  ]
+ },
+ {
+  "bundle": "14cb6dd4cbb36054",
+  "class": "UnitBipedalMoveSoundEffector",
+  "go": "f1_hero_atlant",
+  "tailLen": 40,
+  "dwords": [
+   2700,
+   14,
+   1634497601
+  ]
+ },
+ {
+  "bundle": "19d4d9fc40483474",
+  "class": "UnitDeathSoundEffector",
+  "go": "f2_inf_light",
+  "tailLen": 4
+ },
+ {
+  "bundle": "1b584ac3d6fc64d4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_veh_zeus",
+  "tailLen": 24,
+  "dwords": [
+   100,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "1b6a17d25edb04e4",
+  "class": "UnitHelicopterMoveSoundEffector",
+  "go": "f1_avia_helicopter",
+  "tailLen": 4
+ },
+ {
+  "bundle": "1bb5e9b018df40c2",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_nav_transport_unit",
+  "tailLen": 24,
+  "dwords": [
+   201,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "1c1ecd302876a2e4",
+  "class": "BuildingSoundEffector",
+  "go": "f2_bld_avia",
+  "tailLen": 12,
+  "dwords": [
+   4,
+   5,
+   6
+  ]
+ },
+ {
+  "bundle": "1f21485a3b38f6a4",
+  "class": "UnitHelicopterMoveSoundEffector",
+  "go": "f2_avia_helicopter",
+  "tailLen": 4
+ },
+ {
+  "bundle": "288e24f1fa52f034",
+  "class": "BuildingSoundEffector",
+  "go": "f2_bld_launcher",
+  "tailLen": 12,
+  "dwords": [
+   4,
+   5,
+   6
+  ]
+ },
+ {
+  "bundle": "29f7ae1fa95de304",
+  "class": "BuildingSoundEffector",
+  "go": "f1_bld_avia",
+  "tailLen": 12,
+  "dwords": [
+   4,
+   5,
+   6
+  ]
+ },
+ {
+  "bundle": "2a58053c9162c1d4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_veh_spec",
+  "tailLen": 24,
+  "dwords": [
+   100,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "2bc937c0374516e4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_hero_cerber",
+  "tailLen": 24,
+  "dwords": [
+   1300,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "2bc937c0374516e4",
+  "class": "UnitShootFlashEffector",
+  "go": "f1_hero_cerber",
+  "tailLen": 32,
+  "dwords": [
+   1,
+   1,
+   1
+  ]
+ },
+ {
+  "bundle": "32c9b11800d83e64",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_nav_cayman",
+  "tailLen": 24,
+  "dwords": [
+   200,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "393f1982afe6f834",
+  "class": "UnitHelicopterMoveSoundEffector",
+  "go": "f1_hero_beholder_meta",
+  "tailLen": 4
+ },
+ {
+  "bundle": "3bb24bf345196e64",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_nav_alligator",
+  "tailLen": 24,
+  "dwords": [
+   200,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "3c93f86421fbf6b4",
+  "class": "UnitHelicopterMoveSoundEffector",
+  "go": "f1_avia_helicopter_hero",
+  "tailLen": 4
+ },
+ {
+  "bundle": "3e71a1090a4f26c4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_veh_jaguar",
+  "tailLen": 24,
+  "dwords": [
+   100,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "43fe5cd8b5787814",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_veh_shield",
+  "tailLen": 24,
+  "dwords": [
+   100,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "46168bdf450b63a4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_hero_leviaphan",
+  "tailLen": 24,
+  "dwords": [
+   1700,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "46168bdf450b63a4",
+  "class": "UnitShootFlashEffector",
+  "go": "f2_hero_leviaphan",
+  "tailLen": 32,
+  "dwords": [
+   1,
+   4,
+   1
+  ]
+ },
+ {
+  "bundle": "4c42e180bcf40dc4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_nav_amphibian",
+  "tailLen": 24,
+  "dwords": [
+   200,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "4fa236043a502094",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_nav_heavy",
+  "tailLen": 24,
+  "dwords": [
+   200,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "50dddfac84029684",
+  "class": "BuildingSoundEffector",
+  "go": "f1_bld_hero",
+  "tailLen": 12,
+  "dwords": [
+   4,
+   5,
+   6
+  ]
+ },
+ {
+  "bundle": "6519b56c46fa844e",
+  "class": "UnitAircraftMoveSoundEffector",
+  "go": "f2_avia_transport_unit",
+  "tailLen": 12,
+  "dwords": [
+   360,
+   361,
+   370
+  ]
+ },
+ {
+  "bundle": "65b5ea90ed0d61f4",
+  "class": "UnitHelicopterMoveSoundEffector",
+  "go": "f2_hero_wasp",
+  "tailLen": 4
+ },
+ {
+  "bundle": "6859c6599e9d5db4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_veh_torrent",
+  "tailLen": 24,
+  "dwords": [
+   100,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "6cf98933bcd134b5",
+  "class": "UnitHelicopterMoveSoundEffector",
+  "go": "f1_avia_transport_unit",
+  "tailLen": 4
+ },
+ {
+  "bundle": "746a7f6beff87784",
+  "class": "UnitBipedalMoveSoundEffector",
+  "go": "f1_hero_seraphim_meta",
+  "tailLen": 44,
+  "dwords": [
+   1400,
+   20,
+   1634886995
+  ]
+ },
+ {
+  "bundle": "746a7f6beff87784",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_hero_seraphim_meta",
+  "tailLen": 24,
+  "dwords": [
+   1401,
+   1,
+   0
+  ]
+ },
+ {
+  "bundle": "75eeec1c949ff5d4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_hero_seraphim",
+  "tailLen": 24,
+  "dwords": [
+   1401,
+   1,
+   0
+  ]
+ },
+ {
+  "bundle": "75eeec1c949ff5d4",
+  "class": "UnitBipedalMoveSoundEffector",
+  "go": "f1_hero_seraphim",
+  "tailLen": 44,
+  "dwords": [
+   1400,
+   20,
+   1634886995
+  ]
+ },
+ {
+  "bundle": "75fe9c0eeb438fc4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_veh_hammer",
+  "tailLen": 24,
+  "dwords": [
+   100,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "766c1658a5a35744",
+  "class": "UnitAircraftMoveSoundEffector",
+  "go": "f1_avia_bomber",
+  "tailLen": 12,
+  "dwords": [
+   360,
+   361,
+   370
+  ]
+ },
+ {
+  "bundle": "7aa9fd1e8b747bc4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_nav_light",
+  "tailLen": 24,
+  "dwords": [
+   200,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "8140fb552d8eb654",
+  "class": "UnitAircraftMoveSoundEffector",
+  "go": "f2_avia_fighter",
+  "tailLen": 12,
+  "dwords": [
+   340,
+   341,
+   350
+  ]
+ },
+ {
+  "bundle": "82f713d6afc650a4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_hero_gatling_meta",
+  "tailLen": 24,
+  "dwords": [
+   100,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "8a3461da3418ec14",
+  "class": "UnitDeathSoundEffector",
+  "go": "f2_inf_heavy",
+  "tailLen": 4
+ },
+ {
+  "bundle": "8b6d690c532f43c4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_hero_coiltank",
+  "tailLen": 24,
+  "dwords": [
+   2800,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "8b6d690c532f43c4",
+  "class": "UnitShootSoundEffector",
+  "go": "f2_hero_coiltank",
+  "tailLen": 12,
+  "soundGroup": 243,
+  "fadeOut": 0.1,
+  "weaponIndex": 0
+ },
+ {
+  "bundle": "8b95a0c6cc607a24",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_veh_fortress",
+  "tailLen": 24,
+  "dwords": [
+   100,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "8cd4da667a5ca974",
+  "class": "UnitShootSoundEffector",
+  "go": "f1_inf_zombie",
+  "tailLen": 12,
+  "soundGroup": 200,
+  "fadeOut": 0.1,
+  "weaponIndex": 0
+ },
+ {
+  "bundle": "8cd4da667a5ca974",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_inf_zombie",
+  "tailLen": 24,
+  "dwords": [
+   380,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "8cd4da667a5ca974",
+  "class": "UnitDeathSoundEffector",
+  "go": "f1_inf_zombie",
+  "tailLen": 4
+ },
+ {
+  "bundle": "8d25c057f3d804f4",
+  "class": "BuildingSoundEffector",
+  "go": "f2_bld_hero",
+  "tailLen": 12,
+  "dwords": [
+   4,
+   5,
+   6
+  ]
+ },
+ {
+  "bundle": "8fe48c053f10eaa4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_veh_transport",
+  "tailLen": 24,
+  "dwords": [
+   100,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "9087863c5b0d5a44",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_hero_cryotank",
+  "tailLen": 24,
+  "dwords": [
+   2600,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "9270f635baa776a4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_hero_gatling",
+  "tailLen": 24,
+  "dwords": [
+   100,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "99823abad0b801b4",
+  "class": "BuildingSoundEffector",
+  "go": "f1_bld_factory_light",
+  "tailLen": 12,
+  "dwords": [
+   4,
+   5,
+   6
+  ]
+ },
+ {
+  "bundle": "9bc14b3162edf924",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_nav_barracuda",
+  "tailLen": 24,
+  "dwords": [
+   1220,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "9d24e621ba969b74",
+  "class": "BuildingSoundEffector",
+  "go": "f2_bld_factory_light",
+  "tailLen": 12,
+  "dwords": [
+   4,
+   5,
+   6
+  ]
+ },
+ {
+  "bundle": "a5caae7f6dcd26f4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_veh_porcupine",
+  "tailLen": 24,
+  "dwords": [
+   100,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "a6563f773ea78e84",
+  "class": "UnitShootSoundEffector",
+  "go": "f2_inf_zombie",
+  "tailLen": 12,
+  "soundGroup": 200,
+  "fadeOut": 0.1,
+  "weaponIndex": 0
+ },
+ {
+  "bundle": "a6563f773ea78e84",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_inf_zombie",
+  "tailLen": 24,
+  "dwords": [
+   380,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "a6563f773ea78e84",
+  "class": "UnitDeathSoundEffector",
+  "go": "f2_inf_zombie",
+  "tailLen": 4
+ },
+ {
+  "bundle": "afb02b8329fd93d4",
+  "class": "UnitDeathSoundEffector",
+  "go": "f2_inf_sniper",
+  "tailLen": 4
+ },
+ {
+  "bundle": "b1a125dab42e9da4",
+  "class": "UnitDeathSoundEffector",
+  "go": "f1_inf_light",
+  "tailLen": 4
+ },
+ {
+  "bundle": "b375d6096c525404",
+  "class": "UnitDeathSoundEffector",
+  "go": "f1_inf_heavy",
+  "tailLen": 4
+ },
+ {
+  "bundle": "b4470ea026125ab4",
+  "class": "BuildingSoundEffector",
+  "go": "f2_bld_shipyard",
+  "tailLen": 12,
+  "dwords": [
+   4,
+   5,
+   6
+  ]
+ },
+ {
+  "bundle": "b7c8e482c16be614",
+  "class": "UnitAircraftMoveSoundEffector",
+  "go": "f2_avia_bomber",
+  "tailLen": 12,
+  "dwords": [
+   360,
+   361,
+   370
+  ]
+ },
+ {
+  "bundle": "bafc0eaeb44b7614",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_hero_railgun",
+  "tailLen": 24,
+  "dwords": [
+   100,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "c3bed8960af78774",
+  "class": "UnitDeathSoundEffector",
+  "go": "f1_inf_flame",
+  "tailLen": 4
+ },
+ {
+  "bundle": "ca785ee6177fe304",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_veh_porcupine_hero",
+  "tailLen": 24,
+  "dwords": [
+   100,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "cd87fc9dccd37104",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_hero_psitank_meta",
+  "tailLen": 24,
+  "dwords": [
+   1600,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "d14b4ab509963ff4",
+  "class": "BuildingSoundEffector",
+  "go": "f1_bld_shipyard",
+  "tailLen": 12,
+  "dwords": [
+   4,
+   5,
+   6
+  ]
+ },
+ {
+  "bundle": "d1c1975b5cb3ccc4",
+  "class": "BuildingSoundEffector",
+  "go": "f2_bld_factory_heavy",
+  "tailLen": 12,
+  "dwords": [
+   4,
+   5,
+   6
+  ]
+ },
+ {
+  "bundle": "d811a880dc126f54",
+  "class": "UnitHelicopterMoveSoundEffector",
+  "go": "f2_avia_ufo",
+  "tailLen": 4
+ },
+ {
+  "bundle": "d811a880dc126f54",
+  "class": "UnitDeathSoundEffector",
+  "go": "f2_avia_ufo",
+  "tailLen": 4
+ },
+ {
+  "bundle": "d8a1c78043eea994",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_veh_coyote",
+  "tailLen": 24,
+  "dwords": [
+   100,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "d94e9d9b17c0f1c4",
+  "class": "BuildingSoundEffector",
+  "go": "f1_bld_factory_heavy",
+  "tailLen": 12,
+  "dwords": [
+   4,
+   5,
+   6
+  ]
+ },
+ {
+  "bundle": "db58ed3ec1bc02b4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_hero_salamander_meta",
+  "tailLen": 24,
+  "dwords": [
+   2500,
+   1,
+   2502
+  ]
+ },
+ {
+  "bundle": "db6305c33ead0594",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_veh_armadillo",
+  "tailLen": 24,
+  "dwords": [
+   100,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "dcd18620e19bcb04",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_nav_transport",
+  "tailLen": 24,
+  "dwords": [
+   201,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "e238744889ea3494",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_hero_codomash",
+  "tailLen": 24,
+  "dwords": [
+   1500,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "e238744889ea3494",
+  "class": "UnitShootSoundEffector",
+  "go": "f2_hero_codomash",
+  "tailLen": 12,
+  "soundGroup": 126,
+  "fadeOut": 0.1,
+  "weaponIndex": 0
+ },
+ {
+  "bundle": "e2c5b77171390e94",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_veh_transport",
+  "tailLen": 24,
+  "dwords": [
+   100,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "e97972db0c3f9814",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_veh_typhoon",
+  "tailLen": 24,
+  "dwords": [
+   100,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "f2090bbdc0c908e4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_veh_chameleon",
+  "tailLen": 24,
+  "dwords": [
+   100,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "f291e36f00947514",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_veh_spec",
+  "tailLen": 24,
+  "dwords": [
+   100,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "f86a3a6199c3b0c4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_hero_psitank",
+  "tailLen": 24,
+  "dwords": [
+   1600,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "f870aee2f161cb84",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_hero_salamander",
+  "tailLen": 24,
+  "dwords": [
+   2500,
+   1,
+   2502
+  ]
+ },
+ {
+  "bundle": "f97b67ca001f79f4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_veh_mammoth",
+  "tailLen": 24,
+  "dwords": [
+   100,
+   0,
+   0
+  ]
+ },
+ {
+  "bundle": "fc9372968e73be64",
+  "class": "UnitHelicopterMoveSoundEffector",
+  "go": "f1_hero_beholder",
+  "tailLen": 4
+ },
+ {
+  "bundle": "fd6119a47fa175e4",
+  "class": "UnitShootSoundEffector",
+  "go": "f2_hero_coiltank_meta",
+  "tailLen": 12,
+  "soundGroup": 243,
+  "fadeOut": 0.1,
+  "weaponIndex": 0
+ },
+ {
+  "bundle": "fd6119a47fa175e4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_hero_coiltank_meta",
+  "tailLen": 24,
+  "dwords": [
+   2800,
+   0,
+   0
+  ]
+ }
+]

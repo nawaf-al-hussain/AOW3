@@ -1503,9 +1503,18 @@
     // walk-around paths + strafe sub-system) are all Unit/SlipInfo
     // GearGamesSerializable battle-state members serialized by
     // UnitSTSerializer/BattleSTSerializer — i.e. [SERVER-DATA] delivered with
-    // the stream, matching the fogLines classification. The browser grid check
-    // below stays a static-obstacle gate; per-cell unit occupancy/slot waiting
-    // is NOT simulated (documented approximation, audit B7 residual).
+    // the stream, matching the fogLines classification. B7 pass 2 (Task 65,
+    // b7-value-domains.txt) decoded the VALUE DOMAINS: wait_for_moving is a
+    // wait-cycle COUNTER (BattleAct.$J/UnitAct.$cg set it to 1, UnitAct.$uG
+    // increments +1 per continued wait, UnitAct.$CG clears to 0), weighed in
+    // PathAct.$Qe placement arbitration as POOL_const x occupant.speed_curr >
+    // mover.wait (fast occupants yield sooner); walk_state is BINARY with a
+    // single writer (BattleAct.$J toggles old^1 and resets walk_state_tick to
+    // 0); entering a wait CLEARS forced to 0 (the order's push-through right
+    // is consumed). Pass-1 site corrections: BattleAct.$ZA/$yi "set_WalkState"
+    // were slot-collision FPs (getter-shaped count loops). The browser grid
+    // check below stays a static-obstacle gate; per-cell unit occupancy/slot
+    // waiting is NOT simulated (documented approximation, audit B7 residual).
     passable(u, x, y) {
       if (u.def.kind === "aircraft" && !u.grounded)
         return true;
@@ -40779,6 +40788,16 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       } catch (e) {}
       return r;
     };
+    // Weapon-sound provenance (M3, Task 65 — reverse/notes/m3-weapon-sound-
+    // native-decode.md): native chain = LCUnitShoot{unitId, weaponIndex}
+    // (server lockstep command) -> IUnitShootable.ToShoot(weaponIndex) on the
+    // unit prefab's sound effectors; UnitShootSoundEffector gates on its
+    // serialized m_weaponIndex and plays its serialized SoundGroups enum id
+    // (153 values: ItemFireRifle1=1 .. ItemCoiltankAutoAttack=243 .. 999) via
+    // AudioBattleSoundsHandler.PlayLimitedSoundById; AudioGroups assets
+    // (50, enum id + variant flags) resolve to clip variations; 1,677 clips
+    // inventoried. The pools below stay the documented browser approximation
+    // until the per-weapon SoundGroups table lands (extraction recipe proven).
     const _expl = Renderer3D.prototype.explosion;
     Renderer3D.prototype.explosion = function(x, y, z, r) {
       const res = _expl.call(this, x, y, z, r);

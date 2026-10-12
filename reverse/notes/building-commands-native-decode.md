@@ -206,3 +206,61 @@ binary-gated questions (refund rule, rally shorts, calcRepairPrice
 arithmetic, repair_pause, `$CMA` validators, get_Type ids) are recorded in
 the evidence file's NEGATIVES section and in the registry — they ride the
 same tooling-gate as the R7 script.json re-open.
+
+## Appendix — $CMA validators + get_Type ids (Task 65, binary pass) [DECOMP]
+
+The Task-62 session recorded the per-command `$CMA(Battle)` validators
+(slot 9, `abstract short`, dump.cs 431757) and the command-type ids as
+`[AWAITING BINARY]`. script.json restored (Task 63) — closed here.
+
+**get_Type id register** (`override int get_Type()` slot 4 on every AIComm
+subclass; tool `r13_aicomm_ids.py`, JSON
+`reverse/evidence/commands/r13-aicomm-type-ids.json`): each body is an Obfuz
+arithmetic form over the ConstFieldHolder pool — direct `pool[off]`,
+`pool[off] × imm32` (movz/movk), `pool+pool`, or `pool^pool`. 36 of 49 decode
+into a clean sequential register:
+
+- **5300-5312 unit ops**: UnitsMove 5300, UnitsStop 5301, UnitsSpec 5302,
+  UnitsPatrolTargeting 5303, UnitsHoldPosition 5304, MineLay 5305,
+  UnitBombersTargeting 5306, UnitsBombard 5307, FightersGuard 5308,
+  AircraftRebase 5309, UnitsPsionic 5310, UnitsLoadTransport 5312
+- **5400-5406 building suite (R13's five + BuSet)**: BuSet 5400,
+  BuildingRepair 5402, BuildingRallyPoint 5403, BuildingUpgrade 5404,
+  BuyUnit 5405, CancelBuyUnit 5406
+- **5500-5563 meta**: Implosion 5500, NuclearLaunch 5501, Squad 5504,
+  Settings 5507, ChatMessageSend 5540, TutorialFinished 5551, WinPVE 5561,
+  WinPVP 5562, WinPVPSingleSide 5563
+- **5701-5710 integrity/sync**: CRC 5701, Verify 5702, CRCRequest 5703,
+  SyncTest 5706, DesyncDebugRequest 5707, DesyncNotification 5708,
+  DesyncInfoMessage 5709, DeployExtend 5710; HeroBatteryBuy 5753.
+  The 13 undecoded classes use a fourth form (inline `$gK` accessor with
+  locally-supplied key material — the same third-segment limitation recorded
+  in the B7 pass-2 note; bounded).
+
+**$CMA validator bodies** (tool `r13_cma_decode.py`, evidence
+`reverse/evidence/commands/r13-cma-validators.txt` — 10 commands incl. all
+five R13 suite members + UnitsMove/UnitsStop/MineLay/HeroAbilityActive):
+every body is a jump-table dispatch on a holder pool constant
+(`pool[0x860]=4` for CancelBuyUnit with bound `cmp 0x16`, `pool[0x64]` bound
+`cmp 0x22` for Repair), then the validate chain. Example decoded rules:
+
+- **CancelBuyUnit** @0x48F3DD0: `building = Battle.<slot205 dict>[this.$np]`
+  (Dictionary<int,object>.get_Item, base field $np @0x28 = the target entity
+  id); `X = building.<slot294>`; verdict helper
+  `BattleAct.$Eb<object>(Battle, X, this.$eP @0x30 [the unitType], building)`
+  — cancel validates building existence + unit-type membership, matching the
+  LC mirror {m_buildingId, m_unitType}.
+- **BuildingRepair** @0x48E8DA8: building dict lookup by `$np`; second dict
+  (Battle slot 140) `ContainsKey(this.f0 @0x30)` — a side/player-id
+  membership check; further chained getters (building slot 65 etc.) before
+  the short verdict.
+- **BuyUnit** @0x48EB1CC: dictionary lookups + small state thresholds
+  (`cmp 1..5` — building state / queue gates) with null-guards to the
+  fail exit.
+
+The short return = error-code enum [INFERRED]; the browser keeps its
+validate-before-journal discipline, now backed by the native rule ARCHITECTURE
+(entity existence → membership/state → helper verdict) with per-rule chains
+preserved verbatim in the evidence for line-level follow-up. The remaining
+numeric half (repair prices, refund fraction) stays R1-bound as recorded in
+§Task-62.

@@ -694,7 +694,7 @@ P4 = future/platform work.
 | B4 | **P0** | Live damage application unverifiable (no client consumer of curve) | combat | UNKNOWN→APPROXIMATE | damage-pipeline §3.5 |
 | B5 | **P0** | Invented mechanics vs confirmed native absence (crit; falloff; veterancy mods; heal-aura-Shield) | combat | APPROXIMATE/CONFIRMED-divergence | combat-stats §8; weapon-type-surface |
 | B6 | **P0** | Native tick rate/timing grid unrecovered (20 Hz is an assumption) | simulation | UNKNOWN | FIRE_TICK_LENGTH=4 anchor |
-| B7 | **P0→P1** | No unit–unit collision/path-slot system | movement | **PARTIAL (R14, Task 64, v65)**: native architecture + traffic map decoded [DECOMP]; browser slot-wait dormant-ready-shaped (comment fold-in only) | b7-movement-slot note; evidence/movement/* |
+| B7 | **P0→P1** | No unit–unit collision/path-slot system | movement | **PARTIAL (R14 pass 2, Task 65, v66)**: architecture + traffic map (pass 1) + VALUE DOMAINS decoded [DECOMP] — wait_for_moving = wait-cycle counter (set 1 / +1 per wait / clear 0; $Qe arbitration: pool-const × occupant speed vs mover wait), walk_state binary (single writer $J toggle old^1), forced cleared on wait entry; pass-1 $ZA/$yi set_WalkState claims corrected to slot-collision FPs; browser slot-wait stays dormant (G11) | b7-movement-slot note §7 + evidence/movement/b7-value-domains.txt |
 | B8 | **P1** | Water non-blocking; no naval domain | movement/maps | MISSING | genTerrain; naval roster |
 | G1 | **P1** | Production cancellation/refunds missing | commands | **SHIPPED (R13/Task 62, v63)** — cancel-by-unitType + refund; refund fraction [INFERRED 100%] (no native rule surface) | building-commands note §4; building-commands.test.js |
 | G2 | **P1** | Building rally point missing | commands/buildings | **SHIPPED (R13/Task 62, v63)** — production-scoped rally, spawn-follows (last cell [INFERRED]); multi-waypoint traversal [AWAITING BINARY] | building-commands note §5; building-commands.test.js |
@@ -721,7 +721,7 @@ P4 = future/platform work.
 | H11 | **P2** | Veterancy/upgrade growth (mega tiers) unmodeled | units/economy | MISSING | estat tiers |
 | M1 | **P3** | 7 announcer cues loaded but untriggered | audio | **CONFIRMED** (R12 Task 60: native trigger system decoded — BattleUIEventHelper global register dump.cs:296691 + AudioBattleVoicesPlayer dump.cs:80813; 5 cues wired v61, 2 dormant with decoded triggers) | announcer-voice-native-analysis.md + evidence/audio/r12-* |
 | M2 | **P3** | Music missing | audio | MISSING | — |
-| M3 | **P3** | Weapon→sound mapping heuristic | audio | APPROXIMATE | Sfx pools |
+| M3 | **P3** | Weapon→sound mapping heuristic | audio | **MECHANISM CONFIRMED (Task 65)**: LCUnitShoot{unitId,weaponIndex} server command → IUnitShootable.ToShoot gate → serialized SoundGroups id (153-value register, dump.cs:83052) → PlayLimitedSoundById; AudioGroups assets (50) + 1,677 clips inventoried; 5 direct UnitShootSoundEffector pairs extracted; standard-unit per-weapon table = bounded bundle follow-up (recipe proven) | m3-weapon-sound-native-decode.md + evidence/audio/m3-* |
 | M4 | **P3** | Salamander → missing GLB silent fallback (bug) | assets | PARTIALLY CONFIRMED | game.js L35597 |
 | M5 | **P3** | Control groups / pause / settings / volume missing | UI | MISSING | — |
 | M6 | **P3** | One-finger camera pan absent on touch | input | APPROXIMATE | input audit |
@@ -762,7 +762,7 @@ P4 = future/platform work.
 | I3 | — | salamander → missing `f2_veh_typhoon.glb` fallback | fix `UNIT_MODEL` mapping | none | none |
 | I4 | production cancel/refund; rally; repair; upgrade exist as native commands | ~~all missing (G1–G4)~~ **SHIPPED (R13, Task 62, v63)**: produceCancel/rally/repair/upgrade kernel commands (journaled + lockstep-routed + hash-covered B-line extensions); rally+cancel fully live, repair/upgrade dormant-ready gated on R1 per-level config; 49-check suite | shipped; per-level VALUES + refund fraction = R1 | realized: none (numbers only) | medium (determinism care) |
 | I5 | water/naval walkability | water non-blocking (B8) | water layer in terrain grid; bridge walkability | B3/R11 for naval scope | medium |
-| I6 | path-slot micro-management | units overlap (B7) | deterministic slot/separation system per recovered semantics | **R14 pass 1 done (Task 64)** — architecture + traffic map [DECOMP]; value domains (wait/walk_state/dispersal) = R14 pass 2 or R1 SlipInfo/PathUnitInfo dump; then implement | high (determinism + perf) |
+| I6 | path-slot micro-management | units overlap (B7) | deterministic slot/separation system per recovered semantics | **R14 pass 2 done (Task 65)** — value domains decoded [DECOMP] (wait counter arithmetic + $Qe arbitration rule + walk_state toggle); remaining = $Qe pool constant (third-segment parse) or R1 march dump; then implement the deterministic equivalent | high (determinism + perf) |
 | I7 | burst rounds (`shot_count/shot_int`) | dormant machinery | wire values when captured | R1 | low |
 | I8 | EnergyProduction/**EnergyNeed** | flat bonus, no shortage (G6) | consumption + brownout rules | R1/R7 for rules | medium |
 | I9 | control groups, pause/settings | missing (M5) | UI + command plumbing | none | low |

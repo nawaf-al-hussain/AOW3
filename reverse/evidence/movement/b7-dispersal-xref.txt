@@ -1,0 +1,777 @@
+B7 pass 2 Part C — receiver-verified whole-binary xref, dispersal + walk/wait setters
+(2026-10-12) so=8ace05bbaa2cdfda… PIN MATCH
+
+Verified slot 61 get_Dispersal @0x4246A94 in com.geargames.serialization.serializers.BaseConfigurationSTDeserializer$$content recv=x19
+Verified slot 62 set_Dispersal @0x4245EF8 in com.geargames.serialization.serializers.BaseConfigurationSTDeserializer$$content recv=x19
+Verified slot 63 get_DispersalPrev @0x4245DB0 in com.geargames.serialization.serializers.BaseConfigurationSTDeserializer$$content recv=x19
+Verified slot 64 set_DispersalPrev @0x42459A8 in com.geargames.serialization.serializers.BaseConfigurationSTDeserializer$$content recv=x19
+Verified slot 65 get_DispersalBuId @0x4245860 in com.geargames.serialization.serializers.BaseConfigurationSTDeserializer$$content recv=x19
+Verified slot 66 set_DispersalBuId @0x424A8AC in com.geargames.serialization.serializers.BaseConfigurationSTDeserializer$$content recv=x19
+Verified slot 61 get_Dispersal @0x4479208 in com.geargames.serialization.serializers.SharedBaseDictionarySTDeserializer$$content recv=x29
+Verified slot 62 set_Dispersal @0x4479600 in com.geargames.serialization.serializers.SharedBaseDictionarySTDeserializer$$content recv=x29
+Verified slot 63 get_DispersalPrev @0x44794B4 in com.geargames.serialization.serializers.SharedBaseDictionarySTDeserializer$$content recv=x29
+Verified slot 66 set_DispersalBuId @0x4479DCC in com.geargames.serialization.serializers.SharedBaseDictionarySTDeserializer$$content recv=x29
+Verified slot 62 set_Dispersal @0x8487FA4 in System.Data.XmlTreeGen$$HandleTable recv=x23
+Verified slot 62 set_Dispersal @0x84881A8 in System.Data.XmlTreeGen$$HandleTable recv=x23
+Verified slot 62 set_Dispersal @0x84881EC in System.Data.XmlTreeGen$$HandleTable recv=x23
+Verified slot 62 set_Dispersal @0x84887B0 in System.Data.XmlTreeGen$$HandleTable recv=x23
+Verified slot 62 set_Dispersal @0x84887D8 in System.Data.XmlTreeGen$$HandleTable recv=x23
+Verified slot 62 set_Dispersal @0x8488838 in System.Data.XmlTreeGen$$HandleTable recv=x23
+Verified slot 62 set_Dispersal @0x84898F0 in System.Data.XmlTreeGen$$HandleTable recv=x23
+Verified slot 62 set_Dispersal @0x8489D6C in System.Data.XmlTreeGen$$HandleTable recv=x29
+Verified slot 62 set_Dispersal @0x8489E8C in System.Data.XmlTreeGen$$HandleTable recv=x29
+Verified slot 62 set_Dispersal @0x8489EE0 in System.Data.XmlTreeGen$$HandleTable recv=x29
+Verified slot 62 set_Dispersal @0x8489FF4 in System.Data.XmlTreeGen$$HandleTable recv=x29
+Verified slot 62 set_Dispersal @0x848A0F8 in System.Data.XmlTreeGen$$HandleTable recv=x29
+Verified slot 62 set_Dispersal @0x848A154 in System.Data.XmlTreeGen$$HandleTable recv=x29
+Verified slot 62 set_Dispersal @0x848A1B0 in System.Data.XmlTreeGen$$HandleTable recv=x29
+Verified slot 61 get_Dispersal @0x44529FC in com.geargames.serialization.serializers.SalePresetSTSerializer$$serialize recv=x29
+Verified slot 61 get_Dispersal @0x4452A14 in com.geargames.serialization.serializers.SalePresetSTSerializer$$serialize recv=x29
+Verified slot 61 get_Dispersal @0x4452A3C in com.geargames.serialization.serializers.SalePresetSTSerializer$$serialize recv=x29
+Verified slot 63 get_DispersalPrev @0x44531C8 in com.geargames.serialization.serializers.SalePresetSTSerializer$$serialize recv=x29
+Verified slot 63 get_DispersalPrev @0x44531E0 in com.geargames.serialization.serializers.SalePresetSTSerializer$$serialize recv=x29
+Verified slot 63 get_DispersalPrev @0x4453208 in com.geargames.serialization.serializers.SalePresetSTSerializer$$serialize recv=x29
+Verified slot 65 get_DispersalBuId @0x44524B0 in com.geargames.serialization.serializers.SalePresetSTSerializer$$serialize recv=x29
+Verified slot 62 set_Dispersal @0x4482D5C in com.geargames.serialization.serializers.SharedBaseDictionarySTSerializer$$serialize recv=x22
+Verified slot 62 set_Dispersal @0x4482D74 in com.geargames.serialization.serializers.SharedBaseDictionarySTSerializer$$serialize recv=x22
+Verified slot 62 set_Dispersal @0x4482D9C in com.geargames.serialization.serializers.SharedBaseDictionarySTSerializer$$serialize recv=x22
+Verified slot 64 set_DispersalPrev @0x4482FB8 in com.geargames.serialization.serializers.SharedBaseDictionarySTSerializer$$serialize recv=x22
+Verified slot 64 set_DispersalPrev @0x4482FD0 in com.geargames.serialization.serializers.SharedBaseDictionarySTSerializer$$serialize recv=x22
+Verified slot 66 set_DispersalBuId @0x4483540 in com.geargames.serialization.serializers.SharedBaseDictionarySTSerializer$$serialize recv=x22
+Verified slot 66 set_DispersalBuId @0x4483558 in com.geargames.serialization.serializers.SharedBaseDictionarySTSerializer$$serialize recv=x22
+Verified slot 66 set_DispersalBuId @0x4483580 in com.geargames.serialization.serializers.SharedBaseDictionarySTSerializer$$serialize recv=x22
+Verified slot 61 get_Dispersal @0x4699700 in com.geargames.aow.entities.battle.BattleSide$$$ju recv=x22
+Verified slot 61 get_Dispersal @0x469975C in com.geargames.aow.entities.battle.BattleSide$$$ju recv=x22
+Verified slot 61 get_Dispersal @0x46997A4 in com.geargames.aow.entities.battle.BattleSide$$$ju recv=x22
+Verified slot 61 get_Dispersal @0x4699D6C in com.geargames.aow.entities.battle.BattleSide$$$ju recv=x22
+Verified slot 63 get_DispersalPrev @0x4699D1C in com.geargames.aow.entities.battle.BattleSide$$$ju recv=x22
+Verified slot 63 get_DispersalPrev @0x469A15C in com.geargames.aow.entities.battle.BattleSide$$$ju recv=x22
+Verified slot 65 get_DispersalBuId @0x469B064 in com.geargames.aow.entities.battle.BattleSide$$$ju recv=x22
+Verified slot 65 get_DispersalBuId @0x469B330 in com.geargames.aow.entities.battle.BattleSide$$$ju recv=x22
+Verified slot 65 get_DispersalBuId @0x469B370 in com.geargames.aow.entities.battle.BattleSide$$$ju recv=x22
+Verified slot 65 get_DispersalBuId @0x469B478 in com.geargames.aow.entities.battle.BattleSide$$$ju recv=x22
+Verified slot 65 get_DispersalBuId @0x469B62C in com.geargames.aow.entities.battle.BattleSide$$$ju recv=x22
+Verified slot 61 get_Dispersal @0x445E140 in com.geargames.serialization.serializers.SaleUserConfigurationSTDeserializer$$content recv=x19
+Verified slot 62 set_Dispersal @0x445E318 in com.geargames.serialization.serializers.SaleUserConfigurationSTDeserializer$$content recv=x19
+Verified slot 63 get_DispersalPrev @0x445E228 in com.geargames.serialization.serializers.SaleUserConfigurationSTDeserializer$$content recv=x19
+Verified slot 64 set_DispersalPrev @0x445E568 in com.geargames.serialization.serializers.SaleUserConfigurationSTDeserializer$$content recv=x19
+Verified slot 65 get_DispersalBuId @0x445E478 in com.geargames.serialization.serializers.SaleUserConfigurationSTDeserializer$$content recv=x19
+Verified slot 62 set_Dispersal @0x42C577C in com.geargames.serialization.serializers.GoodsSTSerializer$$serialize recv=x21
+Verified slot 64 set_DispersalPrev @0x42C57B8 in com.geargames.serialization.serializers.GoodsSTSerializer$$serialize recv=x21
+Verified slot 66 set_DispersalBuId @0x42C6084 in com.geargames.serialization.serializers.GoodsSTSerializer$$serialize recv=x21
+Verified slot 66 set_DispersalBuId @0x42C609C in com.geargames.serialization.serializers.GoodsSTSerializer$$serialize recv=x21
+Verified slot 66 set_DispersalBuId @0x42C60C4 in com.geargames.serialization.serializers.GoodsSTSerializer$$serialize recv=x21
+Verified slot 62 set_Dispersal @0x43249A0 in com.geargames.serialization.serializers.LoginRequestSTSerializer$$serialize recv=x20
+Verified slot 62 set_Dispersal @0x43249B8 in com.geargames.serialization.serializers.LoginRequestSTSerializer$$serialize recv=x20
+Verified slot 62 set_Dispersal @0x43249E0 in com.geargames.serialization.serializers.LoginRequestSTSerializer$$serialize recv=x20
+Verified slot 64 set_DispersalPrev @0x4324A74 in com.geargames.serialization.serializers.LoginRequestSTSerializer$$serialize recv=x20
+Verified slot 62 set_Dispersal @0x4578838 in com.geargames.serialization.serializers.WeaponTypeSTSerializer$$serialize recv=x21
+Verified slot 62 set_Dispersal @0x4578850 in com.geargames.serialization.serializers.WeaponTypeSTSerializer$$serialize recv=x21
+Verified slot 62 set_Dispersal @0x4578878 in com.geargames.serialization.serializers.WeaponTypeSTSerializer$$serialize recv=x21
+Verified slot 64 set_DispersalPrev @0x45789CC in com.geargames.serialization.serializers.WeaponTypeSTSerializer$$serialize recv=x21
+Verified slot 64 set_DispersalPrev @0x45789E4 in com.geargames.serialization.serializers.WeaponTypeSTSerializer$$serialize recv=x21
+Verified slot 64 set_DispersalPrev @0x4578A0C in com.geargames.serialization.serializers.WeaponTypeSTSerializer$$serialize recv=x21
+Verified slot 66 set_DispersalBuId @0x4578A98 in com.geargames.serialization.serializers.WeaponTypeSTSerializer$$serialize recv=x21
+Verified slot 66 set_DispersalBuId @0x4578AB0 in com.geargames.serialization.serializers.WeaponTypeSTSerializer$$serialize recv=x21
+Verified slot 66 set_DispersalBuId @0x4578AD8 in com.geargames.serialization.serializers.WeaponTypeSTSerializer$$serialize recv=x21
+Verified slot 61 get_Dispersal @0x43CB3D8 in com.geargames.serialization.serializers.ProfileSTSerializer$$serialize recv=x22
+Verified slot 61 get_Dispersal @0x43CB3F0 in com.geargames.serialization.serializers.ProfileSTSerializer$$serialize recv=x22
+Verified slot 61 get_Dispersal @0x43CB418 in com.geargames.serialization.serializers.ProfileSTSerializer$$serialize recv=x22
+Verified slot 63 get_DispersalPrev @0x43CB5E4 in com.geargames.serialization.serializers.ProfileSTSerializer$$serialize recv=x22
+Verified slot 63 get_DispersalPrev @0x43CB5FC in com.geargames.serialization.serializers.ProfileSTSerializer$$serialize recv=x22
+Verified slot 63 get_DispersalPrev @0x43CB624 in com.geargames.serialization.serializers.ProfileSTSerializer$$serialize recv=x22
+Verified slot 61 get_Dispersal @0x47032C4 in com.geargames.aow.entities.battle.FlagAct$$$yC recv=x19
+Verified slot 61 get_Dispersal @0x47033FC in com.geargames.aow.entities.battle.FlagAct$$$yC recv=x19
+Verified slot 61 get_Dispersal @0x470351C in com.geargames.aow.entities.battle.FlagAct$$$yC recv=x19
+Verified slot 61 get_Dispersal @0x4703D68 in com.geargames.aow.entities.battle.FlagAct$$$yC recv=x19
+Verified slot 62 set_Dispersal @0x4703828 in com.geargames.aow.entities.battle.FlagAct$$$yC recv=x19  VALUE=mov[x21=callret]
+Verified slot 62 set_Dispersal @0x470395C in com.geargames.aow.entities.battle.FlagAct$$$yC recv=x19  VALUE=0
+Verified slot 62 set_Dispersal @0x4703A80 in com.geargames.aow.entities.battle.FlagAct$$$yC recv=x19  VALUE=0
+Verified slot 65 get_DispersalBuId @0x47031C8 in com.geargames.aow.entities.battle.FlagAct$$$yC recv=x19
+Verified slot 64 set_DispersalPrev @0x47D9144 in com.geargames.aow.entities.battle.SideAct$$$qf recv=x20
+Verified slot 61 get_Dispersal @0x48534F0 in com.geargames.aow.entities.battle.UnitAct$$$CG recv=x19
+Verified slot 61 get_Dispersal @0x4853620 in com.geargames.aow.entities.battle.UnitAct$$$CG recv=x19
+Verified slot 61 get_Dispersal @0x485405C in com.geargames.aow.entities.battle.UnitAct$$$CG recv=x19
+Verified slot 61 get_Dispersal @0x48543D8 in com.geargames.aow.entities.battle.UnitAct$$$CG recv=x19
+Verified slot 61 get_Dispersal @0x4856A08 in com.geargames.aow.entities.battle.UnitAct$$$CG recv=x19
+Verified slot 62 set_Dispersal @0x4852508 in com.geargames.aow.entities.battle.UnitAct$$$CG recv=x19  VALUE=0
+Verified slot 300 set_WaitForMoving @0x4856C60 in com.geargames.aow.entities.battle.UnitAct$$$CG recv=x19
+Verified slot 61 get_Dispersal @0x49323D0 in com.geargames.serialization.serializers.BattleSideSTSerializer$$serialize recv=x29
+Verified slot 63 get_DispersalPrev @0x493240C in com.geargames.serialization.serializers.BattleSideSTSerializer$$serialize recv=x29
+Verified slot 65 get_DispersalBuId @0x4936CD4 in com.geargames.serialization.serializers.BattleSideSTSerializer$$serialize recv=x29
+Verified slot 300 set_WaitForMoving @0x4937048 in com.geargames.serialization.serializers.BattleSideSTSerializer$$serialize recv=x29
+Verified slot 62 set_Dispersal @0x4461374 in com.geargames.serialization.serializers.SaleUserConfigurationSTSerializer$$serialize recv=x20
+Verified slot 62 set_Dispersal @0x446138C in com.geargames.serialization.serializers.SaleUserConfigurationSTSerializer$$serialize recv=x20
+Verified slot 62 set_Dispersal @0x44613B4 in com.geargames.serialization.serializers.SaleUserConfigurationSTSerializer$$serialize recv=x20
+Verified slot 64 set_DispersalPrev @0x4461548 in com.geargames.serialization.serializers.SaleUserConfigurationSTSerializer$$serialize recv=x20
+Verified slot 64 set_DispersalPrev @0x4461560 in com.geargames.serialization.serializers.SaleUserConfigurationSTSerializer$$serialize recv=x20
+Verified slot 64 set_DispersalPrev @0x4461588 in com.geargames.serialization.serializers.SaleUserConfigurationSTSerializer$$serialize recv=x20
+Verified slot 66 set_DispersalBuId @0x4461754 in com.geargames.serialization.serializers.SaleUserConfigurationSTSerializer$$serialize recv=x20
+Verified slot 62 set_Dispersal @0x4547C20 in com.geargames.serialization.serializers.UnitTypeSTSerializer$$serialize recv=x21
+Verified slot 64 set_DispersalPrev @0x4547B3C in com.geargames.serialization.serializers.UnitTypeSTSerializer$$serialize recv=x21
+Verified slot 66 set_DispersalBuId @0x4548414 in com.geargames.serialization.serializers.UnitTypeSTSerializer$$serialize recv=x21
+Verified slot 61 get_Dispersal @0x453B0B4 in com.geargames.serialization.serializers.UnitSTSerializer$$serialize recv=x21
+Verified slot 61 get_Dispersal @0x453B160 in com.geargames.serialization.serializers.UnitSTSerializer$$serialize recv=x21
+Verified slot 61 get_Dispersal @0x453B190 in com.geargames.serialization.serializers.UnitSTSerializer$$serialize recv=x21
+Verified slot 61 get_Dispersal @0x453B290 in com.geargames.serialization.serializers.UnitSTSerializer$$serialize recv=x21
+Verified slot 63 get_DispersalPrev @0x453B3D8 in com.geargames.serialization.serializers.UnitSTSerializer$$serialize recv=x21
+Verified slot 65 get_DispersalBuId @0x453B330 in com.geargames.serialization.serializers.UnitSTSerializer$$serialize recv=x21
+Verified slot 61 get_Dispersal @0x46C69AC in com.geargames.aow.entities.battle.BuildingAct$$$KB recv=x22
+Verified slot 61 get_Dispersal @0x46C6F68 in com.geargames.aow.entities.battle.BuildingAct$$$KB recv=x22
+Verified slot 61 get_Dispersal @0x46C702C in com.geargames.aow.entities.battle.BuildingAct$$$KB recv=x22
+Verified slot 66 set_DispersalBuId @0x46C6768 in com.geargames.aow.entities.battle.BuildingAct$$$KB recv=x22
+Verified slot 61 get_Dispersal @0x4748528 in com.geargames.aow.entities.battle.PathAct$$$Oe recv=x20
+Verified slot 61 get_Dispersal @0x474A1A4 in com.geargames.aow.entities.battle.PathAct$$$Oe recv=x10
+Verified slot 63 get_DispersalPrev @0x4748558 in com.geargames.aow.entities.battle.PathAct$$$Oe recv=x20
+Verified slot 63 get_DispersalPrev @0x474A0A0 in com.geargames.aow.entities.battle.PathAct$$$Oe recv=x20
+Verified slot 63 get_DispersalPrev @0x474A208 in com.geargames.aow.entities.battle.PathAct$$$Oe recv=x26
+Verified slot 61 get_Dispersal @0x8469B00 in System.Data.XSDSchema$$HandleRelation recv=x25
+Verified slot 61 get_Dispersal @0x8469B60 in System.Data.XSDSchema$$HandleRelation recv=x25
+Verified slot 61 get_Dispersal @0x8469BBC in System.Data.XSDSchema$$HandleRelation recv=x25
+Verified slot 61 get_Dispersal @0x8469C50 in System.Data.XSDSchema$$HandleRelation recv=x25
+Verified slot 61 get_Dispersal @0x8469D3C in System.Data.XSDSchema$$HandleRelation recv=x25
+Verified slot 61 get_Dispersal @0x8469D5C in System.Data.XSDSchema$$HandleRelation recv=x25
+Verified slot 61 get_Dispersal @0x3E45A48 in com.geargames.serialization.serializers.BulletSTSerializer$$serialize recv=x21
+Verified slot 65 get_DispersalBuId @0x3E45418 in com.geargames.serialization.serializers.BulletSTSerializer$$serialize recv=x21
+Verified slot 65 get_DispersalBuId @0x3E454C4 in com.geargames.serialization.serializers.BulletSTSerializer$$serialize recv=x21
+Verified slot 65 get_DispersalBuId @0x3E454F4 in com.geargames.serialization.serializers.BulletSTSerializer$$serialize recv=x21
+Verified slot 65 get_DispersalBuId @0x3E455EC in com.geargames.serialization.serializers.BulletSTSerializer$$serialize recv=x21
+Verified slot 61 get_Dispersal @0x41D69F4 in com.geargames.serialization.serializers.FlagSTSerializer$$serialize recv=x21
+Verified slot 63 get_DispersalPrev @0x41D6A94 in com.geargames.serialization.serializers.FlagSTSerializer$$serialize recv=x21
+Verified slot 65 get_DispersalBuId @0x41D6B70 in com.geargames.serialization.serializers.FlagSTSerializer$$serialize recv=x21
+Verified slot 65 get_DispersalBuId @0x41D6B88 in com.geargames.serialization.serializers.FlagSTSerializer$$serialize recv=x21
+Verified slot 65 get_DispersalBuId @0x41D6BB0 in com.geargames.serialization.serializers.FlagSTSerializer$$serialize recv=x21
+Verified slot 61 get_Dispersal @0x46B0480 in com.geargames.aow.entities.battle.BuildingAct$$$Vb recv=x19
+Verified slot 61 get_Dispersal @0x46B04E0 in com.geargames.aow.entities.battle.BuildingAct$$$Vb recv=x19
+Verified slot 61 get_Dispersal @0x46B05DC in com.geargames.aow.entities.battle.BuildingAct$$$Vb recv=x19
+Verified slot 61 get_Dispersal @0x46B0A24 in com.geargames.aow.entities.battle.BuildingAct$$$Vb recv=x19
+Verified slot 62 set_Dispersal @0x46B0614 in com.geargames.aow.entities.battle.BuildingAct$$$Vb recv=x19  VALUE=0
+Verified slot 61 get_Dispersal @0x46DA930 in com.geargames.aow.entities.battle.CheckAndCalc$$$uc recv=x29
+Verified slot 61 get_Dispersal @0x46DBEE4 in com.geargames.aow.entities.battle.CheckAndCalc$$$uc recv=x29
+Verified slot 63 get_DispersalPrev @0x46DB480 in com.geargames.aow.entities.battle.CheckAndCalc$$$uc recv=x29
+Verified slot 65 get_DispersalBuId @0x46DCC50 in com.geargames.aow.entities.battle.CheckAndCalc$$$uc recv=x29
+Verified slot 61 get_Dispersal @0x4766F0C in com.geargames.aow.entities.battle.PathAct$$$Te recv=x23
+Verified slot 63 get_DispersalPrev @0x4766F1C in com.geargames.aow.entities.battle.PathAct$$$Te recv=x23
+Verified slot 65 get_DispersalBuId @0x4767C40 in com.geargames.aow.entities.battle.PathAct$$$Te recv=x19
+Verified slot 65 get_DispersalBuId @0x4767C9C in com.geargames.aow.entities.battle.PathAct$$$Te recv=x19
+Verified slot 62 set_Dispersal @0x4378D00 in com.geargames.serialization.serializers.PathSTSerializer$$serialize recv=x20
+Verified slot 64 set_DispersalPrev @0x4377F40 in com.geargames.serialization.serializers.PathSTSerializer$$serialize recv=x20
+Verified slot 64 set_DispersalPrev @0x4377F58 in com.geargames.serialization.serializers.PathSTSerializer$$serialize recv=x20
+Verified slot 64 set_DispersalPrev @0x4377F80 in com.geargames.serialization.serializers.PathSTSerializer$$serialize recv=x20
+Verified slot 66 set_DispersalBuId @0x4377D34 in com.geargames.serialization.serializers.PathSTSerializer$$serialize recv=x20
+Verified slot 62 set_Dispersal @0x43C822C in com.geargames.serialization.serializers.BattleAchievementsSTSerializer$$serialize recv=x21
+Verified slot 64 set_DispersalPrev @0x43C8268 in com.geargames.serialization.serializers.BattleAchievementsSTSerializer$$serialize recv=x21
+Verified slot 66 set_DispersalBuId @0x43C82DC in com.geargames.serialization.serializers.BattleAchievementsSTSerializer$$serialize recv=x21
+Verified slot 300 set_WaitForMoving @0x43C8A98 in com.geargames.serialization.serializers.BattleAchievementsSTSerializer$$serialize recv=x21
+Verified slot 302 set_WalkState @0x43C90B8 in com.geargames.serialization.serializers.BattleAchievementsSTSerializer$$serialize recv=x21
+Verified slot 63 get_DispersalPrev @0x46BF708 in com.geargames.aow.entities.battle.BuildingAct$$$HB recv=x29
+Verified slot 63 get_DispersalPrev @0x46C0098 in com.geargames.aow.entities.battle.BuildingAct$$$HB recv=x29
+Verified slot 65 get_DispersalBuId @0x47E1BA8 in com.geargames.aow.entities.battle.SideAct$$$zf recv=x22
+Verified slot 61 get_Dispersal @0x4373F9C in com.geargames.serialization.serializers.PathSTDeserializer$$content recv=x19
+Verified slot 63 get_DispersalPrev @0x4375ED8 in com.geargames.serialization.serializers.PathSTDeserializer$$content recv=x19
+Verified slot 64 set_DispersalPrev @0x4374B04 in com.geargames.serialization.serializers.PathSTDeserializer$$content recv=x19
+Verified slot 65 get_DispersalBuId @0x4374AC4 in com.geargames.serialization.serializers.PathSTDeserializer$$content recv=x19
+Verified slot 61 get_Dispersal @0x43D0B5C in com.geargames.serialization.serializers.ProfileStatisticsAnswerSTSerializer$$serialize recv=x20
+Verified slot 63 get_DispersalPrev @0x43D09FC in com.geargames.serialization.serializers.ProfileStatisticsAnswerSTSerializer$$serialize recv=x20
+Verified slot 65 get_DispersalBuId @0x43D0A34 in com.geargames.serialization.serializers.ProfileStatisticsAnswerSTSerializer$$serialize recv=x20
+Verified slot 61 get_Dispersal @0x46B1CB0 in com.geargames.aow.entities.battle.BuildingAct$$$xb recv=x19
+Verified slot 62 set_Dispersal @0x46B1C38 in com.geargames.aow.entities.battle.BuildingAct$$$xb recv=x19  VALUE=mov[x0=callret]
+Verified slot 62 set_Dispersal @0x46B1CDC in com.geargames.aow.entities.battle.BuildingAct$$$xb recv=x19  VALUE=mov[x0=callret]
+Verified slot 62 set_Dispersal @0x46B1E44 in com.geargames.aow.entities.battle.BuildingAct$$$xb recv=x19  VALUE=mov[x25=callret]
+Verified slot 61 get_Dispersal @0x4704A6C in com.geargames.aow.entities.battle.FlagAct$$$YC recv=x26
+Verified slot 61 get_Dispersal @0x4705050 in com.geargames.aow.entities.battle.FlagAct$$$YC recv=x26
+Verified slot 61 get_Dispersal @0x4705414 in com.geargames.aow.entities.battle.FlagAct$$$YC recv=x26
+Verified slot 61 get_Dispersal @0x4705478 in com.geargames.aow.entities.battle.FlagAct$$$YC recv=x26
+Verified slot 62 set_Dispersal @0x821BAAC in com.geargames.aow.scenes.battle.gui.actions.GUIBattleBuildingContextMenuUpdater$$Initiate recv=x21
+Verified slot 62 set_Dispersal @0x7919D90 in AOW_Assets.Scenes.Battle.Scripts.GUI.BuildingList.GUIBattleListUpgrade.BuildingTypeComparer$$Compare recv=x20
+Verified slot 63 get_DispersalPrev @0x7919DD4 in AOW_Assets.Scenes.Battle.Scripts.GUI.BuildingList.GUIBattleListUpgrade.BuildingTypeComparer$$Compare recv=x20
+Verified slot 62 set_Dispersal @0x8220848 in com.geargames.aow.scenes.battle.gui.actions.GUIBattleBuildingPanelMenuUpdater$$EnterMenu recv=x21
+Verified slot 61 get_Dispersal @0x3E3CB84 in com.geargames.serialization.serializers.BuildingSTSerializer$$serialize recv=x21
+Verified slot 63 get_DispersalPrev @0x3E3CC24 in com.geargames.serialization.serializers.BuildingSTSerializer$$serialize recv=x21
+Verified slot 65 get_DispersalBuId @0x3E3CC60 in com.geargames.serialization.serializers.BuildingSTSerializer$$serialize recv=x21
+Verified slot 61 get_Dispersal @0x3EB66C4 in com.geargames.serialization.serializers.ClanSTSerializer$$serialize recv=x21
+Verified slot 63 get_DispersalPrev @0x3EB668C in com.geargames.serialization.serializers.ClanSTSerializer$$serialize recv=x21
+Verified slot 65 get_DispersalBuId @0x3EB6654 in com.geargames.serialization.serializers.ClanSTSerializer$$serialize recv=x21
+Verified slot 61 get_Dispersal @0x41ED354 in com.geargames.serialization.serializers.FractionSTSerializer$$serialize recv=x21
+Verified slot 63 get_DispersalPrev @0x41ED3C4 in com.geargames.serialization.serializers.FractionSTSerializer$$serialize recv=x21
+Verified slot 65 get_DispersalBuId @0x41ECDE0 in com.geargames.serialization.serializers.FractionSTSerializer$$serialize recv=x21
+Verified slot 61 get_Dispersal @0x42D6730 in com.geargames.serialization.serializers.HeroParamSTSerializer$$serialize recv=x21
+Verified slot 63 get_DispersalPrev @0x42D6854 in com.geargames.serialization.serializers.HeroParamSTSerializer$$serialize recv=x21
+Verified slot 65 get_DispersalBuId @0x42D681C in com.geargames.serialization.serializers.HeroParamSTSerializer$$serialize recv=x21
+Verified slot 61 get_Dispersal @0x434C1CC in com.geargames.serialization.serializers.MissionDescriptionSTSerializer$$serialize recv=x21
+Verified slot 63 get_DispersalPrev @0x434C194 in com.geargames.serialization.serializers.MissionDescriptionSTSerializer$$serialize recv=x21
+Verified slot 65 get_DispersalBuId @0x434C15C in com.geargames.serialization.serializers.MissionDescriptionSTSerializer$$serialize recv=x21
+Verified slot 61 get_Dispersal @0x437C1E4 in com.geargames.serialization.serializers.PathUnitInfoSTSerializer$$serialize recv=x21
+Verified slot 63 get_DispersalPrev @0x437C294 in com.geargames.serialization.serializers.PathUnitInfoSTSerializer$$serialize recv=x21
+Verified slot 65 get_DispersalBuId @0x437C4B0 in com.geargames.serialization.serializers.PathUnitInfoSTSerializer$$serialize recv=x21
+Verified slot 61 get_Dispersal @0x43A6D74 in com.geargames.serialization.serializers.ProfileRankSTSerializer$$serialize recv=x21
+Verified slot 63 get_DispersalPrev @0x43A6CC4 in com.geargames.serialization.serializers.ProfileRankSTSerializer$$serialize recv=x21
+Verified slot 65 get_DispersalBuId @0x43A6DB0 in com.geargames.serialization.serializers.ProfileRankSTSerializer$$serialize recv=x21
+Verified slot 61 get_Dispersal @0x43C30A8 in com.geargames.serialization.serializers.BattleAchievementsSTDeserializer$$content recv=x20
+Verified slot 63 get_DispersalPrev @0x43C2E38 in com.geargames.serialization.serializers.BattleAchievementsSTDeserializer$$content recv=x20
+Verified slot 65 get_DispersalBuId @0x43C2ED4 in com.geargames.serialization.serializers.BattleAchievementsSTDeserializer$$content recv=x20
+Verified slot 61 get_Dispersal @0x4567CAC in com.geargames.serialization.serializers.UserConfigurationSTSerializer$$serialize recv=x22
+Verified slot 63 get_DispersalPrev @0x456659C in com.geargames.serialization.serializers.UserConfigurationSTSerializer$$serialize recv=x22
+Verified slot 65 get_DispersalBuId @0x4565F54 in com.geargames.serialization.serializers.UserConfigurationSTSerializer$$serialize recv=x22
+Verified slot 61 get_Dispersal @0x456F47C in com.geargames.serialization.serializers.WallSTSerializer$$serialize recv=x21
+Verified slot 63 get_DispersalPrev @0x456F4B4 in com.geargames.serialization.serializers.WallSTSerializer$$serialize recv=x21
+Verified slot 65 get_DispersalBuId @0x456F604 in com.geargames.serialization.serializers.WallSTSerializer$$serialize recv=x21
+Verified slot 61 get_Dispersal @0x46B68A0 in com.geargames.aow.entities.battle.BuildingAct$$$LB recv=x21
+Verified slot 61 get_Dispersal @0x46B6928 in com.geargames.aow.entities.battle.BuildingAct$$$LB recv=x21
+Verified slot 62 set_Dispersal @0x46B69D8 in com.geargames.aow.entities.battle.BuildingAct$$$LB recv=x21  VALUE=0
+Verified slot 61 get_Dispersal @0x499B474 in com.geargames.serialization.serializers.BuildingLevelTypeSTSerializer$$serialize recv=x21
+Verified slot 63 get_DispersalPrev @0x499B7B8 in com.geargames.serialization.serializers.BuildingLevelTypeSTSerializer$$serialize recv=x21
+Verified slot 65 get_DispersalBuId @0x499B940 in com.geargames.serialization.serializers.BuildingLevelTypeSTSerializer$$serialize recv=x21
+Verified slot 61 get_Dispersal @0x8022DEC in com.geargames.aow.scenes.battle.MapEditorHeroParamConfig$$FillConfig recv=x20
+Verified slot 63 get_DispersalPrev @0x8022E04 in com.geargames.aow.scenes.battle.MapEditorHeroParamConfig$$FillConfig recv=x20
+Verified slot 65 get_DispersalBuId @0x8022E1C in com.geargames.aow.scenes.battle.MapEditorHeroParamConfig$$FillConfig recv=x20
+Verified slot 61 get_Dispersal @0x866F5C0 in System.Xml.Schema.Datatype_List$$TryParseValue recv=x21
+Verified slot 62 set_Dispersal @0x3EC4818 in com.geargames.serialization.serializers.ClientInfoSTSerializer$$serialize recv=x22
+Verified slot 62 set_Dispersal @0x3EC4830 in com.geargames.serialization.serializers.ClientInfoSTSerializer$$serialize recv=x22
+Verified slot 62 set_Dispersal @0x3EC4858 in com.geargames.serialization.serializers.ClientInfoSTSerializer$$serialize recv=x22
+Verified slot 62 set_Dispersal @0x437A8A0 in com.geargames.serialization.serializers.PathUnitInfoSTDeserializer$$content recv=x20  VALUE=mov[x0=com.geargames.serialization.SimpleDe()]
+Verified slot 64 set_DispersalPrev @0x437AA74 in com.geargames.serialization.serializers.PathUnitInfoSTDeserializer$$content recv=x20  VALUE=mov[x0=com.geargames.serialization.SimpleDe()]
+Verified slot 66 set_DispersalBuId @0x437AFF0 in com.geargames.serialization.serializers.PathUnitInfoSTDeserializer$$content recv=x20  VALUE=mov[x0=com.geargames.serialization.SimpleDe()]
+Verified slot 62 set_Dispersal @0x4543CCC in com.geargames.serialization.serializers.UnitStateTypeSTSerializer$$serialize recv=x21
+Verified slot 64 set_DispersalPrev @0x4543D04 in com.geargames.serialization.serializers.UnitStateTypeSTSerializer$$serialize recv=x21
+Verified slot 66 set_DispersalBuId @0x4543D3C in com.geargames.serialization.serializers.UnitStateTypeSTSerializer$$serialize recv=x21
+Verified slot 62 set_Dispersal @0x478C210 in com.geargames.aow.entities.battle.ShotAct$$$Ye recv=x23  VALUE=load w1, [sp, #0x10c]
+Verified slot 66 set_DispersalBuId @0x478A6BC in com.geargames.aow.entities.battle.ShotAct$$$Ye recv=x23  VALUE=mov[x25=callret]
+Verified slot 66 set_DispersalBuId @0x478C750 in com.geargames.aow.entities.battle.ShotAct$$$Ye recv=x23  VALUE=mov[x28=callret]
+Verified slot 62 set_Dispersal @0x7918F0C in AOW_Assets.Scenes.Battle.Scripts.GUI.BuildingList.GUIBattleListUpgradeItem$$Initiate recv=x21
+Verified slot 63 get_DispersalPrev @0x7918EF4 in AOW_Assets.Scenes.Battle.Scripts.GUI.BuildingList.GUIBattleListUpgradeItem$$Initiate recv=x21
+Verified slot 62 set_Dispersal @0x8023270 in com.geargames.aow.scenes.battle.MapEditorHeroParamConfig$$OverrideHeroParam recv=x19  VALUE=mem[x20,#0x84]
+Verified slot 64 set_DispersalPrev @0x8023288 in com.geargames.aow.scenes.battle.MapEditorHeroParamConfig$$OverrideHeroParam recv=x19  VALUE=mem[x20,#0x88]
+Verified slot 66 set_DispersalBuId @0x80232A0 in com.geargames.aow.scenes.battle.MapEditorHeroParamConfig$$OverrideHeroParam recv=x19  VALUE=mem[x20,#0x8c]
+Verified slot 62 set_Dispersal @0x80234F8 in com.geargames.aow.scenes.battle.MapEditorUnitStateConfig$$.ctor recv=x20
+Verified slot 64 set_DispersalPrev @0x802361C in com.geargames.aow.scenes.battle.MapEditorUnitStateConfig$$.ctor recv=x20
+Verified slot 66 set_DispersalBuId @0x8023714 in com.geargames.aow.scenes.battle.MapEditorUnitStateConfig$$.ctor recv=x20
+Verified slot 62 set_Dispersal @0x8024284 in com.geargames.aow.scenes.battle.MapEditorUnitTypeConfig$$FillConfig recv=x20
+Verified slot 64 set_DispersalPrev @0x80241C4 in com.geargames.aow.scenes.battle.MapEditorUnitTypeConfig$$FillConfig recv=x20
+Verified slot 66 set_DispersalBuId @0x80242C0 in com.geargames.aow.scenes.battle.MapEditorUnitTypeConfig$$FillConfig recv=x20
+Verified slot 62 set_Dispersal @0x805A354 in com.geargames.aow.scenes.battle.entities.ClientBattleSideOwn$$AddBuilding recv=x19
+Verified slot 62 set_Dispersal @0x805A5A8 in com.geargames.aow.scenes.battle.entities.ClientBattleSideOwn$$AddBuilding recv=x19
+Verified slot 63 get_DispersalPrev @0x805A5D4 in com.geargames.aow.scenes.battle.entities.ClientBattleSideOwn$$AddBuilding recv=x19
+Verified slot 62 set_Dispersal @0x805AA00 in com.geargames.aow.scenes.battle.entities.ClientBattleSideOwn$$RemoveBuilding recv=x19
+Verified slot 62 set_Dispersal @0x805ABB0 in com.geargames.aow.scenes.battle.entities.ClientBattleSideOwn$$RemoveBuilding recv=x19
+Verified slot 63 get_DispersalPrev @0x805ABDC in com.geargames.aow.scenes.battle.entities.ClientBattleSideOwn$$RemoveBuilding recv=x19
+Verified slot 62 set_Dispersal @0x805AF64 in com.geargames.aow.scenes.battle.entities.ClientBattleSideOwn$$UpgradeBuilding recv=x19
+Verified slot 62 set_Dispersal @0x805AFA8 in com.geargames.aow.scenes.battle.entities.ClientBattleSideOwn$$UpgradeBuilding recv=x19
+Verified slot 63 get_DispersalPrev @0x805AFD4 in com.geargames.aow.scenes.battle.entities.ClientBattleSideOwn$$UpgradeBuilding recv=x19
+Verified slot 62 set_Dispersal @0x825FAEC in com.geargames.aow.scenes.battle.gui.actions.GUIBattleEntityInfoPanel$$Initiate recv=x20
+Verified slot 62 set_Dispersal @0x825FB34 in com.geargames.aow.scenes.battle.gui.actions.GUIBattleEntityInfoPanel$$Initiate recv=x20
+Verified slot 62 set_Dispersal @0x825FC00 in com.geargames.aow.scenes.battle.gui.actions.GUIBattleEntityInfoPanel$$Initiate recv=x20
+Verified slot 63 get_DispersalPrev @0x46ABF7C in com.geargames.aow.entities.battle.BuildingAct$$$qb recv=x19
+Verified slot 63 get_DispersalPrev @0x46AC05C in com.geargames.aow.entities.battle.BuildingAct$$$qb recv=x19
+Verified slot 64 set_DispersalPrev @0x46ABE48 in com.geargames.aow.entities.battle.BuildingAct$$$qb recv=x19
+Verified slot 65 get_DispersalBuId @0x479BB64 in com.geargames.aow.entities.battle.ShotAct$$$DE recv=x20
+Verified slot 65 get_DispersalBuId @0x813F884 in com.geargames.aow.scenes.battle.logicservice.commands.LCBulletCreate$$Initiate recv=x20
+Verified slot 65 get_DispersalBuId @0x813F9BC in com.geargames.aow.scenes.battle.logicservice.commands.LCBulletCreate$$Initiate recv=x20
+Verified slot 65 get_DispersalBuId @0x813FA08 in com.geargames.aow.scenes.battle.logicservice.commands.LCBulletCreate$$Initiate recv=x20
+Verified slot 66 set_DispersalBuId @0x466C0D0 in com.geargames.aow.entities.battle.BattleAct$$$J recv=x19
+Verified slot 300 set_WaitForMoving @0x466AA78 in com.geargames.aow.entities.battle.BattleAct$$$J recv=x19  VALUE=POOL[0xc]^POOL[0x10] = 1
+Verified slot 302 set_WalkState @0x466A460 in com.geargames.aow.entities.battle.BattleAct$$$J recv=x19  VALUE=eor(mov[x0=callret],eor(mem[x8,#0x10],mem[x8,#0xc]))
+Verified slot 66 set_DispersalBuId @0x7A839CC in com.geargames.aow.services.resources.PlayerResourceRepository$$GetTypeFromGoods recv=x19
+Verified slot 66 set_DispersalBuId @0x7A83B78 in com.geargames.aow.services.resources.PlayerResourceRepository$$GetTypeFromGoods recv=x19
+Verified slot 66 set_DispersalBuId @0x7A83B9C in com.geargames.aow.services.resources.PlayerResourceRepository$$GetTypeFromGoods recv=x19
+Verified slot 61 get_Dispersal @0x3F3AC7C in com.geargames.serialization.serializers.DailyTypeSTSerializer$$serialize recv=x21
+Verified slot 63 get_DispersalPrev @0x3F3ACB8 in com.geargames.serialization.serializers.DailyTypeSTSerializer$$serialize recv=x21
+Verified slot 61 get_Dispersal @0x44A4B08 in com.geargames.serialization.serializers.SlipInfoSTDeserializer$$content recv=x20
+Verified slot 63 get_DispersalPrev @0x44A4BA4 in com.geargames.serialization.serializers.SlipInfoSTDeserializer$$content recv=x20
+Verified slot 61 get_Dispersal @0x46B736C in com.geargames.aow.entities.battle.BuildingAct$$$zb recv=x20
+Verified slot 61 get_Dispersal @0x46B73A8 in com.geargames.aow.entities.battle.BuildingAct$$$zb recv=x20
+Verified slot 61 get_Dispersal @0x4770F98 in com.geargames.serialization.serializers.BattleSTSerializer$$serialize recv=x25
+Verified slot 63 get_DispersalPrev @0x477171C in com.geargames.serialization.serializers.BattleSTSerializer$$serialize recv=x25
+Verified slot 61 get_Dispersal @0x48069E8 in com.geargames.aow.entities.battle.UnitAct$$$cg recv=x29
+Verified slot 300 set_WaitForMoving @0x48062B8 in com.geargames.aow.entities.battle.UnitAct$$$cg recv=x22  VALUE=POOL[0xc]^POOL[0x10] = 1
+Verified slot 300 set_WaitForMoving @0x482D15C in com.geargames.aow.entities.battle.UnitAct$$$uG recv=x19  VALUE=add(mov[x0=callret],eor(mem[x8,#0x10],mem[x8,#0xc]))
+Verified slot 61 get_Dispersal @0x51F2D44 in System.Xml.Schema.XmlListConverter$$ToArray<__Il2CppFullySharedGenericType> recv=x25
+Verified slot 61 get_Dispersal @0x8061058 in com.geargames.aow.scenes.battle.entities.ClientBuilding$$InitializeVisualizators recv=x19
+Verified slot 63 get_DispersalPrev @0x8060FEC in com.geargames.aow.scenes.battle.entities.ClientBuilding$$InitializeVisualizators recv=x19
+Verified slot 61 get_Dispersal @0x8181310 in com.geargames.aow.scenes.battle.gui.HeroSlotModel$$IsOwnHeroEntity recv=x19
+Verified slot 62 set_Dispersal @0x8181340 in com.geargames.aow.scenes.battle.gui.HeroSlotModel$$IsOwnHeroEntity recv=x19
+Verified slot 61 get_Dispersal @0x8183B5C in com.geargames.aow.scenes.battle.gui.SlotStateCalculator$$IsOwnHeroEntity recv=x19
+Verified slot 62 set_Dispersal @0x8183B8C in com.geargames.aow.scenes.battle.gui.SlotStateCalculator$$IsOwnHeroEntity recv=x19
+Verified slot 61 get_Dispersal @0x8200A8C in com.geargames.aow.scenes.battle.gui.minimap.GUIBattleMinimapEntitiesTextureRenderer$$BuildingAdd recv=x19
+Verified slot 62 set_Dispersal @0x8200AB4 in com.geargames.aow.scenes.battle.gui.minimap.GUIBattleMinimapEntitiesTextureRenderer$$BuildingAdd recv=x19
+Verified slot 61 get_Dispersal @0x822684C in com.geargames.aow.scenes.battle.gui.actions.GUIBattleSpawnOrderButton$$OnBuildingTrainingProgressChanged recv=x20
+Verified slot 62 set_Dispersal @0x8226870 in com.geargames.aow.scenes.battle.gui.actions.GUIBattleSpawnOrderButton$$OnBuildingTrainingProgressChanged recv=x20
+Verified slot 61 get_Dispersal @0x82268C4 in com.geargames.aow.scenes.battle.gui.actions.GUIBattleSpawnOrderButton$$OnBuildingCreatedUpgradedOrDestroyed recv=x20
+Verified slot 62 set_Dispersal @0x82268E8 in com.geargames.aow.scenes.battle.gui.actions.GUIBattleSpawnOrderButton$$OnBuildingCreatedUpgradedOrDestroyed recv=x20
+Verified slot 61 get_Dispersal @0x85A7F94 in System.Xml.Schema.XmlMiscConverter$$ChangeType recv=x21
+Verified slot 61 get_Dispersal @0x85B38E8 in System.Xml.Schema.XmlListConverter$$ToList recv=x23
+Verified slot 61 get_Dispersal @0x866E910 in System.Xml.Schema.DatatypeImplementation$$TryParseValue recv=x23
+Verified slot 62 set_Dispersal @0x4705D98 in com.geargames.aow.entities.battle.FlagAct$$$ZC recv=x19  VALUE=0
+Verified slot 64 set_DispersalPrev @0x4705E14 in com.geargames.aow.entities.battle.FlagAct$$$ZC recv=x19  VALUE=mov[x0=callret]
+Verified slot 64 set_DispersalPrev @0x4847014 in com.geargames.aow.entities.battle.UnitAct$$$Pg recv=x21
+Verified slot 62 set_Dispersal @0x48AB0A0 in com.geargames.aow.entities.battle.WallAct$$$KI recv=x20  VALUE=x1 redef(add)
+Verified slot 62 set_Dispersal @0x7E55F84 in com.geargames.aow.scenes.main.gui.GUIMainStorePack$$InitializePremium recv=x20
+Verified slot 62 set_Dispersal @0x7E55FC0 in com.geargames.aow.scenes.main.gui.GUIMainStorePack$$InitializePremium recv=x20
+Verified slot 62 set_Dispersal @0x800B0AC in com.geargames.aow.scenes.battle.ClientBuildingHelper$$GetAvailableUnitByBuildingPairs recv=x22
+Verified slot 63 get_DispersalPrev @0x800B0E4 in com.geargames.aow.scenes.battle.ClientBuildingHelper$$GetAvailableUnitByBuildingPairs recv=x22
+Verified slot 62 set_Dispersal @0x8181898 in com.geargames.aow.scenes.battle.gui.HeroSlotModel.<>c$$<get_AllOwnActiveHeroBuildings>b__89_0 recv=x19
+Verified slot 63 get_DispersalPrev @0x822203C in com.geargames.aow.scenes.battle.gui.actions.GUIBattleBuildingSpecButtonUpgrade$$Initiate recv=x8
+Verified slot 62 set_Dispersal @0x822B680 in com.geargames.aow.scenes.battle.gui.actions.OrderHeroPresenter$$<get_HasHeroBuildingWithRequiredLevel>b__28_0 recv=x20
+Verified slot 63 get_DispersalPrev @0x822B6A0 in com.geargames.aow.scenes.battle.gui.actions.OrderHeroPresenter$$<get_HasHeroBuildingWithRequiredLevel>b__28_0 recv=x20
+Verified slot 62 set_Dispersal @0x8234CC4 in com.geargames.aow.scenes.battle.gui.actions.GUIBattleUraniumIndicator.<>c$$<get_AllOwnActiveHeroBuildings>b__6_0 recv=x19
+Verified slot 63 get_DispersalPrev @0x46735C0 in com.geargames.aow.entities.battle.BattleAct$$$CA recv=x22
+Verified slot 63 get_DispersalPrev @0x4674A24 in com.geargames.aow.entities.battle.BattleAct$$$CA recv=x22
+Verified slot 63 get_DispersalPrev @0x47A3270 in com.geargames.aow.entities.battle.ShotAct$$$fE recv=x24
+Verified slot 63 get_DispersalPrev @0x47A34B0 in com.geargames.aow.entities.battle.ShotAct$$$fE recv=x24
+Verified slot 63 get_DispersalPrev @0x7EF1BE4 in com.geargames.aow.scenes.main.gui.profile.GUIMainProfileInfo$$OnMessageStatisticsAnswerReceived recv=x19
+Verified slot 65 get_DispersalBuId @0x7EF1BB0 in com.geargames.aow.scenes.main.gui.profile.GUIMainProfileInfo$$OnMessageStatisticsAnswerReceived recv=x19
+Verified slot 63 get_DispersalPrev @0x8023AEC in com.geargames.aow.scenes.battle.MapEditorUnitStateConfig$$OverrideUnitState recv=x20
+Verified slot 65 get_DispersalBuId @0x8023C0C in com.geargames.aow.scenes.battle.MapEditorUnitStateConfig$$OverrideUnitState recv=x20
+Verified slot 63 get_DispersalPrev @0x802478C in com.geargames.aow.scenes.battle.MapEditorUnitTypeConfig$$OverrideUnit recv=x20
+Verified slot 65 get_DispersalBuId @0x80246CC in com.geargames.aow.scenes.battle.MapEditorUnitTypeConfig$$OverrideUnit recv=x20
+Verified slot 65 get_DispersalBuId @0x49FE370 in Firebase.AppUtilPINVOKE$$StringStringMap_setitem recv=x19
+Verified slot 66 set_DispersalBuId @0x49FE4D0 in Firebase.AppUtilPINVOKE$$StringStringMap_Add recv=x19
+Verified slot 66 set_DispersalBuId @0x81FB738 in com.geargames.aow.scenes.battle.gui.unitselection.GUIBattleQuickSelectionUnitsButton$$Initiate recv=x20
+Verified slot 66 set_DispersalBuId @0x81FB7B4 in com.geargames.aow.scenes.battle.gui.unitselection.GUIBattleQuickSelectionUnitsButton$$Initiate recv=x20
+Verified slot 66 set_DispersalBuId @0x8230288 in com.geargames.aow.scenes.battle.gui.actions.GUIBattleActionGroup$$SetGroupIcon recv=x21
+Verified slot 66 set_DispersalBuId @0x82302DC in com.geargames.aow.scenes.battle.gui.actions.GUIBattleActionGroup$$SetGroupIcon recv=x21
+Verified slot 61 get_Dispersal @0x432E2A4 in com.geargames.serialization.serializers.LotteryConfigurationSTDeserializer$$content recv=x20
+Verified slot 61 get_Dispersal @0x45F6368 in com.geargames.aow.entities.gai.gaicomm.GAICommandSpecMode$$execute recv=x19
+Verified slot 61 get_Dispersal @0x46AE618 in com.geargames.aow.entities.battle.BuildingAct$$$BB recv=x19
+Verified slot 61 get_Dispersal @0x46B59A4 in com.geargames.aow.entities.battle.BuildingAct$$$Xb recv=x21
+Verified slot 61 get_Dispersal @0x46B5FE0 in com.geargames.aow.entities.battle.BuildingAct$$$yb recv=x20
+Verified slot 61 get_Dispersal @0x46B85F0 in com.geargames.aow.entities.battle.BuildingAct$$$bB recv=x19
+Verified slot 61 get_Dispersal @0x48DBFF4 in com.geargames.aow.entities.battle.bot.HireByGAIAct$$$wJ recv=x21
+Verified slot 61 get_Dispersal @0x4900618 in com.geargames.aow.entities.battle.aicomm.AICommMineSweep$$$CMA recv=x19
+Verified slot 61 get_Dispersal @0x490C0F8 in com.geargames.aow.entities.battle.aicomm.AICommUnitsMove$$$CMA recv=x19
+Verified slot 61 get_Dispersal @0x4938E88 in com.geargames.serialization.serializers.BattleSideStatisticsSTDeserializer$$content recv=x19
+Verified slot 61 get_Dispersal @0x8030C80 in com.geargames.aow.scenes.battle.AnimationHelper$$CreateAction recv=x19
+Verified slot 61 get_Dispersal @0x8236554 in com.geargames.aow.scenes.battle.gui.actions.BuildingsOrderQueues$$GetBuildingOrderQueueTime recv=x20
+Verified slot 61 get_Dispersal @0x8462664 in System.Data.XDRSchema$$IsTextOnlyContent recv=x19
+Verified slot 61 get_Dispersal @0x86702F4 in System.Xml.Schema.Datatype_union$$TryParseValue recv=x23
+Verified slot 62 set_Dispersal @0x44A5558 in com.geargames.serialization.serializers.SlipInfoSTSerializer$$serialize recv=x21
+Verified slot 62 set_Dispersal @0x4702BE0 in com.geargames.aow.entities.battle.FlagAct$$$Dd recv=x19  VALUE=0
+Verified slot 62 set_Dispersal @0x47568EC in com.geargames.aow.entities.battle.PathAct$$$Ce recv=x19
+Verified slot 62 set_Dispersal @0x8010A44 in com.geargames.aow.scenes.battle.ClientBuildingHelper.<>c$$<IsExistBuildingWithRallyPointForGround>b__30_0 recv=x19
+Verified slot 62 set_Dispersal @0x8063E88 in com.geargames.aow.scenes.battle.entities.ClientBuildingInfo$$.ctor recv=x20
+Verified slot 62 set_Dispersal @0x8074754 in com.geargames.aow.scenes.battle.entities.ClientUnit$$set_CurrentAirport recv=x20
+Verified slot 62 set_Dispersal @0x80B167C in com.geargames.aow.scenes.battle.entities.components.WallPrefabSettings$$GetWallFlag recv=x20
+Verified slot 62 set_Dispersal @0x820EA8C in com.geargames.aow.scenes.battle.gui.buildings.GUIBattleListConstruction.<>c__DisplayClass25_0$$<SetRecommendations>b__1 recv=x1
+Verified slot 62 set_Dispersal @0x820F5DC in com.geargames.aow.scenes.battle.gui.buildings.GUIBattleListSpawn$$ListReconstruct recv=x1
+Verified slot 62 set_Dispersal @0x821FB9C in com.geargames.aow.scenes.battle.gui.actions.GUIBattleBuildingOrderBehaviour$$TryOrderUnit recv=x20
+Verified slot 62 set_Dispersal @0x82212C4 in com.geargames.aow.scenes.battle.gui.actions.GUIBattleBuildingPanelMenuUpdater$$IsQuestBuilding recv=x1
+Verified slot 62 set_Dispersal @0x822B154 in com.geargames.aow.scenes.battle.gui.actions.OrderHeroPresenter$$OnBuildingDestroyed recv=x20
+Verified slot 62 set_Dispersal @0x822B1DC in com.geargames.aow.scenes.battle.gui.actions.OrderHeroPresenter$$OnBuildingCreatedOrUpdated recv=x1
+Verified slot 62 set_Dispersal @0x8293B94 in com.geargames.aow.scenes.battle.map.input.gesturehandlers.GHBuildingSet$$UpdateBuildingCoverage recv=x22
+Verified slot 62 set_Dispersal @0x829E584 in com.geargames.aow.scenes.battle.map.input.gesturehandlers.GHUnitAircraftsRebase$$OnBattleMapClick recv=x19
+Verified slot 62 set_Dispersal @0x847FCC0 in System.Data.XmlTreeGen$$AddExtendedProperties recv=x20
+Verified slot 62 set_Dispersal @0x84815D4 in System.Data.XmlTreeGen$$SetMSDataAttribute recv=x20
+Verified slot 63 get_DispersalPrev @0x4650A4C in com.geargames.aow.entities.battle.BattleAct$$$fA recv=x19
+Verified slot 63 get_DispersalPrev @0x46ADD40 in com.geargames.aow.entities.battle.BuildingAct$$$Qb recv=x21
+Verified slot 63 get_DispersalPrev @0x473624C in com.geargames.aow.entities.battle.FogAct$$$sd recv=x20
+Verified slot 63 get_DispersalPrev @0x47A183C in com.geargames.aow.entities.battle.ShotAct$$$FE recv=x29
+Verified slot 63 get_DispersalPrev @0x47CC210 in com.geargames.aow.entities.battle.SideAct$$$Sf recv=x20
+Verified slot 63 get_DispersalPrev @0x47DC6D4 in com.geargames.aow.entities.battle.SideAct$$$tf recv=x19
+Verified slot 63 get_DispersalPrev @0x821E0A4 in com.geargames.aow.scenes.battle.gui.actions.BaseBuildingOrderButtonController$$IsAvailableByLevel recv=x1
+Verified slot 63 get_DispersalPrev @0x82201EC in com.geargames.aow.scenes.battle.gui.actions.UnitBuildingOrderButtonController$$SetStartState recv=x20
+Verified slot 63 get_DispersalPrev @0x860BDB8 in System.Xml.XmlNodeReaderNavigator$$GetAttributeFromElement recv=x1
+Verified slot 63 get_DispersalPrev @0x860C654 in System.Xml.XmlNodeReaderNavigator$$MoveToAttributeFromElement recv=x20
+Verified slot 65 get_DispersalBuId @0x4797588 in com.geargames.aow.entities.battle.ShotAct$$$EE recv=x19
+Verified slot 65 get_DispersalBuId @0x81812A4 in com.geargames.aow.scenes.battle.gui.HeroSlotModel$$CanOrderInBuilding recv=x19
+Verified slot 66 set_DispersalBuId @0x48ACF20 in com.geargames.aow.entities.battle.WallAct$$$mI recv=x19  VALUE=POOL[0xc]^POOL[0x10] = 1
+Verified slot 66 set_DispersalBuId @0x7C04238 in com.geargames.aow.ugui.army.UGUIArmyHeroTrainingPanelView$$SetInfo recv=x22  VALUE=mov[x0=com.geargames.extensions.Localizatio()]
+Verified slot 66 set_DispersalBuId @0x88F2870 in TMPro.TMP_Text$$ReleaseLinkedTextComponent recv=x19
+Verified slot 300 set_WaitForMoving @0x45F8C98 in com.geargames.aow.entities.gai.gaicomm.GAICommandTourTable$$execute recv=x19  VALUE=mov[x20=System.Collections.Generic.Dictionar()]
+
+## SUMMARY
+
+slot 61 get_Dispersal: 99 verified sites, 209 receiver-unverified
+slot 62 set_Dispersal: 94 verified sites, 192 receiver-unverified
+slot 63 get_DispersalPrev: 66 verified sites, 90 receiver-unverified
+slot 64 set_DispersalPrev: 27 verified sites, 97 receiver-unverified
+slot 65 get_DispersalBuId: 46 verified sites, 75 receiver-unverified
+slot 66 set_DispersalBuId: 35 verified sites, 275 receiver-unverified
+slot 300 set_WaitForMoving: 7 verified sites, 2 receiver-unverified
+slot 302 set_WalkState: 2 verified sites, 11 receiver-unverified
+
+## VERIFIED SITES (full list)
+
+--- slot 61 get_Dispersal ---
+  0x4246A94  com.geargames.serialization.serializers.BaseConfigurationSTDeserializer$$content  recv=unit-arg mptr=x2
+  0x4479208  com.geargames.serialization.serializers.SharedBaseDictionarySTDeserializer$$content  recv=unit-arg mptr=x2
+  0x44529FC  com.geargames.serialization.serializers.SalePresetSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x4452A14  com.geargames.serialization.serializers.SalePresetSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x4452A3C  com.geargames.serialization.serializers.SalePresetSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x4699700  com.geargames.aow.entities.battle.BattleSide$$$ju  recv=unit-arg mptr=x1
+  0x469975C  com.geargames.aow.entities.battle.BattleSide$$$ju  recv=unit-arg mptr=x1
+  0x46997A4  com.geargames.aow.entities.battle.BattleSide$$$ju  recv=unit-arg mptr=x1
+  0x4699D6C  com.geargames.aow.entities.battle.BattleSide$$$ju  recv=unit-arg mptr=x1
+  0x445E140  com.geargames.serialization.serializers.SaleUserConfigurationSTDeserializer$$content  recv=unit-arg mptr=x2
+  0x43CB3D8  com.geargames.serialization.serializers.ProfileSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x43CB3F0  com.geargames.serialization.serializers.ProfileSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x43CB418  com.geargames.serialization.serializers.ProfileSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x47032C4  com.geargames.aow.entities.battle.FlagAct$$$yC  recv=unit-arg mptr=x1
+  0x47033FC  com.geargames.aow.entities.battle.FlagAct$$$yC  recv=unit-arg mptr=x1
+  0x470351C  com.geargames.aow.entities.battle.FlagAct$$$yC  recv=unit-arg mptr=x1
+  0x4703D68  com.geargames.aow.entities.battle.FlagAct$$$yC  recv=unit-arg mptr=x1
+  0x48534F0  com.geargames.aow.entities.battle.UnitAct$$$CG  recv=unit-arg mptr=x1
+  0x4853620  com.geargames.aow.entities.battle.UnitAct$$$CG  recv=unit-arg mptr=x1
+  0x485405C  com.geargames.aow.entities.battle.UnitAct$$$CG  recv=unit-arg mptr=x1
+  0x48543D8  com.geargames.aow.entities.battle.UnitAct$$$CG  recv=unit-arg mptr=x1
+  0x4856A08  com.geargames.aow.entities.battle.UnitAct$$$CG  recv=unit-arg mptr=x1
+  0x49323D0  com.geargames.serialization.serializers.BattleSideSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x453B0B4  com.geargames.serialization.serializers.UnitSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x453B160  com.geargames.serialization.serializers.UnitSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x453B190  com.geargames.serialization.serializers.UnitSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x453B290  com.geargames.serialization.serializers.UnitSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x46C69AC  com.geargames.aow.entities.battle.BuildingAct$$$KB  recv=unit-arg mptr=x1
+  0x46C6F68  com.geargames.aow.entities.battle.BuildingAct$$$KB  recv=unit-arg mptr=x1
+  0x46C702C  com.geargames.aow.entities.battle.BuildingAct$$$KB  recv=unit-arg mptr=x1
+  0x4748528  com.geargames.aow.entities.battle.PathAct$$$Oe  recv=unit-arg mptr=x1
+  0x474A1A4  com.geargames.aow.entities.battle.PathAct$$$Oe  recv=unit-arg mptr=x1
+  0x8469B00  System.Data.XSDSchema$$HandleRelation  recv=unit-arg mptr=x3
+  0x8469B60  System.Data.XSDSchema$$HandleRelation  recv=unit-arg mptr=x3
+  0x8469BBC  System.Data.XSDSchema$$HandleRelation  recv=unit-arg mptr=x3
+  0x8469C50  System.Data.XSDSchema$$HandleRelation  recv=unit-arg mptr=x3
+  0x8469D3C  System.Data.XSDSchema$$HandleRelation  recv=unit-arg mptr=x3
+  0x8469D5C  System.Data.XSDSchema$$HandleRelation  recv=unit-arg mptr=x3
+  0x3E45A48  com.geargames.serialization.serializers.BulletSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x41D69F4  com.geargames.serialization.serializers.FlagSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x46B0480  com.geargames.aow.entities.battle.BuildingAct$$$Vb  recv=unit-arg mptr=x1
+  0x46B04E0  com.geargames.aow.entities.battle.BuildingAct$$$Vb  recv=unit-arg mptr=x1
+  0x46B05DC  com.geargames.aow.entities.battle.BuildingAct$$$Vb  recv=unit-arg mptr=x1
+  0x46B0A24  com.geargames.aow.entities.battle.BuildingAct$$$Vb  recv=unit-arg mptr=x1
+  0x46DA930  com.geargames.aow.entities.battle.CheckAndCalc$$$uc  recv=unit-arg mptr=None
+  0x46DBEE4  com.geargames.aow.entities.battle.CheckAndCalc$$$uc  recv=unit-arg mptr=x1
+  0x4766F0C  com.geargames.aow.entities.battle.PathAct$$$Te  recv=unit-arg mptr=x1
+  0x4373F9C  com.geargames.serialization.serializers.PathSTDeserializer$$content  recv=unit-arg mptr=x2
+  0x43D0B5C  com.geargames.serialization.serializers.ProfileStatisticsAnswerSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x46B1CB0  com.geargames.aow.entities.battle.BuildingAct$$$xb  recv=unit-arg mptr=None
+  0x4704A6C  com.geargames.aow.entities.battle.FlagAct$$$YC  recv=unit-arg mptr=x1
+  0x4705050  com.geargames.aow.entities.battle.FlagAct$$$YC  recv=unit-arg mptr=x1
+  0x4705414  com.geargames.aow.entities.battle.FlagAct$$$YC  recv=unit-arg mptr=x1
+  0x4705478  com.geargames.aow.entities.battle.FlagAct$$$YC  recv=unit-arg mptr=x1
+  0x3E3CB84  com.geargames.serialization.serializers.BuildingSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x3EB66C4  com.geargames.serialization.serializers.ClanSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x41ED354  com.geargames.serialization.serializers.FractionSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x42D6730  com.geargames.serialization.serializers.HeroParamSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x434C1CC  com.geargames.serialization.serializers.MissionDescriptionSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x437C1E4  com.geargames.serialization.serializers.PathUnitInfoSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x43A6D74  com.geargames.serialization.serializers.ProfileRankSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x43C30A8  com.geargames.serialization.serializers.BattleAchievementsSTDeserializer$$content  recv=unit-arg mptr=x2
+  0x4567CAC  com.geargames.serialization.serializers.UserConfigurationSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x456F47C  com.geargames.serialization.serializers.WallSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x46B68A0  com.geargames.aow.entities.battle.BuildingAct$$$LB  recv=unit-arg mptr=x1
+  0x46B6928  com.geargames.aow.entities.battle.BuildingAct$$$LB  recv=unit-arg mptr=x1
+  0x499B474  com.geargames.serialization.serializers.BuildingLevelTypeSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x8022DEC  com.geargames.aow.scenes.battle.MapEditorHeroParamConfig$$FillConfig  recv=unit-arg mptr=x1
+  0x866F5C0  System.Xml.Schema.Datatype_List$$TryParseValue  recv=unit-arg mptr=x4
+  0x3F3AC7C  com.geargames.serialization.serializers.DailyTypeSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x44A4B08  com.geargames.serialization.serializers.SlipInfoSTDeserializer$$content  recv=unit-arg mptr=x2
+  0x46B736C  com.geargames.aow.entities.battle.BuildingAct$$$zb  recv=unit-arg mptr=x1
+  0x46B73A8  com.geargames.aow.entities.battle.BuildingAct$$$zb  recv=unit-arg mptr=x1
+  0x4770F98  com.geargames.serialization.serializers.BattleSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x48069E8  com.geargames.aow.entities.battle.UnitAct$$$cg  recv=unit-arg mptr=x1
+  0x51F2D44  System.Xml.Schema.XmlListConverter$$ToArray<__Il2CppFullySharedGenericType>  recv=unit-arg mptr=x4
+  0x8061058  com.geargames.aow.scenes.battle.entities.ClientBuilding$$InitializeVisualizators  recv=unit-arg mptr=None
+  0x8181310  com.geargames.aow.scenes.battle.gui.HeroSlotModel$$IsOwnHeroEntity  recv=unit-arg mptr=x1
+  0x8183B5C  com.geargames.aow.scenes.battle.gui.SlotStateCalculator$$IsOwnHeroEntity  recv=unit-arg mptr=x1
+  0x8200A8C  com.geargames.aow.scenes.battle.gui.minimap.GUIBattleMinimapEntitiesTextureRenderer$$BuildingAdd  recv=unit-arg mptr=x1
+  0x822684C  com.geargames.aow.scenes.battle.gui.actions.GUIBattleSpawnOrderButton$$OnBuildingTrainingProgressChanged  recv=unit-arg mptr=x1
+  0x82268C4  com.geargames.aow.scenes.battle.gui.actions.GUIBattleSpawnOrderButton$$OnBuildingCreatedUpgradedOrDestroyed  recv=unit-arg mptr=x1
+  0x85A7F94  System.Xml.Schema.XmlMiscConverter$$ChangeType  recv=unit-arg mptr=x4
+  0x85B38E8  System.Xml.Schema.XmlListConverter$$ToList  recv=unit-arg mptr=None
+  0x866E910  System.Xml.Schema.DatatypeImplementation$$TryParseValue  recv=unit-arg mptr=x4
+  0x432E2A4  com.geargames.serialization.serializers.LotteryConfigurationSTDeserializer$$content  recv=unit-arg mptr=x2
+  0x45F6368  com.geargames.aow.entities.gai.gaicomm.GAICommandSpecMode$$execute  recv=unit-arg mptr=None
+  0x46AE618  com.geargames.aow.entities.battle.BuildingAct$$$BB  recv=unit-arg mptr=x1
+  0x46B59A4  com.geargames.aow.entities.battle.BuildingAct$$$Xb  recv=unit-arg mptr=x1
+  0x46B5FE0  com.geargames.aow.entities.battle.BuildingAct$$$yb  recv=unit-arg mptr=x1
+  0x46B85F0  com.geargames.aow.entities.battle.BuildingAct$$$bB  recv=unit-arg mptr=x1
+  0x48DBFF4  com.geargames.aow.entities.battle.bot.HireByGAIAct$$$wJ  recv=unit-arg mptr=None
+  0x4900618  com.geargames.aow.entities.battle.aicomm.AICommMineSweep$$$CMA  recv=unit-arg mptr=x1
+  0x490C0F8  com.geargames.aow.entities.battle.aicomm.AICommUnitsMove$$$CMA  recv=unit-arg mptr=x1
+  0x4938E88  com.geargames.serialization.serializers.BattleSideStatisticsSTDeserializer$$content  recv=unit-arg mptr=x2
+  0x8030C80  com.geargames.aow.scenes.battle.AnimationHelper$$CreateAction  recv=unit-arg mptr=x1
+  0x8236554  com.geargames.aow.scenes.battle.gui.actions.BuildingsOrderQueues$$GetBuildingOrderQueueTime  recv=unit-arg mptr=x1
+  0x8462664  System.Data.XDRSchema$$IsTextOnlyContent  recv=unit-arg mptr=x3
+  0x86702F4  System.Xml.Schema.Datatype_union$$TryParseValue  recv=unit-arg mptr=x4
+--- slot 62 set_Dispersal ---
+  0x4245EF8  com.geargames.serialization.serializers.BaseConfigurationSTDeserializer$$content  recv=unit-arg mptr=x1
+  0x4479600  com.geargames.serialization.serializers.SharedBaseDictionarySTDeserializer$$content  recv=unit-arg mptr=x1
+  0x8487FA4  System.Data.XmlTreeGen$$HandleTable  recv=unit-arg mptr=x4
+  0x84881A8  System.Data.XmlTreeGen$$HandleTable  recv=unit-arg mptr=x4
+  0x84881EC  System.Data.XmlTreeGen$$HandleTable  recv=unit-arg mptr=x4
+  0x84887B0  System.Data.XmlTreeGen$$HandleTable  recv=unit-arg mptr=x4
+  0x84887D8  System.Data.XmlTreeGen$$HandleTable  recv=unit-arg mptr=x4
+  0x8488838  System.Data.XmlTreeGen$$HandleTable  recv=unit-arg mptr=x4
+  0x84898F0  System.Data.XmlTreeGen$$HandleTable  recv=unit-arg mptr=None
+  0x8489D6C  System.Data.XmlTreeGen$$HandleTable  recv=unit-arg mptr=None
+  0x8489E8C  System.Data.XmlTreeGen$$HandleTable  recv=unit-arg mptr=None
+  0x8489EE0  System.Data.XmlTreeGen$$HandleTable  recv=unit-arg mptr=None
+  0x8489FF4  System.Data.XmlTreeGen$$HandleTable  recv=unit-arg mptr=None
+  0x848A0F8  System.Data.XmlTreeGen$$HandleTable  recv=unit-arg mptr=None
+  0x848A154  System.Data.XmlTreeGen$$HandleTable  recv=unit-arg mptr=None
+  0x848A1B0  System.Data.XmlTreeGen$$HandleTable  recv=unit-arg mptr=None
+  0x4482D5C  com.geargames.serialization.serializers.SharedBaseDictionarySTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x4482D74  com.geargames.serialization.serializers.SharedBaseDictionarySTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x4482D9C  com.geargames.serialization.serializers.SharedBaseDictionarySTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x445E318  com.geargames.serialization.serializers.SaleUserConfigurationSTDeserializer$$content  recv=unit-arg mptr=x1
+  0x42C577C  com.geargames.serialization.serializers.GoodsSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x43249A0  com.geargames.serialization.serializers.LoginRequestSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x43249B8  com.geargames.serialization.serializers.LoginRequestSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x43249E0  com.geargames.serialization.serializers.LoginRequestSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x4578838  com.geargames.serialization.serializers.WeaponTypeSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x4578850  com.geargames.serialization.serializers.WeaponTypeSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x4578878  com.geargames.serialization.serializers.WeaponTypeSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x4703828  com.geargames.aow.entities.battle.FlagAct$$$yC  recv=unit-arg mptr=x2  VALUE=mov[x21=callret]
+  0x470395C  com.geargames.aow.entities.battle.FlagAct$$$yC  recv=unit-arg mptr=x2  VALUE=0
+  0x4703A80  com.geargames.aow.entities.battle.FlagAct$$$yC  recv=unit-arg mptr=x2  VALUE=0
+  0x4852508  com.geargames.aow.entities.battle.UnitAct$$$CG  recv=unit-arg mptr=x2  VALUE=0
+  0x4461374  com.geargames.serialization.serializers.SaleUserConfigurationSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x446138C  com.geargames.serialization.serializers.SaleUserConfigurationSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x44613B4  com.geargames.serialization.serializers.SaleUserConfigurationSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x4547C20  com.geargames.serialization.serializers.UnitTypeSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x46B0614  com.geargames.aow.entities.battle.BuildingAct$$$Vb  recv=unit-arg mptr=x2  VALUE=0
+  0x4378D00  com.geargames.serialization.serializers.PathSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x43C822C  com.geargames.serialization.serializers.BattleAchievementsSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x46B1C38  com.geargames.aow.entities.battle.BuildingAct$$$xb  recv=unit-arg mptr=x2  VALUE=mov[x0=callret]
+  0x46B1CDC  com.geargames.aow.entities.battle.BuildingAct$$$xb  recv=unit-arg mptr=x2  VALUE=mov[x0=callret]
+  0x46B1E44  com.geargames.aow.entities.battle.BuildingAct$$$xb  recv=unit-arg mptr=x2  VALUE=mov[x25=callret]
+  0x821BAAC  com.geargames.aow.scenes.battle.gui.actions.GUIBattleBuildingContextMenuUpdater$$Initiate  recv=unit-arg mptr=x1
+  0x7919D90  AOW_Assets.Scenes.Battle.Scripts.GUI.BuildingList.GUIBattleListUpgrade.BuildingTypeComparer$$Compare  recv=unit-arg mptr=x1
+  0x8220848  com.geargames.aow.scenes.battle.gui.actions.GUIBattleBuildingPanelMenuUpdater$$EnterMenu  recv=unit-arg mptr=x1
+  0x46B69D8  com.geargames.aow.entities.battle.BuildingAct$$$LB  recv=unit-arg mptr=x2  VALUE=0
+  0x3EC4818  com.geargames.serialization.serializers.ClientInfoSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x3EC4830  com.geargames.serialization.serializers.ClientInfoSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x3EC4858  com.geargames.serialization.serializers.ClientInfoSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x437A8A0  com.geargames.serialization.serializers.PathUnitInfoSTDeserializer$$content  recv=unit-arg mptr=x2  VALUE=mov[x0=com.geargames.serialization.SimpleDe()]
+  0x4543CCC  com.geargames.serialization.serializers.UnitStateTypeSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x478C210  com.geargames.aow.entities.battle.ShotAct$$$Ye  recv=unit-arg mptr=x2  VALUE=load w1, [sp, #0x10c]
+  0x7918F0C  AOW_Assets.Scenes.Battle.Scripts.GUI.BuildingList.GUIBattleListUpgradeItem$$Initiate  recv=unit-arg mptr=x1
+  0x8023270  com.geargames.aow.scenes.battle.MapEditorHeroParamConfig$$OverrideHeroParam  recv=unit-arg mptr=x2  VALUE=mem[x20,#0x84]
+  0x80234F8  com.geargames.aow.scenes.battle.MapEditorUnitStateConfig$$.ctor  recv=unit-arg mptr=x1
+  0x8024284  com.geargames.aow.scenes.battle.MapEditorUnitTypeConfig$$FillConfig  recv=unit-arg mptr=x1
+  0x805A354  com.geargames.aow.scenes.battle.entities.ClientBattleSideOwn$$AddBuilding  recv=unit-arg mptr=x1
+  0x805A5A8  com.geargames.aow.scenes.battle.entities.ClientBattleSideOwn$$AddBuilding  recv=unit-arg mptr=x1
+  0x805AA00  com.geargames.aow.scenes.battle.entities.ClientBattleSideOwn$$RemoveBuilding  recv=unit-arg mptr=x1
+  0x805ABB0  com.geargames.aow.scenes.battle.entities.ClientBattleSideOwn$$RemoveBuilding  recv=unit-arg mptr=x1
+  0x805AF64  com.geargames.aow.scenes.battle.entities.ClientBattleSideOwn$$UpgradeBuilding  recv=unit-arg mptr=x1
+  0x805AFA8  com.geargames.aow.scenes.battle.entities.ClientBattleSideOwn$$UpgradeBuilding  recv=unit-arg mptr=x1
+  0x825FAEC  com.geargames.aow.scenes.battle.gui.actions.GUIBattleEntityInfoPanel$$Initiate  recv=unit-arg mptr=x1
+  0x825FB34  com.geargames.aow.scenes.battle.gui.actions.GUIBattleEntityInfoPanel$$Initiate  recv=unit-arg mptr=x1
+  0x825FC00  com.geargames.aow.scenes.battle.gui.actions.GUIBattleEntityInfoPanel$$Initiate  recv=unit-arg mptr=x1
+  0x8181340  com.geargames.aow.scenes.battle.gui.HeroSlotModel$$IsOwnHeroEntity  recv=unit-arg mptr=x1
+  0x8183B8C  com.geargames.aow.scenes.battle.gui.SlotStateCalculator$$IsOwnHeroEntity  recv=unit-arg mptr=x1
+  0x8200AB4  com.geargames.aow.scenes.battle.gui.minimap.GUIBattleMinimapEntitiesTextureRenderer$$BuildingAdd  recv=unit-arg mptr=x1
+  0x8226870  com.geargames.aow.scenes.battle.gui.actions.GUIBattleSpawnOrderButton$$OnBuildingTrainingProgressChanged  recv=unit-arg mptr=x1
+  0x82268E8  com.geargames.aow.scenes.battle.gui.actions.GUIBattleSpawnOrderButton$$OnBuildingCreatedUpgradedOrDestroyed  recv=unit-arg mptr=x1
+  0x4705D98  com.geargames.aow.entities.battle.FlagAct$$$ZC  recv=unit-arg mptr=x2  VALUE=0
+  0x48AB0A0  com.geargames.aow.entities.battle.WallAct$$$KI  recv=unit-arg mptr=x2  VALUE=x1 redef(add)
+  0x7E55F84  com.geargames.aow.scenes.main.gui.GUIMainStorePack$$InitializePremium  recv=unit-arg mptr=x1
+  0x7E55FC0  com.geargames.aow.scenes.main.gui.GUIMainStorePack$$InitializePremium  recv=unit-arg mptr=x1
+  0x800B0AC  com.geargames.aow.scenes.battle.ClientBuildingHelper$$GetAvailableUnitByBuildingPairs  recv=unit-arg mptr=None
+  0x8181898  com.geargames.aow.scenes.battle.gui.HeroSlotModel.<>c$$<get_AllOwnActiveHeroBuildings>b__89_0  recv=unit-arg mptr=x1
+  0x822B680  com.geargames.aow.scenes.battle.gui.actions.OrderHeroPresenter$$<get_HasHeroBuildingWithRequiredLevel>b__28_0  recv=unit-arg mptr=x1
+  0x8234CC4  com.geargames.aow.scenes.battle.gui.actions.GUIBattleUraniumIndicator.<>c$$<get_AllOwnActiveHeroBuildings>b__6_0  recv=unit-arg mptr=x1
+  0x44A5558  com.geargames.serialization.serializers.SlipInfoSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x4702BE0  com.geargames.aow.entities.battle.FlagAct$$$Dd  recv=unit-arg mptr=x2  VALUE=0
+  0x47568EC  com.geargames.aow.entities.battle.PathAct$$$Ce  recv=unit-arg mptr=x1
+  0x8010A44  com.geargames.aow.scenes.battle.ClientBuildingHelper.<>c$$<IsExistBuildingWithRallyPointForGround>b__30_0  recv=unit-arg mptr=x1
+  0x8063E88  com.geargames.aow.scenes.battle.entities.ClientBuildingInfo$$.ctor  recv=unit-arg mptr=x1
+  0x8074754  com.geargames.aow.scenes.battle.entities.ClientUnit$$set_CurrentAirport  recv=unit-arg mptr=x1
+  0x80B167C  com.geargames.aow.scenes.battle.entities.components.WallPrefabSettings$$GetWallFlag  recv=unit-arg mptr=x1
+  0x820EA8C  com.geargames.aow.scenes.battle.gui.buildings.GUIBattleListConstruction.<>c__DisplayClass25_0$$<SetRecommendations>b__1  recv=unit-arg mptr=x8
+  0x820F5DC  com.geargames.aow.scenes.battle.gui.buildings.GUIBattleListSpawn$$ListReconstruct  recv=unit-arg mptr=x8
+  0x821FB9C  com.geargames.aow.scenes.battle.gui.actions.GUIBattleBuildingOrderBehaviour$$TryOrderUnit  recv=unit-arg mptr=x1
+  0x82212C4  com.geargames.aow.scenes.battle.gui.actions.GUIBattleBuildingPanelMenuUpdater$$IsQuestBuilding  recv=unit-arg mptr=x8
+  0x822B154  com.geargames.aow.scenes.battle.gui.actions.OrderHeroPresenter$$OnBuildingDestroyed  recv=unit-arg mptr=x1
+  0x822B1DC  com.geargames.aow.scenes.battle.gui.actions.OrderHeroPresenter$$OnBuildingCreatedOrUpdated  recv=unit-arg mptr=x8
+  0x8293B94  com.geargames.aow.scenes.battle.map.input.gesturehandlers.GHBuildingSet$$UpdateBuildingCoverage  recv=unit-arg mptr=x1
+  0x829E584  com.geargames.aow.scenes.battle.map.input.gesturehandlers.GHUnitAircraftsRebase$$OnBattleMapClick  recv=unit-arg mptr=x1
+  0x847FCC0  System.Data.XmlTreeGen$$AddExtendedProperties  recv=unit-arg mptr=x4
+  0x84815D4  System.Data.XmlTreeGen$$SetMSDataAttribute  recv=unit-arg mptr=x4
+--- slot 63 get_DispersalPrev ---
+  0x4245DB0  com.geargames.serialization.serializers.BaseConfigurationSTDeserializer$$content  recv=unit-arg mptr=x2
+  0x44794B4  com.geargames.serialization.serializers.SharedBaseDictionarySTDeserializer$$content  recv=unit-arg mptr=x2
+  0x44531C8  com.geargames.serialization.serializers.SalePresetSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x44531E0  com.geargames.serialization.serializers.SalePresetSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x4453208  com.geargames.serialization.serializers.SalePresetSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x4699D1C  com.geargames.aow.entities.battle.BattleSide$$$ju  recv=unit-arg mptr=x1
+  0x469A15C  com.geargames.aow.entities.battle.BattleSide$$$ju  recv=unit-arg mptr=x1
+  0x445E228  com.geargames.serialization.serializers.SaleUserConfigurationSTDeserializer$$content  recv=unit-arg mptr=x2
+  0x43CB5E4  com.geargames.serialization.serializers.ProfileSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x43CB5FC  com.geargames.serialization.serializers.ProfileSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x43CB624  com.geargames.serialization.serializers.ProfileSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x493240C  com.geargames.serialization.serializers.BattleSideSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x453B3D8  com.geargames.serialization.serializers.UnitSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x4748558  com.geargames.aow.entities.battle.PathAct$$$Oe  recv=unit-arg mptr=x1
+  0x474A0A0  com.geargames.aow.entities.battle.PathAct$$$Oe  recv=unit-arg mptr=x1
+  0x474A208  com.geargames.aow.entities.battle.PathAct$$$Oe  recv=unit-arg mptr=None
+  0x41D6A94  com.geargames.serialization.serializers.FlagSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x46DB480  com.geargames.aow.entities.battle.CheckAndCalc$$$uc  recv=unit-arg mptr=x1
+  0x4766F1C  com.geargames.aow.entities.battle.PathAct$$$Te  recv=unit-arg mptr=x1
+  0x46BF708  com.geargames.aow.entities.battle.BuildingAct$$$HB  recv=unit-arg mptr=x1
+  0x46C0098  com.geargames.aow.entities.battle.BuildingAct$$$HB  recv=unit-arg mptr=x1
+  0x4375ED8  com.geargames.serialization.serializers.PathSTDeserializer$$content  recv=unit-arg mptr=x2
+  0x43D09FC  com.geargames.serialization.serializers.ProfileStatisticsAnswerSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x7919DD4  AOW_Assets.Scenes.Battle.Scripts.GUI.BuildingList.GUIBattleListUpgrade.BuildingTypeComparer$$Compare  recv=unit-arg mptr=x1
+  0x3E3CC24  com.geargames.serialization.serializers.BuildingSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x3EB668C  com.geargames.serialization.serializers.ClanSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x41ED3C4  com.geargames.serialization.serializers.FractionSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x42D6854  com.geargames.serialization.serializers.HeroParamSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x434C194  com.geargames.serialization.serializers.MissionDescriptionSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x437C294  com.geargames.serialization.serializers.PathUnitInfoSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x43A6CC4  com.geargames.serialization.serializers.ProfileRankSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x43C2E38  com.geargames.serialization.serializers.BattleAchievementsSTDeserializer$$content  recv=unit-arg mptr=x2
+  0x456659C  com.geargames.serialization.serializers.UserConfigurationSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x456F4B4  com.geargames.serialization.serializers.WallSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x499B7B8  com.geargames.serialization.serializers.BuildingLevelTypeSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x8022E04  com.geargames.aow.scenes.battle.MapEditorHeroParamConfig$$FillConfig  recv=unit-arg mptr=x1
+  0x7918EF4  AOW_Assets.Scenes.Battle.Scripts.GUI.BuildingList.GUIBattleListUpgradeItem$$Initiate  recv=unit-arg mptr=x1
+  0x805A5D4  com.geargames.aow.scenes.battle.entities.ClientBattleSideOwn$$AddBuilding  recv=unit-arg mptr=x1
+  0x805ABDC  com.geargames.aow.scenes.battle.entities.ClientBattleSideOwn$$RemoveBuilding  recv=unit-arg mptr=x1
+  0x805AFD4  com.geargames.aow.scenes.battle.entities.ClientBattleSideOwn$$UpgradeBuilding  recv=unit-arg mptr=x1
+  0x46ABF7C  com.geargames.aow.entities.battle.BuildingAct$$$qb  recv=unit-arg mptr=x1
+  0x46AC05C  com.geargames.aow.entities.battle.BuildingAct$$$qb  recv=unit-arg mptr=x1
+  0x3F3ACB8  com.geargames.serialization.serializers.DailyTypeSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x44A4BA4  com.geargames.serialization.serializers.SlipInfoSTDeserializer$$content  recv=unit-arg mptr=x2
+  0x477171C  com.geargames.serialization.serializers.BattleSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x8060FEC  com.geargames.aow.scenes.battle.entities.ClientBuilding$$InitializeVisualizators  recv=unit-arg mptr=None
+  0x800B0E4  com.geargames.aow.scenes.battle.ClientBuildingHelper$$GetAvailableUnitByBuildingPairs  recv=unit-arg mptr=None
+  0x822203C  com.geargames.aow.scenes.battle.gui.actions.GUIBattleBuildingSpecButtonUpgrade$$Initiate  recv=unit-arg mptr=x1
+  0x822B6A0  com.geargames.aow.scenes.battle.gui.actions.OrderHeroPresenter$$<get_HasHeroBuildingWithRequiredLevel>b__28_0  recv=unit-arg mptr=x1
+  0x46735C0  com.geargames.aow.entities.battle.BattleAct$$$CA  recv=unit-arg mptr=None
+  0x4674A24  com.geargames.aow.entities.battle.BattleAct$$$CA  recv=unit-arg mptr=None
+  0x47A3270  com.geargames.aow.entities.battle.ShotAct$$$fE  recv=unit-arg mptr=x1
+  0x47A34B0  com.geargames.aow.entities.battle.ShotAct$$$fE  recv=unit-arg mptr=x1
+  0x7EF1BE4  com.geargames.aow.scenes.main.gui.profile.GUIMainProfileInfo$$OnMessageStatisticsAnswerReceived  recv=unit-arg mptr=x1
+  0x8023AEC  com.geargames.aow.scenes.battle.MapEditorUnitStateConfig$$OverrideUnitState  recv=unit-arg mptr=x2
+  0x802478C  com.geargames.aow.scenes.battle.MapEditorUnitTypeConfig$$OverrideUnit  recv=unit-arg mptr=x2
+  0x4650A4C  com.geargames.aow.entities.battle.BattleAct$$$fA  recv=unit-arg mptr=None
+  0x46ADD40  com.geargames.aow.entities.battle.BuildingAct$$$Qb  recv=unit-arg mptr=x1
+  0x473624C  com.geargames.aow.entities.battle.FogAct$$$sd  recv=unit-arg mptr=x1
+  0x47A183C  com.geargames.aow.entities.battle.ShotAct$$$FE  recv=unit-arg mptr=x1
+  0x47CC210  com.geargames.aow.entities.battle.SideAct$$$Sf  recv=unit-arg mptr=None
+  0x47DC6D4  com.geargames.aow.entities.battle.SideAct$$$tf  recv=unit-arg mptr=None
+  0x821E0A4  com.geargames.aow.scenes.battle.gui.actions.BaseBuildingOrderButtonController$$IsAvailableByLevel  recv=unit-arg mptr=x8
+  0x82201EC  com.geargames.aow.scenes.battle.gui.actions.UnitBuildingOrderButtonController$$SetStartState  recv=unit-arg mptr=x1
+  0x860BDB8  System.Xml.XmlNodeReaderNavigator$$GetAttributeFromElement  recv=unit-arg mptr=x8
+  0x860C654  System.Xml.XmlNodeReaderNavigator$$MoveToAttributeFromElement  recv=unit-arg mptr=x8
+--- slot 64 set_DispersalPrev ---
+  0x42459A8  com.geargames.serialization.serializers.BaseConfigurationSTDeserializer$$content  recv=unit-arg mptr=x1
+  0x4482FB8  com.geargames.serialization.serializers.SharedBaseDictionarySTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x4482FD0  com.geargames.serialization.serializers.SharedBaseDictionarySTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x445E568  com.geargames.serialization.serializers.SaleUserConfigurationSTDeserializer$$content  recv=unit-arg mptr=x1
+  0x42C57B8  com.geargames.serialization.serializers.GoodsSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x4324A74  com.geargames.serialization.serializers.LoginRequestSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x45789CC  com.geargames.serialization.serializers.WeaponTypeSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x45789E4  com.geargames.serialization.serializers.WeaponTypeSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x4578A0C  com.geargames.serialization.serializers.WeaponTypeSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x47D9144  com.geargames.aow.entities.battle.SideAct$$$qf  recv=unit-arg mptr=None
+  0x4461548  com.geargames.serialization.serializers.SaleUserConfigurationSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x4461560  com.geargames.serialization.serializers.SaleUserConfigurationSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x4461588  com.geargames.serialization.serializers.SaleUserConfigurationSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x4547B3C  com.geargames.serialization.serializers.UnitTypeSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x4377F40  com.geargames.serialization.serializers.PathSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x4377F58  com.geargames.serialization.serializers.PathSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x4377F80  com.geargames.serialization.serializers.PathSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x43C8268  com.geargames.serialization.serializers.BattleAchievementsSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x4374B04  com.geargames.serialization.serializers.PathSTDeserializer$$content  recv=unit-arg mptr=x1
+  0x437AA74  com.geargames.serialization.serializers.PathUnitInfoSTDeserializer$$content  recv=unit-arg mptr=x2  VALUE=mov[x0=com.geargames.serialization.SimpleDe()]
+  0x4543D04  com.geargames.serialization.serializers.UnitStateTypeSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x8023288  com.geargames.aow.scenes.battle.MapEditorHeroParamConfig$$OverrideHeroParam  recv=unit-arg mptr=x2  VALUE=mem[x20,#0x88]
+  0x802361C  com.geargames.aow.scenes.battle.MapEditorUnitStateConfig$$.ctor  recv=unit-arg mptr=x1
+  0x80241C4  com.geargames.aow.scenes.battle.MapEditorUnitTypeConfig$$FillConfig  recv=unit-arg mptr=x1
+  0x46ABE48  com.geargames.aow.entities.battle.BuildingAct$$$qb  recv=unit-arg mptr=None
+  0x4705E14  com.geargames.aow.entities.battle.FlagAct$$$ZC  recv=unit-arg mptr=x2  VALUE=mov[x0=callret]
+  0x4847014  com.geargames.aow.entities.battle.UnitAct$$$Pg  recv=unit-arg mptr=x3
+--- slot 65 get_DispersalBuId ---
+  0x4245860  com.geargames.serialization.serializers.BaseConfigurationSTDeserializer$$content  recv=unit-arg mptr=x2
+  0x44524B0  com.geargames.serialization.serializers.SalePresetSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x469B064  com.geargames.aow.entities.battle.BattleSide$$$ju  recv=unit-arg mptr=None
+  0x469B330  com.geargames.aow.entities.battle.BattleSide$$$ju  recv=unit-arg mptr=None
+  0x469B370  com.geargames.aow.entities.battle.BattleSide$$$ju  recv=unit-arg mptr=None
+  0x469B478  com.geargames.aow.entities.battle.BattleSide$$$ju  recv=unit-arg mptr=None
+  0x469B62C  com.geargames.aow.entities.battle.BattleSide$$$ju  recv=unit-arg mptr=None
+  0x445E478  com.geargames.serialization.serializers.SaleUserConfigurationSTDeserializer$$content  recv=unit-arg mptr=x2
+  0x47031C8  com.geargames.aow.entities.battle.FlagAct$$$yC  recv=unit-arg mptr=x1
+  0x4936CD4  com.geargames.serialization.serializers.BattleSideSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x453B330  com.geargames.serialization.serializers.UnitSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x3E45418  com.geargames.serialization.serializers.BulletSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x3E454C4  com.geargames.serialization.serializers.BulletSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x3E454F4  com.geargames.serialization.serializers.BulletSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x3E455EC  com.geargames.serialization.serializers.BulletSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x41D6B70  com.geargames.serialization.serializers.FlagSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x41D6B88  com.geargames.serialization.serializers.FlagSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x41D6BB0  com.geargames.serialization.serializers.FlagSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x46DCC50  com.geargames.aow.entities.battle.CheckAndCalc$$$uc  recv=unit-arg mptr=x1
+  0x4767C40  com.geargames.aow.entities.battle.PathAct$$$Te  recv=unit-arg mptr=x1
+  0x4767C9C  com.geargames.aow.entities.battle.PathAct$$$Te  recv=unit-arg mptr=x1
+  0x47E1BA8  com.geargames.aow.entities.battle.SideAct$$$zf  recv=unit-arg mptr=None
+  0x4374AC4  com.geargames.serialization.serializers.PathSTDeserializer$$content  recv=unit-arg mptr=x2
+  0x43D0A34  com.geargames.serialization.serializers.ProfileStatisticsAnswerSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x3E3CC60  com.geargames.serialization.serializers.BuildingSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x3EB6654  com.geargames.serialization.serializers.ClanSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x41ECDE0  com.geargames.serialization.serializers.FractionSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x42D681C  com.geargames.serialization.serializers.HeroParamSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x434C15C  com.geargames.serialization.serializers.MissionDescriptionSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x437C4B0  com.geargames.serialization.serializers.PathUnitInfoSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x43A6DB0  com.geargames.serialization.serializers.ProfileRankSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x43C2ED4  com.geargames.serialization.serializers.BattleAchievementsSTDeserializer$$content  recv=unit-arg mptr=x2
+  0x4565F54  com.geargames.serialization.serializers.UserConfigurationSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x456F604  com.geargames.serialization.serializers.WallSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x499B940  com.geargames.serialization.serializers.BuildingLevelTypeSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x8022E1C  com.geargames.aow.scenes.battle.MapEditorHeroParamConfig$$FillConfig  recv=unit-arg mptr=x1
+  0x479BB64  com.geargames.aow.entities.battle.ShotAct$$$DE  recv=unit-arg mptr=x1
+  0x813F884  com.geargames.aow.scenes.battle.logicservice.commands.LCBulletCreate$$Initiate  recv=unit-arg mptr=x1
+  0x813F9BC  com.geargames.aow.scenes.battle.logicservice.commands.LCBulletCreate$$Initiate  recv=unit-arg mptr=x1
+  0x813FA08  com.geargames.aow.scenes.battle.logicservice.commands.LCBulletCreate$$Initiate  recv=unit-arg mptr=x1
+  0x7EF1BB0  com.geargames.aow.scenes.main.gui.profile.GUIMainProfileInfo$$OnMessageStatisticsAnswerReceived  recv=unit-arg mptr=x1
+  0x8023C0C  com.geargames.aow.scenes.battle.MapEditorUnitStateConfig$$OverrideUnitState  recv=unit-arg mptr=x2
+  0x80246CC  com.geargames.aow.scenes.battle.MapEditorUnitTypeConfig$$OverrideUnit  recv=unit-arg mptr=x2
+  0x49FE370  Firebase.AppUtilPINVOKE$$StringStringMap_setitem  recv=unit-arg mptr=None
+  0x4797588  com.geargames.aow.entities.battle.ShotAct$$$EE  recv=unit-arg mptr=x1
+  0x81812A4  com.geargames.aow.scenes.battle.gui.HeroSlotModel$$CanOrderInBuilding  recv=unit-arg mptr=x1
+--- slot 66 set_DispersalBuId ---
+  0x424A8AC  com.geargames.serialization.serializers.BaseConfigurationSTDeserializer$$content  recv=unit-arg mptr=x1
+  0x4479DCC  com.geargames.serialization.serializers.SharedBaseDictionarySTDeserializer$$content  recv=unit-arg mptr=x1
+  0x4483540  com.geargames.serialization.serializers.SharedBaseDictionarySTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x4483558  com.geargames.serialization.serializers.SharedBaseDictionarySTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x4483580  com.geargames.serialization.serializers.SharedBaseDictionarySTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x42C6084  com.geargames.serialization.serializers.GoodsSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x42C609C  com.geargames.serialization.serializers.GoodsSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x42C60C4  com.geargames.serialization.serializers.GoodsSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x4578A98  com.geargames.serialization.serializers.WeaponTypeSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x4578AB0  com.geargames.serialization.serializers.WeaponTypeSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x4578AD8  com.geargames.serialization.serializers.WeaponTypeSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x4461754  com.geargames.serialization.serializers.SaleUserConfigurationSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x4548414  com.geargames.serialization.serializers.UnitTypeSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x46C6768  com.geargames.aow.entities.battle.BuildingAct$$$KB  recv=unit-arg mptr=None
+  0x4377D34  com.geargames.serialization.serializers.PathSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x43C82DC  com.geargames.serialization.serializers.BattleAchievementsSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x437AFF0  com.geargames.serialization.serializers.PathUnitInfoSTDeserializer$$content  recv=unit-arg mptr=x2  VALUE=mov[x0=com.geargames.serialization.SimpleDe()]
+  0x4543D3C  com.geargames.serialization.serializers.UnitStateTypeSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x478A6BC  com.geargames.aow.entities.battle.ShotAct$$$Ye  recv=unit-arg mptr=x2  VALUE=mov[x25=callret]
+  0x478C750  com.geargames.aow.entities.battle.ShotAct$$$Ye  recv=unit-arg mptr=x2  VALUE=mov[x28=callret]
+  0x80232A0  com.geargames.aow.scenes.battle.MapEditorHeroParamConfig$$OverrideHeroParam  recv=unit-arg mptr=x2  VALUE=mem[x20,#0x8c]
+  0x8023714  com.geargames.aow.scenes.battle.MapEditorUnitStateConfig$$.ctor  recv=unit-arg mptr=x1
+  0x80242C0  com.geargames.aow.scenes.battle.MapEditorUnitTypeConfig$$FillConfig  recv=unit-arg mptr=x1
+  0x466C0D0  com.geargames.aow.entities.battle.BattleAct$$$J  recv=unit-arg mptr=None
+  0x7A839CC  com.geargames.aow.services.resources.PlayerResourceRepository$$GetTypeFromGoods  recv=unit-arg mptr=x1
+  0x7A83B78  com.geargames.aow.services.resources.PlayerResourceRepository$$GetTypeFromGoods  recv=unit-arg mptr=x1
+  0x7A83B9C  com.geargames.aow.services.resources.PlayerResourceRepository$$GetTypeFromGoods  recv=unit-arg mptr=x1
+  0x49FE4D0  Firebase.AppUtilPINVOKE$$StringStringMap_Add  recv=unit-arg mptr=None
+  0x81FB738  com.geargames.aow.scenes.battle.gui.unitselection.GUIBattleQuickSelectionUnitsButton$$Initiate  recv=unit-arg mptr=x1
+  0x81FB7B4  com.geargames.aow.scenes.battle.gui.unitselection.GUIBattleQuickSelectionUnitsButton$$Initiate  recv=unit-arg mptr=x1
+  0x8230288  com.geargames.aow.scenes.battle.gui.actions.GUIBattleActionGroup$$SetGroupIcon  recv=unit-arg mptr=x1
+  0x82302DC  com.geargames.aow.scenes.battle.gui.actions.GUIBattleActionGroup$$SetGroupIcon  recv=unit-arg mptr=x1
+  0x48ACF20  com.geargames.aow.entities.battle.WallAct$$$mI  recv=unit-arg mptr=x2  VALUE=POOL[0xc]^POOL[0x10] = 1
+  0x7C04238  com.geargames.aow.ugui.army.UGUIArmyHeroTrainingPanelView$$SetInfo  recv=unit-arg mptr=x2  VALUE=mov[x0=com.geargames.extensions.Localizatio()]
+  0x88F2870  TMPro.TMP_Text$$ReleaseLinkedTextComponent  recv=unit-arg mptr=None
+--- slot 300 set_WaitForMoving ---
+  0x4856C60  com.geargames.aow.entities.battle.UnitAct$$$CG  recv=unit-arg mptr=None
+  0x4937048  com.geargames.serialization.serializers.BattleSideSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x43C8A98  com.geargames.serialization.serializers.BattleAchievementsSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x466AA78  com.geargames.aow.entities.battle.BattleAct$$$J  recv=unit-arg mptr=x2  VALUE=POOL[0xc]^POOL[0x10] = 1
+  0x48062B8  com.geargames.aow.entities.battle.UnitAct$$$cg  recv=unit-arg mptr=x2  VALUE=POOL[0xc]^POOL[0x10] = 1
+  0x482D15C  com.geargames.aow.entities.battle.UnitAct$$$uG  recv=unit-arg mptr=x2  VALUE=add(mov[x0=callret],eor(mem[x8,#0x10],mem[x8,#0xc]))
+  0x45F8C98  com.geargames.aow.entities.gai.gaicomm.GAICommandTourTable$$execute  recv=unit-arg mptr=x2  VALUE=mov[x20=System.Collections.Generic.Dictionar()]
+--- slot 302 set_WalkState ---
+  0x43C90B8  com.geargames.serialization.serializers.BattleAchievementsSTSerializer$$serialize  recv=unit-arg mptr=x1
+  0x466A460  com.geargames.aow.entities.battle.BattleAct$$$J  recv=unit-arg mptr=x2  VALUE=eor(mov[x0=callret],eor(mem[x8,#0x10],mem[x8,#0xc]))

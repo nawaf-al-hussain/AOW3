@@ -170,3 +170,120 @@ browser grid check remains a static-obstacle gate). Comment-only diff verified
 3. The deterministic browser equivalent (pairwise slot waiting + dispersal)
    stays DORMANT until §6.1/6.2 land — no invented slot semantics (G11
    dormant-ready precedent).
+
+## 7. Pass 2 — the value domains (Task 65) [DECOMP]
+
+Tooling: `reverse/tools/b7_value_domains.py` (v3: shape-filtered callvirt scan
+with Unit-receiver provenance, x0-clobber discipline, w/x width normalization,
+Obfuz pool-constant folding) + `b7_dispersal_xref.py` (receiver-verified
+whole-binary xref for slots 61-66/300/302) + `b7_inline_pool_decode.py`
+(GOA emulator reuse). Evidence: `b7-value-domains.txt` (54k lines),
+`b7-dispersal-xref.txt`.
+
+### 7.1 Pool-constant arithmetic idioms (first, they gate everything)
+
+The *Act bodies read constants from the `$Obfuz$ConstFieldHolder$0` statics
+(usage slot `0x968e4d8`, values from the committed
+`evidence/obfuz/obfuz-pool-values.json`). Three idiom shapes recur:
+
+- **literal 1** = `eor(pool[0xC], pool[0x10])` — pool[0xC]=2197149770 and
+  pool[0x10]=2197149771 are CONSECUTIVE ints; their XOR is 1.
+- **literal 0** = `mul(pool[0x4], pool[0x8])` — pool[0x8]=0.
+- **direct values** — `pool[0x34]=2` (DEFEND), `pool[0x80]=5` (BOMBARD),
+  `pool[0x64]=8` (DONT_SHOOT) already known from R2/Build I.
+
+### 7.2 wait_for_moving (sbyte 0xB9) — a WAIT-CYCLE COUNTER, not a bool
+
+Shape-verified writers (method-ptr in x2, Unit-traced receiver; full site
+list in the evidence):
+
+| Writer | Site | Value |
+|---|---|---|
+| `BattleAct.$J` | 0x466AA78 | **1** — wait START |
+| `UnitAct.$cg` | 0x48062B8 | **1** — wait START (second entry) |
+| `UnitAct.$uG` | 0x482D15C | **old + 1** — wait ESCALATION per continued tick |
+| `UnitAct.$CG` | 0x4856C60 + 0x4852510 | **0** — wait CLEAR (×2 sites) |
+| `GAICommandTourTable.execute` | 0x45F8C98 | dictionary-lookup result (tour-table reassignment) |
+| ST serializers | 0x4937048 / 0x43C8A98 | serialization mirrors ([SERVER-DATA] confirmation) |
+
+Reader arbitration in `PathAct.$Qe` (placement check) @0x476AA50-0x476AABC:
+`w27 = unit.get_WaitForMoving()`; then an INLINE Obfuz accessor
+(`$gK(seg, start=0xD8, salt=0x3D, keyA=0x27428CBF)`, segment object at holder
+statics+0x2820 — NOT one of the two known 2048-B segments, value decodable
+after the builder-.cctor segment-source parse, §8) times
+`occupant.get_SpeedCurr()` (Unit slot 221, sbyte):
+**`if (POOL[0xD8] × occupant.speed_curr > (sbyte)mover.wait_for_moving) →
+branch`** — the wait counter is weighed against the OCCUPANT's speed-weighted
+patience: fast occupants yield sooner. `UnitAct.$cg`'s other read site tests
+`tst w0,#0xff; b.eq` — zero = not waiting. Domain: **0 = not waiting, 1..N =
+waiting (N = accumulated wait cycles, sbyte-wrapping)**.
+
+### 7.3 walk_state (sbyte 0xE4) — BINARY, single writer
+
+The whole-binary receiver-verified scan finds exactly ONE sim writer:
+`BattleAct.$J` @0x466A460: **`set_WalkState(unit, old ^ 1)`** (the
+`eor(get_WalkState(), POOL[0x10]^POOL[0xC]=1)` chain, result of
+`get_WalkState` @0x466A430) — a walking-phase TOGGLE, with
+`set_WalkStateTick(unit, 0)` @0x466A494 (the `mul(pool[0x4],pool[0x8])=0`
+idiom) resetting the phase timer. Readers: `PathAct.$ce` ×2 (the walk
+stepper) + `BattleSTSerializer` ×3 + `UnitSTSerializer` — phase state rides
+the battle stream. **The pass-1 candidate "$ZJ..$dk 0..7 family = walk_state
+values" is WRONG** — walk_state is binary; the 0..7 sbyte family remains an
+axis/step-count candidate [INFERRED], unrelated to walk_state by this decode.
+
+### 7.4 forced (sbyte 0xB8) — cleared by the wait handlers
+
+`set_Forced(unit, mul(pool[0x4],pool[0x8])=0)` at `UnitAct.$cg` @0x47FF9E8 and
+`UnitAct.$uG` @0x482D1A8 — entering/continuing a wait CLEARS the command-forced
+flag (the order's push-through right is consumed by the wait). Readers across
+`$ce`/`$Te`/`$yG` per pass 1.
+
+### 7.5 Pass-1 traffic-map CORRECTIONS (argument-shape filter, Task-63 discipline)
+
+The v3 shape+receiver filter re-tests every pass-1 callvirt claim:
+
+- **`BattleAct.$ZA` "set_WalkState ×4" (0x4658B94/CDC/D44/D64): FALSE
+  POSITIVES.** The sites are getter-shaped calls (`x1`=method) whose returns
+  feed `cmp w23, w9; b.lt` list-index loops on objects pulled from a
+  `List<object>` enumerator — slot-302 collisions on a NON-Unit class
+  (get_Count-shaped). $ZA's real traffic is the statics-driven state machine
+  over pool values (§ pass 1 census, class-init caveat applies).
+- **`UnitAct.$yi` "set_WalkState ×2": FALSE POSITIVES** (same getter-shape +
+  count-loop signature; receivers are call returns).
+- **`UnitAct.$Ag` / `PathAct.$ce` "set_WalkState": receiver-unverified** (the
+  receiver comes from call returns / unit-field loads, not the x1 chain) —
+  downgraded from verified to unproven, not counted as writers.
+- `PathAct.$ce` "get_Forced ×13": getter-shaped, receivers not unit-traced
+  (likely `unit.obj` field loads — recorded unverified, not FP).
+- `PathAct.$Oe` "dispersal trio writer": the apparent `get_Dispersal`/
+  `get_DispersalPrev` calls at 0x4748530/0x4748560 are SLOT COLLISIONS on a
+  class with SHORT-returning getters at slots 61/63 (results go through
+  `sxth` into `sub` + `CheckAndCalc$$$nc` — coordinate math, not Unit state).
+
+**Corrected writer map**: wait_for_moving = {$cg:1, $J:1, $uG:+1, $CG:0,
+TourTable:lookup}; walk_state = {$J: old^1} only; walk_state_tick = {$J: 0};
+forced = {$cg:0, $uG:0} in wait contexts.
+
+### 7.6 Dispersal (0x120/0x128/0x130) — accessors virtual, traffic [SERVER-DATA]
+
+Unit slots 61-66 (get/set_Dispersal{,Prev,BuId}, dump.cs 393735-393750). The
+whole-binary receiver-verified scan (raw word counts 1.5k-3.6k per slot from
+offset collisions) yields verified sites concentrated in serializers
+(BattleSTSerializer/UnitST* — the battle-stream confirmation) and a bounded
+set of *Act/BattleSide bodies whose receivers trace through unit fields
+(`obj @0x88`, `dispersal @0x120`). `Fraction.dispersalTick` (sbyte @0xF1,
+slots 161/162) is FACTION CONFIG (data-delivered period, R1-carriable); the
+scheduler pass structure stands as pass-1 [INFERRED]. The dispersal VALUE
+DOMAINS (period/radius) remain config data — no client-decodable formula, G11
+discipline holds.
+
+## 8. Residual after pass 2 (replaces §6.1)
+
+1. The `$Qe` arbitration constant `POOL[0xD8]` (inline accessor triple
+   start=0xD8, salt=0x3D, keyA=0x27428CBF, segment @holder statics+0x2820):
+   requires extending the R2 builder-.cctor parse to the THIRD segment (the
+   697-entry table covers srcSlots 0x1008/0x1810 only). Bounded, tooling
+   exists; the rule SHAPE (constant × occupant speed vs mover wait) is the
+   deliverable and is decoded.
+2. R1 carryable unchanged (SlipInfo/PathUnitInfo march dump), plus now: the
+   live wait_for_moving escalation rate and $Qe branch polarity.

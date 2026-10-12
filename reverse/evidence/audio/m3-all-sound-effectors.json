@@ -1,0 +1,779 @@
+[
+ {
+  "bundle": "0a1b1d0adddd1ee4",
+  "class": "AudioGroups",
+  "go": "hero_solaris_charge",
+  "tailLen": 40,
+  "tailHex": "76000000010000000000000000000000000000000000000000000000000000007500000000000000"
+ },
+ {
+  "bundle": "0a1b1d0adddd1ee4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_hero_solaris",
+  "tailLen": 24,
+  "tailHex": "400600000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "0cb7ad0c08d67994",
+  "class": "UnitDeathSoundEffector",
+  "go": "f1_avia_ufo",
+  "tailLen": 4,
+  "tailHex": "02000000"
+ },
+ {
+  "bundle": "14cb6dd4cbb36054",
+  "class": "AudioGroups",
+  "go": "audio_group_passive_off",
+  "tailLen": 40,
+  "tailHex": "eb000000010000000000000000000000010000000000000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "14cb6dd4cbb36054",
+  "class": "AudioGroups",
+  "go": "audio_group_death",
+  "tailLen": 40,
+  "tailHex": "2b000000010000000000000000000000000000000000000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "14cb6dd4cbb36054",
+  "class": "AudioGroups",
+  "go": "audio_group_passive_on",
+  "tailLen": 40,
+  "tailHex": "ea000000010000000000000000000000010000000000000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "14cb6dd4cbb36054",
+  "class": "AudioGroups",
+  "go": "audio_group_immortal",
+  "tailLen": 40,
+  "tailHex": "ee000000010000000000000000000000000000000000000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "14cb6dd4cbb36054",
+  "class": "AudioGroups",
+  "go": "audio_group_active",
+  "tailLen": 40,
+  "tailHex": "e9000000010000000000000000000000000000000000000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "14cb6dd4cbb36054",
+  "class": "AudioGroups",
+  "go": "audio_group_move",
+  "tailLen": 40,
+  "tailHex": "ec000000010000000000000000000000010000000000000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "19d4d9fc40483474",
+  "class": "UnitDeathSoundEffector",
+  "go": "f2_inf_light",
+  "tailLen": 4,
+  "tailHex": "00000000"
+ },
+ {
+  "bundle": "1b584ac3d6fc64d4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_veh_zeus",
+  "tailLen": 24,
+  "tailHex": "640000000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "1bb5e9b018df40c2",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_nav_transport_unit",
+  "tailLen": 24,
+  "tailHex": "c90000000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "2a58053c9162c1d4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_veh_spec",
+  "tailLen": 24,
+  "tailHex": "640000000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "2bc937c0374516e4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_hero_cerber",
+  "tailLen": 24,
+  "tailHex": "140500000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "2bc937c0374516e4",
+  "class": "UnitShootFlashEffector",
+  "go": "f1_hero_cerber",
+  "tailLen": 32,
+  "tailHex": "0100000001000000010000000000000045000000000000000100000000000000"
+ },
+ {
+  "bundle": "32635ddd1dd83e04",
+  "class": "AudioGroups",
+  "go": "audio_group_move",
+  "tailLen": 40,
+  "tailHex": "ec000000010000000000000000000000010000000000000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "32635ddd1dd83e04",
+  "class": "AudioGroups",
+  "go": "audio_group_death",
+  "tailLen": 40,
+  "tailHex": "2b000000010000000000000000000000000000000000000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "32635ddd1dd83e04",
+  "class": "AudioGroups",
+  "go": "audio_group_passive_on",
+  "tailLen": 40,
+  "tailHex": "ea000000010000000000000000000000010000000000000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "32635ddd1dd83e04",
+  "class": "AudioGroups",
+  "go": "audio_group_passive_off",
+  "tailLen": 40,
+  "tailHex": "eb000000010000000000000000000000010000000000000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "32635ddd1dd83e04",
+  "class": "AudioGroups",
+  "go": "audio_group_active",
+  "tailLen": 40,
+  "tailHex": "e9000000010000000000000000000000000000000000000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "32635ddd1dd83e04",
+  "class": "AudioGroups",
+  "go": "audio_group_immortal",
+  "tailLen": 40,
+  "tailHex": "ee000000010000000000000000000000000000000000000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "32c9b11800d83e64",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_nav_cayman",
+  "tailLen": 24,
+  "tailHex": "c80000000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "3bb24bf345196e64",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_nav_alligator",
+  "tailLen": 24,
+  "tailHex": "c80000000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "3e71a1090a4f26c4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_veh_jaguar",
+  "tailLen": 24,
+  "tailHex": "640000000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "43fe5cd8b5787814",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_veh_shield",
+  "tailLen": 24,
+  "tailHex": "640000000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "46168bdf450b63a4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_hero_leviaphan",
+  "tailLen": 24,
+  "tailHex": "a40600000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "46168bdf450b63a4",
+  "class": "UnitShootFlashEffector",
+  "go": "f2_hero_leviaphan",
+  "tailLen": 32,
+  "tailHex": "0100000004000000010000000000000030000000000000000000000000000000"
+ },
+ {
+  "bundle": "4c42e180bcf40dc4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_nav_amphibian",
+  "tailLen": 24,
+  "tailHex": "c80000000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "4fa236043a502094",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_nav_heavy",
+  "tailLen": 24,
+  "tailHex": "c80000000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "6859c6599e9d5db4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_veh_torrent",
+  "tailLen": 24,
+  "tailHex": "640000000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "746a7f6beff87784",
+  "class": "AudioGroups",
+  "go": "fx_turbo_2",
+  "tailLen": 40,
+  "tailHex": "6e00000001000000000000000000000001000000000000000000000000000000b700000000000000"
+ },
+ {
+  "bundle": "746a7f6beff87784",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_hero_seraphim_meta",
+  "tailLen": 24,
+  "tailHex": "790500000100000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "75eeec1c949ff5d4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_hero_seraphim",
+  "tailLen": 24,
+  "tailHex": "790500000100000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "75eeec1c949ff5d4",
+  "class": "AudioGroups",
+  "go": "fx_turbo_2",
+  "tailLen": 40,
+  "tailHex": "6e00000001000000000000000000000001000000000000000000000000000000d100000000000000"
+ },
+ {
+  "bundle": "75fe9c0eeb438fc4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_veh_hammer",
+  "tailLen": 24,
+  "tailHex": "640000000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "7aa9fd1e8b747bc4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_nav_light",
+  "tailLen": 24,
+  "tailHex": "c80000000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "7b0d11d79ee1c8f4",
+  "class": "AudioGroups",
+  "go": "bul_rocket3_s5_nuke_2",
+  "tailLen": 40,
+  "tailHex": "0e000000010000000100000000000000000000000000000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "82f713d6afc650a4",
+  "class": "AudioGroups",
+  "go": "audio_group_fire_3",
+  "tailLen": 40,
+  "tailHex": "98000000010000000000000000000000010000000100000001000000000000000000000000000000"
+ },
+ {
+  "bundle": "82f713d6afc650a4",
+  "class": "AudioGroups",
+  "go": "audio_group_fire_1",
+  "tailLen": 40,
+  "tailHex": "96000000010000000000000000000000000000000000000001000000000000000000000000000000"
+ },
+ {
+  "bundle": "82f713d6afc650a4",
+  "class": "AudioGroups",
+  "go": "audio_group_spin",
+  "tailLen": 40,
+  "tailHex": "99000000010000000000000000000000010000000100000001000000000000000000000000000000"
+ },
+ {
+  "bundle": "82f713d6afc650a4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_hero_gatling_meta",
+  "tailLen": 24,
+  "tailHex": "640000000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "82f713d6afc650a4",
+  "class": "AudioGroups",
+  "go": "audio_group_fire_2",
+  "tailLen": 40,
+  "tailHex": "97000000010000000000000000000000010000000100000001000000000000000000000000000000"
+ },
+ {
+  "bundle": "8a3461da3418ec14",
+  "class": "UnitDeathSoundEffector",
+  "go": "f2_inf_heavy",
+  "tailLen": 4,
+  "tailHex": "00000000"
+ },
+ {
+  "bundle": "8b6d690c532f43c4",
+  "class": "AudioGroups",
+  "go": "fx_idle_weapon_1",
+  "tailLen": 40,
+  "tailHex": "f8000000010000000000000000000000010000000100000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "8b6d690c532f43c4",
+  "class": "AudioGroups",
+  "go": "fx_idle_weapon_0",
+  "tailLen": 40,
+  "tailHex": "f9000000010000000000000000000000010000000100000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "8b6d690c532f43c4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_hero_coiltank",
+  "tailLen": 24,
+  "tailHex": "f00a00000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "8b6d690c532f43c4",
+  "class": "AudioGroups",
+  "go": "fx_passive_activation",
+  "tailLen": 40,
+  "tailHex": "f0000000010000000000000000000000010000000100000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "8b6d690c532f43c4",
+  "class": "UnitShootSoundEffector",
+  "go": "f2_hero_coiltank",
+  "tailLen": 12,
+  "tailHex": "f3000000cdcccc3d00000000"
+ },
+ {
+  "bundle": "8b6d690c532f43c4",
+  "class": "AudioGroups",
+  "go": "fx_active_activation",
+  "tailLen": 40,
+  "tailHex": "f4000000010000000000000000000000010000000100000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "8b95a0c6cc607a24",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_veh_fortress",
+  "tailLen": 24,
+  "tailHex": "640000000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "8cd4da667a5ca974",
+  "class": "UnitShootSoundEffector",
+  "go": "f1_inf_zombie",
+  "tailLen": 12,
+  "tailHex": "c8000000cdcccc3d00000000"
+ },
+ {
+  "bundle": "8cd4da667a5ca974",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_inf_zombie",
+  "tailLen": 24,
+  "tailHex": "7c0100000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "8cd4da667a5ca974",
+  "class": "UnitDeathSoundEffector",
+  "go": "f1_inf_zombie",
+  "tailLen": 4,
+  "tailHex": "01000000"
+ },
+ {
+  "bundle": "8fe48c053f10eaa4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_veh_transport",
+  "tailLen": 24,
+  "tailHex": "640000000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "9087863c5b0d5a44",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_hero_cryotank",
+  "tailLen": 24,
+  "tailHex": "280a00000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "9270f635baa776a4",
+  "class": "GatlingAudioEffectController",
+  "go": "f2_hero_gatling",
+  "tailLen": 64,
+  "tailHex": "000000003b00000000000000000000003800000000000000000000003c00000000000000000000003a000000000000009f000000a00000009c000000a1000000"
+ },
+ {
+  "bundle": "9270f635baa776a4",
+  "class": "AudioGroups",
+  "go": "audio_group_fire_2",
+  "tailLen": 40,
+  "tailHex": "97000000010000000000000000000000010000000100000001000000000000000000000000000000"
+ },
+ {
+  "bundle": "9270f635baa776a4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_hero_gatling",
+  "tailLen": 24,
+  "tailHex": "640000000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "9270f635baa776a4",
+  "class": "AudioGroups",
+  "go": "audio_group_spin",
+  "tailLen": 40,
+  "tailHex": "99000000010000000000000000000000010000000100000001000000000000000000000000000000"
+ },
+ {
+  "bundle": "9270f635baa776a4",
+  "class": "AudioGroups",
+  "go": "audio_group_fire_1",
+  "tailLen": 40,
+  "tailHex": "96000000010000000000000000000000000000000000000001000000000000000000000000000000"
+ },
+ {
+  "bundle": "9270f635baa776a4",
+  "class": "AudioGroups",
+  "go": "audio_group_fire_3",
+  "tailLen": 40,
+  "tailHex": "98000000010000000000000000000000010000000100000001000000000000000000000000000000"
+ },
+ {
+  "bundle": "9bc14b3162edf924",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_nav_barracuda",
+  "tailLen": 24,
+  "tailHex": "c40400000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "a5caae7f6dcd26f4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_veh_porcupine",
+  "tailLen": 24,
+  "tailHex": "640000000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "a6563f773ea78e84",
+  "class": "UnitShootSoundEffector",
+  "go": "f2_inf_zombie",
+  "tailLen": 12,
+  "tailHex": "c8000000cdcccc3d00000000"
+ },
+ {
+  "bundle": "a6563f773ea78e84",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_inf_zombie",
+  "tailLen": 24,
+  "tailHex": "7c0100000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "a6563f773ea78e84",
+  "class": "UnitDeathSoundEffector",
+  "go": "f2_inf_zombie",
+  "tailLen": 4,
+  "tailHex": "01000000"
+ },
+ {
+  "bundle": "afb02b8329fd93d4",
+  "class": "UnitDeathSoundEffector",
+  "go": "f2_inf_sniper",
+  "tailLen": 4,
+  "tailHex": "00000000"
+ },
+ {
+  "bundle": "b1a125dab42e9da4",
+  "class": "UnitDeathSoundEffector",
+  "go": "f1_inf_light",
+  "tailLen": 4,
+  "tailHex": "00000000"
+ },
+ {
+  "bundle": "b375d6096c525404",
+  "class": "UnitDeathSoundEffector",
+  "go": "f1_inf_heavy",
+  "tailLen": 4,
+  "tailHex": "00000000"
+ },
+ {
+  "bundle": "bafc0eaeb44b7614",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_hero_railgun",
+  "tailLen": 24,
+  "tailHex": "640000000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "c3bed8960af78774",
+  "class": "UnitDeathSoundEffector",
+  "go": "f1_inf_flame",
+  "tailLen": 4,
+  "tailHex": "00000000"
+ },
+ {
+  "bundle": "ca785ee6177fe304",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_veh_porcupine_hero",
+  "tailLen": 24,
+  "tailHex": "640000000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "cd87fc9dccd37104",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_hero_psitank_meta",
+  "tailLen": 24,
+  "tailHex": "400600000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "d811a880dc126f54",
+  "class": "UnitDeathSoundEffector",
+  "go": "f2_avia_ufo",
+  "tailLen": 4,
+  "tailHex": "02000000"
+ },
+ {
+  "bundle": "d8a1c78043eea994",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_veh_coyote",
+  "tailLen": 24,
+  "tailHex": "640000000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "db58ed3ec1bc02b4",
+  "class": "AudioGroups",
+  "go": "muzzle1_2",
+  "tailLen": 40,
+  "tailHex": "96000000010000000000000000000000000000000000000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "db58ed3ec1bc02b4",
+  "class": "AudioGroups",
+  "go": "muzzle1_4",
+  "tailLen": 40,
+  "tailHex": "96000000010000000000000000000000000000000000000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "db58ed3ec1bc02b4",
+  "class": "AudioGroups",
+  "go": "muzzle1_3",
+  "tailLen": 40,
+  "tailHex": "96000000010000000000000000000000000000000000000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "db58ed3ec1bc02b4",
+  "class": "AudioGroups",
+  "go": "muzzle1_0",
+  "tailLen": 40,
+  "tailHex": "96000000010000000000000000000000000000000000000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "db58ed3ec1bc02b4",
+  "class": "AudioGroups",
+  "go": "muzzle1_5",
+  "tailLen": 40,
+  "tailHex": "96000000010000000000000000000000000000000000000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "db58ed3ec1bc02b4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_hero_salamander_meta",
+  "tailLen": 24,
+  "tailHex": "c409000001000000c609000001000000c509000001000000"
+ },
+ {
+  "bundle": "db58ed3ec1bc02b4",
+  "class": "AudioGroups",
+  "go": "muzzle1_1",
+  "tailLen": 40,
+  "tailHex": "96000000010000000000000000000000000000000000000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "db6305c33ead0594",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_veh_armadillo",
+  "tailLen": 24,
+  "tailHex": "640000000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "dcd18620e19bcb04",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_nav_transport",
+  "tailLen": 24,
+  "tailHex": "c90000000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "e188c92f51441094",
+  "class": "AudioGroups",
+  "go": "muzzle1_1",
+  "tailLen": 40,
+  "tailHex": "96000000010000000000000000000000000000000000000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "e188c92f51441094",
+  "class": "AudioGroups",
+  "go": "muzzle1_0",
+  "tailLen": 40,
+  "tailHex": "96000000010000000000000000000000000000000000000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "e188c92f51441094",
+  "class": "AudioGroups",
+  "go": "muzzle1_5",
+  "tailLen": 40,
+  "tailHex": "96000000010000000000000000000000000000000000000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "e188c92f51441094",
+  "class": "AudioGroups",
+  "go": "muzzle1_3",
+  "tailLen": 40,
+  "tailHex": "96000000010000000000000000000000000000000000000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "e188c92f51441094",
+  "class": "AudioGroups",
+  "go": "muzzle1_4",
+  "tailLen": 40,
+  "tailHex": "96000000010000000000000000000000000000000000000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "e188c92f51441094",
+  "class": "AudioGroups",
+  "go": "muzzle1_2",
+  "tailLen": 40,
+  "tailHex": "96000000010000000000000000000000000000000000000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "e238744889ea3494",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_hero_codomash",
+  "tailLen": 24,
+  "tailHex": "dc0500000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "e238744889ea3494",
+  "class": "UnitShootSoundEffector",
+  "go": "f2_hero_codomash",
+  "tailLen": 12,
+  "tailHex": "7e000000cdcccc3d00000000"
+ },
+ {
+  "bundle": "e2c5b77171390e94",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_veh_transport",
+  "tailLen": 24,
+  "tailHex": "640000000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "e97972db0c3f9814",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_veh_typhoon",
+  "tailLen": 24,
+  "tailHex": "640000000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "f2090bbdc0c908e4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_veh_chameleon",
+  "tailLen": 24,
+  "tailHex": "640000000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "f291e36f00947514",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_veh_spec",
+  "tailLen": 24,
+  "tailHex": "640000000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "f86a3a6199c3b0c4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f1_hero_psitank",
+  "tailLen": 24,
+  "tailHex": "400600000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "f870aee2f161cb84",
+  "class": "AudioGroups",
+  "go": "muzzle1_1",
+  "tailLen": 40,
+  "tailHex": "96000000010000000000000000000000000000000000000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "f870aee2f161cb84",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_hero_salamander",
+  "tailLen": 24,
+  "tailHex": "c409000001000000c609000001000000c509000001000000"
+ },
+ {
+  "bundle": "f870aee2f161cb84",
+  "class": "AudioGroups",
+  "go": "muzzle1_0",
+  "tailLen": 40,
+  "tailHex": "96000000010000000000000000000000000000000000000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "f870aee2f161cb84",
+  "class": "AudioGroups",
+  "go": "muzzle1_5",
+  "tailLen": 40,
+  "tailHex": "96000000010000000000000000000000000000000000000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "f870aee2f161cb84",
+  "class": "AudioGroups",
+  "go": "muzzle1_3",
+  "tailLen": 40,
+  "tailHex": "96000000010000000000000000000000000000000000000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "f870aee2f161cb84",
+  "class": "AudioGroups",
+  "go": "muzzle1_4",
+  "tailLen": 40,
+  "tailHex": "96000000010000000000000000000000000000000000000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "f870aee2f161cb84",
+  "class": "AudioGroups",
+  "go": "muzzle1_2",
+  "tailLen": 40,
+  "tailHex": "96000000010000000000000000000000000000000000000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "f97b67ca001f79f4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_veh_mammoth",
+  "tailLen": 24,
+  "tailHex": "640000000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "fd6119a47fa175e4",
+  "class": "AudioGroups",
+  "go": "fx_active_activation",
+  "tailLen": 40,
+  "tailHex": "f4000000010000000000000000000000010000000100000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "fd6119a47fa175e4",
+  "class": "UnitShootSoundEffector",
+  "go": "f2_hero_coiltank_meta",
+  "tailLen": 12,
+  "tailHex": "f3000000cdcccc3d00000000"
+ },
+ {
+  "bundle": "fd6119a47fa175e4",
+  "class": "AudioGroups",
+  "go": "fx_passive_activation",
+  "tailLen": 40,
+  "tailHex": "f0000000010000000000000000000000010000000100000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "fd6119a47fa175e4",
+  "class": "AudioGroups",
+  "go": "fx_idle_weapon_0",
+  "tailLen": 40,
+  "tailHex": "f9000000010000000000000000000000010000000100000000000000000000000000000000000000"
+ },
+ {
+  "bundle": "fd6119a47fa175e4",
+  "class": "UnitMoveSoundEffector",
+  "go": "f2_hero_coiltank_meta",
+  "tailLen": 24,
+  "tailHex": "f00a00000000000000000000000000000000000001000000"
+ },
+ {
+  "bundle": "fd6119a47fa175e4",
+  "class": "AudioGroups",
+  "go": "fx_idle_weapon_1",
+  "tailLen": 40,
+  "tailHex": "f8000000010000000000000000000000010000000100000000000000000000000000000000000000"
+ }
+]

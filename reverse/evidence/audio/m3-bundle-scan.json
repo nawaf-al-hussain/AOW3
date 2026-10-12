@@ -1,0 +1,6718 @@
+{
+ "clip_count": 1677,
+ "clips": [
+  "128_building_an_army",
+  "128_epic_adventure",
+  "128_menu_01",
+  "128_menu_02",
+  "128_menu_03",
+  "128_menu_04",
+  "128_menu_05",
+  "128_menu_06",
+  "128_menu_07",
+  "128_menu_08",
+  "128_prepare_for_battle",
+  "128_rising_action",
+  "128_this_means_war",
+  "Int_14days_open",
+  "Int_30days_open",
+  "act_f1_advance",
+  "act_f1_affirmative",
+  "act_f1_as_you_were",
+  "act_f1_break_their_lines",
+  "act_f1_break_them_up",
+  "act_f1_defend_position",
+  "act_f1_destroy",
+  "act_f1_destroy_it",
+  "act_f1_destroy_them",
+  "act_f1_engaging",
+  "act_f1_fire",
+  "act_f1_follow_me",
+  "act_f1_full_ahead",
+  "act_f1_got_it",
+  "act_f1_group",
+  "act_f1_heading_target",
+  "act_f1_hide",
+  "act_f1_hold_position",
+  "act_f1_lets_go",
+  "act_f1_lets_move",
+  "act_f1_march_mode",
+  "act_f1_move_ahead",
+  "act_f1_ready_for_orders",
+  "act_f1_ready_to_serve",
+  "act_f1_siege_mode",
+  "act_f1_take_aim",
+  "act_f1_target_acquired",
+  "act_f1_target_identified",
+  "act_f1_target_understood",
+  "act_f1_waiting_orders",
+  "act_f1_we_move",
+  "act_f1_yes",
+  "act_f1_yes_sir",
+  "bld_building_end",
+  "bld_building_loop",
+  "bld_building_start",
+  "bld_space_work_loop",
+  "bld_space_work_start",
+  "bld_work_end",
+  "bld_work_loop",
+  "bld_work_start",
+  "boom_big1_g_1",
+  "boom_big1_g_2",
+  "boom_big1_g_3",
+  "boom_big1_g_4",
+  "boom_big1_w_1",
+  "boom_big1_w_2",
+  "boom_big1_w_3",
+  "boom_bld_big",
+  "boom_bld_med",
+  "boom_med1_g_1",
+  "boom_med1_g_2",
+  "boom_med1_g_3",
+  "boom_med1_w_1",
+  "boom_med1_w_2",
+  "boom_metal_crash1",
+  "boom_metal_crash2",
+  "boom_metal_crash3",
+  "boom_nuke_bomb",
+  "boom_small1_g_1",
+  "boom_small1_g_2",
+  "boom_small1_g_3",
+  "boom_small1_w_1",
+  "boom_small1_w_2",
+  "boom_small2_g_1",
+  "boom_small3_g_1",
+  "boom_small3_g_2",
+  "boom_space",
+  "boom_water_splash",
+  "effect_pss",
+  "fire_bomb1_1",
+  "fire_flame1_1",
+  "fire_flame1_2",
+  "fire_gun1_1",
+  "fire_gun2_1",
+  "fire_gun2_2",
+  "fire_gun3_1",
+  "fire_gun3_2",
+  "fire_gun4_1",
+  "fire_gun4_2",
+  "fire_gun5_1",
+  "fire_gun6_1",
+  "fire_gun7_1",
+  "fire_gun7_2",
+  "fire_launch_nuke_rocket",
+  "fire_launch_nuke_rocket_2",
+  "fire_launch_space",
+  "fire_machine1_1",
+  "fire_machine2_1",
+  "fire_machine3_1",
+  "fire_machine4_1",
+  "fire_missile1_1",
+  "fire_missile2_1",
+  "fire_missile3_1",
+  "fire_missile4_1",
+  "fire_missile4_2",
+  "fire_missile5_1",
+  "fire_missile6_1",
+  "fire_missile7_1",
+  "fire_rifle1_1",
+  "fire_rifle1_2",
+  "fire_rifle1_3",
+  "fire_rifle2_1",
+  "fire_rifle2_2",
+  "fire_rifle2_3",
+  "fire_slug1_1",
+  "fire_sniper1_1",
+  "fire_torpedo2_1",
+  "h1_atlant_active",
+  "h1_atlant_active_prepare",
+  "h1_atlant_fire",
+  "h1_atlant_immortal",
+  "h1_atlant_impact_1",
+  "h1_atlant_impact_2",
+  "h1_atlant_impact_3",
+  "h1_atlant_passive_off",
+  "h1_atlant_passive_on",
+  "h1_atlant_step_1",
+  "h1_atlant_step_2",
+  "h1_atlas_aint_nobody_got_time_for_that",
+  "h1_atlas_all_cannons_lockedon",
+  "h1_atlas_always_ready",
+  "h1_atlas_armor_penetration_guaranteed",
+  "h1_atlas_armor_what_armor_haha",
+  "h1_atlas_atlas_warbot_online",
+  "h1_atlas_awaiting_your_word",
+  "h1_atlas_bad_day_to_meet_me",
+  "h1_atlas_barely_felt_that",
+  "h1_atlas_big_boss_is_here",
+  "h1_atlas_come_at_me_bro",
+  "h1_atlas_confederation_is_supreme",
+  "h1_atlas_crushem",
+  "h1_atlas_didnt_even_have_to_aim",
+  "h1_atlas_feel_my_wrath",
+  "h1_atlas_fighting_till_the_very_end",
+  "h1_atlas_finally_some_action",
+  "h1_atlas_floor_is_a_lava",
+  "h1_atlas_force_barrier_is_on",
+  "h1_atlas_giant_and_strong",
+  "h1_atlas_gonna_be_a_fight_now",
+  "h1_atlas_haalt",
+  "h1_atlas_hold_on",
+  "h1_atlas_i_aint_gonna_be_easy",
+  "h1_atlas_i_live_for_this",
+  "h1_atlas_im_starting_blasting",
+  "h1_atlas_into_position",
+  "h1_atlas_its_badly_damaged",
+  "h1_atlas_its_honored_death",
+  "h1_atlas_its_nothing_to_me",
+  "h1_atlas_its_our_last_stand",
+  "h1_atlas_look_whos_there",
+  "h1_atlas_marching_to_victory",
+  "h1_atlas_no_hesitation",
+  "h1_atlas_no_resistance_here",
+  "h1_atlas_no_retreat_no_surrender",
+  "h1_atlas_oh_here_we_go_again",
+  "h1_atlas_on_the_march",
+  "h1_atlas_overpowered_yes_i_am",
+  "h1_atlas_protection_matrix_activated",
+  "h1_atlas_protector_of_land_and_sky",
+  "h1_atlas_ready_to_blastem",
+  "h1_atlas_reloading_at_moment",
+  "h1_atlas_special_ammo_ready",
+  "h1_atlas_step_by_step",
+  "h1_atlas_striding",
+  "h1_atlas_that_one_hurt",
+  "h1_atlas_the_enemy_is_erased",
+  "h1_atlas_they_crossed_the_line",
+  "h1_atlas_turn_it_all_to_dust",
+  "h1_atlas_un-des-tructable",
+  "h1_atlas_wanna_epic_battle",
+  "h1_atlas_wanna_fight_get_it",
+  "h1_atlas_we_all_waiting_comander",
+  "h1_atlas_who_dares_oppose_us",
+  "h1_atlas_why_did_i_get_into_this",
+  "h1_atlas_wow_you_okay_buddy",
+  "h1_atlas_yeah_boy",
+  "h1_beholder_advance_and_watch",
+  "h1_beholder_advancing_cautiously",
+  "h1_beholder_adversary_down",
+  "h1_beholder_aircraft_scout_online",
+  "h1_beholder_alarm",
+  "h1_beholder_attack",
+  "h1_beholder_avenge_me_commandant",
+  "h1_beholder_bonjour_commandant",
+  "h1_beholder_clear_skies_clear_intel",
+  "h1_beholder_consider_it_done",
+  "h1_beholder_coordinates_received",
+  "h1_beholder_critical_damage",
+  "h1_beholder_detected_enemy_weak_spots",
+  "h1_beholder_dont_give_up_without_a_fight",
+  "h1_beholder_en_route",
+  "h1_beholder_enduring_damage",
+  "h1_beholder_enemy_detected",
+  "h1_beholder_enemy_presence_confirmed",
+  "h1_beholder_every_shot_calculated",
+  "h1_beholder_for_the_confederation",
+  "h1_beholder_full_view_reached",
+  "h1_beholder_get_it_out_of_me",
+  "h1_beholder_hit_falling_down",
+  "h1_beholder_i_will_be_your_eyes",
+  "h1_beholder_im_under_fire",
+  "h1_beholder_invisibility_enabled",
+  "h1_beholder_its_not_safe_here",
+  "h1_beholder_maneuvering",
+  "h1_beholder_masked",
+  "h1_beholder_move",
+  "h1_beholder_not_ready_yet",
+  "h1_beholder_observation_complete",
+  "h1_beholder_on_my_guard",
+  "h1_beholder_oui_commandant",
+  "h1_beholder_oversight",
+  "h1_beholder_please_stand_still",
+  "h1_beholder_proceeding_with_orders",
+  "h1_beholder_propeller",
+  "h1_beholder_ready_to_behold",
+  "h1_beholder_ready_to_seek_out_their_flaws",
+  "h1_beholder_reporting_hostile_activity",
+  "h1_beholder_scanner",
+  "h1_beholder_scanner_is_not_ready",
+  "h1_beholder_scanning_armor_for_vulnerability",
+  "h1_beholder_scouting_ahead",
+  "h1_beholder_stealth_mode_activated",
+  "h1_beholder_still_preparing_standby",
+  "h1_beholder_surveillance_is_a_first_priority",
+  "h1_beholder_target_is_locked_on",
+  "h1_beholder_target_neutralized",
+  "h1_beholder_the_all_seeing_eye",
+  "h1_beholder_the_order_is_clear",
+  "h1_beholder_time_for_a_little_surprise",
+  "h1_beholder_ugh_stop_resisting",
+  "h1_beholder_vulnerability_scan_is_ready",
+  "h1_beholder_without_a_miss",
+  "h1_boreas_chills_down_the_spine",
+  "h1_boreas_cold_and_clear",
+  "h1_boreas_cold_as_a_dead_man_indeed",
+  "h1_boreas_cold_justice",
+  "h1_boreas_cold_steel_at_your_service",
+  "h1_boreas_coolant_pressure_stable",
+  "h1_boreas_coolheaded",
+  "h1_boreas_cooling_the_frontline",
+  "h1_boreas_copy_that_commander",
+  "h1_boreas_cryo_systems_online",
+  "h1_boreas_cryoblast_primed",
+  "h1_boreas_cryocore_breached",
+  "h1_boreas_deep_freeze_delivery",
+  "h1_boreas_deep_freeze_is_armed",
+  "h1_boreas_enemy_advance_detected",
+  "h1_boreas_enemy_frozen_out",
+  "h1_boreas_everybody_chill",
+  "h1_boreas_freeze",
+  "h1_boreas_fresh_warm_targets_here",
+  "h1_boreas_frozen_fractured_finished",
+  "h1_boreas_getting_warm",
+  "h1_boreas_hostile_thermal_signature_spotted",
+  "h1_boreas_hull_integrity_dropping_low",
+  "h1_boreas_ice_ice_baby",
+  "h1_boreas_ice_to_meet_you",
+  "h1_boreas_ice_work_team_haha",
+  "h1_boreas_its_kinda_hot_here",
+  "h1_boreas_keeping_pace_with_the_assault",
+  "h1_boreas_lets_cool_their_temper",
+  "h1_boreas_make_them_brittle",
+  "h1_boreas_minefield_that_breaks_the_ice",
+  "h1_boreas_no_chillin_here",
+  "h1_boreas_no_heat_no_haste",
+  "h1_boreas_no_one_gets_past_me",
+  "h1_boreas_no_rush_no_mistakes",
+  "h1_boreas_not_cool_not_cool",
+  "h1_boreas_not_ready_chill_out",
+  "h1_boreas_order_received",
+  "h1_boreas_patience_ice_takes_time",
+  "h1_boreas_requesting_an_order",
+  "h1_boreas_rolling_out",
+  "h1_boreas_science_power",
+  "h1_boreas_snowstorm",
+  "h1_boreas_so_cold",
+  "h1_boreas_stone_cold",
+  "h1_boreas_switch_back",
+  "h1_boreas_system_is_not_cold_enough",
+  "h1_boreas_temperature_is_under_control",
+  "h1_boreas_the_ground_just_bit_back",
+  "h1_boreas_their_armor_will_shatter",
+  "h1_boreas_they_look_overheated",
+  "h1_boreas_under_fire_not_a_joke",
+  "h1_boreas_weapon_of_the_future",
+  "h1_boreas_what_killed_the_dinosaurs_the_ice_age",
+  "h1_boreas_winter_is_coming",
+  "h1_cerberus_aaagh",
+  "h1_cerberus_afirmative",
+  "h1_cerberus_agh",
+  "h1_cerberus_aghh",
+  "h1_cerberus_aghhh",
+  "h1_cerberus_almost_ready",
+  "h1_cerberus_attack",
+  "h1_cerberus_bayonet",
+  "h1_cerberus_cerberus_ready_for_action",
+  "h1_cerberus_change_weapon",
+  "h1_cerberus_charge",
+  "h1_cerberus_come_on_come_on",
+  "h1_cerberus_demolition",
+  "h1_cerberus_dont_joke_with_matilda",
+  "h1_cerberus_eaaaaarr",
+  "h1_cerberus_eaaaaarrr",
+  "h1_cerberus_enemy_detected",
+  "h1_cerberus_enemy_down",
+  "h1_cerberus_enemy_in_view",
+  "h1_cerberus_enemy_on_my_visor",
+  "h1_cerberus_enemy_smashed",
+  "h1_cerberus_energy_shield_activated",
+  "h1_cerberus_engage",
+  "h1_cerberus_fight_till_the_end",
+  "h1_cerberus_get_over_here",
+  "h1_cerberus_got_it",
+  "h1_cerberus_ha",
+  "h1_cerberus_haa",
+  "h1_cerberus_haha_oh_eyah",
+  "h1_cerberus_haha_take_that",
+  "h1_cerberus_hee",
+  "h1_cerberus_hu",
+  "h1_cerberus_huaa",
+  "h1_cerberus_huu",
+  "h1_cerberus_i_feel_power",
+  "h1_cerberus_i_need_action",
+  "h1_cerberus_i_never_hesitate",
+  "h1_cerberus_i_want_more_enemies",
+  "h1_cerberus_ill_do_it_with_pleasure",
+  "h1_cerberus_jetpack_reloaded",
+  "h1_cerberus_jump_landing",
+  "h1_cerberus_just_give_me_a_target",
+  "h1_cerberus_killing_time",
+  "h1_cerberus_landing_explosion",
+  "h1_cerberus_lead_me_to_battle",
+  "h1_cerberus_lets_do_it_fast",
+  "h1_cerberus_lock_and_load",
+  "h1_cerberus_multigun_loaded",
+  "h1_cerberus_my_matilda_is_waiting_for_action",
+  "h1_cerberus_no_mercy_for_cowards_haha",
+  "h1_cerberus_no_problem",
+  "h1_cerberus_no_time_to_wait",
+  "h1_cerberus_not_now",
+  "h1_cerberus_reloading",
+  "h1_cerberus_roger_that",
+  "h1_cerberus_run_away_cowards",
+  "h1_cerberus_shield",
+  "h1_cerberus_shields_on",
+  "h1_cerberus_show_me_an_enemy_to_shred",
+  "h1_cerberus_shred_them_to_bits",
+  "h1_cerberus_take_this",
+  "h1_cerberus_taste_this",
+  "h1_cerberus_ugh",
+  "h1_cerberus_ughh",
+  "h1_cerberus_waiting_orders",
+  "h1_cerberus_walk",
+  "h1_cerberus_where_you_going",
+  "h1_cerberus_whos_next",
+  "h1_cerberus_you_aint_seen_nothing_yet",
+  "h1_cerberus_you_want_the_best_here_i_am",
+  "h1_psion_advancing",
+  "h1_psion_as_i_thought",
+  "h1_psion_become_my_thralls",
+  "h1_psion_bring_them_nightmares",
+  "h1_psion_critical_damage_level",
+  "h1_psion_divide_and_conquer",
+  "h1_psion_do_we_need_a_brainstorm",
+  "h1_psion_how_can_this_be",
+  "h1_psion_i_crave_for_power",
+  "h1_psion_i_read_minds",
+  "h1_psion_i_sense_enemy_presence",
+  "h1_psion_i_sense_their_rage_and..._fear",
+  "h1_psion_i_still..._command...",
+  "h1_psion_im..._fading",
+  "h1_psion_im_victorious",
+  "h1_psion_is_this_a_riot",
+  "h1_psion_it_is_recharging",
+  "h1_psion_kneel_before_me",
+  "h1_psion_let_me_fry_their_brains",
+  "h1_psion_lets_do_an_experiment",
+  "h1_psion_lets_make_some_puppets",
+  "h1_psion_lets_see...",
+  "h1_psion_mind_over_matter",
+  "h1_psion_mindbreak_is_ready",
+  "h1_psion_mines_are_stupid",
+  "h1_psion_my_path_is_clear",
+  "h1_psion_my_thoughts_exactly",
+  "h1_psion_my_will_is_unbreakable",
+  "h1_psion_no_rest_for_me",
+  "h1_psion_nothing_holds_me_back",
+  "h1_psion_obey_and_follow_me",
+  "h1_psion_obey_your_master",
+  "h1_psion_of_course",
+  "h1_psion_pathetic",
+  "h1_psion_patience_is_a_virtue",
+  "h1_psion_psychic_power",
+  "h1_psion_put_them_to_the_test",
+  "h1_psion_ready_to_dominate",
+  "h1_psion_spotted_hostile_brainwaves",
+  "h1_psion_stop_it",
+  "h1_psion_stronger_than_ever",
+  "h1_psion_suppress_their_will",
+  "h1_psion_suppression",
+  "h1_psion_supress_them",
+  "h1_psion_target_vanquished",
+  "h1_psion_tell_me_your_order",
+  "h1_psion_test_subjects_detected",
+  "h1_psion_tremble_in_fear",
+  "h1_psion_troublesome_creatures",
+  "h1_psion_twist_their_minds",
+  "h1_psion_we_need_to_wait",
+  "h1_psion_what_changed_your_mind",
+  "h1_psion_you_have_my_attention_commander",
+  "h1_psitank_active_impact",
+  "h1_psitank_active_shot",
+  "h1_psitank_active_start",
+  "h1_psitank_attack_attack",
+  "h1_psitank_attack_attack2",
+  "h1_psitank_attack_attack3",
+  "h1_psitank_attack_impact",
+  "h1_psitank_attack_impact2",
+  "h1_psitank_attack_impact3",
+  "h1_psitank_attack_impact4",
+  "h1_psitank_move",
+  "h1_psitank_passive1",
+  "h1_psitank_passive2",
+  "h1_psitank_passive_impact",
+  "h1_seraphim_affirmative",
+  "h1_seraphim_all_system_ready",
+  "h1_seraphim_as_fast_as_possible",
+  "h1_seraphim_as_you_say",
+  "h1_seraphim_attack",
+  "h1_seraphim_be_patient",
+  "h1_seraphim_blessing_you",
+  "h1_seraphim_checking_ignition",
+  "h1_seraphim_complete_absolution",
+  "h1_seraphim_confederation_bless_you",
+  "h1_seraphim_confirmed",
+  "h1_seraphim_destination_clear",
+  "h1_seraphim_double_power",
+  "h1_seraphim_enemy_down",
+  "h1_seraphim_enemy_spotted",
+  "h1_seraphim_fire_on_target",
+  "h1_seraphim_flight",
+  "h1_seraphim_frenzy_fire",
+  "h1_seraphim_got_it",
+  "h1_seraphim_here_my_blessing",
+  "h1_seraphim_iam_loosing_control",
+  "h1_seraphim_in_control",
+  "h1_seraphim_incoming_fire",
+  "h1_seraphim_incoming_missles",
+  "h1_seraphim_judgment_day_has_come",
+  "h1_seraphim_landing_keep_away",
+  "h1_seraphim_locked_on_target",
+  "h1_seraphim_massive_fire",
+  "h1_seraphim_may_day",
+  "h1_seraphim_moving",
+  "h1_seraphim_need_my_blessing",
+  "h1_seraphim_no_problem",
+  "h1_seraphim_noone_will_survive",
+  "h1_seraphim_overdrive",
+  "h1_seraphim_passive",
+  "h1_seraphim_point_captured",
+  "h1_seraphim_prepare_for_catharsis",
+  "h1_seraphim_punishment",
+  "h1_seraphim_punishment_ready",
+  "h1_seraphim_ready_for_operation",
+  "h1_seraphim_reloading",
+  "h1_seraphim_rocket_launch",
+  "h1_seraphim_rocket_salvo",
+  "h1_seraphim_rockets_reloaded",
+  "h1_seraphim_seraphim_going_down",
+  "h1_seraphim_seraphim_reporting",
+  "h1_seraphim_shooting",
+  "h1_seraphim_step_new_1",
+  "h1_seraphim_step_new_2",
+  "h1_seraphim_taking_damage",
+  "h1_seraphim_taking_off",
+  "h1_seraphim_target_detected",
+  "h1_seraphim_target_eliminated",
+  "h1_seraphim_they_will_confess",
+  "h1_seraphim_transform_1",
+  "h1_seraphim_transform_2",
+  "h1_seraphim_transformation",
+  "h1_seraphim_we_have_a_mission",
+  "h1_seraphim_well_done",
+  "h1_seraphim_you_want_to_confess",
+  "h1_solaris_active",
+  "h1_solaris_affirmative",
+  "h1_solaris_armor_critical",
+  "h1_solaris_attack",
+  "h1_solaris_battaries_charged",
+  "h1_solaris_battaries_empty",
+  "h1_solaris_battaries_full",
+  "h1_solaris_burn_them_to_ashes",
+  "h1_solaris_chain_damage",
+  "h1_solaris_checking_systems",
+  "h1_solaris_destination_clear",
+  "h1_solaris_destroying",
+  "h1_solaris_discharge",
+  "h1_solaris_em_systems_ready",
+  "h1_solaris_emp_strike",
+  "h1_solaris_enemy_in_sight",
+  "h1_solaris_enemy_roasted",
+  "h1_solaris_enemy_sighted",
+  "h1_solaris_enemy_vanished",
+  "h1_solaris_forward",
+  "h1_solaris_great_shot",
+  "h1_solaris_ill_vanish_them",
+  "h1_solaris_impact",
+  "h1_solaris_in_motion",
+  "h1_solaris_in_the_name_of_confederation",
+  "h1_solaris_incoming_damage",
+  "h1_solaris_leave_nothing",
+  "h1_solaris_lets_shake_them",
+  "h1_solaris_move1",
+  "h1_solaris_move2",
+  "h1_solaris_moving_out",
+  "h1_solaris_oh_yeah",
+  "h1_solaris_passive",
+  "h1_solaris_perfect",
+  "h1_solaris_point_captured",
+  "h1_solaris_power",
+  "h1_solaris_power__on",
+  "h1_solaris_power_strike",
+  "h1_solaris_ready_for_vanishing",
+  "h1_solaris_solaris_destroyed",
+  "h1_solaris_solaris_moving",
+  "h1_solaris_solaris_reporting",
+  "h1_solaris_solaris_tank_ready",
+  "h1_solaris_systems_damaged",
+  "h1_solaris_taking_damage",
+  "h1_solaris_taking_position",
+  "h1_solaris_target_locked",
+  "h1_solaris_they_will_fail",
+  "h1_solaris_thunder_and_lightning",
+  "h1_solaris_wait_recharging",
+  "h1_solaris_well_done",
+  "h1_solaris_yeah",
+  "h1_solaris_yes_commander",
+  "h2_bison_abra_cadabra_lightning_orb",
+  "h2_bison_all_coils_busy",
+  "h2_bison_ball_lightning_is_ready",
+  "h2_bison_big_plasma_ball",
+  "h2_bison_cabins_on_fire",
+  "h2_bison_calm_before_the_storm",
+  "h2_bison_caution_electric_shock_hazard",
+  "h2_bison_charg\u0435",
+  "h2_bison_current_kills",
+  "h2_bison_danger_close_i_am_the_danger_close",
+  "h2_bison_danger_high_voltage",
+  "h2_bison_death_by_electrocution",
+  "h2_bison_deep_fried",
+  "h2_bison_discharged",
+  "h2_bison_dont_stay_near",
+  "h2_bison_electro_nova",
+  "h2_bison_electrodes_ready",
+  "h2_bison_facing_the_enemy",
+  "h2_bison_found_something_hostile",
+  "h2_bison_hair_on_end",
+  "h2_bison_here_coming_thunderbolt",
+  "h2_bison_i_am_resistance_itself_literally",
+  "h2_bison_i_dont_conduct_negotiations",
+  "h2_bison_im_the_one_they_do_fear",
+  "h2_bison_its_hooked_up_well",
+  "h2_bison_its_over_9000_volts",
+  "h2_bison_lets_take_a_closer_look",
+  "h2_bison_like_a_battering_ram",
+  "h2_bison_lovely_battery_hummin",
+  "h2_bison_maximum_extermination",
+  "h2_bison_melt_through_them",
+  "h2_bison_my_armor_is_iron",
+  "h2_bison_need_an_electrician",
+  "h2_bison_oh_they_titillate_my_nerves",
+  "h2_bison_okay_understood",
+  "h2_bison_on_maximum_power",
+  "h2_bison_others_will_take_my_place",
+  "h2_bison_overcharge",
+  "h2_bison_poof_at_its_gone",
+  "h2_bison_positive",
+  "h2_bison_ready_to_do_some_magic_tricks",
+  "h2_bison_ready_to_melt_them",
+  "h2_bison_release_the_clutch",
+  "h2_bison_ride_the_lightning",
+  "h2_bison_shock_therapy",
+  "h2_bison_shortcircuit_here",
+  "h2_bison_surging_forward",
+  "h2_bison_switch_off",
+  "h2_bison_the_bottom_gonna_break",
+  "h2_bison_the_storm_is_coming",
+  "h2_bison_theyve_grounded_me",
+  "h2_bison_thunderstruck",
+  "h2_bison_too_many_sparks_inside",
+  "h2_bison_total_blackout",
+  "h2_bison_what_is_just_tinkled",
+  "h2_bison_\u0441harging_at_the_max",
+  "h2_bison_\u0441ome_closer_fools",
+  "h2_bison_\u0441ontacts_\u0441heck_wiring_check",
+  "h2_coiltank_active_charge",
+  "h2_coiltank_active_fire",
+  "h2_coiltank_active_impact",
+  "h2_coiltank_auto",
+  "h2_coiltank_auto_2",
+  "h2_coiltank_idle",
+  "h2_coiltank_idle2_1",
+  "h2_coiltank_idle2_2",
+  "h2_coiltank_lightnings_impact_2",
+  "h2_coiltank_lightnings_impact_3",
+  "h2_coiltank_ligtnings_impact_1",
+  "h2_coiltank_move",
+  "h2_coiltank_move_select",
+  "h2_coiltank_passive_charge",
+  "h2_coiltank_passive_shot",
+  "h2_gatling_active_prepare",
+  "h2_gatling_active_shot",
+  "h2_gatling_at_full_speed",
+  "h2_gatling_attack_1",
+  "h2_gatling_attack_2_loop",
+  "h2_gatling_attack_3_loop",
+  "h2_gatling_attack_spin_end",
+  "h2_gatling_attack_spin_loop",
+  "h2_gatling_attack_spin_start",
+  "h2_gatling_battle_frenzy",
+  "h2_gatling_beast_mode",
+  "h2_gatling_blood_for_blood",
+  "h2_gatling_born_to_fight",
+  "h2_gatling_bring_it_on",
+  "h2_gatling_bullet_storm_is_coming",
+  "h2_gatling_death_volley_ready",
+  "h2_gatling_easy_pickings",
+  "h2_gatling_executing_the_order",
+  "h2_gatling_found_the_threat",
+  "h2_gatling_gatling_claws_and_metal_hide",
+  "h2_gatling_gimme_real_challenge",
+  "h2_gatling_give_em_hell",
+  "h2_gatling_grip_of_steel",
+  "h2_gatling_grr_patience",
+  "h2_gatling_hunting_season",
+  "h2_gatling_i_love_the_smell_of_gunpowder",
+  "h2_gatling_just_a_scratch",
+  "h2_gatling_lethal_firepower",
+  "h2_gatling_lets_find_some_targets",
+  "h2_gatling_lets_practice_shooting",
+  "h2_gatling_minefield_really",
+  "h2_gatling_not_yet",
+  "h2_gatling_oh_they_ruined_all_the_fun",
+  "h2_gatling_on_a_prowl",
+  "h2_gatling_one_down_next",
+  "h2_gatling_passive_shot",
+  "h2_gatling_passive_smoke_bullet",
+  "h2_gatling_prey_in_sight",
+  "h2_gatling_push_harder",
+  "h2_gatling_ready_for_a_carnage",
+  "h2_gatling_ready_to_destroy",
+  "h2_gatling_rollin",
+  "h2_gatling_running_wild",
+  "h2_gatling_smoke_and_fire",
+  "h2_gatling_smoke_boom",
+  "h2_gatling_smoke_em_all",
+  "h2_gatling_smoke_loop",
+  "h2_gatling_son_of_v1",
+  "h2_gatling_son_of_v2",
+  "h2_gatling_still_reloading",
+  "h2_gatling_sure_thing",
+  "h2_gatling_switching_tactics",
+  "h2_gatling_targets_on_the_radar",
+  "h2_gatling_tear_em_apart",
+  "h2_gatling_theyre_testing_my_limits",
+  "h2_gatling_this_could_be_the_end",
+  "h2_gatling_unleash_hellfire",
+  "h2_gatling_wahaha_yes",
+  "h2_gatling_wanna_piece_of_me",
+  "h2_gatling_wheres_my_prey",
+  "h2_gatling_wolverine_here",
+  "h2_gatling_wreak_havoc",
+  "h2_gatling_you_call_that_damage",
+  "h2_leviaphan_alarm1",
+  "h2_leviaphan_alarm2",
+  "h2_leviaphan_attack",
+  "h2_leviaphan_explosion",
+  "h2_leviaphan_flight",
+  "h2_leviaphan_open_slot",
+  "h2_leviaphan_passive",
+  "h2_leviaphan_rocket",
+  "h2_leviathan_air_target_detected",
+  "h2_leviathan_all_ahead",
+  "h2_leviathan_all_crew_prepare_for_hard_landing",
+  "h2_leviathan_all_guns_fire",
+  "h2_leviathan_all_weapons_ready",
+  "h2_leviathan_as_you_command",
+  "h2_leviathan_captain_here",
+  "h2_leviathan_captain_on_the_bridge",
+  "h2_leviathan_confirmed",
+  "h2_leviathan_course_set",
+  "h2_leviathan_destroy_them",
+  "h2_leviathan_destroy_them_now",
+  "h2_leviathan_devastation",
+  "h2_leviathan_devastation_ready",
+  "h2_leviathan_domination_in_the_sky",
+  "h2_leviathan_done",
+  "h2_leviathan_enemy_vanished",
+  "h2_leviathan_enjoy_the_show",
+  "h2_leviathan_falling_down",
+  "h2_leviathan_for_the_clear_sky",
+  "h2_leviathan_full_ahead",
+  "h2_leviathan_heat_flares",
+  "h2_leviathan_incoming_fire",
+  "h2_leviathan_incoming_missiles",
+  "h2_leviathan_its_my_last_greeting",
+  "h2_leviathan_leave_nothing",
+  "h2_leviathan_leviathan_destroyed",
+  "h2_leviathan_leviathan_is_here",
+  "h2_leviathan_mass_destruction",
+  "h2_leviathan_may_day_may_day",
+  "h2_leviathan_missile_shield",
+  "h2_leviathan_naval_target_detected",
+  "h2_leviathan_neutralized",
+  "h2_leviathan_nuclear_missile_ready",
+  "h2_leviathan_our_time_has_come",
+  "h2_leviathan_prepare_for_destruction",
+  "h2_leviathan_preparing_missile",
+  "h2_leviathan_reloading",
+  "h2_leviathan_size_does_matter",
+  "h2_leviathan_steer_the_course",
+  "h2_leviathan_taking_fire",
+  "h2_leviathan_target_ahead",
+  "h2_leviathan_target_destroyed",
+  "h2_leviathan_target_eliminated",
+  "h2_leviathan_they_are_doomed",
+  "h2_leviathan_they_will_trouble_you_no_more",
+  "h2_leviathan_this_is_our_day",
+  "h2_leviathan_total_demolition",
+  "h2_leviathan_under_attack",
+  "h2_leviathan_yes_commander",
+  "h2_mole_aha",
+  "h2_mole_almost_ready",
+  "h2_mole_alright",
+  "h2_mole_alright2",
+  "h2_mole_alright3",
+  "h2_mole_armor_critical",
+  "h2_mole_attack",
+  "h2_mole_big_drill_big_hole",
+  "h2_mole_break_them_all",
+  "h2_mole_deploying",
+  "h2_mole_deploying_turret",
+  "h2_mole_diggin_it",
+  "h2_mole_do_you_like_my_drill",
+  "h2_mole_ha_isit_hard",
+  "h2_mole_haha",
+  "h2_mole_haha2",
+  "h2_mole_haha3",
+  "h2_mole_i_can_fix_anything",
+  "h2_mole_i_see_them",
+  "h2_mole_im_under_attack",
+  "h2_mole_its_time_to_hide",
+  "h2_mole_its_too_far_commander",
+  "h2_mole_minimole",
+  "h2_mole_mole_is_online",
+  "h2_mole_mole_ready",
+  "h2_mole_move",
+  "h2_mole_moving",
+  "h2_mole_my_drill_is_heavy",
+  "h2_mole_need_my_help",
+  "h2_mole_no_i_dont_want_to_die",
+  "h2_mole_no_i_dont_want_to_die2",
+  "h2_mole_no_i_dont_want_to_die3",
+  "h2_mole_no_its_not_my_job",
+  "h2_mole_no_retreat",
+  "h2_mole_not_ready",
+  "h2_mole_not_ready2",
+  "h2_mole_oh_no_its_too_fast_for_me",
+  "h2_mole_okey_ill_do_it",
+  "h2_mole_passive_off",
+  "h2_mole_passive_on",
+  "h2_mole_ready_to_repair",
+  "h2_mole_recieving_damage",
+  "h2_mole_safe_mod",
+  "h2_mole_station_off",
+  "h2_mole_station_on",
+  "h2_mole_surprise",
+  "h2_mole_surprise2",
+  "h2_mole_surprise3",
+  "h2_mole_take_this_comrad",
+  "h2_mole_taking_position",
+  "h2_mole_taste_my_drill",
+  "h2_mole_they_are_coming",
+  "h2_mole_they_wont_pass_through me",
+  "h2_mole_too_far_for_me",
+  "h2_mole_turret_ready",
+  "h2_mole_turret_ready_for_deploying",
+  "h2_mole_turret_shot",
+  "h2_mole_ups_going_underground",
+  "h2_mole_wait_commander",
+  "h2_mole_we_will_bury_them_alive",
+  "h2_mole_whatever_you_say",
+  "h2_mole_whats_next",
+  "h2_mole_yap",
+  "h2_mole_yeah_baby",
+  "h2_mole_yes",
+  "h2_salamander_active_full_open",
+  "h2_salamander_active_impact_land",
+  "h2_salamander_active_impact_water",
+  "h2_salamander_active_launch",
+  "h2_salamander_ah_curse",
+  "h2_salamander_aint_no_stopping_us",
+  "h2_salamander_another_one_bites_the_dust",
+  "h2_salamander_ay_caramba",
+  "h2_salamander_aye_commander",
+  "h2_salamander_curse_this",
+  "h2_salamander_dive_down",
+  "h2_salamander_dive_up",
+  "h2_salamander_diving_deep",
+  "h2_salamander_dodge_this_if_you_can",
+  "h2_salamander_enemy_in_range",
+  "h2_salamander_engineering_marvel_is_here",
+  "h2_salamander_fire_reload",
+  "h2_salamander_fix_it_fix_it",
+  "h2_salamander_full_throttle",
+  "h2_salamander_go_hard",
+  "h2_salamander_hang_on_fellas",
+  "h2_salamander_huh_gotcha",
+  "h2_salamander_i_also_hate_waiting",
+  "h2_salamander_i_hear_ya_commander",
+  "h2_salamander_i_see_the_enemy",
+  "h2_salamander_instructions_clear",
+  "h2_salamander_it_will_take_a_lot_of_duct_tape",
+  "h2_salamander_kick_their_rumps",
+  "h2_salamander_lets_race",
+  "h2_salamander_lets_rock_boys",
+  "h2_salamander_lets_wreck_them",
+  "h2_salamander_move_ground",
+  "h2_salamander_move_underw",
+  "h2_salamander_move_water",
+  "h2_salamander_no_place_to_hide",
+  "h2_salamander_off_to_sea",
+  "h2_salamander_ok_moving_on",
+  "h2_salamander_on_my_way_to_a_junkyard",
+  "h2_salamander_on_the_raid",
+  "h2_salamander_one_vehicle_wrecking_crew",
+  "h2_salamander_oops_we_hit_a_mine",
+  "h2_salamander_passive",
+  "h2_salamander_prime_amphibian",
+  "h2_salamander_ready_to_lauch_this_pretty_little_rocket",
+  "h2_salamander_reroute",
+  "h2_salamander_rocket_ready_lets_shoot",
+  "h2_salamander_semiaquatic_semiterrestrial",
+  "h2_salamander_sentenced_to_death",
+  "h2_salamander_set_sail",
+  "h2_salamander_smash_em_up",
+  "h2_salamander_stay_the_course",
+  "h2_salamander_swimin_freely",
+  "h2_salamander_take_courage",
+  "h2_salamander_tapping_button_won\u00b4t_do_the_trick",
+  "h2_salamander_theres_no_need_to_shout",
+  "h2_salamander_threat_here",
+  "h2_salamander_to_pieces",
+  "h2_salamander_under_fire",
+  "h2_salamander_we_fight_on_land_and_sea",
+  "h2_salamander_we_got_the_spirit",
+  "h2_salamander_we_need_to_get_outta_here",
+  "h2_salamander_yeah_its_very_sloow_reloading",
+  "h2_wasp_ability_explosion",
+  "h2_wasp_ability_strike",
+  "h2_wasp_acid_strike",
+  "h2_wasp_alarm",
+  "h2_wasp_any_orders",
+  "h2_wasp_are_you_sure",
+  "h2_wasp_armor_damaged",
+  "h2_wasp_catch_this",
+  "h2_wasp_checking_missiles",
+  "h2_wasp_chemicals_ready",
+  "h2_wasp_collect_loop",
+  "h2_wasp_desolation",
+  "h2_wasp_enemy",
+  "h2_wasp_enemy_spotted",
+  "h2_wasp_falling_down",
+  "h2_wasp_flying",
+  "h2_wasp_got_it",
+  "h2_wasp_gotcha",
+  "h2_wasp_how_about_some_action",
+  "h2_wasp_i_see_you",
+  "h2_wasp_ill_hunt_them_down",
+  "h2_wasp_ill_take_some_down_with_me",
+  "h2_wasp_im_hit",
+  "h2_wasp_just_a_moment",
+  "h2_wasp_leave_it_to_me",
+  "h2_wasp_lets_add_some_green",
+  "h2_wasp_lets_make_it_messy",
+  "h2_wasp_no_problem",
+  "h2_wasp_not_enough_sour",
+  "h2_wasp_not_ready_yet",
+  "h2_wasp_ok",
+  "h2_wasp_on_the_move",
+  "h2_wasp_receiving_damage",
+  "h2_wasp_recharging",
+  "h2_wasp_smoke",
+  "h2_wasp_some_smoke",
+  "h2_wasp_stay_still_now",
+  "h2_wasp_taking_position",
+  "h2_wasp_taste_this",
+  "h2_wasp_thats_all_you_got",
+  "h2_wasp_they_wont_get_far",
+  "h2_wasp_waahoo",
+  "h2_wasp_wasp_is_here",
+  "h2_wasp_wasp_is_ready_for_action",
+  "h2_wasp_yeeehaw",
+  "h2_wasp_you_will_pay_for_this",
+  "int_5_year_birthday",
+  "int_attack",
+  "int_attack_ground",
+  "int_award",
+  "int_battle_chat_incoming",
+  "int_battle_chat_sending",
+  "int_bld_change",
+  "int_box_big_container",
+  "int_box_bonus",
+  "int_box_open",
+  "int_bp_open_vip",
+  "int_bp_receiving",
+  "int_building_denied",
+  "int_building_menu_open",
+  "int_building_move",
+  "int_button_tap_active",
+  "int_button_tap_inactive",
+  "int_cake_collect",
+  "int_change_item",
+  "int_clan_supplies_collected",
+  "int_click1",
+  "int_click3",
+  "int_click4",
+  "int_click5",
+  "int_container",
+  "int_cryptodata_collect",
+  "int_defeat",
+  "int_double",
+  "int_event_joker_box_bad",
+  "int_event_joker_box_good_1",
+  "int_event_joker_box_good_2",
+  "int_event_joker_box_open",
+  "int_first_victory_bonus",
+  "int_halloween_bad_pumpkin",
+  "int_halloween_explosion",
+  "int_halloween_good_pumpkin",
+  "int_halloween_welcome",
+  "int_hero_activation",
+  "int_hint",
+  "int_info_1",
+  "int_info_2",
+  "int_info_feed_lobby",
+  "int_lantern_collect",
+  "int_lottery_bonus",
+  "int_lottery_prize",
+  "int_lottery_spin",
+  "int_lottery_stop",
+  "int_menu_open",
+  "int_mine_set",
+  "int_mission_open",
+  "int_move",
+  "int_move_assault",
+  "int_new_league",
+  "int_new_year",
+  "int_phrase_one",
+  "int_phrase_three",
+  "int_phrase_two",
+  "int_player_add",
+  "int_player_delete",
+  "int_pot_of_gold_collect",
+  "int_premium_bonus",
+  "int_progressbar",
+  "int_progressbar_2",
+  "int_region_close",
+  "int_region_open",
+  "int_score1",
+  "int_score2",
+  "int_score3",
+  "int_score4",
+  "int_score_bonus",
+  "int_score_small",
+  "int_secondary_failed",
+  "int_sfx_border",
+  "int_signal_beam_collect",
+  "int_signal_beam_idle",
+  "int_skill_card_need",
+  "int_skill_card_upgrade_1",
+  "int_skill_card_upgrade_2",
+  "int_skill_series_open",
+  "int_spin",
+  "int_star",
+  "int_stat_buff",
+  "int_supply_box_finish",
+  "int_supply_box_open",
+  "int_supply_box_show",
+  "int_timer",
+  "int_timer_finish",
+  "int_timer_ping",
+  "int_timer_superweapon",
+  "int_timer_superweapon_end",
+  "int_victory",
+  "int_window_close",
+  "int_window_open",
+  "msg_achievement",
+  "msg_allied_base_under_attack",
+  "msg_allied_unit_under_attack",
+  "msg_battle_get_ready",
+  "msg_battle_invitation_received",
+  "msg_battle_lost",
+  "msg_battle_prepare",
+  "msg_bld_complete",
+  "msg_boost_activated",
+  "msg_clanmate_needs_troop",
+  "msg_cont_detected",
+  "msg_defeat",
+  "msg_deploy_begin",
+  "msg_enemy_controls_flags",
+  "msg_enemy_detected",
+  "msg_flag_captured",
+  "msg_flag_lost",
+  "msg_hidden_enemy",
+  "msg_hidden_our",
+  "msg_ins_energy",
+  "msg_ins_res",
+  "msg_join_team_battle",
+  "msg_join_tournament_battle",
+  "msg_lot_invite_its_your_lucky_day",
+  "msg_lot_invite_luck_is_near",
+  "msg_lot_invite_ok_try_your_luck",
+  "msg_lot_invite_take_a_chance",
+  "msg_lot_invite_try_your_luck",
+  "msg_lot_invite_you_are_close",
+  "msg_lot_invite_you_are_very_close",
+  "msg_lot_prize_cheer_up",
+  "msg_lot_prize_come_on",
+  "msg_lot_prize_dont_give_up",
+  "msg_lot_prize_dont_worry",
+  "msg_lot_prize_epic",
+  "msg_lot_prize_epic_prize",
+  "msg_lot_prize_excellent",
+  "msg_lot_prize_excellent_prize",
+  "msg_lot_prize_fantastic",
+  "msg_lot_prize_fantastic_prize",
+  "msg_lot_prize_good",
+  "msg_lot_prize_good_prize",
+  "msg_lot_prize_great",
+  "msg_lot_prize_it_is_great",
+  "msg_lot_prize_its_great",
+  "msg_lot_prize_its_your_lucky_day",
+  "msg_lot_prize_lets_try_again",
+  "msg_lot_prize_perfect",
+  "msg_lot_prize_the_luck_is_near",
+  "msg_lot_prize_very_good_prize",
+  "msg_lot_prize_very_well",
+  "msg_lot_prize_wow1",
+  "msg_lot_prize_wow2",
+  "msg_lot_prize_youre_lucky_today",
+  "msg_lot_prize_youre_really_lucky_today",
+  "msg_lot_prize_youre_very_lucky",
+  "msg_lot_prize_youve_got_the_luck",
+  "msg_mine_exploded",
+  "msg_minefield",
+  "msg_need_cp",
+  "msg_new_level",
+  "msg_new_objective",
+  "msg_not_enoght_credits",
+  "msg_nuclear_detected",
+  "msg_nuclear_ready",
+  "msg_offer_dont_miss",
+  "msg_offer_most_profit",
+  "msg_offer_personal",
+  "msg_offer_special",
+  "msg_our_base_under_attack",
+  "msg_our_bld_destroyed",
+  "msg_our_unit_under_attack",
+  "msg_place_building",
+  "msg_point_captured",
+  "msg_point_lost",
+  "msg_primary_objective_complete",
+  "msg_primary_objective_failed",
+  "msg_res_recieved",
+  "msg_secondary_objective_complete",
+  "msg_skirmish_over",
+  "msg_space_detected",
+  "msg_space_ready",
+  "msg_tournament_is_over",
+  "msg_troop_activated",
+  "msg_troop_arrived",
+  "msg_upg_complete",
+  "msg_victory",
+  "msg_ww_turn",
+  "msg_you_control_flags",
+  "u1_avia_changing_location",
+  "u1_avia_checking_the_course",
+  "u1_avia_commencing_attack_run",
+  "u1_avia_coordinates_confirmed",
+  "u1_avia_cyclone_reporting",
+  "u1_avia_damage_critical",
+  "u1_avia_designation_set",
+  "u1_avia_destination",
+  "u1_avia_destroy",
+  "u1_avia_enemy_destroyed",
+  "u1_avia_fuel_is_out_coming_home",
+  "u1_avia_fuel_level_critical",
+  "u1_avia_fuels_in_red_returning_to_base",
+  "u1_avia_good_work",
+  "u1_avia_im_burning",
+  "u1_avia_im_going_down",
+  "u1_avia_in_control",
+  "u1_avia_job_done_coming_home",
+  "u1_avia_job_well_done",
+  "u1_avia_jobs_done_coming_home",
+  "u1_avia_let_me_take_care_of_it",
+  "u1_avia_lets_takeem_out",
+  "u1_avia_loading",
+  "u1_avia_may_day_may_day_im_hit",
+  "u1_avia_missiles_ready",
+  "u1_avia_orders_received",
+  "u1_avia_patrolling",
+  "u1_avia_pilot_online",
+  "u1_avia_prepare_for_landing",
+  "u1_avia_ready_as_always",
+  "u1_avia_ready_for_take_off",
+  "u1_avia_ready_to_rule_the_skies",
+  "u1_avia_redirecting_course",
+  "u1_avia_roger",
+  "u1_avia_scramble_fighters",
+  "u1_avia_standing_by",
+  "u1_avia_taking_off",
+  "u1_avia_target_eliminated",
+  "u1_avia_target_in_sight",
+  "u1_avia_thor_reporting",
+  "u1_avia_top_speed",
+  "u1_avia_tracking_enemy",
+  "u1_avia_vertex_online",
+  "u1_avia_well_done",
+  "u1_inf_act_as_you_were",
+  "u1_inf_act_attacking",
+  "u1_inf_act_charge",
+  "u1_inf_act_combat_patrol",
+  "u1_inf_act_destroy_this_target",
+  "u1_inf_act_dont_stop_move",
+  "u1_inf_act_engage",
+  "u1_inf_act_fire",
+  "u1_inf_act_fire_this_target",
+  "u1_inf_act_got_it",
+  "u1_inf_act_here_we_go",
+  "u1_inf_act_hold_position",
+  "u1_inf_act_in_motion",
+  "u1_inf_act_kill_target",
+  "u1_inf_act_lets_blow_them_up",
+  "u1_inf_act_lets_giveem_hell",
+  "u1_inf_act_lets_move",
+  "u1_inf_act_move_move",
+  "u1_inf_act_move_your_ass",
+  "u1_inf_act_moving",
+  "u1_inf_act_off_we_go",
+  "u1_inf_act_roger",
+  "u1_inf_act_stop",
+  "u1_inf_act_stop_action",
+  "u1_inf_act_stop_firing",
+  "u1_inf_act_take_this_aim",
+  "u1_inf_act_yes_sir",
+  "u1_inf_ev_air",
+  "u1_inf_ev_air-raid_warning",
+  "u1_inf_ev_airstrike",
+  "u1_inf_ev_artillery",
+  "u1_inf_ev_contact",
+  "u1_inf_ev_cover_me",
+  "u1_inf_ev_damn_i_got_shot",
+  "u1_inf_ev_enemy_air_support",
+  "u1_inf_ev_enemy_armor_down",
+  "u1_inf_ev_enemy_coming",
+  "u1_inf_ev_enemy_killed",
+  "u1_inf_ev_enemy_shields_on",
+  "u1_inf_ev_enemy_structure",
+  "u1_inf_ev_enemy_tank_destroyed",
+  "u1_inf_ev_enemy_vehicle",
+  "u1_inf_ev_enemy_vehicle_down",
+  "u1_inf_ev_enemy_warship",
+  "u1_inf_ev_fall_back",
+  "u1_inf_ev_flag_captured",
+  "u1_inf_ev_good_shooting",
+  "u1_inf_ev_hold_the_flag",
+  "u1_inf_ev_incomiiiing",
+  "u1_inf_ev_incoming_strike_take_care",
+  "u1_inf_ev_lets_take_the_point",
+  "u1_inf_ev_minefield_here",
+  "u1_inf_ev_mines",
+  "u1_inf_ev_mines_all_around",
+  "u1_inf_ev_my_suit_damaged",
+  "u1_inf_ev_need_support",
+  "u1_inf_ev_point_captured",
+  "u1_inf_ev_receiving_fire",
+  "u1_inf_ev_smokescreen",
+  "u1_inf_ev_snipers",
+  "u1_inf_ev_snipers_over_there",
+  "u1_inf_ev_supplies_container_spotted",
+  "u1_inf_ev_take_care",
+  "u1_inf_ev_take_the_flag",
+  "u1_inf_ev_target_destroyed",
+  "u1_inf_ev_target_killed",
+  "u1_inf_ev_target_smashed",
+  "u1_inf_ev_target_spotted",
+  "u1_inf_ev_they_burn_us",
+  "u1_inf_ev_they_use_fog",
+  "u1_inf_ev_watch_out_minefield",
+  "u1_inf_sel_flaming_greetings",
+  "u1_inf_sel_give_me_orders",
+  "u1_inf_sel_ready",
+  "u1_inf_sel_ready_for_orders",
+  "u1_inf_sel_ready_for_trouble",
+  "u1_inf_sel_ready_to_kick_ass",
+  "u1_inf_sel_ready_to_roast",
+  "u1_inf_sel_show_me_armor",
+  "u1_inf_sel_squad_ready",
+  "u1_inf_sel_squad_ready_and_waiting",
+  "u1_inf_sel_this_thing_is_heavy",
+  "u1_nav_air_target_detected",
+  "u1_nav_all_ahead_twothirds",
+  "u1_nav_approaching",
+  "u1_nav_at_your_service",
+  "u1_nav_battlecruiser_ready_and_waiting",
+  "u1_nav_battlecruiser_reporting",
+  "u1_nav_confirmed",
+  "u1_nav_destroyer_online",
+  "u1_nav_destroyer_ready",
+  "u1_nav_eliminated",
+  "u1_nav_enemy_engaged",
+  "u1_nav_executed",
+  "u1_nav_fire_on_target",
+  "u1_nav_full_ahead",
+  "u1_nav_full_speed_ahead",
+  "u1_nav_go_for_hard_burn",
+  "u1_nav_hard_to_starboard",
+  "u1_nav_land_target",
+  "u1_nav_left_full_rudder_all_ahead",
+  "u1_nav_open_kingstons_scuttle_the_ship",
+  "u1_nav_receiving_damage",
+  "u1_nav_right_full_rudder_all_ahead",
+  "u1_nav_salvo_fire",
+  "u1_nav_sea_mines",
+  "u1_nav_sea_mines_detected",
+  "u1_nav_ship_is_sinking",
+  "u1_nav_skipper",
+  "u1_nav_steady",
+  "u1_nav_steer_the_course",
+  "u1_nav_surface_target_ahead",
+  "u1_nav_target_destroyed",
+  "u1_nav_target_set",
+  "u1_veh_accomplished",
+  "u1_veh_advance",
+  "u1_veh_afirmative",
+  "u1_veh_airraid_warning",
+  "u1_veh_airstrike",
+  "u1_veh_antitank_infantry",
+  "u1_veh_any_orders",
+  "u1_veh_approaching_target",
+  "u1_veh_artillery",
+  "u1_veh_artillery_strike",
+  "u1_veh_ashes_to_ashes",
+  "u1_veh_attacking",
+  "u1_veh_boooom_haha",
+  "u1_veh_burn_in_hell",
+  "u1_veh_clearing_sector",
+  "u1_veh_commander",
+  "u1_veh_contact",
+  "u1_veh_critical_damage",
+  "u1_veh_deploying",
+  "u1_veh_destroy_target",
+  "u1_veh_destroying",
+  "u1_veh_dont_move",
+  "u1_veh_driving",
+  "u1_veh_eliminated",
+  "u1_veh_enemy_coming",
+  "u1_veh_enemy_destroyed",
+  "u1_veh_enemys_on_radar",
+  "u1_veh_fire",
+  "u1_veh_fire_this_target",
+  "u1_veh_fireee",
+  "u1_veh_flag_captured",
+  "u1_veh_fog_cloud_in_sight",
+  "u1_veh_fortress_ready",
+  "u1_veh_fueled_up_and_ready",
+  "u1_veh_full_ahead",
+  "u1_veh_give_me_a_firing_solution",
+  "u1_veh_give_me_a_target_to_smash",
+  "u1_veh_good_job_man",
+  "u1_veh_got_him_haha",
+  "u1_veh_guns_loaded",
+  "u1_veh_haha_is_it_hot_enough_for_you",
+  "u1_veh_hammer_ready",
+  "u1_veh_hold_position",
+  "u1_veh_hold_your_ground",
+  "u1_veh_i_am_indestructible",
+  "u1_veh_i_cant_hold",
+  "u1_veh_lets_blow_them_up",
+  "u1_veh_lets_burn_them",
+  "u1_veh_liquidating",
+  "u1_veh_minefield_detected",
+  "u1_veh_minefield_here",
+  "u1_veh_mines_dont_move_here",
+  "u1_veh_moving_out",
+  "u1_veh_my_armor_damaged",
+  "u1_veh_need_protection",
+  "u1_veh_neutralised",
+  "u1_veh_on_the_move",
+  "u1_veh_patrolling",
+  "u1_veh_radars_on",
+  "u1_veh_ready_for_orders",
+  "u1_veh_ready_to_move_out",
+  "u1_veh_ready_to_roast",
+  "u1_veh_reporting_damage",
+  "u1_veh_rockets_loaded",
+  "u1_veh_scanning",
+  "u1_veh_sector_clear",
+  "u1_veh_shield_ready",
+  "u1_veh_shoot_shoot",
+  "u1_veh_siege_mode",
+  "u1_veh_smells_like_a_grilled_meat",
+  "u1_veh_structures_on_radar",
+  "u1_veh_supply_container_here",
+  "u1_veh_take_this_flag",
+  "u1_veh_take_this_ground",
+  "u1_veh_taking_fire",
+  "u1_veh_target_down",
+  "u1_veh_target_marked",
+  "u1_veh_they_using_shield",
+  "u1_veh_took_him_in_sight",
+  "u1_veh_torrent_ready",
+  "u1_veh_tracking_enemy",
+  "u1_veh_typhoon_ready",
+  "u1_veh_understood",
+  "u1_veh_we_taking_fire",
+  "u1_veh_well_done",
+  "u1_veh_were_under_attack",
+  "u1_veh_whats_our_target",
+  "u1_veh_whos_next",
+  "u1_veh_yes_sir",
+  "u1_veh_zeus_tank_ready",
+  "u2_avia_albatross_reporting",
+  "u2_avia_bombs_loaded",
+  "u2_avia_booom",
+  "u2_avia_commence_firing",
+  "u2_avia_commencing_attack_run",
+  "u2_avia_coordinates_set",
+  "u2_avia_critical_damage",
+  "u2_avia_dragonfly_reporting",
+  "u2_avia_enemy_in_sight",
+  "u2_avia_enjoy_the_show",
+  "u2_avia_fasten_your_seat_belts",
+  "u2_avia_fuel_level_critical",
+  "u2_avia_hawk_fighter_online",
+  "u2_avia_im_hit",
+  "u2_avia_im_hit_im_hit",
+  "u2_avia_in_control",
+  "u2_avia_its_hot_its_hoooot",
+  "u2_avia_its_our_diplomatic_note_haha",
+  "u2_avia_jobs_done_coming_home",
+  "u2_avia_landing",
+  "u2_avia_low_fuel",
+  "u2_avia_low_fuel_returning_to_base",
+  "u2_avia_maneuvering",
+  "u2_avia_no_mercy",
+  "u2_avia_orders_received",
+  "u2_avia_pilot_online",
+  "u2_avia_ready_as_always",
+  "u2_avia_redirecting_course",
+  "u2_avia_relocating",
+  "u2_avia_scramble_fighters",
+  "u2_avia_target_location_confirmed",
+  "u2_avia_target_set",
+  "u2_avia_the_sky_is_ours",
+  "u2_avia_tracking_enemy",
+  "u2_avia_tracking_target",
+  "u2_avia_transport_at_your_service",
+  "u2_avia_welcome_aboard",
+  "u2_avia_well_done_hahaha",
+  "u2_inf_aaaa_im_hit",
+  "u2_inf_afirmative",
+  "u2_inf_air",
+  "u2_inf_ambush",
+  "u2_inf_approaching",
+  "u2_inf_armor_destroyed",
+  "u2_inf_artillery_strike",
+  "u2_inf_as_you_say",
+  "u2_inf_as_you_were",
+  "u2_inf_attack",
+  "u2_inf_awaiting_orders",
+  "u2_inf_bastards",
+  "u2_inf_catch_this_grenade_amigo",
+  "u2_inf_changing_position",
+  "u2_inf_closing_in",
+  "u2_inf_commander",
+  "u2_inf_contact",
+  "u2_inf_cover_me",
+  "u2_inf_damn_they_shooting_us",
+  "u2_inf_destroy_this_armor",
+  "u2_inf_do_it",
+  "u2_inf_dont_be_afraid_of_death",
+  "u2_inf_dont_move_back",
+  "u2_inf_dont_stop_move",
+  "u2_inf_enemy_aircraft",
+  "u2_inf_enemy_destroyed",
+  "u2_inf_enemy_down",
+  "u2_inf_enemy_in_sight",
+  "u2_inf_enemy_ship",
+  "u2_inf_enemy_structure",
+  "u2_inf_enemy_vehicle",
+  "u2_inf_engage",
+  "u2_inf_faster",
+  "u2_inf_fire",
+  "u2_inf_fire_at_will",
+  "u2_inf_fire_hard",
+  "u2_inf_fire_this_target",
+  "u2_inf_flag_captured",
+  "u2_inf_for_freedom",
+  "u2_inf_for_resistance",
+  "u2_inf_get_me_out_of_here",
+  "u2_inf_give_me_orders",
+  "u2_inf_go_go_go",
+  "u2_inf_good_hit",
+  "u2_inf_got_him_haha",
+  "u2_inf_got_it",
+  "u2_inf_grenades_here",
+  "u2_inf_grenades_loaded",
+  "u2_inf_hit_the_ground",
+  "u2_inf_hit_this_target",
+  "u2_inf_holding_position",
+  "u2_inf_hostile_spotted",
+  "u2_inf_im_bleeding",
+  "u2_inf_im_burning_aaaa",
+  "u2_inf_im_dying_here",
+  "u2_inf_its_killing_time",
+  "u2_inf_its_not_good",
+  "u2_inf_jobs_all_done",
+  "u2_inf_lets_do_this",
+  "u2_inf_lets_move",
+  "u2_inf_lets_take_the_point",
+  "u2_inf_move_quietly",
+  "u2_inf_moving",
+  "u2_inf_moving_hide",
+  "u2_inf_my_rifle_is_ready_for_action",
+  "u2_inf_nice_shot",
+  "u2_inf_on_combat_patrol",
+  "u2_inf_orders",
+  "u2_inf_over_there",
+  "u2_inf_point_captured",
+  "u2_inf_quick_as_you_can",
+  "u2_inf_ready",
+  "u2_inf_roger_that",
+  "u2_inf_roger_that_hide",
+  "u2_inf_shoot",
+  "u2_inf_shoot_shoot_them",
+  "u2_inf_show_me_an_armor",
+  "u2_inf_show_them_no_mercy",
+  "u2_inf_speak_quietly",
+  "u2_inf_stop",
+  "u2_inf_stop_action",
+  "u2_inf_stop_firing",
+  "u2_inf_sudden_death",
+  "u2_inf_supplies_found",
+  "u2_inf_take_cover",
+  "u2_inf_take_the_flag",
+  "u2_inf_take_this",
+  "u2_inf_tanks",
+  "u2_inf_they_hide_in_a_fog",
+  "u2_inf_they_shootin_us",
+  "u2_inf_they_use_shield",
+  "u2_inf_tracking_enemy",
+  "u2_inf_under_fire",
+  "u2_inf_under_suppressive_fire",
+  "u2_inf_watch_out",
+  "u2_inf_watch_out_minefield",
+  "u2_inf_we_burning",
+  "u2_inf_we_need_reinforcements",
+  "u2_inf_we_under_fire",
+  "u2_inf_what",
+  "u2_inf_whats_next",
+  "u2_inf_whats_next_hide",
+  "u2_inf_where_to_shoot",
+  "u2_inf_yes",
+  "u2_nav_affirmative",
+  "u2_nav_air_target_detected",
+  "u2_nav_all_ahead",
+  "u2_nav_all_guns_loaded",
+  "u2_nav_alligator_reporting",
+  "u2_nav_barracuda_on_the_hunt",
+  "u2_nav_captain_here",
+  "u2_nav_cayman_here",
+  "u2_nav_course_set",
+  "u2_nav_destroy_them",
+  "u2_nav_full_ahead",
+  "u2_nav_it_is_done",
+  "u2_nav_land_target_spotted",
+  "u2_nav_may_day_may_day",
+  "u2_nav_neutralized",
+  "u2_nav_prepare_for_war",
+  "u2_nav_push_forward",
+  "u2_nav_reporting_for_duty",
+  "u2_nav_rocket_strike",
+  "u2_nav_salvo_fire",
+  "u2_nav_sea_mines",
+  "u2_nav_set_a_course",
+  "u2_nav_ship_sinking",
+  "u2_nav_sink_them_now",
+  "u2_nav_steer_the_course",
+  "u2_nav_submarine_ready",
+  "u2_nav_surface_target_ahead",
+  "u2_nav_taking_fire",
+  "u2_nav_target_aquired",
+  "u2_nav_target_down",
+  "u2_nav_that_was_easy",
+  "u2_nav_the_sea_will_be_ours",
+  "u2_nav_torpedoes",
+  "u2_nav_under_attack",
+  "u2_nav_with_pleasure",
+  "u2_veh_advancing",
+  "u2_veh_air",
+  "u2_veh_airraid_warning",
+  "u2_veh_all_systems_activated",
+  "u2_veh_approaching_to_target",
+  "u2_veh_armodillo_in_action",
+  "u2_veh_armor_pierced",
+  "u2_veh_armor_ready",
+  "u2_veh_artillery_ready",
+  "u2_veh_attacking",
+  "u2_veh_cant_hold_forever",
+  "u2_veh_chameleon_ready",
+  "u2_veh_charge",
+  "u2_veh_clearing_the_area",
+  "u2_veh_command",
+  "u2_veh_commence_firing",
+  "u2_veh_complete",
+  "u2_veh_container_here",
+  "u2_veh_cough_smoky_here",
+  "u2_veh_coyote_ready",
+  "u2_veh_critical_damage",
+  "u2_veh_crush_them",
+  "u2_veh_defend_this_point",
+  "u2_veh_deploying_mines",
+  "u2_veh_destroy",
+  "u2_veh_destroy_target",
+  "u2_veh_direct_hit",
+  "u2_veh_dont_move_back",
+  "u2_veh_dont_worry_about_it",
+  "u2_veh_driving_closer",
+  "u2_veh_enemy_armor_down",
+  "u2_veh_enemy_on_sight",
+  "u2_veh_enemys_using_fog",
+  "u2_veh_enemys_using_shield",
+  "u2_veh_engaging",
+  "u2_veh_engine`s_burning",
+  "u2_veh_executing",
+  "u2_veh_faster_than_light",
+  "u2_veh_fire",
+  "u2_veh_fire_this_target",
+  "u2_veh_fireee",
+  "u2_veh_flag_captured",
+  "u2_veh_fog_activated",
+  "u2_veh_for_freedom",
+  "u2_veh_for_resistance",
+  "u2_veh_full_ahead",
+  "u2_veh_full_throttle",
+  "u2_veh_give_me_a_firing_solution",
+  "u2_veh_give_me_a_target_to_smash",
+  "u2_veh_got_it",
+  "u2_veh_guns_loaded",
+  "u2_veh_hold_this_ground",
+  "u2_veh_i_can_take_it",
+  "u2_veh_incoming_strike",
+  "u2_veh_jaguar_tank_ready",
+  "u2_veh_jobs_done",
+  "u2_veh_just_give_me_orders",
+  "u2_veh_lock_and_load",
+  "u2_veh_mammoth_ready",
+  "u2_veh_massive_fire_on_target",
+  "u2_veh_massive_strike",
+  "u2_veh_minefield",
+  "u2_veh_neeeext",
+  "u2_veh_no_problem",
+  "u2_veh_off_we_go",
+  "u2_veh_on_my_way",
+  "u2_veh_on_the_move",
+  "u2_veh_our_sky_must_be_clear",
+  "u2_veh_patrolling",
+  "u2_veh_point_captured",
+  "u2_veh_porcupine_ready",
+  "u2_veh_ready_for_action",
+  "u2_veh_ready_to_crush",
+  "u2_veh_receiving_much_damage",
+  "u2_veh_roger",
+  "u2_veh_rolling",
+  "u2_veh_shield_theyre_using_shield",
+  "u2_veh_shoot_shoot",
+  "u2_veh_shoot_the_target",
+  "u2_veh_show_them_no_mercy",
+  "u2_veh_siege_mode",
+  "u2_veh_siege_tank_here",
+  "u2_veh_smash_em",
+  "u2_veh_speak_louder",
+  "u2_veh_surprize",
+  "u2_veh_take_this",
+  "u2_veh_take_this_flag",
+  "u2_veh_take_this_ground",
+  "u2_veh_taking_fire",
+  "u2_veh_target_down",
+  "u2_veh_target_eliminated",
+  "u2_veh_target_in_sight",
+  "u2_veh_target_smashed",
+  "u2_veh_took_him_in_sight",
+  "u2_veh_torrent_strike",
+  "u2_veh_two_guns_make_a_double_trouble_to_enemy",
+  "u2_veh_two_shots_-_two_holes",
+  "u2_veh_under_attack",
+  "u2_veh_under_fire",
+  "u2_veh_using_smokescreen",
+  "u2_veh_waiting_for_new_orders",
+  "u2_veh_waiting_orders",
+  "u2_veh_watch_this",
+  "u2_veh_we_taking_fire",
+  "u2_veh_were_controlling_the_area",
+  "u2_veh_what_the_hell",
+  "u2_veh_whats_the_plan",
+  "u2_veh_whos_next",
+  "u2_veh_yeah",
+  "u2_veh_yes_moving",
+  "units_bomber_move1",
+  "units_f1_march1",
+  "units_f1_march2",
+  "units_f1_spec1",
+  "units_f1_spec2",
+  "units_f1_spec2_loop",
+  "units_f2_march1",
+  "units_f2_march2",
+  "units_f2_spec1",
+  "units_f2_spec2",
+  "units_f2_spec2_loop",
+  "units_fighter_down1",
+  "units_fighter_move1",
+  "units_fighter_up1",
+  "units_helicopter_move1",
+  "units_infantry_die1_1",
+  "units_infantry_die1_2",
+  "units_infantry_die1_3",
+  "units_infantry_die1_4",
+  "units_infantry_die1_5",
+  "units_mine_set",
+  "units_nav_move1",
+  "units_submarine_move1",
+  "units_ufo_death",
+  "units_ufo_idle_engine",
+  "units_ufo_move",
+  "units_veh_move1_1",
+  "units_veh_move1_2",
+  "units_zombie_attack_1",
+  "units_zombie_attack_2",
+  "units_zombie_attack_3",
+  "units_zombie_death_1",
+  "units_zombie_death_2",
+  "units_zombie_impact_1",
+  "units_zombie_move_1",
+  "units_zombie_move_2",
+  "units_zombie_move_3",
+  "units_zombie_spotted_1",
+  "units_zombie_spotted_2",
+  "units_zombie_spotted_3"
+ ],
+ "clip_bundles": {
+  "00162bbdd6fb3da4": [
+   "msg_lot_prize_youre_very_lucky"
+  ],
+  "002158cd8dade364": [
+   "msg_mine_exploded"
+  ],
+  "0059c574eb91c4f4": [
+   "h1_cerberus_energy_shield_activated"
+  ],
+  "006c33b1286ace84": [
+   "u1_inf_act_fire"
+  ],
+  "006ce622650e94d4": [
+   "u2_inf_artillery_strike"
+  ],
+  "00724759d9c0c814": [
+   "h1_atlas_its_our_last_stand"
+  ],
+  "00c5d2760c0d4b14": [
+   "h2_gatling_gimme_real_challenge"
+  ],
+  "00cf14e419de1154": [
+   "h2_salamander_under_fire"
+  ],
+  "00d1e7bc51218274": [
+   "u1_avia_jobs_done_coming_home"
+  ],
+  "00d31d95058df114": [
+   "u2_nav_ship_sinking"
+  ],
+  "00da0844429b6574": [
+   "h1_beholder_critical_damage"
+  ],
+  "00fb08877ac8bdb4": [
+   "u2_inf_watch_out"
+  ],
+  "0143b93f39dc9ea4": [
+   "msg_point_lost"
+  ],
+  "0152aa421d04a984": [
+   "u1_avia_tracking_enemy"
+  ],
+  "017fe37cf1432445": [
+   "h2_leviathan_enjoy_the_show"
+  ],
+  "01bc07d050f75a34": [
+   "fire_missile3_1"
+  ],
+  "01c8958143cc9a24": [
+   "u2_veh_on_the_move"
+  ],
+  "01ca0df64b2fca24": [
+   "msg_lot_invite_its_your_lucky_day"
+  ],
+  "01fa64b2e078c7f4": [
+   "u1_avia_target_eliminated"
+  ],
+  "021626ed98d9c4a3": [
+   "h2_leviathan_confirmed"
+  ],
+  "023942a010fc4403": [
+   "h2_mole_break_them_all"
+  ],
+  "023a1d030ba4d0d4": [
+   "u2_veh_advancing"
+  ],
+  "0273240670bbe8d4": [
+   "u1_veh_approaching_target"
+  ],
+  "027cbef9fae1f4bf": [
+   "h2_mole_moving"
+  ],
+  "02973199a4ae1284": [
+   "h2_bison_big_plasma_ball"
+  ],
+  "02b9be4a738ef314": [
+   "h1_beholder_maneuvering"
+  ],
+  "02dd3be8de1ac2d4": [
+   "int_player_delete"
+  ],
+  "02f0a36a021cfd14": [
+   "h2_salamander_aint_no_stopping_us"
+  ],
+  "030f26596be8e574": [
+   "h1_boreas_hostile_thermal_signature_spotted"
+  ],
+  "0328fe59a0309174": [
+   "msg_primary_objective_failed"
+  ],
+  "0331afecf6e2c4a4": [
+   "h1_psion_put_them_to_the_test"
+  ],
+  "03455ea216b24574": [
+   "h2_bison_found_something_hostile"
+  ],
+  "03ca7a9059277b04": [
+   "u2_nav_that_was_easy"
+  ],
+  "03d1ad85339550f4": [
+   "h2_wasp_taste_this"
+  ],
+  "03f6ac2aa3b3a464": [
+   "h2_bison_what_is_just_tinkled"
+  ],
+  "040c59ef0e720f84": [
+   "u2_avia_no_mercy"
+  ],
+  "0433fae910d42244": [
+   "u2_veh_fireee"
+  ],
+  "0459b37e1b0b90f4": [
+   "h2_salamander_go_hard"
+  ],
+  "046bc652923024df": [
+   "h2_leviathan_falling_down"
+  ],
+  "047ed3ee64ded504": [
+   "u2_veh_fire_this_target"
+  ],
+  "04a3bf246cce3ce4": [
+   "h2_salamander_passive"
+  ],
+  "04ad82cb3629d694": [
+   "u1_veh_flag_captured"
+  ],
+  "054d7215196701e4": [
+   "act_f1_lets_move"
+  ],
+  "055a6cdb3dbe5c04": [
+   "h1_atlant_step_1"
+  ],
+  "057beedd7bca4483": [
+   "h2_mole_need_my_help"
+  ],
+  "05f82f6167905fd4": [
+   "h1_beholder_without_a_miss"
+  ],
+  "064313f3892ec3d4": [
+   "h2_salamander_theres_no_need_to_shout"
+  ],
+  "065b1c8cc371ad44": [
+   "int_skill_card_need"
+  ],
+  "0688b4f2b6906194": [
+   "u2_avia_enjoy_the_show"
+  ],
+  "068f1f5ce7b0e4b2": [
+   "h1_cerberus_whos_next"
+  ],
+  "06d43fd67e7e94f0": [
+   "h2_leviathan_course_set"
+  ],
+  "06f4dffec370ea14": [
+   "u2_nav_air_target_detected"
+  ],
+  "0707d088d24fb8d4": [
+   "u1_veh_burn_in_hell"
+  ],
+  "07167fb544957470": [
+   "h1_cerberus_enemy_detected"
+  ],
+  "0717f00abd496e24": [
+   "h2_salamander_move_underw"
+  ],
+  "072a370ed9ea6484": [
+   "h1_cerberus_ugh"
+  ],
+  "0750dece8f695254": [
+   "h1_atlas_barely_felt_that"
+  ],
+  "076c80d63d8de2f4": [
+   "msg_nuclear_ready"
+  ],
+  "077c29c7f60fcf34": [
+   "h1_psion_it_is_recharging"
+  ],
+  "07974e938e5a8714": [
+   "u2_veh_driving_closer"
+  ],
+  "07f022e36518f634": [
+   "u2_inf_as_you_were"
+  ],
+  "07f3fc730c69d5a4": [
+   "u2_nav_barracuda_on_the_hunt"
+  ],
+  "0817ca67e3f95407": [
+   "h1_solaris_attack"
+  ],
+  "0858965e85881254": [
+   "h2_salamander_i_see_the_enemy"
+  ],
+  "085f822523f9b004": [
+   "h1_atlas_striding"
+  ],
+  "086b09c05e60e468": [
+   "h1_solaris_ready_for_vanishing"
+  ],
+  "08e31db8bfdb6fa4": [
+   "int_timer_ping"
+  ],
+  "0904b35533a855a4": [
+   "act_f1_target_identified"
+  ],
+  "097d64791b1c1444": [
+   "h1_beholder_its_not_safe_here"
+  ],
+  "098deec5ff721004": [
+   "u2_inf_give_me_orders"
+  ],
+  "09d5c2b43d11cd94": [
+   "h1_psion_suppression"
+  ],
+  "09eff2c7363c8d54": [
+   "h2_bison_death_by_electrocution"
+  ],
+  "0a3cbf5a634f46a4": [
+   "u1_avia_thor_reporting"
+  ],
+  "0a461e6b327fd224": [
+   "u1_veh_artillery"
+  ],
+  "0a7f74a7c2f55461": [
+   "h1_seraphim_punishment_ready"
+  ],
+  "0a88e16f89181dc4": [
+   "u2_inf_we_burning"
+  ],
+  "0a94a938e5b01e84": [
+   "h1_boreas_no_one_gets_past_me"
+  ],
+  "0aa8bd496ad338c4": [
+   "u2_nav_under_attack"
+  ],
+  "0ad2a73b6f54c400": [
+   "h1_solaris_power"
+  ],
+  "0ae7ecdd15122584": [
+   "u2_inf_shoot_shoot_them"
+  ],
+  "0af6fcfcdcb5a5a4": [
+   "u1_veh_structures_on_radar"
+  ],
+  "0b013e5b486934bb": [
+   "h2_leviathan_prepare_for_destruction"
+  ],
+  "0b15cd9299fb54ff": [
+   "h1_solaris_impact"
+  ],
+  "0b5fffd8384163c4": [
+   "act_f1_destroy"
+  ],
+  "0b6e5131f60394c6": [
+   "h2_leviathan_all_crew_prepare_for_hard_landing"
+  ],
+  "0b736288007edd54": [
+   "h1_boreas_not_cool_not_cool"
+  ],
+  "0bd0bb5da97d9418": [
+   "h2_mole_deploying"
+  ],
+  "0bf21027371a76a4": [
+   "u2_nav_salvo_fire"
+  ],
+  "0c2308da8e96dcd4": [
+   "u1_veh_fireee"
+  ],
+  "0c44b32aba1b2cb4": [
+   "int_container"
+  ],
+  "0c5a6d24edbb4466": [
+   "h1_solaris_passive"
+  ],
+  "0c9debdd1e164e94": [
+   "u1_inf_ev_air-raid_warning"
+  ],
+  "0ca9d76b47db9cb4": [
+   "u2_inf_hostile_spotted"
+  ],
+  "0cabba9d78795f44": [
+   "u2_veh_shoot_the_target"
+  ],
+  "0d2a3d528758adf4": [
+   "h1_atlas_look_whos_there"
+  ],
+  "0d2aa6c2fe0d7114": [
+   "u1_veh_i_cant_hold"
+  ],
+  "0d3f1723a2bc03a4": [
+   "fire_missile4_2"
+  ],
+  "0d4942e17574a544": [
+   "u1_inf_ev_fall_back"
+  ],
+  "0d582ac5a2138ea4": [
+   "units_ufo_death"
+  ],
+  "0da78517865ad465": [
+   "h2_leviaphan_flight"
+  ],
+  "0db6938b44762c44": [
+   "units_zombie_death_1"
+  ],
+  "0e66fbec97b62436": [
+   "h1_solaris_oh_yeah"
+  ],
+  "0e7317ab3020d4ac": [
+   "h2_mole_whatever_you_say"
+  ],
+  "0eb258e4c83cba34": [
+   "h1_psion_tremble_in_fear"
+  ],
+  "0ecb666d8488d834": [
+   "h1_beholder_move"
+  ],
+  "0f35cba2ae4d31e4": [
+   "h2_salamander_oops_we_hit_a_mine"
+  ],
+  "0f3bd02a1caa1c44": [
+   "h1_cerberus_i_never_hesitate"
+  ],
+  "0f59c63649e1bbc4": [
+   "h1_cerberus_no_problem"
+  ],
+  "0fa927c6f2c404d3": [
+   "h2_mole_turret_ready"
+  ],
+  "0fc8767558471894": [
+   "u1_avia_destroy"
+  ],
+  "0ff4998c714fc224": [
+   "u2_veh_defend_this_point"
+  ],
+  "1033a21e7c9ab5e4": [
+   "h2_coiltank_idle2_2"
+  ],
+  "104641e0ef4f29b4": [
+   "int_event_joker_box_good_1"
+  ],
+  "10a04e44d2f62604": [
+   "h1_atlas_no_hesitation"
+  ],
+  "10d369598e998bd4": [
+   "u1_nav_eliminated"
+  ],
+  "10e46c7049655564": [
+   "h2_bison_the_bottom_gonna_break"
+  ],
+  "10e88029c5014eb4": [
+   "u1_avia_fuels_in_red_returning_to_base"
+  ],
+  "11140961ec67ed14": [
+   "int_info_2"
+  ],
+  "112f669ba7a8e524": [
+   "u1_inf_ev_cover_me"
+  ],
+  "11537676d1cb9d94": [
+   "msg_enemy_controls_flags"
+  ],
+  "1180fae18e617b84": [
+   "u1_inf_ev_supplies_container_spotted"
+  ],
+  "118a6a5f06364430": [
+   "h2_leviaphan_rocket"
+  ],
+  "11ac09eca3f084b4": [
+   "u2_inf_dont_stop_move"
+  ],
+  "11d4c4c475153f74": [
+   "h1_beholder_observation_complete"
+  ],
+  "121da891efd83ac4": [
+   "u1_inf_ev_target_killed"
+  ],
+  "1220da9e429f1534": [
+   "msg_you_control_flags"
+  ],
+  "12302d96e0b2e194": [
+   "u1_inf_ev_need_support"
+  ],
+  "123194bf1255a124": [
+   "msg_lot_prize_youre_lucky_today"
+  ],
+  "127982fb64b320a4": [
+   "u2_inf_nice_shot"
+  ],
+  "127ba80f92cc743d": [
+   "h2_mole_ready_to_repair"
+  ],
+  "129c997ca71fbce4": [
+   "h1_beholder_attack"
+  ],
+  "12b59c459236a644": [
+   "u1_veh_moving_out"
+  ],
+  "12b6e181c7b59fa4": [
+   "h2_bison_positive"
+  ],
+  "12ce5d90ad644274": [
+   "u2_inf_destroy_this_armor"
+  ],
+  "12f759c413edbf24": [
+   "h1_beholder_on_my_guard"
+  ],
+  "12fa26c7f87aa414": [
+   "u1_inf_ev_target_smashed"
+  ],
+  "1357ffa4ad46f9f4": [
+   "h1_cerberus_dont_joke_with_matilda"
+  ],
+  "13860249023204b3": [
+   "h2_leviathan_enemy_vanished"
+  ],
+  "1388912d5d554404": [
+   "u2_avia_maneuvering"
+  ],
+  "13cb050a80d8e284": [
+   "h1_beholder_still_preparing_standby"
+  ],
+  "13dcd0fd3a4d73b4": [
+   "act_f1_break_their_lines"
+  ],
+  "13ed43e1dfc9fe74": [
+   "h1_boreas_ice_to_meet_you"
+  ],
+  "1420308fb476a794": [
+   "int_hero_activation"
+  ],
+  "143a7f21673cd5b4": [
+   "u1_veh_target_marked"
+  ],
+  "14773a78bb809914": [
+   "msg_achievement"
+  ],
+  "14ac9b2231e03284": [
+   "h1_psitank_attack_attack2"
+  ],
+  "14ba93ecd460b6f4": [
+   "u1_nav_hard_to_starboard"
+  ],
+  "14c175d1cb0e8174": [
+   "h1_psion_stop_it"
+  ],
+  "14c89d390c72eab4": [
+   "u2_inf_cover_me"
+  ],
+  "14db13794155ca84": [
+   "msg_lot_prize_very_good_prize"
+  ],
+  "15058f128b4a941f": [
+   "h1_cerberus_run_away_cowards"
+  ],
+  "156db82bfe8e8c34": [
+   "h2_salamander_engineering_marvel_is_here"
+  ],
+  "157160d6b29c95c4": [
+   "h1_beholder_full_view_reached"
+  ],
+  "158a0989038b2ec4": [
+   "msg_flag_lost"
+  ],
+  "15bce9f94b7345d4": [
+   "h1_cerberus_afirmative"
+  ],
+  "15f11460fdc6f694": [
+   "h1_psion_kneel_before_me"
+  ],
+  "1606e130795bbbc4": [
+   "u2_inf_enemy_structure"
+  ],
+  "16118523e5d1f714": [
+   "h2_gatling_grip_of_steel"
+  ],
+  "16212b6c2529af54": [
+   "u1_inf_act_lets_move"
+  ],
+  "164928c3d016e624": [
+   "h1_atlas_giant_and_strong"
+  ],
+  "164c67375eb004a2": [
+   "h1_seraphim_prepare_for_catharsis"
+  ],
+  "1684fcca6de73480": [
+   "h1_seraphim_target_eliminated"
+  ],
+  "16acb7f7180f73a4": [
+   "u1_avia_lets_takeem_out"
+  ],
+  "16d6dc240bd47409": [
+   "h2_leviaphan_passive"
+  ],
+  "16eba1da5e4159a4": [
+   "h2_gatling_active_shot"
+  ],
+  "17253d584e415794": [
+   "u1_inf_ev_they_burn_us"
+  ],
+  "172ea8d8a47a7814": [
+   "units_zombie_death_2"
+  ],
+  "1763f10537ec2904": [
+   "msg_lot_prize_excellent_prize"
+  ],
+  "179e461338271d44": [
+   "h2_wasp_got_it"
+  ],
+  "17a96c35967926e4": [
+   "u2_inf_grenades_loaded"
+  ],
+  "17bbdf1ac494b7e4": [
+   "h2_gatling_bring_it_on"
+  ],
+  "17ff5609a2246114": [
+   "h2_salamander_dive_up"
+  ],
+  "180b4d2ce9dd5c34": [
+   "int_event_joker_box_bad"
+  ],
+  "18297361fbdbecf4": [
+   "u2_avia_im_hit"
+  ],
+  "185da45c5a796ff4": [
+   "msg_lot_invite_you_are_close"
+  ],
+  "186eda0b2491f0e4": [
+   "u2_veh_armor_pierced"
+  ],
+  "18a4164fdb8cc4dc": [
+   "h2_leviathan_incoming_fire"
+  ],
+  "18bfaa9604356fb4": [
+   "u1_avia_orders_received"
+  ],
+  "18c1905690698a54": [
+   "h2_wasp_desolation"
+  ],
+  "18f0c07a23589354": [
+   "u1_inf_act_in_motion"
+  ],
+  "1974b241ce66ddf4": [
+   "act_f1_got_it"
+  ],
+  "197c639a0e4c54c9": [
+   "h1_cerberus_huu"
+  ],
+  "197de6a6d3234f44": [
+   "u2_veh_ready_to_crush"
+  ],
+  "19aaa099448d5d24": [
+   "u2_veh_airraid_warning"
+  ],
+  "19eead77a3901094": [
+   "units_f1_spec2_loop"
+  ],
+  "1a5641ddbb358c34": [
+   "h2_bison_dont_stay_near"
+  ],
+  "1a792abcfc8c8bb4": [
+   "h2_gatling_smoke_em_all"
+  ],
+  "1a8b54c33d731ed4": [
+   "u1_avia_taking_off"
+  ],
+  "1ab1eb97018bf054": [
+   "h1_boreas_its_kinda_hot_here"
+  ],
+  "1aea283a40236e04": [
+   "u2_veh_dont_move_back"
+  ],
+  "1b4697b7e3e1d034": [
+   "u2_nav_course_set"
+  ],
+  "1b70b60ef9e0a3a4": [
+   "u1_veh_driving"
+  ],
+  "1b7cc564c7fb0824": [
+   "h2_gatling_smoke_loop"
+  ],
+  "1b891d7b512944f4": [
+   "u2_avia_tracking_target"
+  ],
+  "1bb9dbc76168f9e4": [
+   "msg_bld_complete"
+  ],
+  "1c026b09ed975b74": [
+   "h2_gatling_wreak_havoc"
+  ],
+  "1c156bb78c541bb4": [
+   "msg_clanmate_needs_troop"
+  ],
+  "1c5b69312737c454": [
+   "u1_avia_cyclone_reporting"
+  ],
+  "1c7d6750a0ef349a": [
+   "h1_solaris_armor_critical"
+  ],
+  "1c878ccfc2683482": [
+   "h1_seraphim_transform_2"
+  ],
+  "1c925866b4f6c447": [
+   "h1_seraphim_reloading"
+  ],
+  "1d3fa70b73ae0934": [
+   "h2_gatling_blood_for_blood"
+  ],
+  "1d5a74f7c253c794": [
+   "h1_psion_tell_me_your_order"
+  ],
+  "1d76ee27ca8b544d": [
+   "h1_seraphim_frenzy_fire"
+  ],
+  "1d87c676fc890dd4": [
+   "u1_veh_fortress_ready"
+  ],
+  "1dc012b3c2519994": [
+   "u2_veh_taking_fire"
+  ],
+  "1e37349c7e663478": [
+   "h1_seraphim_noone_will_survive"
+  ],
+  "1e49bb4cdec04714": [
+   "u2_inf_hit_this_target"
+  ],
+  "1e8ff81161da86b4": [
+   "int_click5"
+  ],
+  "1ea2bf3c806bf417": [
+   "h2_leviathan_steer_the_course"
+  ],
+  "1ecb4cd3696928a4": [
+   "u2_inf_contact"
+  ],
+  "1ecc0441149029f4": [
+   "u1_inf_act_stop_firing"
+  ],
+  "1eef1bc38f167204": [
+   "msg_troop_activated"
+  ],
+  "1f1984497cf7e664": [
+   "u1_avia_standing_by"
+  ],
+  "1f2239abd27119b4": [
+   "h1_psitank_attack_impact"
+  ],
+  "1f6b24e291a08344": [
+   "h1_boreas_no_rush_no_mistakes"
+  ],
+  "1f9491d432acb474": [
+   "h1_cerberus_taste_this"
+  ],
+  "1fb5c54d717fbac4": [
+   "boom_metal_crash2"
+  ],
+  "1ff2f6db9faae8f4": [
+   "int_secondary_failed"
+  ],
+  "2046b0f223c9f844": [
+   "u1_inf_ev_incomiiiing"
+  ],
+  "2047bcb918e73054": [
+   "u2_inf_moving_hide"
+  ],
+  "20eb3f6716d4f394": [
+   "u2_inf_watch_out_minefield"
+  ],
+  "20f7ef3be3581c64": [
+   "u1_veh_enemy_destroyed"
+  ],
+  "212a72451ac944b4": [
+   "h2_salamander_threat_here"
+  ],
+  "214bcbf2364bd5e4": [
+   "h2_gatling_attack_3_loop"
+  ],
+  "21b8bd9d0b3974e4": [
+   "msg_lot_prize_epic"
+  ],
+  "21cbc38ca8f146d4": [
+   "u1_nav_go_for_hard_burn"
+  ],
+  "22035b21a1a9b8e4": [
+   "h1_beholder_ready_to_seek_out_their_flaws"
+  ],
+  "22438a28012a247b": [
+   "h2_mole_minimole"
+  ],
+  "224c1259b83b8a64": [
+   "h1_boreas_system_is_not_cold_enough"
+  ],
+  "229e06996e155424": [
+   "h2_gatling_wanna_piece_of_me"
+  ],
+  "229e3607ffcab274": [
+   "h2_bison_danger_high_voltage"
+  ],
+  "22cd6e70373aa994": [
+   "u2_veh_fog_activated"
+  ],
+  "22e33591ee101b14": [
+   "u1_inf_sel_ready_to_kick_ass"
+  ],
+  "23b362a123c544f4": [
+   "h1_boreas_hull_integrity_dropping_low"
+  ],
+  "23bdf63299aa4e04": [
+   "h2_gatling_bullet_storm_is_coming"
+  ],
+  "23def0c590d9643b": [
+   "h1_cerberus_hu"
+  ],
+  "24074f1efea0b344": [
+   "h1_atlant_step_2"
+  ],
+  "240c83eb6a6e64ce": [
+   "h2_mole_too_far_for_me"
+  ],
+  "249eff07ca380c14": [
+   "u1_veh_fog_cloud_in_sight"
+  ],
+  "24a20bbe0abc7414": [
+   "h1_beholder_not_ready_yet"
+  ],
+  "24a9c5cb80c1d994": [
+   "u2_nav_may_day_may_day"
+  ],
+  "24aba03249c2b444": [
+   "h1_boreas_their_armor_will_shatter"
+  ],
+  "24c8c1cc8632c194": [
+   "h2_salamander_instructions_clear"
+  ],
+  "2508ec6b45a8dcf4": [
+   "u1_avia_checking_the_course"
+  ],
+  "253b014ad365f934": [
+   "h1_atlas_we_all_waiting_comander"
+  ],
+  "256ee53176f28114": [
+   "u2_veh_under_attack"
+  ],
+  "257a5826962a2574": [
+   "u2_veh_target_eliminated"
+  ],
+  "258c39c79ab18014": [
+   "u1_inf_act_hold_position"
+  ],
+  "25a3596a87409a04": [
+   "h1_boreas_ice_work_team_haha"
+  ],
+  "25c1c7d2ae9a7fb4": [
+   "u1_veh_contact"
+  ],
+  "261611c6640d5b54": [
+   "h2_gatling_attack_2_loop"
+  ],
+  "262f3687010304ae": [
+   "h1_cerberus_almost_ready"
+  ],
+  "2632d3a32785e9c4": [
+   "u1_avia_ready_as_always"
+  ],
+  "2635391414491ec4": [
+   "msg_lot_prize_youre_really_lucky_today"
+  ],
+  "26445294a7046944": [
+   "u1_veh_good_job_man"
+  ],
+  "267135f2ba0fbf14": [
+   "h1_atlas_marching_to_victory"
+  ],
+  "268bb3d011a47f44": [
+   "h1_boreas_minefield_that_breaks_the_ice"
+  ],
+  "26a13cd52e09e9a4": [
+   "128_rising_action"
+  ],
+  "26b0de11aa020114": [
+   "u2_inf_enemy_aircraft"
+  ],
+  "26cad2c7a19abd74": [
+   "u1_avia_patrolling"
+  ],
+  "26cca681b9d15d04": [
+   "h2_bison_\u0441harging_at_the_max"
+  ],
+  "2713a313b8cad6e4": [
+   "u2_veh_watch_this"
+  ],
+  "27b300da49cedc44": [
+   "u2_inf_attack"
+  ],
+  "27be4a622a43c204": [
+   "u1_veh_siege_mode"
+  ],
+  "27ec515751321774": [
+   "h2_gatling_found_the_threat"
+  ],
+  "27f65a2c700079c4": [
+   "h2_bison_abra_cadabra_lightning_orb"
+  ],
+  "281768f0b3134824": [
+   "u1_veh_minefield_detected"
+  ],
+  "28460cda67e98483": [
+   "h1_seraphim_judgment_day_has_come"
+  ],
+  "284a81252d97ce54": [
+   "h1_psion_twist_their_minds"
+  ],
+  "28a1b4492d14a704": [
+   "u1_veh_were_under_attack"
+  ],
+  "28c37882b2b476e4": [
+   "h2_coiltank_active_fire"
+  ],
+  "28ced17a0c40ae14": [
+   "u2_veh_siege_tank_here"
+  ],
+  "28f57f94e7aa8524": [
+   "u2_inf_they_hide_in_a_fog"
+  ],
+  "292d2aa51dbba854": [
+   "u2_inf_as_you_say"
+  ],
+  "2945620f62994134": [
+   "u1_inf_act_yes_sir"
+  ],
+  "2971067a7e0ea884": [
+   "h1_boreas_cold_justice"
+  ],
+  "297c80bb771140c4": [
+   "act_f1_as_you_were"
+  ],
+  "29bdd533264b7c14": [
+   "h2_gatling_passive_smoke_bullet"
+  ],
+  "29db9c4db62c8744": [
+   "h1_atlas_force_barrier_is_on"
+  ],
+  "29fc4d8428f34af4": [
+   "h2_salamander_active_impact_land"
+  ],
+  "29ff29286a76f6b4": [
+   "u1_inf_ev_snipers"
+  ],
+  "2a09b44c5bb43432": [
+   "h1_cerberus_eaaaaarr"
+  ],
+  "2a3f42f71e441480": [
+   "h1_seraphim_complete_absolution"
+  ],
+  "2a41c35dcf8ab414": [
+   "u2_nav_target_aquired"
+  ],
+  "2a7d8a8d495cdda4": [
+   "h2_coiltank_idle"
+  ],
+  "2a80274affb14544": [
+   "msg_deploy_begin"
+  ],
+  "2ac6768ed65c1b04": [
+   "h2_gatling_on_a_prowl"
+  ],
+  "2ad8d6e20f0b7464": [
+   "u1_inf_act_got_it"
+  ],
+  "2afe56556d74a408": [
+   "h1_seraphim_iam_loosing_control"
+  ],
+  "2b04539e71046994": [
+   "h2_bison_i_dont_conduct_negotiations"
+  ],
+  "2b283df35382f7c4": [
+   "int_halloween_explosion"
+  ],
+  "2b4beeb89f1b5f54": [
+   "boom_big1_g_3"
+  ],
+  "2b6108484f0a6ac4": [
+   "int_pot_of_gold_collect"
+  ],
+  "2b69fca76fa63f94": [
+   "h1_atlas_i_aint_gonna_be_easy"
+  ],
+  "2bc9a4d77a3f0d44": [
+   "act_f1_defend_position"
+  ],
+  "2be4ed795b28fa84": [
+   "h1_beholder_im_under_fire"
+  ],
+  "2c4986e7661dbbb4": [
+   "u1_avia_im_burning"
+  ],
+  "2c564a99875a4364": [
+   "u2_inf_what"
+  ],
+  "2c64c5e8bbcb82d4": [
+   "h2_bison_theyve_grounded_me"
+  ],
+  "2c7653abb38c56f4": [
+   "128_this_means_war"
+  ],
+  "2c78f17331662d24": [
+   "h2_coiltank_passive_shot"
+  ],
+  "2ccec15c1608a3c4": [
+   "units_nav_move1"
+  ],
+  "2ce8e0e904df02d4": [
+   "u1_inf_act_kill_target"
+  ],
+  "2cedc344aeb96f74": [
+   "h2_gatling_running_wild"
+  ],
+  "2d0f51e3963827b4": [
+   "h1_psion_i_read_minds"
+  ],
+  "2d2eb637c7bf4442": [
+   "h1_seraphim_got_it"
+  ],
+  "2d3696f10c15a334": [
+   "h1_psitank_attack_attack"
+  ],
+  "2d36b5e381f78af4": [
+   "fire_rifle1_3"
+  ],
+  "2d587493e61df5d4": [
+   "boom_bld_big"
+  ],
+  "2d5978f34fb89ad4": [
+   "act_f1_follow_me"
+  ],
+  "2dfe9c1a1002e254": [
+   "u2_veh_full_ahead"
+  ],
+  "2e23bb06395b50a4": [
+   "h1_boreas_deep_freeze_is_armed"
+  ],
+  "2e5483898364c924": [
+   "u1_veh_commander"
+  ],
+  "2e5530cc04c4d104": [
+   "u1_veh_deploying"
+  ],
+  "2e94a8632afa1f54": [
+   "h2_wasp_are_you_sure"
+  ],
+  "2ec2a9e7953bfcf4": [
+   "u1_nav_sea_mines"
+  ],
+  "2ee739faeb66ca44": [
+   "int_supply_box_show"
+  ],
+  "2eea158ff7dfaf94": [
+   "h1_psion_i_crave_for_power"
+  ],
+  "2f4c2962064bc444": [
+   "h2_wasp_ill_hunt_them_down"
+  ],
+  "2f623e5def8e3488": [
+   "h2_mole_alright"
+  ],
+  "2f6f80dca778b468": [
+   "h2_leviathan_captain_on_the_bridge"
+  ],
+  "2fcd092638f978e4": [
+   "h2_salamander_dodge_this_if_you_can"
+  ],
+  "2ff5f5ff73d462d4": [
+   "h2_wasp_catch_this"
+  ],
+  "2ffb004e041b57d4": [
+   "u1_veh_antitank_infantry"
+  ],
+  "300fa087cf06c704": [
+   "u1_nav_destroyer_ready"
+  ],
+  "305085684c69046c": [
+   "h2_mole_haha2"
+  ],
+  "3053136751c8cd64": [
+   "u1_nav_ship_is_sinking"
+  ],
+  "305705b014e964a4": [
+   "h1_psion_im..._fading"
+  ],
+  "30b345f67027aac4": [
+   "u2_avia_target_location_confirmed"
+  ],
+  "30d94a3fce97ad84": [
+   "boom_space"
+  ],
+  "3140ffddf00fc8c4": [
+   "h1_cerberus_multigun_loaded"
+  ],
+  "314594bb952944e9": [
+   "h1_seraphim_confederation_bless_you"
+  ],
+  "3169ba2ea87d47d4": [
+   "units_ufo_idle_engine"
+  ],
+  "3176e3c84897c104": [
+   "msg_ins_energy"
+  ],
+  "317afb668fc9d8d4": [
+   "u1_avia_damage_critical"
+  ],
+  "318dc8c49b72f414": [
+   "h2_salamander_fix_it_fix_it"
+  ],
+  "31f1a546f34b7614": [
+   "h1_boreas_chills_down_the_spine"
+  ],
+  "320e8135f7063ed4": [
+   "h1_atlant_impact_3"
+  ],
+  "321f9cff7895eab4": [
+   "h2_gatling_wheres_my_prey"
+  ],
+  "32205b8c42bf54cd": [
+   "h1_seraphim_incoming_missles"
+  ],
+  "32780044c8464904": [
+   "u2_inf_changing_position"
+  ],
+  "32e367a0c9aaec84": [
+   "u2_veh_armor_ready"
+  ],
+  "33116f46dbf84924": [
+   "msg_troop_arrived"
+  ],
+  "33886ce21aea7094": [
+   "h1_boreas_everybody_chill"
+  ],
+  "339fcc88ec0983c4": [
+   "h2_wasp_armor_damaged"
+  ],
+  "33ad0dd3ecb1f1e4": [
+   "u1_inf_act_here_we_go"
+  ],
+  "33e6948885300434": [
+   "h2_mole_turret_ready_for_deploying"
+  ],
+  "3457c4df3d87ab24": [
+   "h1_psion_patience_is_a_virtue"
+  ],
+  "34659cad4bf6a420": [
+   "h2_leviathan_all_weapons_ready"
+  ],
+  "348ce78507efb2e4": [
+   "h1_beholder_avenge_me_commandant"
+  ],
+  "3492400ba98d7c84": [
+   "h2_salamander_ready_to_lauch_this_pretty_little_rocket"
+  ],
+  "349fd211a8d8fa24": [
+   "units_infantry_die1_4"
+  ],
+  "34accc99e6cd68c4": [
+   "act_f1_destroy_them"
+  ],
+  "34d4bf3f02e9740f": [
+   "h1_seraphim_overdrive"
+  ],
+  "34df3c7e81ccf4a5": [
+   "h2_mole_diggin_it"
+  ],
+  "351ccc094efea425": [
+   "h2_mole_almost_ready"
+  ],
+  "35944e2c7671a7a4": [
+   "u1_veh_understood"
+  ],
+  "35de7ebf40e4f447": [
+   "h1_seraphim_blessing_you"
+  ],
+  "360def8a048bc544": [
+   "h1_atlas_its_badly_damaged"
+  ],
+  "361d414231ea2a14": [
+   "u2_nav_affirmative"
+  ],
+  "362cf6332386a7d4": [
+   "h2_bison_oh_they_titillate_my_nerves"
+  ],
+  "363b61f3fc829524": [
+   "int_double"
+  ],
+  "36636cdf008d2be4": [
+   "msg_lot_invite_you_are_very_close"
+  ],
+  "36eede70cca764e2": [
+   "h1_solaris_perfect"
+  ],
+  "371ce1f5c8b03418": [
+   "h1_cerberus_enemy_smashed"
+  ],
+  "3742aeab3b6c2ba4": [
+   "h2_bison_\u0441ontacts_\u0441heck_wiring_check"
+  ],
+  "378395dd2d80a1a4": [
+   "fire_machine1_1"
+  ],
+  "37adc66cdcdd44f2": [
+   "h1_seraphim_attack"
+  ],
+  "37b6e945f80fa409": [
+   "h2_leviathan_air_target_detected"
+  ],
+  "37df9a96c5f634be": [
+   "h2_mole_alright2"
+  ],
+  "37f1afe1e0e91489": [
+   "h2_mole_station_on"
+  ],
+  "37fea680cced0554": [
+   "int_lottery_spin"
+  ],
+  "382ec8d377e7641c": [
+   "h2_mole_ups_going_underground"
+  ],
+  "38480e7b0c77e704": [
+   "int_window_close"
+  ],
+  "3890d10653927454": [
+   "u1_veh_lets_burn_them"
+  ],
+  "3899413f7f7e5426": [
+   "h2_leviathan_heat_flares"
+  ],
+  "38c1c5a7c2ea64c8": [
+   "h1_seraphim_need_my_blessing"
+  ],
+  "38e9a98ec4fd9a44": [
+   "u2_veh_ready_for_action"
+  ],
+  "38fd3fefd6e21054": [
+   "u2_veh_all_systems_activated"
+  ],
+  "39076ee8df716cf4": [
+   "h2_gatling_not_yet"
+  ],
+  "392626977b88c0a4": [
+   "h1_boreas_cold_as_a_dead_man_indeed"
+  ],
+  "398626ec31b4345d": [
+   "h2_mole_no_i_dont_want_to_die3"
+  ],
+  "398df3dba62db434": [
+   "u2_inf_fire_hard"
+  ],
+  "399b233be6489344": [
+   "fire_gun6_1"
+  ],
+  "3a07646d6d46acb4": [
+   "Int_14days_open"
+  ],
+  "3a441207e8e83584": [
+   "h2_bison_discharged"
+  ],
+  "3a60e258e132e914": [
+   "h1_boreas_not_ready_chill_out"
+  ],
+  "3ab3d324c6ceb6e4": [
+   "fire_rifle2_3"
+  ],
+  "3ac8b43ce74caf34": [
+   "u1_inf_act_roger"
+  ],
+  "3af8db37a8d804c1": [
+   "h1_cerberus_haa"
+  ],
+  "3b969f3a16867a34": [
+   "u1_nav_sea_mines_detected"
+  ],
+  "3bbc558860c914a0": [
+   "h1_solaris_power_strike"
+  ],
+  "3bc7aefb9a5e2d34": [
+   "int_phrase_three"
+  ],
+  "3beeafc29779a45b": [
+   "h2_leviathan_this_is_our_day"
+  ],
+  "3bfae9da9b825b64": [
+   "u1_inf_act_move_your_ass"
+  ],
+  "3c038681071f0294": [
+   "h2_bison_total_blackout"
+  ],
+  "3c228308d67b9664": [
+   "boom_small1_g_2"
+  ],
+  "3c9c73b2b96c3d04": [
+   "h1_psion_how_can_this_be"
+  ],
+  "3cc0b7c936537394": [
+   "units_f2_march2"
+  ],
+  "3cca7952051f5b04": [
+   "h1_psion_pathetic"
+  ],
+  "3d5a9408456e6b44": [
+   "u2_veh_charge"
+  ],
+  "3d68ff5188cf8854": [
+   "h1_psion_suppress_their_will"
+  ],
+  "3db91ad8bedb4914": [
+   "h1_psion_mind_over_matter"
+  ],
+  "3e26c1c5fd17f334": [
+   "u2_inf_on_combat_patrol"
+  ],
+  "3e3052972646e8a4": [
+   "units_f2_march1"
+  ],
+  "3e373926a603e574": [
+   "h1_cerberus_no_time_to_wait"
+  ],
+  "3e8439ecf2265204": [
+   "u2_veh_enemys_using_fog"
+  ],
+  "3ed379a870fa99f4": [
+   "u1_nav_executed"
+  ],
+  "3f106cf3b6a715a4": [
+   "msg_offer_special"
+  ],
+  "3f5a1667442fceb4": [
+   "u1_veh_sector_clear"
+  ],
+  "3fbb376c8a0d9114": [
+   "act_f1_ready_to_serve"
+  ],
+  "3fbf64824f2e0a24": [
+   "h2_bison_its_over_9000_volts"
+  ],
+  "3fc24bbbb32b25e4": [
+   "h2_wasp_acid_strike"
+  ],
+  "3fe748e226383486": [
+   "h1_solaris_emp_strike"
+  ],
+  "3ff19a9b1e452184": [
+   "u1_veh_got_him_haha"
+  ],
+  "405a5ac01d5dff34": [
+   "u1_veh_eliminated"
+  ],
+  "406ad4019ac9de14": [
+   "u2_avia_bombs_loaded"
+  ],
+  "407305fb6b233440": [
+   "h1_solaris_they_will_fail"
+  ],
+  "407fed33384893a4": [
+   "u1_avia_im_going_down"
+  ],
+  "4086ccaa9e4ab984": [
+   "u2_nav_cayman_here"
+  ],
+  "409c67018da6dea4": [
+   "h1_cerberus_roger_that"
+  ],
+  "40b18f692bd84ba4": [
+   "u2_veh_destroy_target"
+  ],
+  "40dd1fc846ba31a4": [
+   "u2_nav_captain_here"
+  ],
+  "411f13a6808377b4": [
+   "int_box_open"
+  ],
+  "4121ec58cd272c84": [
+   "h1_boreas_no_heat_no_haste"
+  ],
+  "4135adfffd3e8194": [
+   "h2_salamander_smash_em_up"
+  ],
+  "416cbcbfc6df9d84": [
+   "u2_inf_stop_firing"
+  ],
+  "418a5405c7602494": [
+   "h1_cerberus_show_me_an_enemy_to_shred"
+  ],
+  "419b939990a04476": [
+   "h1_cerberus_haha_oh_eyah"
+  ],
+  "41bc15d9e4c9c4b4": [
+   "bld_building_end"
+  ],
+  "41ed2ca6fb37a5d4": [
+   "u2_inf_fire_at_will"
+  ],
+  "420f7501a535f7d4": [
+   "u2_veh_yes_moving"
+  ],
+  "423d43128555dba4": [
+   "msg_new_objective"
+  ],
+  "425ac2b66a116634": [
+   "h2_bison_i_am_resistance_itself_literally"
+  ],
+  "426aaf552b73ed64": [
+   "u2_veh_take_this_flag"
+  ],
+  "428203f087e91534": [
+   "u2_veh_hold_this_ground"
+  ],
+  "4295528499fb24fe": [
+   "h1_solaris_active"
+  ],
+  "42d80a9dc54c0f74": [
+   "bld_space_work_start"
+  ],
+  "42d99d04402da0f4": [
+   "u2_inf_enemy_ship"
+  ],
+  "42f51f3bdc1e3af4": [
+   "u1_avia_pilot_online"
+  ],
+  "4334818f806aa431": [
+   "h1_seraphim_well_done"
+  ],
+  "43697e660016a6a4": [
+   "int_halloween_welcome"
+  ],
+  "43780b104c8b4304": [
+   "u2_avia_fuel_level_critical"
+  ],
+  "43970344f26c0e44": [
+   "int_mission_open"
+  ],
+  "43b048ebbb848ce4": [
+   "u1_inf_ev_enemy_air_support"
+  ],
+  "43f4e1cfbbc18484": [
+   "h1_psion_what_changed_your_mind"
+  ],
+  "440ec3b020b22604": [
+   "h2_salamander_tapping_button_won\u00b4t_do_the_trick"
+  ],
+  "444bfd09083db4e2": [
+   "h1_cerberus_agh"
+  ],
+  "4478564530fdcc34": [
+   "u2_nav_all_guns_loaded"
+  ],
+  "447d83df56c61574": [
+   "h1_psitank_passive_impact"
+  ],
+  "44a28a52ddd60504": [
+   "int_info_1"
+  ],
+  "44cf910ed80f1324": [
+   "h1_beholder_target_neutralized"
+  ],
+  "44de8abd862139a4": [
+   "h2_gatling_at_full_speed"
+  ],
+  "44f9a5c085f22254": [
+   "h2_bison_ride_the_lightning"
+  ],
+  "451e09899df7949c": [
+   "h2_mole_taste_my_drill"
+  ],
+  "457a5ef51619041e": [
+   "h1_seraphim_shooting"
+  ],
+  "45a9bd7f46f375f4": [
+   "h2_gatling_ready_for_a_carnage"
+  ],
+  "45f51aa2e3c23514": [
+   "u1_inf_ev_minefield_here"
+  ],
+  "4606ef91bdc97214": [
+   "h2_gatling_oh_they_ruined_all_the_fun"
+  ],
+  "46636ba2ed0ec2a4": [
+   "h2_salamander_ay_caramba"
+  ],
+  "466b0e66a1e1847c": [
+   "h1_solaris_solaris_tank_ready"
+  ],
+  "46fcdd5aaa520f04": [
+   "boom_small3_g_1"
+  ],
+  "476b5f47122c2034": [
+   "msg_battle_lost"
+  ],
+  "47d589fd9305a324": [
+   "u2_veh_whats_the_plan"
+  ],
+  "47e6af9a08058f74": [
+   "h2_wasp_some_smoke"
+  ],
+  "47efa7dbde35ed04": [
+   "h1_atlas_wanna_epic_battle"
+  ],
+  "47f13978c3f7a254": [
+   "u2_nav_the_sea_will_be_ours"
+  ],
+  "47fce7e9ce209414": [
+   "h2_salamander_dive_down"
+  ],
+  "48300237bff6c724": [
+   "h2_gatling_smoke_and_fire"
+  ],
+  "488078eb15869491": [
+   "h1_solaris_great_shot"
+  ],
+  "48981f82c773f004": [
+   "u1_inf_act_take_this_aim"
+  ],
+  "48b157f842de449c": [
+   "h1_solaris_burn_them_to_ashes"
+  ],
+  "48c11e16cdf0aa14": [
+   "u2_nav_alligator_reporting"
+  ],
+  "48cd7179536be594": [
+   "int_timer"
+  ],
+  "48d693092315f432": [
+   "h1_cerberus_lets_do_it_fast"
+  ],
+  "48f991e844b97da4": [
+   "u1_veh_destroying"
+  ],
+  "494038b6638e14d9": [
+   "h1_seraphim_rocket_salvo"
+  ],
+  "494849d56c417044": [
+   "u1_veh_whos_next"
+  ],
+  "4958b5234c3b99f4": [
+   "u2_inf_quick_as_you_can"
+  ],
+  "495d3f8a1dc8cb64": [
+   "h1_beholder_en_route"
+  ],
+  "4964f0c8f93107e4": [
+   "u1_avia_good_work"
+  ],
+  "497096cbb6300be4": [
+   "msg_offer_most_profit"
+  ],
+  "49a5e776283017d4": [
+   "u2_veh_deploying_mines"
+  ],
+  "49a88c58ed9e92c4": [
+   "u1_inf_sel_ready"
+  ],
+  "49aa65f1aca54475": [
+   "h1_solaris_thunder_and_lightning"
+  ],
+  "4a272fecd9fd1654": [
+   "int_supply_box_finish"
+  ],
+  "4a44ccceadef8b44": [
+   "h1_atlant_fire"
+  ],
+  "4a67b9fdee41bd34": [
+   "units_fighter_move1"
+  ],
+  "4a7007f9aff5c8f4": [
+   "h1_beholder_clear_skies_clear_intel"
+  ],
+  "4a71457837a08a04": [
+   "msg_lot_prize_epic_prize"
+  ],
+  "4aa8eda91183ea64": [
+   "128_prepare_for_battle"
+  ],
+  "4abac4516c9a4444": [
+   "u2_inf_orders"
+  ],
+  "4add827366a19f44": [
+   "128_menu_08"
+  ],
+  "4adfc4a55634bbf4": [
+   "u2_inf_we_need_reinforcements"
+  ],
+  "4aeb871ec53523b4": [
+   "h1_psion_target_vanquished"
+  ],
+  "4af5ff1d928744a4": [
+   "u2_veh_i_can_take_it"
+  ],
+  "4b07277d10e467c4": [
+   "h1_beholder_scouting_ahead"
+  ],
+  "4b0858cecee7bea4": [
+   "act_f1_move_ahead"
+  ],
+  "4b112cbc5369a0c4": [
+   "int_score4"
+  ],
+  "4b46f7221404d414": [
+   "h2_leviathan_for_the_clear_sky"
+  ],
+  "4b6cc2f683569994": [
+   "h1_cerberus_cerberus_ready_for_action"
+  ],
+  "4b755e573dcb8f84": [
+   "u2_nav_all_ahead"
+  ],
+  "4baa9577fb912483": [
+   "h1_seraphim_checking_ignition"
+  ],
+  "4bbe6a740b26c4c9": [
+   "h2_leviaphan_explosion"
+  ],
+  "4bc3bc15d6c4be54": [
+   "h1_boreas_enemy_advance_detected"
+  ],
+  "4bf9ef0ed499a044": [
+   "u1_avia_commencing_attack_run"
+  ],
+  "4c264a4c806637d4": [
+   "int_bp_open_vip"
+  ],
+  "4cb8e17babf807d4": [
+   "u1_veh_tracking_enemy"
+  ],
+  "4ccccbc5395f0474": [
+   "msg_lot_prize_wow1"
+  ],
+  "4cefebe3bb0b0904": [
+   "units_mine_set"
+  ],
+  "4cf75906b11ca094": [
+   "u2_avia_well_done_hahaha"
+  ],
+  "4d1487e9ac433ca4": [
+   "h1_atlas_ready_to_blastem"
+  ],
+  "4d7c9d5a8d5f849a": [
+   "h1_seraphim_incoming_fire"
+  ],
+  "4da9a49ba26c43a4": [
+   "msg_enemy_detected"
+  ],
+  "4daa26199963b054": [
+   "u1_veh_i_am_indestructible"
+  ],
+  "4db03136d4d9b364": [
+   "h2_wasp_not_enough_sour"
+  ],
+  "4e0f7c72f7ca19f4": [
+   "u2_nav_full_ahead"
+  ],
+  "4e78b093d2588734": [
+   "u1_avia_let_me_take_care_of_it"
+  ],
+  "4eee347a78fa68e4": [
+   "u1_nav_skipper"
+  ],
+  "4f11987d82b758f4": [
+   "h1_beholder_every_shot_calculated"
+  ],
+  "4f9e15484baaef64": [
+   "h1_boreas_ice_ice_baby"
+  ],
+  "4fc2f4e75ba10a64": [
+   "msg_lot_prize_lets_try_again"
+  ],
+  "4fc930e762297c44": [
+   "u2_veh_full_throttle"
+  ],
+  "5064d73fc52484ec": [
+   "h2_leviathan_they_will_trouble_you_no_more"
+  ],
+  "507c3e90442167d4": [
+   "u2_veh_container_here"
+  ],
+  "50affea6f48233a4": [
+   "u1_inf_act_off_we_go"
+  ],
+  "50c9e6e97a265474": [
+   "h2_mole_im_under_attack"
+  ],
+  "50ee1ac1e323a4f6": [
+   "h2_mole_safe_mod"
+  ],
+  "50f367738482cb54": [
+   "bld_space_work_loop"
+  ],
+  "516a282d5d68c4a8": [
+   "msg_battle_invitation_received"
+  ],
+  "517dc978f4cf8cf4": [
+   "int_lottery_prize"
+  ],
+  "519e0739993128a4": [
+   "h1_cerberus_waiting_orders"
+  ],
+  "51f015d9356be064": [
+   "h1_boreas_frozen_fractured_finished"
+  ],
+  "52033fe2eebc0a64": [
+   "h2_wasp_lets_make_it_messy"
+  ],
+  "5224311070e85447": [
+   "h2_mole_aha"
+  ],
+  "524b849080439d14": [
+   "h2_gatling_battle_frenzy"
+  ],
+  "5254f35f0a6b04f3": [
+   "h1_cerberus_aaagh"
+  ],
+  "5292ba70fe22a4b4": [
+   "h1_cerberus_aghhh"
+  ],
+  "529987963f90c244": [
+   "int_victory"
+  ],
+  "52a1e27c644fbba4": [
+   "u1_inf_act_move_move"
+  ],
+  "52a3c6bb42d2dad4": [
+   "u2_inf_for_freedom"
+  ],
+  "52a4bdd4bfe43492": [
+   "h2_mole_attack"
+  ],
+  "52e2df732f9a32e4": [
+   "u1_veh_took_him_in_sight"
+  ],
+  "52e77c108c5b3594": [
+   "h1_beholder_reporting_hostile_activity"
+  ],
+  "5302e3fe34640924": [
+   "u1_nav_confirmed"
+  ],
+  "5320415800c881c4": [
+   "u2_inf_shoot"
+  ],
+  "536ab48080897164": [
+   "h1_atlas_into_position"
+  ],
+  "536f6444d848eb84": [
+   "u2_inf_good_hit"
+  ],
+  "53a769c26a1c0e54": [
+   "h2_salamander_to_pieces"
+  ],
+  "53b953bb182f6bf4": [
+   "h1_atlas_gonna_be_a_fight_now"
+  ],
+  "53bfd8764e2dcce4": [
+   "h1_psion_lets_make_some_puppets"
+  ],
+  "53c148707e9785d4": [
+   "u2_inf_over_there"
+  ],
+  "53e4a2976349b1c4": [
+   "u2_inf_move_quietly"
+  ],
+  "540a284d3406c904": [
+   "u2_inf_stop"
+  ],
+  "54295f74f3626cb4": [
+   "h2_bison_ready_to_melt_them"
+  ],
+  "54797d26ba46bf04": [
+   "u2_inf_approaching"
+  ],
+  "547d62df52f3d5a4": [
+   "u2_inf_engage"
+  ],
+  "54ceec1637ebfe44": [
+   "int_cake_collect"
+  ],
+  "55083da30925a3d4": [
+   "boom_med1_g_3"
+  ],
+  "551f2ea6f90045b4": [
+   "u2_inf_roger_that_hide"
+  ],
+  "556223867f2ed6a4": [
+   "h2_wasp_enemy"
+  ],
+  "556d74e230c5a094": [
+   "h2_wasp_smoke"
+  ],
+  "55787f0da44954c3": [
+   "h1_cerberus_enemy_on_my_visor"
+  ],
+  "558a997dad615c64": [
+   "h2_salamander_we_got_the_spirit"
+  ],
+  "559bf77cb02d7479": [
+   "h1_solaris_power__on"
+  ],
+  "55ac13ad05ab3054": [
+   "h1_boreas_winter_is_coming"
+  ],
+  "55c8d8928b227da4": [
+   "h2_coiltank_move"
+  ],
+  "56212e8aeb7848d4": [
+   "u2_veh_enemys_using_shield"
+  ],
+  "56533a53f12ee2c4": [
+   "act_f1_advance"
+  ],
+  "56671c694c93c4b4": [
+   "u1_nav_battlecruiser_reporting"
+  ],
+  "567c3f3a8ba52564": [
+   "h1_psion_lets_see..."
+  ],
+  "568a167a1afc943c": [
+   "h1_seraphim_destination_clear"
+  ],
+  "56908a5c2f955814": [
+   "int_click4"
+  ],
+  "56d909428b912364": [
+   "msg_allied_base_under_attack"
+  ],
+  "572e7ab4284d2a94": [
+   "h2_coiltank_active_impact"
+  ],
+  "574ae90ea63efe94": [
+   "u2_veh_cough_smoky_here"
+  ],
+  "574d53f840ee0d24": [
+   "u2_veh_massive_strike"
+  ],
+  "5754bc7d9239f46d": [
+   "h2_mole_they_wont_pass_through me"
+  ],
+  "5755935feb54aaa4": [
+   "h2_salamander_i_hear_ya_commander"
+  ],
+  "57ac4c0d36dbfea4": [
+   "u2_avia_redirecting_course"
+  ],
+  "57bf92985e84b454": [
+   "h1_cerberus_i_need_action"
+  ],
+  "57c0b154e140d7e4": [
+   "u1_veh_dont_move"
+  ],
+  "57dd669cee9a2ec4": [
+   "h2_bison_overcharge"
+  ],
+  "580acf8646b2caf4": [
+   "h1_atlas_finally_some_action"
+  ],
+  "5819c48c7ca24f44": [
+   "u1_inf_ev_enemy_coming"
+  ],
+  "58299f6d3fb8549e": [
+   "h1_solaris_move1"
+  ],
+  "586611510c8994d4": [
+   "u1_avia_ready_to_rule_the_skies"
+  ],
+  "5876e093ad170274": [
+   "u2_veh_just_give_me_orders"
+  ],
+  "589b3c3864d194e4": [
+   "int_score_small"
+  ],
+  "599a967b0352e4c1": [
+   "h1_solaris_moving_out"
+  ],
+  "599f9b068f312994": [
+   "u1_nav_full_speed_ahead"
+  ],
+  "59d48c4368831ee4": [
+   "h1_psion_no_rest_for_me"
+  ],
+  "59d4e1c654845e24": [
+   "msg_lot_prize_fantastic_prize"
+  ],
+  "59e0fde7ba212d04": [
+   "u1_inf_ev_enemy_armor_down"
+  ],
+  "5a1552081e5ecb74": [
+   "units_submarine_move1"
+  ],
+  "5a41ecccedd49da4": [
+   "h2_gatling_lets_find_some_targets"
+  ],
+  "5a47c387172d18c4": [
+   "h1_beholder_consider_it_done"
+  ],
+  "5a81abd21c06a2e4": [
+   "u1_veh_radars_on"
+  ],
+  "5a8de50d20c2e3f4": [
+   "u2_veh_air"
+  ],
+  "5a970a6dda7d14f7": [
+   "h1_solaris_chain_damage"
+  ],
+  "5abbb017e752c4d4": [
+   "u2_inf_point_captured"
+  ],
+  "5b06b8f516d3d294": [
+   "h2_bison_others_will_take_my_place"
+  ],
+  "5b1cd566964c8624": [
+   "h1_beholder_dont_give_up_without_a_fight"
+  ],
+  "5b72c09a0a219b44": [
+   "u2_veh_got_it"
+  ],
+  "5bf458673ca57b04": [
+   "u2_avia_fasten_your_seat_belts"
+  ],
+  "5c4baea6af55e084": [
+   "u1_veh_guns_loaded"
+  ],
+  "5c5ca6e1a23d9c74": [
+   "int_button_tap_active"
+  ],
+  "5c5cfaa02cb608a4": [
+   "int_skill_card_upgrade_2"
+  ],
+  "5c5fe7dcada2b4f4": [
+   "h2_wasp_collect_loop"
+  ],
+  "5c6f56a4bfcce604": [
+   "u1_inf_act_lets_blow_them_up"
+  ],
+  "5c6ffcd9b68e60e4": [
+   "u2_inf_whats_next"
+  ],
+  "5cd80c4d14c2a014": [
+   "h2_gatling_you_call_that_damage"
+  ],
+  "5d136ca94c057c34": [
+   "h1_boreas_cold_and_clear"
+  ],
+  "5d3e407012535494": [
+   "u1_veh_on_the_move"
+  ],
+  "5de6b2b761e59534": [
+   "h1_atlas_they_crossed_the_line"
+  ],
+  "5dfacfe68b955e14": [
+   "h2_salamander_stay_the_course"
+  ],
+  "5e67deee4aa266f4": [
+   "u1_veh_we_taking_fire"
+  ],
+  "5e6d88c373a32488": [
+   "h2_leviathan_destroy_them"
+  ],
+  "5e7f46979c4624bb": [
+   "h1_seraphim_landing_keep_away"
+  ],
+  "5e930fce46775294": [
+   "int_score3"
+  ],
+  "5ea5570dd3125a84": [
+   "u2_veh_shoot_shoot"
+  ],
+  "5eae86ea9f133964": [
+   "bld_work_start"
+  ],
+  "5ed4eca059a12454": [
+   "u1_veh_hammer_ready"
+  ],
+  "5ee789e979e2d104": [
+   "u1_avia_prepare_for_landing"
+  ],
+  "5ef8dc30873c5f24": [
+   "u1_avia_vertex_online"
+  ],
+  "5efb41fd98bdb462": [
+   "h2_leviathan_yes_commander"
+  ],
+  "5f29999e5d64f214": [
+   "act_f1_yes"
+  ],
+  "5f51d379344c20c4": [
+   "u2_veh_roger"
+  ],
+  "5f672cc64c8ca0c4": [
+   "msg_ww_turn"
+  ],
+  "5f8aeaaa3dce51c4": [
+   "u1_veh_ready_for_orders"
+  ],
+  "5f90a43061d266a4": [
+   "bld_building_loop"
+  ],
+  "5fb3de61b0369434": [
+   "h1_solaris_checking_systems"
+  ],
+  "5fc6c47eb97521f4": [
+   "h1_atlant_active"
+  ],
+  "5feb1c14525001f4": [
+   "u2_veh_massive_fire_on_target"
+  ],
+  "6006471562c22704": [
+   "h1_cerberus_bayonet"
+  ],
+  "6030f783134a29a4": [
+   "h1_atlas_protection_matrix_activated"
+  ],
+  "605f1b93f5f70a84": [
+   "h2_gatling_wolverine_here"
+  ],
+  "606ec7bd277e19a4": [
+   "h1_atlas_didnt_even_have_to_aim"
+  ],
+  "607cf44b12a8444c": [
+   "h1_solaris_leave_nothing"
+  ],
+  "6080e275f917a47f": [
+   "h2_mole_alright3"
+  ],
+  "60878cbed56a29c4": [
+   "u2_avia_coordinates_set"
+  ],
+  "608db4518c987e74": [
+   "h1_psitank_passive1"
+  ],
+  "609696b5d7bb8ca4": [
+   "h2_salamander_aye_commander"
+  ],
+  "60ae34a9342f2e24": [
+   "msg_lot_prize_good_prize"
+  ],
+  "60cc77d49c388064": [
+   "units_zombie_attack_2"
+  ],
+  "60d21a7b3642c44a": [
+   "h2_leviathan_full_ahead"
+  ],
+  "611958901531cf54": [
+   "bld_work_end"
+  ],
+  "61501a59c16aa47e": [
+   "h1_cerberus_enemy_in_view"
+  ],
+  "61a185b3ea69a264": [
+   "msg_lot_prize_great"
+  ],
+  "61ac6b769e7b0da4": [
+   "u2_inf_lets_move"
+  ],
+  "61b56f810afe6634": [
+   "int_stat_buff"
+  ],
+  "6200e0c03fb0e464": [
+   "h2_bison_deep_fried"
+  ],
+  "6208bb25ffeb4514": [
+   "u1_veh_afirmative"
+  ],
+  "62239f1b1e129dc4": [
+   "u2_veh_mammoth_ready"
+  ],
+  "627be7415417a4a1": [
+   "h1_solaris_solaris_destroyed"
+  ],
+  "6281b86311261e74": [
+   "u2_veh_whos_next"
+  ],
+  "62aa3804cc1be42d": [
+   "h1_seraphim_enemy_down"
+  ],
+  "62cbb7359e2e38d4": [
+   "msg_lot_prize_good"
+  ],
+  "62e1e3588e0441a4": [
+   "act_f1_break_them_up"
+  ],
+  "6341e9e43aea7e14": [
+   "h2_coiltank_move_select"
+  ],
+  "6343cf5cbe7c2427": [
+   "h2_mole_passive_on"
+  ],
+  "63bc7f93ce99f014": [
+   "h1_atlas_fighting_till_the_very_end"
+  ],
+  "63e51177a20cf454": [
+   "u2_veh_jaguar_tank_ready"
+  ],
+  "6402e35519100c64": [
+   "h2_gatling_minefield_really"
+  ],
+  "64237ce079dfd4e4": [
+   "u2_veh_were_controlling_the_area"
+  ],
+  "64fbbc5949be04b8": [
+   "h1_solaris_destroying"
+  ],
+  "651808bdfe2bbfc4": [
+   "h2_bison_thunderstruck"
+  ],
+  "65433159e7d55436": [
+   "h2_leviaphan_alarm1"
+  ],
+  "6549bcb6b626a499": [
+   "h1_solaris_em_systems_ready"
+  ],
+  "65568df8cea80024": [
+   "u2_inf_enemy_in_sight"
+  ],
+  "655d54757aa0df94": [
+   "h1_atlas_armor_penetration_guaranteed"
+  ],
+  "6576ca183004b5a4": [
+   "u2_inf_supplies_found"
+  ],
+  "658e5de5995ef410": [
+   "h2_leviathan_may_day_may_day"
+  ],
+  "65e4b8cdacad7426": [
+   "h1_cerberus_shield"
+  ],
+  "65f6f0d0a848b084": [
+   "u1_veh_reporting_damage"
+  ],
+  "66597551c0c85c14": [
+   "h1_beholder_enduring_damage"
+  ],
+  "668ec49ec8b7fd34": [
+   "h1_atlas_why_did_i_get_into_this"
+  ],
+  "66ab7542a76e7864": [
+   "u1_avia_changing_location"
+  ],
+  "66b72b29120771a4": [
+   "u1_veh_haha_is_it_hot_enough_for_you"
+  ],
+  "66c836dd25001004": [
+   "h2_salamander_ah_curse"
+  ],
+  "66e4e7b865405440": [
+   "h1_solaris_yeah"
+  ],
+  "66ea0a815f31445b": [
+   "int_signal_beam_idle"
+  ],
+  "670da98a49e96934": [
+   "h2_gatling_grr_patience"
+  ],
+  "672ee6d2c77ae3a4": [
+   "h1_boreas_lets_cool_their_temper"
+  ],
+  "6789eb5edcfc144c": [
+   "h1_solaris_lets_shake_them"
+  ],
+  "67ae7f47dcaf1644": [
+   "u2_inf_closing_in"
+  ],
+  "67dc594a66a2a474": [
+   "u1_inf_ev_mines_all_around"
+  ],
+  "67e32f9800446264": [
+   "h1_beholder_stealth_mode_activated"
+  ],
+  "67f6ad8b8ed2ccb4": [
+   "msg_place_building"
+  ],
+  "6807a32a00537414": [
+   "h2_leviathan_incoming_missiles"
+  ],
+  "681166dc2464a7f4": [
+   "msg_space_detected"
+  ],
+  "68506a2de73c3c24": [
+   "u1_inf_ev_good_shooting"
+  ],
+  "686a0acb28694a24": [
+   "u2_inf_for_resistance"
+  ],
+  "6882fcf5ee99c914": [
+   "int_skill_card_upgrade_1"
+  ],
+  "689cad0f53239448": [
+   "h1_solaris_taking_damage"
+  ],
+  "68a39fe45635f444": [
+   "u1_veh_artillery_strike"
+  ],
+  "68e525436d97b4fc": [
+   "h2_mole_i_can_fix_anything"
+  ],
+  "690f0ef1de40a7c4": [
+   "h2_wasp_im_hit"
+  ],
+  "6921eb796e4ed416": [
+   "h1_cerberus_where_you_going"
+  ],
+  "692e3855392b5db4": [
+   "h2_salamander_ok_moving_on"
+  ],
+  "693035dacb927234": [
+   "h1_beholder_propeller"
+  ],
+  "699c10eb20d82b94": [
+   "u2_veh_show_them_no_mercy"
+  ],
+  "699f43ad1af69894": [
+   "u1_inf_ev_incoming_strike_take_care"
+  ],
+  "69e66fc842ecd754": [
+   "u1_inf_ev_enemy_vehicle"
+  ],
+  "69ee3ce0ae746e64": [
+   "h2_bison_too_many_sparks_inside"
+  ],
+  "6a30fa0171ea7624": [
+   "h2_coiltank_ligtnings_impact_1"
+  ],
+  "6a38e50b76cca104": [
+   "u1_inf_act_moving"
+  ],
+  "6a4ca5c50b3fd415": [
+   "h2_leviathan_target_destroyed"
+  ],
+  "6a5819099f757ab4": [
+   "u2_avia_commence_firing"
+  ],
+  "6a696bf4c3cef499": [
+   "h2_mole_no_i_dont_want_to_die2"
+  ],
+  "6a8bb25a71ac9084": [
+   "u1_veh_shoot_shoot"
+  ],
+  "6a8cfcd3e1dbe394": [
+   "msg_lot_prize_its_great"
+  ],
+  "6acd9bca0b4863e4": [
+   "h2_gatling_active_prepare"
+  ],
+  "6ae3c0f89cc79704": [
+   "h2_bison_lovely_battery_hummin"
+  ],
+  "6b515b441552eb14": [
+   "fire_gun5_1"
+  ],
+  "6b6ea5faad173439": [
+   "h1_solaris_in_the_name_of_confederation"
+  ],
+  "6b73cde5ee7fd064": [
+   "h1_psitank_move"
+  ],
+  "6bf2990746f996e4": [
+   "h2_wasp_they_wont_get_far"
+  ],
+  "6c1b5d30aa893684": [
+   "h2_bison_my_armor_is_iron"
+  ],
+  "6c304d7aa30ae654": [
+   "h1_beholder_enemy_presence_confirmed"
+  ],
+  "6c6e4380ac8776a4": [
+   "u2_nav_destroy_them"
+  ],
+  "6c88901f01b7e694": [
+   "h2_bison_maximum_extermination"
+  ],
+  "6cd42c29694f3624": [
+   "fire_torpedo2_1"
+  ],
+  "6ce5a94157f9f3f4": [
+   "boom_big1_g_1"
+  ],
+  "6d33f32e3fa40454": [
+   "units_zombie_attack_3"
+  ],
+  "6d55951836354684": [
+   "fire_missile5_1"
+  ],
+  "6d916ef784245bc4": [
+   "h1_psion_my_path_is_clear"
+  ],
+  "6dab60775e65ce94": [
+   "fire_gun2_2"
+  ],
+  "6dd2a29fef7a9294": [
+   "u1_avia_destination"
+  ],
+  "6de58e44ff932b14": [
+   "act_f1_target_acquired"
+  ],
+  "6e057df8cf4caf24": [
+   "h1_beholder_advance_and_watch"
+  ],
+  "6e12833d2ad1d274": [
+   "h2_wasp_how_about_some_action"
+  ],
+  "6e4b80b790cae144": [
+   "h1_boreas_they_look_overheated"
+  ],
+  "6e63c785ef004124": [
+   "u1_avia_fuel_is_out_coming_home"
+  ],
+  "6e7985838fd99814": [
+   "msg_lot_prize_the_luck_is_near"
+  ],
+  "6e89339fc2636f64": [
+   "h1_atlas_all_cannons_lockedon"
+  ],
+  "6e9b393823681094": [
+   "h1_beholder_scanning_armor_for_vulnerability"
+  ],
+  "6ee323f4e39c2e34": [
+   "u2_veh_dont_worry_about_it"
+  ],
+  "6f134d0fa83d6433": [
+   "h1_cerberus_haha_take_that"
+  ],
+  "6f3c38496d5e29f4": [
+   "u1_veh_take_this_flag"
+  ],
+  "6f9a440b1329b6c4": [
+   "h2_salamander_full_throttle"
+  ],
+  "6fa31670a5bb99a4": [
+   "u1_veh_patrolling"
+  ],
+  "6fa6be9435e44454": [
+   "u2_inf_we_under_fire"
+  ],
+  "6faed5d98c7ed453": [
+   "h1_solaris_battaries_full"
+  ],
+  "6fdbe5d90369b4c1": [
+   "h1_solaris_in_motion"
+  ],
+  "6ff69667698f1394": [
+   "u2_inf_im_burning_aaaa"
+  ],
+  "7044cf8e24f43d64": [
+   "u1_veh_mines_dont_move_here"
+  ],
+  "70499f488758147a": [
+   "h1_seraphim_in_control"
+  ],
+  "708feabf9f0b65c4": [
+   "u2_inf_im_dying_here"
+  ],
+  "709ca8625ad48934": [
+   "fire_gun7_1"
+  ],
+  "70ccb02a2e11b5e4": [
+   "u1_inf_sel_this_thing_is_heavy"
+  ],
+  "717c2a97bf861564": [
+   "h1_beholder_get_it_out_of_me"
+  ],
+  "71b4a28413e31544": [
+   "h1_boreas_the_ground_just_bit_back"
+  ],
+  "71cf8eb98c5f3d84": [
+   "u1_nav_land_target"
+  ],
+  "71d06ec0de5f6d74": [
+   "h2_salamander_kick_their_rumps"
+  ],
+  "71eecf3f83d52455": [
+   "h2_leviathan_devastation"
+  ],
+  "720ef509f05097a4": [
+   "u1_avia_fuel_level_critical"
+  ],
+  "7226f72bf43064e4": [
+   "h2_gatling_tear_em_apart"
+  ],
+  "72321fde15907c84": [
+   "h2_bison_need_an_electrician"
+  ],
+  "725f1aa81bee7b54": [
+   "msg_lot_prize_dont_worry"
+  ],
+  "72992db711d894e4": [
+   "u1_inf_act_stop_action"
+  ],
+  "729b04c6d9bac438": [
+   "h2_mole_my_drill_is_heavy"
+  ],
+  "72c703c8c1e694f4": [
+   "h1_psion_mindbreak_is_ready"
+  ],
+  "72f33ec2000c7f34": [
+   "int_timer_superweapon"
+  ],
+  "72f5d412687d81d4": [
+   "units_helicopter_move1"
+  ],
+  "72fa585457c0db64": [
+   "h1_atlas_atlas_warbot_online"
+  ],
+  "735383f3688476f4": [
+   "msg_new_level"
+  ],
+  "73e12e4e865b7514": [
+   "u1_veh_enemy_coming"
+  ],
+  "73f83f213d14a864": [
+   "u1_avia_ready_for_take_off"
+  ],
+  "7416fd5b35d04594": [
+   "h1_beholder_the_all_seeing_eye"
+  ],
+  "746921a793ca0344": [
+   "u1_inf_ev_take_the_flag"
+  ],
+  "7489c68090e568f4": [
+   "u2_avia_im_hit_im_hit"
+  ],
+  "74c2f7a87011c354": [
+   "h2_bison_facing_the_enemy"
+  ],
+  "754d6a669936afd4": [
+   "h1_atlas_on_the_march"
+  ],
+  "7560e54e18438174": [
+   "h1_boreas_order_received"
+  ],
+  "75e1f2f64646a384": [
+   "h1_atlas_yeah_boy"
+  ],
+  "75f14d948b9c66e4": [
+   "h1_psitank_attack_impact4"
+  ],
+  "75fc1544ea957c24": [
+   "h2_salamander_lets_rock_boys"
+  ],
+  "7601cd1243823714": [
+   "int_hint"
+  ],
+  "7610ecdf3a6fe674": [
+   "int_halloween_bad_pumpkin"
+  ],
+  "76225ef2ae884474": [
+   "h2_gatling_wahaha_yes"
+  ],
+  "7623fad4c6bf5534": [
+   "u2_veh_armodillo_in_action"
+  ],
+  "762ab45d2238c764": [
+   "h2_bison_electrodes_ready"
+  ],
+  "764ea4a5debf5114": [
+   "u1_avia_designation_set"
+  ],
+  "76de098deb371a44": [
+   "h2_gatling_still_reloading"
+  ],
+  "76ee4e8480971504": [
+   "u2_inf_faster"
+  ],
+  "771c32f775ace154": [
+   "u2_inf_got_him_haha"
+  ],
+  "776e70db3ebe9a34": [
+   "u2_avia_pilot_online"
+  ],
+  "77838ea27f48a8d4": [
+   "msg_lot_prize_fantastic"
+  ],
+  "77b3f852fec1a7b4": [
+   "u2_inf_speak_quietly"
+  ],
+  "77ff383f8d22341b": [
+   "h2_leviathan_mass_destruction"
+  ],
+  "784dd14b26eaeb94": [
+   "h1_beholder_scanner"
+  ],
+  "786aef5ab40cf3c4": [
+   "h2_salamander_on_the_raid"
+  ],
+  "786cef0e1480a6f4": [
+   "h2_wasp_gotcha"
+  ],
+  "78b2595271ef6c44": [
+   "u2_avia_commencing_attack_run"
+  ],
+  "78e40fdef64d7474": [
+   "h1_cerberus_engage"
+  ],
+  "78ff9bc75d3fce74": [
+   "msg_primary_objective_complete"
+  ],
+  "790cef4177defab4": [
+   "h2_gatling_rollin"
+  ],
+  "791f6a2c292d8476": [
+   "h2_leviathan_total_demolition"
+  ],
+  "792bb98928300104": [
+   "int_click3"
+  ],
+  "793f916f68584f34": [
+   "h1_atlas_bad_day_to_meet_me"
+  ],
+  "798f6d69032db784": [
+   "u2_veh_executing"
+  ],
+  "79df3c73c6ac82c4": [
+   "h2_salamander_it_will_take_a_lot_of_duct_tape"
+  ],
+  "7a0278b67bdc3df4": [
+   "u2_inf_under_fire"
+  ],
+  "7a1cf61312c414fe": [
+   "h2_mole_no_its_not_my_job"
+  ],
+  "7a481bd0a02710b4": [
+   "h2_wasp_you_will_pay_for_this"
+  ],
+  "7a83172ac5c6c394": [
+   "u1_nav_at_your_service"
+  ],
+  "7aee0562423904db": [
+   "h1_cerberus_aghh"
+  ],
+  "7b7de65ad43e3794": [
+   "u1_veh_give_me_a_firing_solution"
+  ],
+  "7b99b9ed02610444": [
+   "u2_veh_enemy_armor_down"
+  ],
+  "7b99e59d8ad47af4": [
+   "act_f1_yes_sir"
+  ],
+  "7bd08a8b2fe78134": [
+   "u2_veh_target_smashed"
+  ],
+  "7bdf1ae863eeee34": [
+   "h2_gatling_easy_pickings"
+  ],
+  "7c08c0f82902ead4": [
+   "u2_veh_what_the_hell"
+  ],
+  "7c12d4d4a4324644": [
+   "units_infantry_die1_5"
+  ],
+  "7c1fda111f0c74bc": [
+   "h2_mole_oh_no_its_too_fast_for_me"
+  ],
+  "7c26d5dcf30744c8": [
+   "h1_cerberus_enemy_down"
+  ],
+  "7c38dd9269684d94": [
+   "int_progressbar"
+  ],
+  "7c44de36b0ac3c74": [
+   "h2_salamander_active_full_open"
+  ],
+  "7c4b41757bba3b74": [
+   "h2_salamander_yeah_its_very_sloow_reloading"
+  ],
+  "7c69f859f98f14d6": [
+   "int_signal_beam_collect"
+  ],
+  "7c81e44a4f04b614": [
+   "msg_need_cp"
+  ],
+  "7c96633e806572c4": [
+   "u1_veh_torrent_ready"
+  ],
+  "7cc2edb83e319704": [
+   "h2_salamander_take_courage"
+  ],
+  "7cf56afa93adb254": [
+   "u1_nav_full_ahead"
+  ],
+  "7d35b416ea7b9c84": [
+   "u1_inf_ev_lets_take_the_point"
+  ],
+  "7d79ffcca42e6b64": [
+   "u1_nav_all_ahead_twothirds"
+  ],
+  "7d7cd0610240c944": [
+   "u2_inf_stop_action"
+  ],
+  "7dc46661c01fbf54": [
+   "u2_veh_waiting_orders"
+  ],
+  "7e24c4f5327300c4": [
+   "units_veh_move1_2"
+  ],
+  "7e3b50705b30f414": [
+   "u1_avia_redirecting_course"
+  ],
+  "7e41831ff952ce14": [
+   "u1_inf_act_stop"
+  ],
+  "7e6c8ad12f0314d1": [
+   "h1_seraphim_here_my_blessing"
+  ],
+  "7f043210410a0a44": [
+   "u2_veh_take_this_ground"
+  ],
+  "7f56f7710819da94": [
+   "msg_lot_prize_perfect"
+  ],
+  "7f6e5a976bc355f4": [
+   "msg_boost_activated"
+  ],
+  "7f78c5be5e57ad74": [
+   "u1_nav_target_destroyed"
+  ],
+  "7f866d647246ba34": [
+   "fire_machine2_1"
+  ],
+  "7f9a27a39ec71404": [
+   "int_button_tap_inactive"
+  ],
+  "7faa39ab0c792964": [
+   "h1_atlas_that_one_hurt"
+  ],
+  "7fb184d970c2ed44": [
+   "h2_wasp_on_the_move"
+  ],
+  "7fb801545b1394c7": [
+   "h1_seraphim_rocket_launch"
+  ],
+  "7fc2aa84aa1f2524": [
+   "h2_bison_caution_electric_shock_hazard"
+  ],
+  "7fe07f81552b3294": [
+   "u2_veh_coyote_ready"
+  ],
+  "80484a4575c294c0": [
+   "h2_mole_wait_commander"
+  ],
+  "8063630fdecbec84": [
+   "h1_boreas_cryocore_breached"
+  ],
+  "806d9d2310826874": [
+   "h2_wasp_enemy_spotted"
+  ],
+  "80d61e6ab3c4f084": [
+   "u2_nav_rocket_strike"
+  ],
+  "80d8a8f671498f14": [
+   "h1_atlas_its_honored_death"
+  ],
+  "8137bed578435074": [
+   "h2_gatling_attack_spin_end"
+  ],
+  "819c5f057f1af484": [
+   "h1_beholder_masked"
+  ],
+  "81c9d66c8cc564d1": [
+   "h1_seraphim_moving"
+  ],
+  "821d0a929b6fcf74": [
+   "int_phrase_two"
+  ],
+  "822849f6a108e954": [
+   "h2_gatling_ready_to_destroy"
+  ],
+  "8253ce8495e99894": [
+   "u1_inf_sel_ready_for_orders"
+  ],
+  "82600832d02f2044": [
+   "h2_wasp_ability_explosion"
+  ],
+  "82965056ea4d84dd": [
+   "h1_cerberus_come_on_come_on"
+  ],
+  "82bd388b355fba84": [
+   "u2_avia_hawk_fighter_online"
+  ],
+  "82c187a6feaf7bf4": [
+   "int_event_joker_box_open"
+  ],
+  "82c46ac3fdd82274": [
+   "h1_boreas_deep_freeze_delivery"
+  ],
+  "82daf6b54345fd94": [
+   "u2_inf_flag_captured"
+  ],
+  "82f35d926c47a4c4": [
+   "128_menu_06"
+  ],
+  "830d71774edf5514": [
+   "fire_gun3_1"
+  ],
+  "838dc1c0a1d52114": [
+   "msg_hidden_enemy"
+  ],
+  "83999abff2536a54": [
+   "int_spin"
+  ],
+  "83b0ce21e89776a4": [
+   "u2_inf_tanks"
+  ],
+  "83b5b8442a5fcde4": [
+   "h1_atlas_i_live_for_this"
+  ],
+  "83cb8915c5b93894": [
+   "h2_bison_poof_at_its_gone"
+  ],
+  "83d7f3b9990b3e24": [
+   "units_f2_spec1"
+  ],
+  "83f78b2939df5eb4": [
+   "h2_bison_surging_forward"
+  ],
+  "84261ceeb85d6e34": [
+   "h1_beholder_enemy_detected"
+  ],
+  "843a020d27357134": [
+   "units_zombie_move_2"
+  ],
+  "8483100931cfc8b4": [
+   "u1_veh_hold_position"
+  ],
+  "84b7318e51bf27b4": [
+   "h1_psitank_passive2"
+  ],
+  "854761304df8a1d4": [
+   "u1_inf_ev_watch_out_minefield"
+  ],
+  "8548afd56af8e404": [
+   "h1_cerberus_change_weapon"
+  ],
+  "8581c418db3ec374": [
+   "h1_beholder_the_order_is_clear"
+  ],
+  "85b6fa46946b3491": [
+   "h2_leviathan_neutralized"
+  ],
+  "85be24756d20ee24": [
+   "units_infantry_die1_3"
+  ],
+  "861c8196939fda24": [
+   "fire_launch_nuke_rocket_2"
+  ],
+  "86221186e8d4fc04": [
+   "u1_veh_give_me_a_target_to_smash"
+  ],
+  "8630d1a37210ca44": [
+   "u2_avia_relocating"
+  ],
+  "865fe8798c443584": [
+   "fire_sniper1_1"
+  ],
+  "867007031bbc4834": [
+   "u2_veh_yeah"
+  ],
+  "86c3a8f5dce87864": [
+   "h1_psion_advancing"
+  ],
+  "86d2e1a0dd08f42f": [
+   "h2_leviathan_target_ahead"
+  ],
+  "86eb91d1922706e4": [
+   "u2_veh_engine`s_burning"
+  ],
+  "8716f340fdce8584": [
+   "u1_avia_loading"
+  ],
+  "8717e0c8f69317d4": [
+   "h2_wasp_no_problem"
+  ],
+  "8744f7cf9261cc04": [
+   "h1_psion_supress_them"
+  ],
+  "8752d80da7415224": [
+   "act_f1_affirmative"
+  ],
+  "875f85e032c17254": [
+   "u2_avia_low_fuel"
+  ],
+  "877fad55237c4d34": [
+   "act_f1_fire"
+  ],
+  "8780723eb6e2e4ca": [
+   "h2_leviathan_devastation_ready"
+  ],
+  "878e8e611a4b8584": [
+   "int_lottery_bonus"
+  ],
+  "87afc14f14348ff4": [
+   "h1_psion_divide_and_conquer"
+  ],
+  "87bdb6309b3cce84": [
+   "boom_med1_g_1"
+  ],
+  "87f7f2a8b2fa7794": [
+   "h1_atlas_oh_here_we_go_again"
+  ],
+  "87f9eb9ff031041d": [
+   "h1_cerberus_shields_on"
+  ],
+  "8847128cc11d1f14": [
+   "h2_bison_shock_therapy"
+  ],
+  "884a0d934657e284": [
+   "int_lantern_collect"
+  ],
+  "884b1a97ab21eab4": [
+   "msg_lot_prize_excellent"
+  ],
+  "88a94d6cc614c9d4": [
+   "h2_salamander_off_to_sea"
+  ],
+  "88be3fc3c6c974e4": [
+   "int_sfx_border"
+  ],
+  "88ed838b9d806824": [
+   "act_f1_take_aim"
+  ],
+  "88fc1bdc1f00b5e4": [
+   "u2_veh_using_smokescreen"
+  ],
+  "88fdcc29333f3458": [
+   "h2_mole_deploying_turret"
+  ],
+  "890de1e4b86725d4": [
+   "fire_gun4_1"
+  ],
+  "892e1129a0a8d774": [
+   "u2_veh_point_captured"
+  ],
+  "89876b5272182364": [
+   "u2_avia_dragonfly_reporting"
+  ],
+  "899686bcc75162f4": [
+   "u1_veh_zeus_tank_ready"
+  ],
+  "89976498735d49d4": [
+   "u1_nav_surface_target_ahead"
+  ],
+  "89f6c59abd39d044": [
+   "h2_gatling_prey_in_sight"
+  ],
+  "8a5e8cbd132f9064": [
+   "h1_boreas_snowstorm"
+  ],
+  "8a7ece67d1c11834": [
+   "u2_veh_porcupine_ready"
+  ],
+  "8a96390e3d016a44": [
+   "h1_atlant_passive_on"
+  ],
+  "8acf6fee6448afd4": [
+   "u1_inf_ev_airstrike"
+  ],
+  "8ae10413481b4404": [
+   "int_timer_finish"
+  ],
+  "8af29f3a34f321b4": [
+   "h1_boreas_coolheaded"
+  ],
+  "8afab609b82c34f1": [
+   "h2_leviathan_our_time_has_come"
+  ],
+  "8b10e091cc88a064": [
+   "int_info_feed_lobby"
+  ],
+  "8b6874f4add2c4e4": [
+   "h1_atlas_confederation_is_supreme"
+  ],
+  "8b6c0dc87b9ec984": [
+   "h1_atlas_its_nothing_to_me"
+  ],
+  "8b6c9b91d46a9094": [
+   "u2_inf_yes"
+  ],
+  "8b849515e1f718d4": [
+   "u1_inf_ev_enemy_warship"
+  ],
+  "8b9c6fcb098df413": [
+   "h2_leviathan_all_guns_fire"
+  ],
+  "8be5d037915d0ca4": [
+   "int_building_menu_open"
+  ],
+  "8bebfe7060561a54": [
+   "u2_veh_cant_hold_forever"
+  ],
+  "8bf3e554dac9a41c": [
+   "h2_leviathan_size_does_matter"
+  ],
+  "8c16c81ef081fd94": [
+   "u2_veh_direct_hit"
+  ],
+  "8c30cb5f286d245c": [
+   "h2_mole_its_too_far_commander"
+  ],
+  "8c683972b11bd4fa": [
+   "h2_leviathan_reloading"
+  ],
+  "8c73753ff949fb14": [
+   "boom_nuke_bomb"
+  ],
+  "8c9ced24a5480764": [
+   "h2_salamander_sentenced_to_death"
+  ],
+  "8cdace8670b01d94": [
+   "h1_beholder_vulnerability_scan_is_ready"
+  ],
+  "8d1ac0cb02520974": [
+   "fire_flame1_2"
+  ],
+  "8d386c44099168c4": [
+   "h1_beholder_alarm"
+  ],
+  "8d55fc7ce11c13b4": [
+   "h1_psitank_active_start"
+  ],
+  "8dac68bf5a6cf034": [
+   "h1_cerberus_jump_landing"
+  ],
+  "8dbf871a4afa88c4": [
+   "u1_inf_ev_enemy_shields_on"
+  ],
+  "8dc90edb234d8a34": [
+   "h1_boreas_stone_cold"
+  ],
+  "8df0a670730e0204": [
+   "u1_inf_sel_ready_to_roast"
+  ],
+  "8e50f34c20211694": [
+   "h1_cerberus_landing_explosion"
+  ],
+  "8e7cce6f67378074": [
+   "int_move_assault"
+  ],
+  "8e8ac7e6ed8d2c84": [
+   "u1_inf_ev_air"
+  ],
+  "8e9dd2d58af2a654": [
+   "u2_inf_bastards"
+  ],
+  "8f00656ff7ca746e": [
+   "h1_seraphim_taking_damage"
+  ],
+  "8f43dbaae5161164": [
+   "u2_veh_minefield"
+  ],
+  "8f4e732b26fa4114": [
+   "h2_bison_here_coming_thunderbolt"
+  ],
+  "8f6c74d4af36d41b": [
+   "h2_leviathan_they_are_doomed"
+  ],
+  "8f70283e5ec405f4": [
+   "h1_beholder_please_stand_still"
+  ],
+  "8f72ddf7f5a91c74": [
+   "u2_inf_tracking_enemy"
+  ],
+  "8f80bd1f8fdcc594": [
+   "h1_boreas_science_power"
+  ],
+  "9024dfaec9c38cb4": [
+   "int_new_league"
+  ],
+  "9053bc5adb0d8462": [
+   "h2_mole_armor_critical"
+  ],
+  "908524e8a884ca24": [
+   "u2_inf_enemy_destroyed"
+  ],
+  "90b11c8e1dcfe4e4": [
+   "h2_salamander_move_ground"
+  ],
+  "90b25cd90a135426": [
+   "h1_seraphim_as_you_say"
+  ],
+  "90b71216c35774aa": [
+   "h1_cerberus_hee"
+  ],
+  "90cc6fe6dad29454": [
+   "h1_solaris_enemy_roasted"
+  ],
+  "90cf583ef2c6b8e4": [
+   "h1_beholder_target_is_locked_on"
+  ],
+  "90e610fa7a1e6b24": [
+   "u2_inf_roger_that"
+  ],
+  "90f4c1fd678fb43e": [
+   "h2_mole_take_this_comrad"
+  ],
+  "913870e71d7fa984": [
+   "h2_salamander_rocket_ready_lets_shoot"
+  ],
+  "917aa9b7d5afec04": [
+   "u1_inf_ev_flag_captured"
+  ],
+  "91871baa858dd2a4": [
+   "u1_veh_whats_our_target"
+  ],
+  "91904263c9a70497": [
+   "h1_seraphim_they_will_confess"
+  ],
+  "919d0b023a7ee8e4": [
+   "h2_salamander_we_fight_on_land_and_sea"
+  ],
+  "919d14f9cc0d8344": [
+   "u2_avia_booom"
+  ],
+  "91d71fca4d7e16d4": [
+   "msg_point_captured"
+  ],
+  "91f0ce4b34f69104": [
+   "h1_psion_i_still..._command..."
+  ],
+  "921964bb72f5a414": [
+   "u1_veh_fire_this_target"
+  ],
+  "92826aad386c44c8": [
+   "h1_solaris_enemy_in_sight"
+  ],
+  "92dcd32a805caf44": [
+   "fire_machine3_1"
+  ],
+  "931467a6be217d04": [
+   "int_change_item"
+  ],
+  "934413af289c4504": [
+   "msg_offer_dont_miss"
+  ],
+  "9354dd4948565f34": [
+   "128_menu_01"
+  ],
+  "935a346bb3339af4": [
+   "units_f1_spec2"
+  ],
+  "935ac4063de77694": [
+   "h1_atlas_wow_you_okay_buddy"
+  ],
+  "93662284d8809104": [
+   "h2_gatling_son_of_v2"
+  ],
+  "9410ba32e28d6414": [
+   "u2_veh_lock_and_load"
+  ],
+  "941dd6c508add964": [
+   "h1_psion_im_victorious"
+  ],
+  "9461c3e2b27cd424": [
+   "h2_bison_melt_through_them"
+  ],
+  "94757c3dc162f054": [
+   "msg_lot_prize_very_well"
+  ],
+  "94b040842bebb40d": [
+   "h2_mole_no_retreat"
+  ],
+  "94b193b51dfef304": [
+   "h1_atlas_no_retreat_no_surrender"
+  ],
+  "94b6a55a204e2494": [
+   "int_skill_series_open"
+  ],
+  "94e0c8c4e4af2764": [
+   "int_first_victory_bonus"
+  ],
+  "94e9fb902c2fbd44": [
+   "u2_nav_push_forward"
+  ],
+  "9508cdd24c585d24": [
+   "h2_salamander_semiaquatic_semiterrestrial"
+  ],
+  "952f2b540f3042a4": [
+   "msg_skirmish_over"
+  ],
+  "95745dfc49b94a04": [
+   "h1_cerberus_attack"
+  ],
+  "957a5f82a375044c": [
+   "h1_solaris_forward"
+  ],
+  "95827207a1a5b284": [
+   "u2_veh_complete"
+  ],
+  "95b8e054bce2cc34": [
+   "int_halloween_good_pumpkin"
+  ],
+  "96280d1841f96469": [
+   "h2_leviathan_naval_target_detected"
+  ],
+  "96490d550a7aba14": [
+   "boom_big1_g_4"
+  ],
+  "96fcf5cfd9c73384": [
+   "h2_salamander_prime_amphibian"
+  ],
+  "96ff491f06f1c234": [
+   "h1_boreas_requesting_an_order"
+  ],
+  "97572e1372271534": [
+   "h1_atlas_aint_nobody_got_time_for_that"
+  ],
+  "981272241a6f1484": [
+   "h2_wasp_falling_down"
+  ],
+  "98142cb2d9a50174": [
+   "h2_wasp_alarm"
+  ],
+  "98305a8afdfcb774": [
+   "h2_bison_ball_lightning_is_ready"
+  ],
+  "988b0e6c89c00b54": [
+   "h2_wasp_flying"
+  ],
+  "989aef77c33425e4": [
+   "u1_veh_ready_to_roast"
+  ],
+  "98a6efd32f827c14": [
+   "u2_veh_engaging"
+  ],
+  "994a433fb687d5d4": [
+   "msg_lot_invite_ok_try_your_luck"
+  ],
+  "9989ded5d0a02464": [
+   "u1_avia_coordinates_confirmed"
+  ],
+  "99d3cd5d46985004": [
+   "msg_our_bld_destroyed"
+  ],
+  "9a0bfb4f8f282ec4": [
+   "h2_wasp_chemicals_ready"
+  ],
+  "9a0f931dc1ef6844": [
+   "h2_gatling_sure_thing"
+  ],
+  "9a1a5611c4a70fc4": [
+   "128_menu_03"
+  ],
+  "9aa516c682a6a485": [
+   "h1_seraphim_taking_off"
+  ],
+  "9aa8c47969484754": [
+   "h2_gatling_smoke_boom"
+  ],
+  "9aab6af7ecb66504": [
+   "units_f1_march1"
+  ],
+  "9ab0944399973554": [
+   "h1_psion_i_sense_enemy_presence"
+  ],
+  "9ab22587e36d0e14": [
+   "u2_nav_reporting_for_duty"
+  ],
+  "9ac9550f571b44be": [
+   "h2_mole_its_time_to_hide"
+  ],
+  "9ae074cdbff73fd4": [
+   "h2_gatling_gatling_claws_and_metal_hide"
+  ],
+  "9b14ede60fb89a64": [
+   "h2_salamander_no_place_to_hide"
+  ],
+  "9b24d2b115d36e34": [
+   "fire_slug1_1"
+  ],
+  "9b8f471908fbff34": [
+   "h2_wasp_lets_add_some_green"
+  ],
+  "9bc575302ee30a24": [
+   "u2_avia_transport_at_your_service"
+  ],
+  "9be86e3033a561e4": [
+   "h1_atlant_passive_off"
+  ],
+  "9c0c5de94b2c1a74": [
+   "u1_nav_open_kingstons_scuttle_the_ship"
+  ],
+  "9c448ed10fae46f4": [
+   "u2_nav_it_is_done"
+  ],
+  "9c4690ae5e972459": [
+   "int_5_year_birthday"
+  ],
+  "9c6be182d16366b4": [
+   "h1_boreas_fresh_warm_targets_here"
+  ],
+  "9c8244b401f63c54": [
+   "msg_upg_complete"
+  ],
+  "9c86c59de2d34e94": [
+   "u2_avia_target_set"
+  ],
+  "9cb801cbc4684fe4": [
+   "u1_veh_fire"
+  ],
+  "9d08de60ca5a4447": [
+   "h1_seraphim_seraphim_going_down"
+  ],
+  "9d6e437ecec593a4": [
+   "boom_small1_g_1"
+  ],
+  "9d9455c1b2da64a6": [
+   "h2_leviathan_under_attack"
+  ],
+  "9df3701ca2fc64c1": [
+   "h2_mole_turret_shot"
+  ],
+  "9e23c9758dcba9c4": [
+   "h1_atlas_the_enemy_is_erased"
+  ],
+  "9e3dbc8baf73c344": [
+   "int_building_denied"
+  ],
+  "9e7f059ad5b6adf4": [
+   "h2_gatling_unleash_hellfire"
+  ],
+  "9eacf1cfbd23ad34": [
+   "u2_nav_taking_fire"
+  ],
+  "9ec7d6b6c05daf04": [
+   "h2_wasp_just_a_moment"
+  ],
+  "9ecbd921b00e1b94": [
+   "h1_boreas_switch_back"
+  ],
+  "9f1f8834fdaf0914": [
+   "u1_inf_sel_squad_ready_and_waiting"
+  ],
+  "9f30a73f3a0fa1e4": [
+   "msg_defeat"
+  ],
+  "9f57c0e96be484b8": [
+   "h1_seraphim_double_power"
+  ],
+  "9f66e8496f4bb44b": [
+   "h1_seraphim_transform_1"
+  ],
+  "9f7ce1ddd6ffe694": [
+   "u2_avia_enemy_in_sight"
+  ],
+  "9fa45b5eb67b7c74": [
+   "u1_veh_target_down"
+  ],
+  "9faba94866007924": [
+   "u1_veh_clearing_sector"
+  ],
+  "a0205938fdb7744a": [
+   "h2_mole_not_ready2"
+  ],
+  "a05bcfe5a2bf1684": [
+   "int_new_year"
+  ],
+  "a06ba014a4eebcb4": [
+   "msg_ins_res"
+  ],
+  "a0b780a0c5a7a4cc": [
+   "h1_cerberus_charge"
+  ],
+  "a0b7da21fe086c14": [
+   "int_cryptodata_collect"
+  ],
+  "a0bf61fbe19ec704": [
+   "h1_atlas_always_ready"
+  ],
+  "a11e3037456be4fa": [
+   "h2_mole_big_drill_big_hole"
+  ],
+  "a1707e0e05a5d974": [
+   "msg_minefield"
+  ],
+  "a174e24fe78cb014": [
+   "h1_boreas_keeping_pace_with_the_assault"
+  ],
+  "a1b34538e28b0e84": [
+   "units_f2_spec2_loop"
+  ],
+  "a2432c5fabbad764": [
+   "u1_avia_enemy_destroyed"
+  ],
+  "a246f247213114b9": [
+   "h2_leviathan_target_eliminated"
+  ],
+  "a267126d5daa17b4": [
+   "boom_small2_g_1"
+  ],
+  "a27a99abf1dd6b04": [
+   "u2_veh_neeeext"
+  ],
+  "a2a4470f3e729436": [
+   "h2_mole_move"
+  ],
+  "a2bed56d0df17824": [
+   "u2_avia_tracking_enemy"
+  ],
+  "a2e33586a63d89b4": [
+   "h1_psion_ready_to_dominate"
+  ],
+  "a2e75107c1cd52a4": [
+   "h2_gatling_attack_spin_loop"
+  ],
+  "a2f03fd47bbcfd84": [
+   "u2_inf_take_this"
+  ],
+  "a30ab6574f7f7754": [
+   "h2_gatling_targets_on_the_radar"
+  ],
+  "a362f240ace41b04": [
+   "u2_veh_on_my_way"
+  ],
+  "a383d45a2ad2a6c4": [
+   "h2_salamander_enemy_in_range"
+  ],
+  "a3d99f7c14f9446c": [
+   "h1_cerberus_take_this"
+  ],
+  "a441b2aa24f9df14": [
+   "h1_beholder_advancing_cautiously"
+  ],
+  "a4449971d919c3f4": [
+   "u2_inf_take_cover"
+  ],
+  "a4559c50a06fac84": [
+   "h2_bison_the_storm_is_coming"
+  ],
+  "a4850732b184ede4": [
+   "u2_avia_the_sky_is_ours"
+  ],
+  "a49523de00b85e94": [
+   "u1_inf_ev_target_spotted"
+  ],
+  "a4a6b516f4dcb164": [
+   "h2_coiltank_lightnings_impact_3"
+  ],
+  "a4e6a77d8ba1a914": [
+   "h2_gatling_attack_spin_start"
+  ],
+  "a4f15b397f9be704": [
+   "h1_boreas_cold_steel_at_your_service"
+  ],
+  "a503079c53129d94": [
+   "u2_avia_landing"
+  ],
+  "a504ac756961a3a4": [
+   "u1_nav_approaching"
+  ],
+  "a524322c451bb4f5": [
+   "h1_solaris_enemy_sighted"
+  ],
+  "a52e571308430cd4": [
+   "h1_psion_test_subjects_detected"
+  ],
+  "a59ea9dee91231b4": [
+   "h2_wasp_receiving_damage"
+  ],
+  "a5cc088f9e54f424": [
+   "u2_inf_catch_this_grenade_amigo"
+  ],
+  "a5e441a7d4c8b468": [
+   "h1_seraphim_affirmative"
+  ],
+  "a63bc7c78ebca1f4": [
+   "h2_salamander_another_one_bites_the_dust"
+  ],
+  "a6fa6ca281574be4": [
+   "u1_veh_lets_blow_them_up"
+  ],
+  "a71668072cc79fe4": [
+   "h1_cerberus_i_feel_power"
+  ],
+  "a7252c7079b6d1b4": [
+   "h2_salamander_move_water"
+  ],
+  "a72cee9732739460": [
+   "h2_mole_do_you_like_my_drill"
+  ],
+  "a738af53219a90b4": [
+   "u1_veh_minefield_here"
+  ],
+  "a77f9bcc714d8074": [
+   "u2_veh_jobs_done"
+  ],
+  "a787581c307c3429": [
+   "h1_seraphim_fire_on_target"
+  ],
+  "a78842ac7fed146a": [
+   "h2_mole_okey_ill_do_it"
+  ],
+  "a7f2c99120db27c4": [
+   "h2_gatling_son_of_v1"
+  ],
+  "a81542f6852e9421": [
+   "h1_seraphim_seraphim_reporting"
+  ],
+  "a82e1efd6109b084": [
+   "u1_inf_ev_they_use_fog"
+  ],
+  "a868e2b1295cb5c4": [
+   "u2_veh_give_me_a_target_to_smash"
+  ],
+  "a86e7d5c2c209485": [
+   "h2_leviathan_nuclear_missile_ready"
+  ],
+  "a91b33fc8b2880f4": [
+   "u2_veh_crush_them"
+  ],
+  "a95927d7ae75f4cc": [
+   "h2_leviathan_taking_fire"
+  ],
+  "a96b6a9d4efad49f": [
+   "h1_seraphim_enemy_spotted"
+  ],
+  "a99d03d085732264": [
+   "h1_atlant_impact_2"
+  ],
+  "a9aeb240f37536b4": [
+   "h2_gatling_hunting_season"
+  ],
+  "a9b568ceb4868ca4": [
+   "boom_small1_g_3"
+  ],
+  "a9cbc4d6ebdc62a4": [
+   "h2_bison_okay_understood"
+  ],
+  "aa03f36b58434704": [
+   "h1_beholder_oversight"
+  ],
+  "aa1a77bd07373e04": [
+   "h2_bison_\u0441ome_closer_fools"
+  ],
+  "aab46d76c5382bf4": [
+   "u1_nav_battlecruiser_ready_and_waiting"
+  ],
+  "aad07917960fd4d8": [
+   "h1_seraphim_passive"
+  ],
+  "aaf480e638496754": [
+   "u1_veh_attacking"
+  ],
+  "ab2b188fd0025214": [
+   "h1_beholder_ready_to_behold"
+  ],
+  "ab3a902eda9dbd74": [
+   "int_lottery_stop"
+  ],
+  "ab62c44c1cc15724": [
+   "msg_lot_prize_cheer_up"
+  ],
+  "ab9d474c3afcb3f4": [
+   "u1_inf_ev_snipers_over_there"
+  ],
+  "aba177cff63c0f24": [
+   "h1_psion_bring_them_nightmares"
+  ],
+  "abb0a287d52e4894": [
+   "u2_nav_sea_mines"
+  ],
+  "abd7dbee9d74ab94": [
+   "u1_inf_sel_show_me_armor"
+  ],
+  "abfa57823b2c2f34": [
+   "128_building_an_army"
+  ],
+  "ac29ebefcdc58044": [
+   "boom_big1_w_2"
+  ],
+  "ac6aeea4b0e8f1d4": [
+   "boom_med1_w_2"
+  ],
+  "ac86b281a10a3aa4": [
+   "h1_beholder_invisibility_enabled"
+  ],
+  "ace452dbaeefb264": [
+   "u2_inf_hit_the_ground"
+  ],
+  "ad54eac7e220d374": [
+   "u1_veh_fueled_up_and_ready"
+  ],
+  "ad5f710f1a59edc4": [
+   "u2_veh_clearing_the_area"
+  ],
+  "ad96ceed2564db44": [
+   "fire_machine4_1"
+  ],
+  "ade29888331c6483": [
+   "h2_mole_recieving_damage"
+  ],
+  "ae2c1b391d171b14": [
+   "u2_inf_do_it"
+  ],
+  "ae325bdda0459234": [
+   "u2_inf_its_not_good"
+  ],
+  "ae5a684513203904": [
+   "boom_small1_w_1"
+  ],
+  "ae61f4b9f826a964": [
+   "h1_atlas_awaiting_your_word"
+  ],
+  "ae88ece6264b3344": [
+   "u2_inf_aaaa_im_hit"
+  ],
+  "aed7769c2192ec54": [
+   "int_box_bonus"
+  ],
+  "aed798a47c608ce4": [
+   "h2_wasp_recharging"
+  ],
+  "af0c93180f783cc4": [
+   "fire_gun3_2"
+  ],
+  "af17c1c3be354aa4": [
+   "u1_veh_full_ahead"
+  ],
+  "af343d14f7eb34a4": [
+   "h2_leviathan_missile_shield"
+  ],
+  "af772134d499e7a4": [
+   "h1_boreas_cryo_systems_online"
+  ],
+  "afa46c5291940574": [
+   "act_f1_we_move"
+  ],
+  "afbde16b3bf8f884": [
+   "int_window_open"
+  ],
+  "afc2903add00cbc4": [
+   "h1_atlas_floor_is_a_lava"
+  ],
+  "afeb7ceb2612dea4": [
+   "act_f1_siege_mode"
+  ],
+  "affac12afd53ea24": [
+   "u1_veh_well_done"
+  ],
+  "affffb2cbabaef54": [
+   "h1_psion_lets_do_an_experiment"
+  ],
+  "b006b3111ca03f34": [
+   "h2_wasp_wasp_is_here"
+  ],
+  "b0949a3872fb1044": [
+   "u2_inf_go_go_go"
+  ],
+  "b0b7e40650a4e439": [
+   "msg_join_team_battle"
+  ],
+  "b1277054f9615a04": [
+   "u1_inf_ev_receiving_fire"
+  ],
+  "b12a36916fc3c434": [
+   "u1_inf_act_charge"
+  ],
+  "b158798f86de6a24": [
+   "act_f1_group"
+  ],
+  "b169bb5859556774": [
+   "h2_gatling_theyre_testing_my_limits"
+  ],
+  "b16b1f57fd1ab4a0": [
+   "h2_leviathan_leave_nothing"
+  ],
+  "b1ac438c2f3da6e4": [
+   "boom_small3_g_2"
+  ],
+  "b1b409bca3f628a4": [
+   "boom_med1_w_1"
+  ],
+  "b1bd35fe50fcec04": [
+   "u1_inf_act_fire_this_target"
+  ],
+  "b2971a05f43bf924": [
+   "u1_veh_critical_damage"
+  ],
+  "b2f61d8ede277824": [
+   "u2_inf_damn_they_shooting_us"
+  ],
+  "b3482d897e6f5134": [
+   "u2_nav_target_down"
+  ],
+  "b3518ca83f1c7e04": [
+   "h1_atlas_haalt"
+  ],
+  "b37437a362973914": [
+   "h1_psion_troublesome_creatures"
+  ],
+  "b3785e954add0477": [
+   "h1_cerberus_lock_and_load"
+  ],
+  "b37c67760208e754": [
+   "u1_inf_sel_squad_ready"
+  ],
+  "b38378f2a85884d4": [
+   "u1_inf_ev_artillery"
+  ],
+  "b393875f9f9a3b34": [
+   "h1_boreas_cryoblast_primed"
+  ],
+  "b3a6d4b197005694": [
+   "u2_inf_dont_be_afraid_of_death"
+  ],
+  "b3d6cdb98cfcefc4": [
+   "h2_bison_lets_take_a_closer_look"
+  ],
+  "b3e26b47c6228514": [
+   "u2_inf_show_them_no_mercy"
+  ],
+  "b40773426ea97c54": [
+   "h2_bison_cabins_on_fire"
+  ],
+  "b4529d143c8135c4": [
+   "u1_veh_airraid_warning"
+  ],
+  "b48327723b927ac4": [
+   "msg_our_base_under_attack"
+  ],
+  "b48bad8d9e781574": [
+   "boom_med1_g_2"
+  ],
+  "b4a2faf2ae4c3684": [
+   "u2_veh_command"
+  ],
+  "b4bb8f3480f1f447": [
+   "h1_cerberus_eaaaaarrr"
+  ],
+  "b4d0bc305ecd9754": [
+   "h2_salamander_lets_race"
+  ],
+  "b4d914c051acfb64": [
+   "u2_veh_destroy"
+  ],
+  "b4dadb7a58a83c94": [
+   "h2_bison_electro_nova"
+  ],
+  "b4e148ca28b8b8f4": [
+   "h1_psitank_attack_impact2"
+  ],
+  "b4ed6988ccc89458": [
+   "h1_seraphim_may_day"
+  ],
+  "b4f1fba134b13fd4": [
+   "act_f1_ready_for_orders"
+  ],
+  "b53efd434f55f524": [
+   "u2_veh_speak_louder"
+  ],
+  "b58e4deba2ac7934": [
+   "u1_inf_ev_hold_the_flag"
+  ],
+  "b5a5f2e6139d8d34": [
+   "u1_inf_sel_ready_for_trouble"
+  ],
+  "b5d26c5199995a94": [
+   "boom_big1_g_2"
+  ],
+  "b5eeb90c0011f459": [
+   "h1_seraphim_all_system_ready"
+  ],
+  "b6189e042f1c6304": [
+   "fire_rifle2_2"
+  ],
+  "b62d4a2c2df6fa94": [
+   "units_veh_move1_1"
+  ],
+  "b683f0cdd30e7074": [
+   "u1_inf_ev_point_captured"
+  ],
+  "b6fad75161177472": [
+   "h2_leviathan_captain_here"
+  ],
+  "b7316f066d66fba4": [
+   "h1_boreas_copy_that_commander"
+  ],
+  "b766d000e0597884": [
+   "h1_cerberus_ill_do_it_with_pleasure"
+  ],
+  "b76742d8a15d80d4": [
+   "h1_boreas_coolant_pressure_stable"
+  ],
+  "b7696761c628fdd4": [
+   "h2_gatling_i_love_the_smell_of_gunpowder"
+  ],
+  "b7aae60e245c8cc4": [
+   "msg_not_enoght_credits"
+  ],
+  "b7b018725e6cf48d": [
+   "h1_cerberus_no_mercy_for_cowards_haha"
+  ],
+  "b7c130fce2fe1db4": [
+   "h2_bison_switch_off"
+  ],
+  "b7c14101b792e8b4": [
+   "h1_boreas_cooling_the_frontline"
+  ],
+  "b7e8bc430654042d": [
+   "h2_leviaphan_open_slot"
+  ],
+  "b7f5fc11a33654da": [
+   "h1_solaris_battaries_empty"
+  ],
+  "b866996b66422884": [
+   "u2_veh_two_guns_make_a_double_trouble_to_enemy"
+  ],
+  "b88340c6f8952b94": [
+   "h2_bison_current_kills"
+  ],
+  "b8b794234114ebb4": [
+   "act_f1_target_understood"
+  ],
+  "b8e164edb5df8f64": [
+   "fire_gun2_1"
+  ],
+  "b8eee33e200537f4": [
+   "fire_launch_space"
+  ],
+  "b907e640de4328c4": [
+   "h1_boreas_enemy_frozen_out"
+  ],
+  "b92c8ce095a36446": [
+   "h2_mole_whats_next"
+  ],
+  "b93bc444e80422f4": [
+   "u1_nav_right_full_rudder_all_ahead"
+  ],
+  "b956316f1299e44a": [
+   "h1_seraphim_rockets_reloaded"
+  ],
+  "b96293df58866584": [
+   "h1_beholder_bonjour_commandant"
+  ],
+  "b99dd647d1c851e4": [
+   "fire_missile4_1"
+  ],
+  "b9a8d1465672a4de": [
+   "h2_mole_mole_ready"
+  ],
+  "b9ae1625e3ff0bc4": [
+   "int_defeat"
+  ],
+  "b9d03a903d92b624": [
+   "msg_offer_personal"
+  ],
+  "b9e5eeda3ad912d4": [
+   "u2_inf_whats_next_hide"
+  ],
+  "ba0cd5742fae3334": [
+   "h1_atlas_turn_it_all_to_dust"
+  ],
+  "ba28a52e5718e4d9": [
+   "h1_cerberus_ughh"
+  ],
+  "ba3fb8bb7a41fd24": [
+   "u2_inf_ready"
+  ],
+  "ba5ee2f0f89047c4": [
+   "u1_nav_steady"
+  ],
+  "ba7d12bf0d901034": [
+   "h2_salamander_one_vehicle_wrecking_crew"
+  ],
+  "ba84f8d80dcce4d4": [
+   "h2_gatling_switching_tactics"
+  ],
+  "ba8f3d955874c584": [
+   "msg_lot_prize_its_your_lucky_day"
+  ],
+  "bacd9a09737077c4": [
+   "units_fighter_down1"
+  ],
+  "baeac83e7c253304": [
+   "u1_nav_salvo_fire"
+  ],
+  "bb085ff739dc142c": [
+   "h1_solaris_affirmative"
+  ],
+  "bb35bd13f9386424": [
+   "h2_mole_haha"
+  ],
+  "bb4d9b85ccb12400": [
+   "h2_leviathan_destroy_them_now"
+  ],
+  "bb75d0e0b82843f4": [
+   "u2_inf_grenades_here"
+  ],
+  "bb96b499bf904a04": [
+   "h1_psion_become_my_thralls"
+  ],
+  "bbd8227d5a1334ce": [
+   "h2_mole_mole_is_online"
+  ],
+  "bbe9e5a31c30f094": [
+   "h2_salamander_we_need_to_get_outta_here"
+  ],
+  "bbf4c192e9122e54": [
+   "h2_gatling_just_a_scratch"
+  ],
+  "bc05199fd762a514": [
+   "Int_30days_open"
+  ],
+  "bc0653a868d3b974": [
+   "h1_boreas_under_fire_not_a_joke"
+  ],
+  "bcad7f1a985baf34": [
+   "msg_cont_detected"
+  ],
+  "bcb15778b2adf4ea": [
+   "h1_solaris_solaris_moving"
+  ],
+  "bccab9269a6e1404": [
+   "h1_seraphim_flight"
+  ],
+  "bccb71c9d6f702b4": [
+   "u2_inf_my_rifle_is_ready_for_action"
+  ],
+  "bcf126c6bdeeead4": [
+   "u1_inf_ev_target_destroyed"
+  ],
+  "bd1951fb2055049e": [
+   "h2_mole_they_are_coming"
+  ],
+  "bd78dbae22ec50a4": [
+   "fire_bomb1_1"
+  ],
+  "bd7f53217a6b3f14": [
+   "boom_big1_w_1"
+  ],
+  "bd929a9550d5e774": [
+   "u2_avia_jobs_done_coming_home"
+  ],
+  "bd9571d6b5fcbd44": [
+   "msg_join_tournament_battle"
+  ],
+  "bdb5906768fd8e54": [
+   "units_ufo_move"
+  ],
+  "bdd5bc180c3598c4": [
+   "u2_veh_fire"
+  ],
+  "bde675d0af6430b4": [
+   "h1_boreas_rolling_out"
+  ],
+  "be1cd0d6b3fff462": [
+   "h1_solaris_yes_commander"
+  ],
+  "be2dc8ce0d233614": [
+   "u2_inf_lets_do_this"
+  ],
+  "be2dcacee31c36f4": [
+   "u2_avia_critical_damage"
+  ],
+  "be3a64e044af2684": [
+   "units_zombie_move_3"
+  ],
+  "be58b9e0e1442b24": [
+   "fire_missile6_1"
+  ],
+  "be6ec47bdc02b3e4": [
+   "u1_veh_hold_your_ground"
+  ],
+  "be7953fe35998f54": [
+   "u1_nav_left_full_rudder_all_ahead"
+  ],
+  "bed6872b9b6fbba4": [
+   "h1_beholder_proceeding_with_orders"
+  ],
+  "bf10f050624a36c4": [
+   "h1_atlas_protector_of_land_and_sky"
+  ],
+  "bf5e915fb33b6124": [
+   "u1_avia_in_control"
+  ],
+  "bfbaa4cbd1aedeb4": [
+   "h2_wasp_i_see_you"
+  ],
+  "bfc0bd30f001fe84": [
+   "u2_inf_sudden_death"
+  ],
+  "bfdf380fe5defdc4": [
+   "u2_veh_guns_loaded"
+  ],
+  "c01e55bff18760f4": [
+   "h2_salamander_set_sail"
+  ],
+  "c032cb57211f0414": [
+   "h2_leviaphan_attack"
+  ],
+  "c0657f94c3325b84": [
+   "h1_atlas_hold_on"
+  ],
+  "c07c179f4373df84": [
+   "h1_psitank_attack_impact3"
+  ],
+  "c09d8a0a3b07bcd4": [
+   "int_building_move"
+  ],
+  "c0a5d5fefc2b58c4": [
+   "h1_beholder_oui_commandant"
+  ],
+  "c0b0872221529214": [
+   "int_phrase_one"
+  ],
+  "c0d792e14751d2c4": [
+   "msg_lot_invite_luck_is_near"
+  ],
+  "c0eeac182f0050b4": [
+   "units_zombie_spotted_2"
+  ],
+  "c105b69275433254": [
+   "u2_veh_attacking"
+  ],
+  "c1188a5243d57234": [
+   "u1_veh_they_using_shield"
+  ],
+  "c14adc7aecfc64cb": [
+   "h1_cerberus_you_aint_seen_nothing_yet"
+  ],
+  "c15163b4e790a754": [
+   "u1_veh_yes_sir"
+  ],
+  "c158b83e7db2cb24": [
+   "128_menu_04"
+  ],
+  "c179be08a1474a64": [
+   "h1_psion_psychic_power"
+  ],
+  "c1bb5501fc133cd4": [
+   "int_award"
+  ],
+  "c1cbcde3588e7c04": [
+   "int_attack_ground"
+  ],
+  "c1df533447107294": [
+   "u1_veh_advance"
+  ],
+  "c1f0288ab16c84a8": [
+   "h1_seraphim_locked_on_target"
+  ],
+  "c2a10fb2b205e164": [
+   "u2_inf_holding_position"
+  ],
+  "c2bd774d691e1024": [
+   "h2_bison_hair_on_end"
+  ],
+  "c2ec1b40837665b4": [
+   "units_f2_spec2"
+  ],
+  "c2eee204f0fc8294": [
+   "h2_salamander_diving_deep"
+  ],
+  "c3049731d7c314c2": [
+   "h1_seraphim_ready_for_operation"
+  ],
+  "c3140f65ad5b3554": [
+   "fire_gun7_2"
+  ],
+  "c355f59d646516f4": [
+   "msg_space_ready"
+  ],
+  "c38cddcfe26f341e": [
+   "h1_cerberus_fight_till_the_end"
+  ],
+  "c3a487f071987994": [
+   "u1_veh_destroy_target"
+  ],
+  "c3e6a0e692604427": [
+   "h1_seraphim_point_captured"
+  ],
+  "c4168f563a6f6324": [
+   "boom_small1_w_2"
+  ],
+  "c419cf20fd30a334": [
+   "int_battle_chat_incoming"
+  ],
+  "c4348538547e5c44": [
+   "units_fighter_up1"
+  ],
+  "c454f330e2f580c4": [
+   "act_f1_heading_target"
+  ],
+  "c49edf88ed8e91a4": [
+   "int_menu_open"
+  ],
+  "c5133bc5dcbed9f4": [
+   "u2_inf_lets_take_the_point"
+  ],
+  "c51610124b4cfcf4": [
+   "u2_inf_enemy_down"
+  ],
+  "c51b6e8e4133c064": [
+   "u2_avia_in_control"
+  ],
+  "c5611c5fb5e7f404": [
+   "u1_inf_act_lets_giveem_hell"
+  ],
+  "c59b09b496ceee14": [
+   "h1_atlas_step_by_step"
+  ],
+  "c59f89cb68223074": [
+   "128_menu_07"
+  ],
+  "c5be39e48db826f4": [
+   "h2_bison_calm_before_the_storm"
+  ],
+  "c5c9fcb110516104": [
+   "h1_psion_stronger_than_ever"
+  ],
+  "c619e70545975664": [
+   "units_f1_spec1"
+  ],
+  "c68d271c732cf544": [
+   "msg_lot_invite_try_your_luck"
+  ],
+  "c6aa1d8c046338d4": [
+   "msg_nuclear_detected"
+  ],
+  "c6fd245fc2625e24": [
+   "u1_inf_ev_enemy_structure"
+  ],
+  "c73c090d61f5f404": [
+   "h1_seraphim_confirmed"
+  ],
+  "c744e43c2bd159e4": [
+   "h1_atlas_un-des-tructable"
+  ],
+  "c75ad2b4619baf94": [
+   "h2_gatling_passive_shot"
+  ],
+  "c7605a30f205d4e6": [
+   "h2_mole_yes"
+  ],
+  "c7bebbf18f4b341b": [
+   "h2_mole_surprise3"
+  ],
+  "c7c2aa2f65e354fb": [
+   "h2_mole_not_ready"
+  ],
+  "c7cd322d7ce2e674": [
+   "h1_psion_we_need_to_wait"
+  ],
+  "c8414e39eb88d714": [
+   "h2_bison_its_hooked_up_well"
+  ],
+  "c85ad93cdcdf9b44": [
+   "act_f1_lets_go"
+  ],
+  "c8cccc781384e43b": [
+   "h1_cerberus_huaa"
+  ],
+  "c9071fb1e11299e4": [
+   "h1_atlas_no_resistance_here"
+  ],
+  "c95bb4a75e99ce84": [
+   "u1_avia_well_done"
+  ],
+  "c987497f98048411": [
+   "h1_solaris_battaries_charged"
+  ],
+  "ca092cdcba0cb5b4": [
+   "128_menu_02"
+  ],
+  "ca1bf768b6440ae4": [
+   "u1_inf_act_attacking"
+  ],
+  "ca377f61e0289464": [
+   "h2_wasp_ability_strike"
+  ],
+  "ca7708de7f7f69b4": [
+   "msg_lot_invite_take_a_chance"
+  ],
+  "caee907b2ee6d6b4": [
+   "msg_tournament_is_over"
+  ],
+  "caf1a6096ec062f4": [
+   "u1_inf_ev_damn_i_got_shot"
+  ],
+  "caf33797699757d4": [
+   "h1_atlas_armor_what_armor_haha"
+  ],
+  "cb10a84a3c33af04": [
+   "int_bp_receiving"
+  ],
+  "cb167a76d30f7e14": [
+   "msg_secondary_objective_complete"
+  ],
+  "cb3d367e4dfb4874": [
+   "u1_inf_ev_my_suit_damaged"
+  ],
+  "cb4f2703295f4c94": [
+   "u1_veh_any_orders"
+  ],
+  "cb7d5e274bfe0c34": [
+   "h2_salamander_reroute"
+  ],
+  "cb7f1bdfa63894ad": [
+   "h1_solaris_incoming_damage"
+  ],
+  "cbb4d160dd2ea034": [
+   "units_zombie_spotted_1"
+  ],
+  "ccaaf4ea54e37473": [
+   "h1_seraphim_no_problem"
+  ],
+  "cccf7940deacd254": [
+   "u2_nav_torpedoes"
+  ],
+  "cd23256ff6b074e4": [
+   "u1_inf_act_destroy_this_target"
+  ],
+  "cd2d9db8e1875874": [
+   "h1_atlas_special_ammo_ready"
+  ],
+  "cd4a8920d001c467": [
+   "h2_leviathan_leviathan_is_here"
+  ],
+  "cd79863785d370d4": [
+   "u2_veh_commence_firing"
+  ],
+  "cd87e3d9b426cff4": [
+   "h1_beholder_for_the_confederation"
+  ],
+  "cd8f2522c6719954": [
+   "u1_veh_scanning"
+  ],
+  "cda477eb83faa124": [
+   "u2_nav_land_target_spotted"
+  ],
+  "cdcf4b6446ef24d7": [
+   "h2_leviathan_all_ahead"
+  ],
+  "cde809cf5617ac44": [
+   "h2_gatling_this_could_be_the_end"
+  ],
+  "ce1020d710f7cc34": [
+   "h2_gatling_push_harder"
+  ],
+  "ce154eeee4ab11b4": [
+   "u1_nav_air_target_detected"
+  ],
+  "ce1c95139a1ffa84": [
+   "u1_inf_act_as_you_were"
+  ],
+  "ce3b1d316dbab834": [
+   "act_f1_waiting_orders"
+  ],
+  "ce3ed5b7d05736c4": [
+   "h2_gatling_born_to_fight"
+  ],
+  "ce484fbf2c183b24": [
+   "h1_beholder_scanner_is_not_ready"
+  ],
+  "ce515715b88e8164": [
+   "h1_beholder_hit_falling_down"
+  ],
+  "ce5d77ecf54ad934": [
+   "u1_inf_act_combat_patrol"
+  ],
+  "ce668df1747884b6": [
+   "h2_mole_passive_off"
+  ],
+  "ce69bf102bed06e4": [
+   "u2_veh_critical_damage"
+  ],
+  "cea45ff8b8c8840c": [
+   "h1_solaris_point_captured"
+  ],
+  "cebdb5030e45aaa4": [
+   "u1_veh_airstrike"
+  ],
+  "cecbceb622b2c324": [
+   "act_f1_march_mode"
+  ],
+  "d02cb826b1e4fe94": [
+   "u2_inf_commander"
+  ],
+  "d0776d9fd4377624": [
+   "u2_avia_welcome_aboard"
+  ],
+  "d087a28031ed27a4": [
+   "act_f1_hold_position"
+  ],
+  "d11e0533f91b56a4": [
+   "u2_veh_smash_em"
+  ],
+  "d12518b46cc564d9": [
+   "h2_mole_yeah_baby"
+  ],
+  "d1440612ba4873d4": [
+   "u1_veh_rockets_loaded"
+  ],
+  "d1483fdb129e20c4": [
+   "u1_nav_destroyer_online"
+  ],
+  "d153cd96ee3d9404": [
+   "h2_mole_haha3"
+  ],
+  "d166e71e3a9c03a4": [
+   "u2_veh_flag_captured"
+  ],
+  "d1681ce00364c554": [
+   "h1_cerberus_my_matilda_is_waiting_for_action"
+  ],
+  "d19c0e3d7932daf4": [
+   "u1_inf_act_engage"
+  ],
+  "d1c550283201e481": [
+   "h1_seraphim_punishment"
+  ],
+  "d1cf64e5ec891fe4": [
+   "h2_salamander_fire_reload"
+  ],
+  "d25e9105bb0e8ee4": [
+   "u2_veh_rolling"
+  ],
+  "d2e51118a65205c4": [
+   "128_epic_adventure"
+  ],
+  "d30aa672bc5064a2": [
+   "h1_solaris_discharge"
+  ],
+  "d319affe5f533694": [
+   "u1_avia_scramble_fighters"
+  ],
+  "d3386c03a6ef7a24": [
+   "u2_veh_approaching_to_target"
+  ],
+  "d39fe9b6eaf1747a": [
+   "h2_leviathan_done"
+  ],
+  "d3c58cdbee0ce498": [
+   "h1_seraphim_as_fast_as_possible"
+  ],
+  "d3e379320f0be4ab": [
+   "h2_mole_no_i_dont_want_to_die"
+  ],
+  "d420378be4cdd634": [
+   "u2_inf_show_me_an_armor"
+  ],
+  "d43eb0881c4de1e4": [
+   "u1_veh_accomplished"
+  ],
+  "d44e3e89e7006be4": [
+   "u1_avia_top_speed"
+  ],
+  "d456fadfef213084": [
+   "int_score2"
+  ],
+  "d4737e0fb1e20884": [
+   "int_click1"
+  ],
+  "d4c1d9e65b316c84": [
+   "bld_work_loop"
+  ],
+  "d4e04741bd874294": [
+   "boom_big1_w_3"
+  ],
+  "d4f69c2363fab234": [
+   "h2_salamander_huh_gotcha"
+  ],
+  "d508030f6ca7f2d4": [
+   "u2_nav_submarine_ready"
+  ],
+  "d5419c57649c7964": [
+   "int_region_close"
+  ],
+  "d55b933789da8b94": [
+   "h2_salamander_on_my_way_to_a_junkyard"
+  ],
+  "d5605ed719f834ed": [
+   "h2_mole_i_see_them"
+  ],
+  "d56dc22b89da4234": [
+   "u2_inf_ambush"
+  ],
+  "d61d161ac80703c4": [
+   "int_move"
+  ],
+  "d624c02aa9cba194": [
+   "h1_atlas_reloading_at_moment"
+  ],
+  "d68d97d4b9306724": [
+   "h1_boreas_make_them_brittle"
+  ],
+  "d69cb5c1dad33ff4": [
+   "h1_atlas_crushem"
+  ],
+  "d6c8ec9caeca3fe4": [
+   "h1_atlant_immortal"
+  ],
+  "d730f9bd2eb1fe94": [
+   "h2_bison_like_a_battering_ram"
+  ],
+  "d749c3354f6fbd34": [
+   "h1_psion_is_this_a_riot"
+  ],
+  "d7711962955e7534": [
+   "int_player_add"
+  ],
+  "d795f48a9c7bebb4": [
+   "h1_beholder_coordinates_received"
+  ],
+  "d7b308924d6f2ff4": [
+   "u2_veh_give_me_a_firing_solution"
+  ],
+  "d7b76d7053f587e4": [
+   "h1_boreas_freeze"
+  ],
+  "d7ba3cb7c387ff44": [
+   "u1_veh_liquidating"
+  ],
+  "d7cc7f17ff66c4a7": [
+   "h1_seraphim_target_detected"
+  ],
+  "d7dfe08ba2678403": [
+   "h1_solaris_enemy_vanished"
+  ],
+  "d7e8c90a54e343e4": [
+   "u1_inf_ev_take_care"
+  ],
+  "d81603703b247478": [
+   "h2_leviathan_leviathan_destroyed"
+  ],
+  "d82cd675be331634": [
+   "int_timer_superweapon_end"
+  ],
+  "d84d72e7cca16dc4": [
+   "u2_nav_with_pleasure"
+  ],
+  "d8b077b027897c04": [
+   "u1_nav_steer_the_course"
+  ],
+  "d8b7b55d8a5fa244": [
+   "h2_coiltank_idle2_1"
+  ],
+  "d8d15c12056f2984": [
+   "u1_veh_shield_ready"
+  ],
+  "d8e13915be3cb3b4": [
+   "act_f1_engaging"
+  ],
+  "d922f0a8a229a474": [
+   "h1_boreas_patience_ice_takes_time"
+  ],
+  "d93b0700566f9674": [
+   "fire_rifle1_1"
+  ],
+  "d9477abe2fea7824": [
+   "h1_atlas_feel_my_wrath"
+  ],
+  "d95fb2e708959a14": [
+   "h2_wasp_taking_position"
+  ],
+  "d97cee1e62584f74": [
+   "effect_pss"
+  ],
+  "d9a71401e33c546a": [
+   "h2_leviathan_as_you_command"
+  ],
+  "d9f1068588acf449": [
+   "int_box_big_container"
+  ],
+  "da0287952e178234": [
+   "u2_nav_steer_the_course"
+  ],
+  "da130ca86a1dba74": [
+   "u2_inf_air"
+  ],
+  "da8d551b63eb4494": [
+   "msg_battle_prepare"
+  ],
+  "da9086085a164f54": [
+   "u2_nav_surface_target_ahead"
+  ],
+  "dab83084c10d0a24": [
+   "h1_psion_my_will_is_unbreakable"
+  ],
+  "db2e3547328aff84": [
+   "h2_salamander_hang_on_fellas"
+  ],
+  "db4205816a3c3304": [
+   "int_mine_set"
+  ],
+  "db62b8d623bf2224": [
+   "boom_metal_crash1"
+  ],
+  "db645215418df974": [
+   "units_f1_march2"
+  ],
+  "dba7db5d5d5338c4": [
+   "fire_launch_nuke_rocket"
+  ],
+  "dbc7a6972acb2714": [
+   "int_score1"
+  ],
+  "dbd80142cee15ca4": [
+   "u2_inf_fire_this_target"
+  ],
+  "dbff19dc7867b8d4": [
+   "fire_rifle2_1"
+  ],
+  "dc24e48239b96465": [
+   "h1_cerberus_jetpack_reloaded"
+  ],
+  "dc2c888af881e4e8": [
+   "h1_seraphim_we_have_a_mission"
+  ],
+  "dc2cf52498c63c94": [
+   "u2_inf_under_suppressive_fire"
+  ],
+  "dccef64fe728b476": [
+   "h1_cerberus_killing_time"
+  ],
+  "dce1d6cc5bb93614": [
+   "h1_psion_obey_your_master"
+  ],
+  "dce71d972fc5a804": [
+   "u2_veh_target_down"
+  ],
+  "dcec03de73519034": [
+   "u1_veh_my_armor_damaged"
+  ],
+  "dd6263aa78665f24": [
+   "h2_wasp_not_ready_yet"
+  ],
+  "dd6682a87ba5f7e4": [
+   "msg_lot_prize_wow2"
+  ],
+  "dd8088464fb0e1b4": [
+   "fire_missile7_1"
+  ],
+  "dd8877e33bf361b4": [
+   "h1_boreas_what_killed_the_dinosaurs_the_ice_age"
+  ],
+  "ddab493737a57c34": [
+   "msg_lot_prize_dont_give_up"
+  ],
+  "ddbbaac5ba443854": [
+   "u2_avia_low_fuel_returning_to_base"
+  ],
+  "ddebddfa75afee74": [
+   "h1_boreas_getting_warm"
+  ],
+  "de821187c01ae44a": [
+   "h1_seraphim_massive_fire"
+  ],
+  "df075b1d1480edf4": [
+   "u2_avia_orders_received"
+  ],
+  "df21226ccacc441d": [
+   "h1_cerberus_i_want_more_enemies"
+  ],
+  "df392b5771d38cf4": [
+   "u2_veh_patrolling"
+  ],
+  "df3f8f0caa929914": [
+   "u1_inf_ev_enemy_tank_destroyed"
+  ],
+  "df4eadb2454353c4": [
+   "h2_bison_release_the_clutch"
+  ],
+  "df7dbfa307dabe94": [
+   "u1_avia_job_done_coming_home"
+  ],
+  "df82d179c4cae0a4": [
+   "h1_atlas_overpowered_yes_i_am"
+  ],
+  "dfae887b0d99a224": [
+   "u2_inf_moving"
+  ],
+  "dfd9b08c480fb1c4": [
+   "h2_wasp_waahoo"
+  ],
+  "dff2e046cdc0ae14": [
+   "u2_veh_for_resistance"
+  ],
+  "e0378a900cc27444": [
+   "u2_nav_neutralized"
+  ],
+  "e053b73855b4142e": [
+   "h1_solaris_taking_position"
+  ],
+  "e066f1cfda279994": [
+   "h1_psion_as_i_thought"
+  ],
+  "e0676fee5263c974": [
+   "h1_psion_mines_are_stupid"
+  ],
+  "e079b55cb9d28489": [
+   "h2_leviathan_its_my_last_greeting"
+  ],
+  "e079e0b67bb87af4": [
+   "h1_psitank_active_shot"
+  ],
+  "e125565ed32180c4": [
+   "u1_veh_smells_like_a_grilled_meat"
+  ],
+  "e13e843efb9b7024": [
+   "h1_psion_you_have_my_attention_commander"
+  ],
+  "e154852a36f75e34": [
+   "h1_beholder_time_for_a_little_surprise"
+  ],
+  "e156b27d5be83d64": [
+   "units_zombie_move_1"
+  ],
+  "e19314041279a524": [
+   "msg_our_unit_under_attack"
+  ],
+  "e1e857f951c88e64": [
+   "int_score_bonus"
+  ],
+  "e2454280e94d747e": [
+   "h2_leviathan_domination_in_the_sky"
+  ],
+  "e25e554f450c8ca4": [
+   "u2_inf_its_killing_time"
+  ],
+  "e29cb871017ed714": [
+   "fire_gun1_1"
+  ],
+  "e29ece053eca0c64": [
+   "u2_veh_torrent_strike"
+  ],
+  "e317e86da5af2914": [
+   "h2_wasp_checking_missiles"
+  ],
+  "e31c560f10dbf42e": [
+   "h1_solaris_well_done"
+  ],
+  "e33332a719a0a44a": [
+   "h1_cerberus_reloading"
+  ],
+  "e3797bd26874b422": [
+   "h1_cerberus_ha"
+  ],
+  "e39ea31040ba3de4": [
+   "h2_bison_charg\u0435"
+  ],
+  "e3bc96c9ad0b9454": [
+   "u2_inf_they_shootin_us"
+  ],
+  "e3c1f86dcd63a1e4": [
+   "msg_victory"
+  ],
+  "e3d69ae57ebd3274": [
+   "h1_cerberus_got_it"
+  ],
+  "e3e05567b92424c4": [
+   "u2_avia_its_hot_its_hoooot"
+  ],
+  "e3e2ef2fbf6cfbf4": [
+   "u2_veh_we_taking_fire"
+  ],
+  "e3eb18f6a2d6c7f4": [
+   "h2_gatling_executing_the_order"
+  ],
+  "e4092aa08a6214c2": [
+   "h1_seraphim_you_want_to_confess"
+  ],
+  "e41eca99c0349f44": [
+   "u2_veh_for_freedom"
+  ],
+  "e42f291f503a83b4": [
+   "h1_cerberus_walk"
+  ],
+  "e4627d61bd551f04": [
+   "u1_avia_may_day_may_day_im_hit"
+  ],
+  "e463a93162b3e084": [
+   "u1_inf_ev_enemy_vehicle_down"
+  ],
+  "e485f036fd1b8a24": [
+   "boom_metal_crash3"
+  ],
+  "e490547e1d1da2c4": [
+   "units_infantry_die1_1"
+  ],
+  "e490c2be833cdb14": [
+   "h1_beholder_detected_enemy_weak_spots"
+  ],
+  "e493953e8cc8fb54": [
+   "h1_psion_spotted_hostile_brainwaves"
+  ],
+  "e4bd420b9705cec4": [
+   "msg_battle_get_ready"
+  ],
+  "e52699bf1877d0e4": [
+   "u2_inf_enemy_vehicle"
+  ],
+  "e5341e6a159e2af4": [
+   "u2_inf_awaiting_orders"
+  ],
+  "e56d24938e59c461": [
+   "h1_cerberus_shred_them_to_bits"
+  ],
+  "e57de1df304b86b4": [
+   "u2_inf_jobs_all_done"
+  ],
+  "e5ba94b2ff8970c4": [
+   "h2_salamander_curse_this"
+  ],
+  "e5bd37b97d3c51c4": [
+   "msg_res_recieved"
+  ],
+  "e5bd6199cc9b3804": [
+   "h1_atlas_big_boss_is_here"
+  ],
+  "e5e36bdc67ad0004": [
+   "int_event_joker_box_good_2"
+  ],
+  "e60496bd67eb0428": [
+   "h1_solaris_target_locked"
+  ],
+  "e60caa4ee3d2e544": [
+   "h1_psion_obey_and_follow_me"
+  ],
+  "e64f40c133ac8244": [
+   "h2_bison_ready_to_do_some_magic_tricks"
+  ],
+  "e65f5139add687b4": [
+   "int_star"
+  ],
+  "e6941e6cbb867714": [
+   "msg_flag_captured"
+  ],
+  "e69e0af305c56c34": [
+   "u2_veh_two_shots_-_two_holes"
+  ],
+  "e6ba77a001eac924": [
+   "u1_nav_enemy_engaged"
+  ],
+  "e6c4d35d40deb294": [
+   "u1_avia_missiles_ready"
+  ],
+  "e6de2ab59e10f674": [
+   "h1_seraphim_step_new_2"
+  ],
+  "e71540f6bdee9c74": [
+   "u2_avia_albatross_reporting"
+  ],
+  "e77549aed711de54": [
+   "h1_atlant_active_prepare"
+  ],
+  "e7c485706fd42604": [
+   "u2_veh_took_him_in_sight"
+  ],
+  "e7caf00b91c1d204": [
+   "h2_bison_shortcircuit_here"
+  ],
+  "e8080f9e44882574": [
+   "h2_gatling_death_volley_ready"
+  ],
+  "e84132653d2ee44f": [
+   "h1_cerberus_demolition"
+  ],
+  "e87f2c608512e994": [
+   "u1_nav_fire_on_target"
+  ],
+  "e89a4cb504961416": [
+   "h1_cerberus_not_now"
+  ],
+  "e8acf06e70d1cea4": [
+   "int_bld_change"
+  ],
+  "e8df59e701833ab4": [
+   "u1_nav_target_set"
+  ],
+  "e8f5acaea0179194": [
+   "u1_veh_ashes_to_ashes"
+  ],
+  "e931f1c8a891b884": [
+   "h2_wasp_ok"
+  ],
+  "e956129cd6d27db4": [
+   "u1_inf_sel_give_me_orders"
+  ],
+  "e971e176e1abb264": [
+   "units_bomber_move1"
+  ],
+  "e9832d4ba7961264": [
+   "h1_boreas_no_chillin_here"
+  ],
+  "e98ddfa4d59102b4": [
+   "msg_hidden_our"
+  ],
+  "e9be60a55c9f6a34": [
+   "h1_psitank_active_impact"
+  ],
+  "e9dca39b44c88ad4": [
+   "u2_nav_set_a_course"
+  ],
+  "ea09e23ef44a5774": [
+   "u2_veh_surprize"
+  ],
+  "ea46ed0ef7087364": [
+   "fire_missile1_1"
+  ],
+  "ea53545b111c8224": [
+   "u2_inf_afirmative"
+  ],
+  "ea7e1b90235024f2": [
+   "h1_solaris_move2"
+  ],
+  "eadcc7d6b0edbea4": [
+   "h1_atlant_impact_1"
+  ],
+  "eb0fbb5637ab9be4": [
+   "act_f1_destroy_it"
+  ],
+  "eb44b8c4027d5174": [
+   "h1_psion_do_we_need_a_brainstorm"
+  ],
+  "eb93a696e4d87a74": [
+   "h1_psion_nothing_holds_me_back"
+  ],
+  "eb951fda75db1434": [
+   "u1_inf_ev_contact"
+  ],
+  "eba4cb00a9e66244": [
+   "u1_veh_boooom_haha"
+  ],
+  "ebbf111ad3dbf724": [
+   "msg_lot_prize_youve_got_the_luck"
+  ],
+  "ebd59c9c12e3c454": [
+   "msg_allied_unit_under_attack"
+  ],
+  "ebe1f28238c3aae4": [
+   "u2_veh_take_this"
+  ],
+  "ec2ecc9e8a5098b4": [
+   "int_clan_supplies_collected"
+  ],
+  "ec524e4586194524": [
+   "u2_veh_our_sky_must_be_clear"
+  ],
+  "ec9d197a7be06804": [
+   "h2_wasp_any_orders"
+  ],
+  "ecdeafc4cdfba694": [
+   "u2_veh_artillery_ready"
+  ],
+  "ed534e1e3a90846d": [
+   "h1_seraphim_transformation"
+  ],
+  "ed7cbacaf9381364": [
+   "units_infantry_die1_2"
+  ],
+  "edac4a6885a8f174": [
+   "h1_cerberus_just_give_me_a_target"
+  ],
+  "edbb48b4f1115024": [
+   "msg_lot_prize_come_on"
+  ],
+  "edc47cf535700e94": [
+   "h2_bison_im_the_one_they_do_fear"
+  ],
+  "edc8f8607271e9e4": [
+   "h1_atlas_come_at_me_bro"
+  ],
+  "ee185a57081bcde4": [
+   "h2_coiltank_auto"
+  ],
+  "ee25fb2108f93944": [
+   "h2_bison_all_coils_busy"
+  ],
+  "ee7d07004521f564": [
+   "h1_psion_of_course"
+  ],
+  "ee7e129381d3e974": [
+   "u1_inf_ev_smokescreen"
+  ],
+  "ee93668e6ecbec54": [
+   "u1_inf_sel_flaming_greetings"
+  ],
+  "eeb9304d8c0395e4": [
+   "h2_gatling_beast_mode"
+  ],
+  "eeb9b60a2fbd442e": [
+   "h1_solaris_wait_recharging"
+  ],
+  "eed1bc234015d4b4": [
+   "u2_veh_target_in_sight"
+  ],
+  "eef39ee836a43e94": [
+   "h1_psion_my_thoughts_exactly"
+  ],
+  "ef225cf176f563c4": [
+   "u2_inf_got_it"
+  ],
+  "ef25bc3d4f697ce4": [
+   "msg_lot_prize_it_is_great"
+  ],
+  "ef8a2f0c3ef297b4": [
+   "int_premium_bonus"
+  ],
+  "efb2906eddb16874": [
+   "u2_inf_they_use_shield"
+  ],
+  "efbc9714e46f6244": [
+   "u2_avia_its_our_diplomatic_note_haha"
+  ],
+  "efc8089076293074": [
+   "h2_wasp_leave_it_to_me"
+  ],
+  "f004f79184497494": [
+   "u2_inf_fire"
+  ],
+  "f015b3091634d964": [
+   "h1_boreas_temperature_is_under_control"
+  ],
+  "f055468674d0fa94": [
+   "h1_psitank_attack_attack3"
+  ],
+  "f0779f2e05dd1d74": [
+   "int_region_open"
+  ],
+  "f09a9209b8b604e4": [
+   "h2_gatling_give_em_hell"
+  ],
+  "f09fc7adc90a1464": [
+   "h2_wasp_ill_take_some_down_with_me"
+  ],
+  "f0c4eaeb605b5a34": [
+   "fire_flame1_1"
+  ],
+  "f0fd9b03410f1de4": [
+   "u2_inf_where_to_shoot"
+  ],
+  "f110e0e61cedbca4": [
+   "h2_salamander_active_launch"
+  ],
+  "f11939bbc5ccb674": [
+   "u2_veh_enemy_on_sight"
+  ],
+  "f1350a2be5aba7a4": [
+   "u1_inf_ev_enemy_killed"
+  ],
+  "f13dc865eb6966d4": [
+   "h2_coiltank_auto_2"
+  ],
+  "f1ae146693866c44": [
+   "u2_veh_receiving_much_damage"
+  ],
+  "f21ef8e0e431c3f4": [
+   "h2_bison_on_maximum_power"
+  ],
+  "f2a4dfcee5a634f5": [
+   "h1_solaris_systems_damaged"
+  ],
+  "f2c11fbf9aaf543a": [
+   "h2_leviathan_preparing_missile"
+  ],
+  "f2d44430d63f53d4": [
+   "fire_missile2_1"
+  ],
+  "f2f59099f0020e84": [
+   "h2_gatling_one_down_next"
+  ],
+  "f32a135dff0b8d94": [
+   "act_f1_full_ahead"
+  ],
+  "f33b4c7256168ad4": [
+   "h1_boreas_so_cold"
+  ],
+  "f3c01c3f154c0f84": [
+   "h2_bison_danger_close_i_am_the_danger_close"
+  ],
+  "f3f0a4b2deab3a64": [
+   "128_menu_05"
+  ],
+  "f4195d267cb3a8b4": [
+   "u1_veh_enemys_on_radar"
+  ],
+  "f4583f417d78c184": [
+   "h1_psion_i_sense_their_rage_and..._fear"
+  ],
+  "f4d41dd304ff8e44": [
+   "units_zombie_spotted_3"
+  ],
+  "f4f950b6a745147a": [
+   "h1_solaris_solaris_reporting"
+  ],
+  "f4faf83c86d50ea4": [
+   "int_battle_chat_sending"
+  ],
+  "f543c82e8e941534": [
+   "u1_inf_act_dont_stop_move"
+  ],
+  "f557173258676b24": [
+   "h2_salamander_active_impact_water"
+  ],
+  "f58cc5d1394752a4": [
+   "fire_gun4_2"
+  ],
+  "f5aa36a52c301b74": [
+   "u1_veh_take_this_ground"
+  ],
+  "f5df7b39866ba2f4": [
+   "h2_coiltank_active_charge"
+  ],
+  "f6478a41331fffa4": [
+   "h1_beholder_i_will_be_your_eyes"
+  ],
+  "f6a5586b91d654ac": [
+   "h1_solaris_destination_clear"
+  ],
+  "f6a70e9ed2c5a474": [
+   "u1_veh_typhoon_ready"
+  ],
+  "f6b9a3aee24e2f44": [
+   "u1_veh_neutralised"
+  ],
+  "f6ccfcf791b64314": [
+   "h1_atlas_im_starting_blasting"
+  ],
+  "f6d6e5a559899534": [
+   "u2_avia_ready_as_always"
+  ],
+  "f6e25c984cc2e1b4": [
+   "u1_veh_taking_fire"
+  ],
+  "f6ea348bb230a764": [
+   "u2_veh_off_we_go"
+  ],
+  "f6fcbba90c4d8074": [
+   "h2_coiltank_lightnings_impact_2"
+  ],
+  "f72ff917e983dd94": [
+   "u2_nav_sink_them_now"
+  ],
+  "f770376584de4c14": [
+   "h2_gatling_lethal_firepower"
+  ],
+  "f789a17bf922c064": [
+   "h1_atlas_who_dares_oppose_us"
+  ],
+  "f7a520a92b498493": [
+   "h2_mole_station_off"
+  ],
+  "f7a77a56e1b79a34": [
+   "h2_salamander_swimin_freely"
+  ],
+  "f7e705cc0b498de4": [
+   "h2_wasp_thats_all_you_got"
+  ],
+  "f7fa164b5c99cee4": [
+   "h1_psion_let_me_fry_their_brains"
+  ],
+  "f805f76f203d2044": [
+   "units_zombie_attack_1"
+  ],
+  "f86a8509e077b9d4": [
+   "h2_gatling_lets_practice_shooting"
+  ],
+  "f86d6b72ba0055b4": [
+   "h1_beholder_surveillance_is_a_first_priority"
+  ],
+  "f8bbba820738b4be": [
+   "h2_mole_surprise2"
+  ],
+  "f8c1fa3f91fdcb54": [
+   "u1_veh_ready_to_move_out"
+  ],
+  "f8c47bc3a2b5d6c4": [
+   "h1_psion_critical_damage_level"
+  ],
+  "f8ff654d245d945b": [
+   "h2_mole_surprise"
+  ],
+  "f928d297acfe2cb4": [
+   "u2_veh_incoming_strike"
+  ],
+  "f94a5be4f87c8d24": [
+   "h2_coiltank_passive_charge"
+  ],
+  "f95d2f45739e0f84": [
+   "u2_inf_dont_move_back"
+  ],
+  "f9b645beb2a5cc44": [
+   "h1_seraphim_step_new_1"
+  ],
+  "f9e7939fb6b402e4": [
+   "h1_atlas_wanna_fight_get_it"
+  ],
+  "f9f978b1606a942c": [
+   "h2_mole_ha_isit_hard"
+  ],
+  "fa18332cdc868494": [
+   "h2_salamander_lets_wreck_them"
+  ],
+  "fa470b7ec19c95d4": [
+   "h1_cerberus_you_want_the_best_here_i_am"
+  ],
+  "fa497cb5b33f5954": [
+   "act_f1_hide"
+  ],
+  "fa4e50a8be939fa4": [
+   "h1_beholder_ugh_stop_resisting"
+  ],
+  "fa6248cabf3db444": [
+   "u1_inf_ev_mines"
+  ],
+  "faec1bf11fa11c64": [
+   "h2_wasp_stay_still_now"
+  ],
+  "faf7211a2c7aa364": [
+   "fire_rifle1_2"
+  ],
+  "fb54943ef4bbcb44": [
+   "int_progressbar_2"
+  ],
+  "fb57f8fc874484d4": [
+   "u1_nav_receiving_damage"
+  ],
+  "fb94986c921274f7": [
+   "h1_solaris_ill_vanish_them"
+  ],
+  "fbac5637e9064064": [
+   "u2_inf_get_me_out_of_here"
+  ],
+  "fbe801a1981da4b0": [
+   "h2_mole_yap"
+  ],
+  "fc11927fc5aaea94": [
+   "h1_beholder_adversary_down"
+  ],
+  "fc19418c658da2d4": [
+   "units_zombie_impact_1"
+  ],
+  "fc29f1c38e439b44": [
+   "boom_water_splash"
+  ],
+  "fc3c499560a61b94": [
+   "u1_avia_target_in_sight"
+  ],
+  "fc5ead6b1e33a4f8": [
+   "h2_mole_we_will_bury_them_alive"
+  ],
+  "fc9f8d66ab89b4fa": [
+   "h1_cerberus_get_over_here"
+  ],
+  "fccc5a3298807f24": [
+   "h1_cerberus_lead_me_to_battle"
+  ],
+  "fcdd0d5237077724": [
+   "h1_boreas_weapon_of_the_future"
+  ],
+  "fd2d3229fdf9bac4": [
+   "u2_veh_chameleon_ready"
+  ],
+  "fd557b5872eec494": [
+   "h2_wasp_yeeehaw"
+  ],
+  "fd57fbdb6aad8684": [
+   "h2_wasp_wasp_is_ready_for_action"
+  ],
+  "fd89ca1e7335cf84": [
+   "u2_inf_armor_destroyed"
+  ],
+  "fd920dc13fe38e54": [
+   "u2_veh_no_problem"
+  ],
+  "fda93d0de4503134": [
+   "bld_building_start"
+  ],
+  "fdce5b44d5eb2094": [
+   "u2_veh_waiting_for_new_orders"
+  ],
+  "fdd653695bb97cf4": [
+   "u2_inf_take_the_flag"
+  ],
+  "fde61697b5b5b004": [
+   "u1_veh_supply_container_here"
+  ],
+  "fde9aafae159b7a4": [
+   "boom_bld_med"
+  ],
+  "fded77405fb52e44": [
+   "u2_veh_under_fire"
+  ],
+  "fe2e782727260406": [
+   "h1_seraphim_be_patient"
+  ],
+  "fe3632b9312af48f": [
+   "h2_mole_taking_position"
+  ],
+  "fe8a0eea707a0a44": [
+   "u2_veh_siege_mode"
+  ],
+  "fe96de6ca625a904": [
+   "h1_beholder_aircraft_scout_online"
+  ],
+  "fea95c419720dc84": [
+   "int_attack"
+  ],
+  "fea96c94932a4294": [
+   "u2_nav_prepare_for_war"
+  ],
+  "fecfbc62caa4d4d4": [
+   "u1_veh_need_protection"
+  ],
+  "fedf93a076db1974": [
+   "u2_veh_shield_theyre_using_shield"
+  ],
+  "fef221f98f2430f4": [
+   "u2_inf_im_bleeding"
+  ],
+  "ff034e9ce0993584": [
+   "u1_avia_job_well_done"
+  ],
+  "ff075d605b8a9c44": [
+   "u2_veh_faster_than_light"
+  ],
+  "ff18c7622816efb4": [
+   "int_supply_box_open"
+  ],
+  "ff24814f4a6b9324": [
+   "u1_avia_roger"
+  ],
+  "ff46d7960ea73ac4": [
+   "h2_salamander_i_also_hate_waiting"
+  ],
+  "ff76b6b6c0dd7e84": [
+   "u2_avia_scramble_fighters"
+  ],
+  "ffa4aa689a0a8401": [
+   "h2_leviaphan_alarm2"
+  ],
+  "ffb17b7212e56c94": [
+   "h2_gatling_attack_1"
+  ]
+ },
+ "shoot_components": [],
+ "sound_scripts": {},
+ "handler_like_trees": []
+}
