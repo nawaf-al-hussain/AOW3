@@ -1487,6 +1487,25 @@
           this.hashes.shift();
       }
     }
+    // Native movement/occupancy provenance (B7 pass 1, Task 64 — see
+    // reverse/evidence/movement/b7-pathact-decode.txt): the native sim tracks
+    // who stands where through BattleCellBasic { occupant Dynamic (0x10),
+    // occupants List<Dynamic> (0x18), state sbytes, crosscell } per cell, with
+    // multi-cell occupants in BattleCrosscell { int[]/int[]/Dynamic[] } and a
+    // CellScheduleStack object pool. PathAct (entities.battle, ~50 Obfuz-named
+    // statics over (Battle,Unit,...)) is the movement engine: PathAct.$ce is
+    // the walk stepper (13 virtual get_Forced reads + set_Forced/set_WalkState
+    // sites), UnitAct.$cg/$uG/$CG write Unit.wait_for_moving (0xB9, slot 300),
+    // GAICommandSpecMode.execute sets Unit.forced (0xB8, slot 102) x5 and
+    // GAICommandTroopMove once — forced orders push through slot waits.
+    // Unit.wait_for_moving/forced/walk_state/dispersal{,_prev,_bu_id} and the
+    // SlipInfo slide-resolver (slip dx/do + closest obstacle + two tangent
+    // walk-around paths + strafe sub-system) are all Unit/SlipInfo
+    // GearGamesSerializable battle-state members serialized by
+    // UnitSTSerializer/BattleSTSerializer — i.e. [SERVER-DATA] delivered with
+    // the stream, matching the fogLines classification. The browser grid check
+    // below stays a static-obstacle gate; per-cell unit occupancy/slot waiting
+    // is NOT simulated (documented approximation, audit B7 residual).
     passable(u, x, y) {
       if (u.def.kind === "aircraft" && !u.grounded)
         return true;

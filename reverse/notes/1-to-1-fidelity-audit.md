@@ -157,7 +157,7 @@ game from being considered a faithful recreation. Status/confidence refer to the
 - **Required work:** on-device tick instrumentation, or timing analysis of native network
   traffic; cross-check `FIRE_TICK_LENGTH` semantics.
 
-### B7 — No unit–unit collision / path-slot micro-management [NATIVE fields, INFER behavior]
+### B7 — No unit–unit collision / path-slot micro-management [architecture decoded R14/Task 64; browser behavior still absent]
 
 - **Blocker:** browser units overlap freely (no pairwise push-out; only static-grid blocking,
   `passable` L1297). The native `Unit` carries `wait_for_moving 0xB9`, `forced 0xB8`,
@@ -165,11 +165,23 @@ game from being considered a faithful recreation. Status/confidence refer to the
   internals were explicitly not reconstructed (`unit-state-machines-native-analysis.md` §"Not
   reconstructed"); `UnitTakePositionsManager` decodes occupancy masks/cells proving the
   original reasons about *who stands where*.
+- **Pass 1 (R14, Task 64, 2026-10-12) decoded the architecture** [DECOMP]: the engine is
+  `com.geargames.aow.entities.battle.PathAct` (~50 Obfuz-named statics over (Battle,Unit)),
+  occupancy = per-cell `BattleCellBasic {occupant, occupants List, crosscell}` over
+  `BattleMap` grids + `CellScheduleStack`/`SkirtsStack`; the walk stepper `PathAct.$ce`
+  reads `forced` at 13 virtual sites, `GAICommandSpecMode.execute` sets it ×5; wait
+  handlers `UnitAct.$cg/$uG/$CG` write `wait_for_moving`; dispersal is faction-timed
+  (`Fraction.dispersalTick`) over a `dispersal_prev` worklist; `SlipInfo` is a complete
+  slide/tangent-detour resolver. All slot state rides the battle serialization stream
+  ([SERVER-DATA], fogLines classification). Evidence: `evidence/movement/*`,
+  `notes/b7-movement-slot-native-analysis.md`.
 - **Why it matters:** crowd behavior, chokes, and surround dynamics visibly differ.
-- **Status:** MISSING (browser) vs APPROXIMATE-need (native behavior partially evidenced).
-  **Confidence:** HIGH (fields CONFIRMED; semantics [INFER]).
-- **Required work:** RE the slot system (likely `$Pg`-adjacent, Obfuz-encumbered), then a
-  deterministic browser equivalent.
+- **Status:** MISSING (browser behavior) vs architecture CONFIRMED (native).
+  **Confidence:** HIGH (architecture [DECOMP]); value domains [INFERRED]/residual.
+- **Required work (updated):** R14 pass 2 value-domain decode (statics-aware flow
+  analysis of `UnitAct.$cg/$uG/$CG`, `BattleAct.$ZA/$J`, `PathAct.$ce/$Qe` — tooling
+  committed) or R1 SlipInfo/PathUnitInfo march dump; then the deterministic browser
+  slot-wait/dispersal equivalent (dormant until then — no invented slot semantics).
 
 ### B8 — Water is render-only; no naval domain in the sim [BROWSER + NATIVE roster]
 
@@ -486,7 +498,7 @@ established against the original roster.
 |---|---|---|---|---|---|---|
 | Pathfinding | server-side; client fields (`walk_state`, cross-tile `walk_dx/dy`, `wait_for_moving`, `forced`) prove tile-walking + slot system [NATIVE fields] | A* 8-dir octile + binary heap + corner-cut prevention + LOS string-pulling + nearestFree retarget (60k node budget) [BROWSER] | APPROXIMATE | unit-state-machines §"Not reconstructed"; takepos occupancy decode | MEDIUM (structure) / LOW (parity) | original algorithm unrecoverable from client |
 | Steering & avoidance | unknown | per-tick move, waypoint pop < 0.25 tile, axis-sliding + re-path fallback (0.5 s cd) [BROWSER] | APPROXIMATE | game.js L1740–1777 | LOW | — |
-| Unit–unit collision / slots | slot micro-management CONFIRMED present [NATIVE fields] | **none** — units overlap [BROWSER] | MISSING | B7 | HIGH | — |
+| Unit–unit collision / slots | slot micro-management CONFIRMED present [NATIVE fields]; **architecture decoded (R14/Task 64)**: PathAct engine + per-cell occupancy (BattleCellBasic occupant+list+crosscell) + forced/wait/walk-state traffic map; slot state battle-stream [SERVER-DATA] | **none** — units overlap [BROWSER] (documented approximation; slot-wait/dispersal dormant until value domains) | PARTIAL (architecture CONFIRMED; behavior not simulated) | b7-movement-slot-native-analysis.md; evidence/movement/* | HIGH (architecture) / LOW (values) | slot value domains (R14 pass 2 / R1) |
 | Formation | server slots (`SendUnitsMove` slots) [INFER] | deterministic ring spread at issue time (8/ring) [BROWSER] | APPROXIMATE | game.js L704–706 | LOW | — |
 | Speed | `speed/speed_init/accelerate` fields [NATIVE] | constant per def ×0.45 grounded-air; **no acceleration curve** [BROWSER] | PARTIALLY CONFIRMED | fields native; values tuned; accelerate unmodeled | MEDIUM | — |
 | Rotation | gradual at `rotate` rad/s [NATIVE] | `updateRotation` 10/3.2/4.5 rad/s by kind; movement NOT gated on facing [BROWSER] | PARTIALLY CONFIRMED | semantics native; movement-gating difference documented | MEDIUM | — |
@@ -682,7 +694,7 @@ P4 = future/platform work.
 | B4 | **P0** | Live damage application unverifiable (no client consumer of curve) | combat | UNKNOWN→APPROXIMATE | damage-pipeline §3.5 |
 | B5 | **P0** | Invented mechanics vs confirmed native absence (crit; falloff; veterancy mods; heal-aura-Shield) | combat | APPROXIMATE/CONFIRMED-divergence | combat-stats §8; weapon-type-surface |
 | B6 | **P0** | Native tick rate/timing grid unrecovered (20 Hz is an assumption) | simulation | UNKNOWN | FIRE_TICK_LENGTH=4 anchor |
-| B7 | **P0→P1** | No unit–unit collision/path-slot system | movement | MISSING | unit-state-machines §Not-reconstructed |
+| B7 | **P0→P1** | No unit–unit collision/path-slot system | movement | **PARTIAL (R14, Task 64, v65)**: native architecture + traffic map decoded [DECOMP]; browser slot-wait dormant-ready-shaped (comment fold-in only) | b7-movement-slot note; evidence/movement/* |
 | B8 | **P1** | Water non-blocking; no naval domain | movement/maps | MISSING | genTerrain; naval roster |
 | G1 | **P1** | Production cancellation/refunds missing | commands | **SHIPPED (R13/Task 62, v63)** — cancel-by-unitType + refund; refund fraction [INFERRED 100%] (no native rule surface) | building-commands note §4; building-commands.test.js |
 | G2 | **P1** | Building rally point missing | commands/buildings | **SHIPPED (R13/Task 62, v63)** — production-scoped rally, spawn-follows (last cell [INFERRED]); multi-waypoint traversal [AWAITING BINARY] | building-commands note §5; building-commands.test.js |
@@ -750,7 +762,7 @@ P4 = future/platform work.
 | I3 | — | salamander → missing `f2_veh_typhoon.glb` fallback | fix `UNIT_MODEL` mapping | none | none |
 | I4 | production cancel/refund; rally; repair; upgrade exist as native commands | ~~all missing (G1–G4)~~ **SHIPPED (R13, Task 62, v63)**: produceCancel/rally/repair/upgrade kernel commands (journaled + lockstep-routed + hash-covered B-line extensions); rally+cancel fully live, repair/upgrade dormant-ready gated on R1 per-level config; 49-check suite | shipped; per-level VALUES + refund fraction = R1 | realized: none (numbers only) | medium (determinism care) |
 | I5 | water/naval walkability | water non-blocking (B8) | water layer in terrain grid; bridge walkability | B3/R11 for naval scope | medium |
-| I6 | path-slot micro-management | units overlap (B7) | deterministic slot/separation system per recovered semantics | R5/R6 | high (determinism + perf) |
+| I6 | path-slot micro-management | units overlap (B7) | deterministic slot/separation system per recovered semantics | **R14 pass 1 done (Task 64)** — architecture + traffic map [DECOMP]; value domains (wait/walk_state/dispersal) = R14 pass 2 or R1 SlipInfo/PathUnitInfo dump; then implement | high (determinism + perf) |
 | I7 | burst rounds (`shot_count/shot_int`) | dormant machinery | wire values when captured | R1 | low |
 | I8 | EnergyProduction/**EnergyNeed** | flat bonus, no shortage (G6) | consumption + brownout rules | R1/R7 for rules | medium |
 | I9 | control groups, pause/settings | missing (M5) | UI + command plumbing | none | low |

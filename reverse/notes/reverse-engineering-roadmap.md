@@ -10,7 +10,7 @@ Game version of record: **6.9.18** (`libil2cpp.so` sha256 `8ace05bb…`, metadat
 dump.cs `0050e67d…`). Evidence labels per AGENTS.md §9 / mission vocabulary:
 `[NATIVE] [DECOMP] [RUNTIME] [ASSET] [SERVER-DATA] [BROWSER] [INFERRED] [SPECULATIVE]`.
 
-## Status snapshot (2026-10-11, R13 closed / Task 62)
+## Status snapshot (2026-10-12, R14 pass 1 closed / Task 64)
 
 | Audit ID | Question | Status | Evidence anchor | Next concrete action |
 |---|---|---|---|---|
@@ -26,7 +26,8 @@ dump.cs `0050e67d…`). Evidence labels per AGENTS.md §9 / mission vocabulary:
 | R10 | Camera/UI metrics | BLOCKED (device captures) | V8 A/B harness exists | record device gameplay; calibrate v2 pitch ramp |
 | R11 | Addressables DLC scan (naval/air prefabs) | BLOCKED (device storage) | APK-side absence proven | pull catalog+bundles from device, re-run `unpack_bundles.py` |
 | R12 | Native announcer/voice trigger system | **CONFIRMED** (trigger wiring decoded: BattleUIEventHelper global register + AudioBattleVoicesPlayer LC/GH wiring; flag polarity, throttles, spec gate; fold-in wired ann_captured/flag_lost/flags_lost/enemy/base_attack v61) | `notes/announcer-voice-native-analysis.md`, `evidence/audio/r12-*.txt` | closed at static limit for the global register; optional: per-unit VoiceType voice layer (note §2), M3 weapon-sound table from audio bundles |
-| R13 | Building/production command suite (cancel/rally/repair/upgrade) | **CONFIRMED** (structure; offline dump.cs decode 2026-10-11 — binary LFS/tooling-gated session, no disassembly claims: AIComm payload shapes + Send* facade + plain-named LC application commands; cancel names a UNIT TYPE; repair/upgrade durations SERVER-delivered; BuildingLevelType→UpgradeLevel config chain; refund rule has NO native surface) | `notes/building-commands-native-decode.md`, `evidence/commands/building-commands-decode.txt` | CLOSED at the offline-reachable limit; per-level repair_price/upg_lvl values + refund fraction ride R1; $CMA validators + get_Type ids ride the script.json tooling-gate |
+| R13 | Building/production command suite (cancel/rally/repair/upgrade) | **CONFIRMED** (structure; offline dump.cs decode 2026-10-11 — binary LFS/tooling-gated session, no disassembly claims: AIComm payload shapes + Send* facade + plain-named LC application commands; cancel names a UNIT TYPE; repair/upgrade durations SERVER-delivered; BuildingLevelType→UpgradeLevel config chain; refund rule has NO native surface) | `notes/building-commands-native-decode.md`, `evidence/commands/building-commands-decode.txt` | CLOSED at the offline-reachable limit; per-level repair_price/upg_lvl values + refund fraction ride R1; $CMA validators + get_Type ids now STARTABLE (Task 63 broke the script.json tooling-gate) |
+| R14 | Unit–unit collision / path-slot system (audit gate B7) | **PARTIALLY_CONFIRMED** (pass 1 2026-10-12: PathAct engine map + per-cell occupancy model + slot/wait/forced/walk-state callvirt traffic map site-pinned [DECOMP]; slot state is battle-stream [SERVER-DATA]; value domains remain in *Act bodies) | `notes/b7-movement-slot-native-analysis.md`, `evidence/movement/b7-pathact-decode.txt`, `evidence/movement/b7-handler-disasm.txt` | pass-2 value-domain decode (statics-aware flow tooling committed) or R1 SlipInfo/PathUnitInfo march dump; browser slot-wait/dispersal dormant until then (no invented slot semantics) |
 
 ## Priorities (mission §6 mapped to sequencing)
 
@@ -49,7 +50,7 @@ Ranked by fidelity impact per audit §7 and current residuals:
    per-weapon VALUES remain (R1).
 3. ~~**G11 burst wire-up**~~ — **dormant-complete** (verified 2026-10-11): burst machinery shipped (`shotCount ?? 1` burst paths + burstLeft/burstT state) and hash-covered by H1 (Task 58); only per-weapon VALUES remain (R1).
 4. ~~**H1 hash blind spots**~~ — **DONE (Task 58, v=59)**: mines (M-lines) + `_chain` + behavior-timer block + cmdSeq serialized; golden structure assertions re-baselined; exposed + fixed the JIP clientless-window archive hole (lockstep-jip).
-5. ~~**B7 path-slot system** — only after R5/R6-derived semantics~~ — R6 semantics now CLOSED (Task 59); B7 remains highest determinism risk, keep last in this priority.
+5. ~~**B7 path-slot system**~~ — **PASS 1 DONE (R14, Task 64, 2026-10-12)**: PathAct engine + occupancy model + slot/wait/forced traffic map decoded, slot state classified [SERVER-DATA]; browser comment-only fold-in v65; value-domain decode (pass 2) or R1 dump converts the residual. B7 remains the highest determinism risk — browser equivalent stays dormant until value domains land.
 
 ### Priority C — Rendering/visual presentation (continues in parallel, V-series)
 * V1–V7 shipped (camera angulation, UV root-cause, lighting calibration, flags/insignias,
@@ -111,3 +112,12 @@ Ranked by fidelity impact per audit §7 and current residuals:
    (repair/upgrade config-gated dormant until R1 data — no invented balance),
    stateString/lockstep/journal parity, 49-check suite; refund fraction [INFERRED 100%]
    recorded as an R1-session question.
+9. **R14 pass 2 — slot-behavior value domains** (startable offline): statics-aware
+   flow decode of `UnitAct.$cg/$uG/$CG` + `BattleAct.$ZA/$J` + `PathAct.$ce/$Qe`
+   for the wait_for_moving/walk_state value domains and the dispersal period;
+   `b7_handler_disasm.py` is the entry tool. Alternative shortcut: R1 SlipInfo/
+   PathUnitInfo march dump (one Frida hook each).
+10. **R13 residual — $CMA validators + get_Type ids** (startable offline since
+   Task 63): script.json is recovered; bounded decode.
+11. **M3 weapon-sound table from audio bundles** (R12 optional, offline): clip
+   inventory exists; per-weapon table from bundle scan.

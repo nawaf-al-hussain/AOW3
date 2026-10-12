@@ -251,6 +251,31 @@
    ],
    "repro": "unzip reverse/dump.cs.zip && sha256sum dump.cs (0050e67d...) && sed -n '<line>' dump.cs per evidence file; node reverse/evidence/tests/building-commands.test.js",
    "next_action": "CLOSED at the offline-reachable limit; per-building repair_price / upg_lvl values and refund fraction ride the R1 device session; $CMA validators + get_Type ids ride the script.json tooling-gate (R7 re-open lane)"
+  },
+  "R14": {
+   "question": "native unit-unit collision / path-slot micro-management (audit gate B7): who owns the slot/wait/walk-state machine, what is the occupancy model, and how is the state delivered",
+   "status": "PARTIALLY_CONFIRMED (pass 1 offline: architecture + traffic map + delivery path [DECOMP]; slot-behavior value domains remain in *Act bodies, bounded residual)",
+   "evidence": [
+    "reverse/evidence/movement/b7-pathact-decode.txt",
+    "reverse/evidence/movement/b7-handler-disasm.txt",
+    "reverse/notes/b7-movement-slot-native-analysis.md",
+    "reverse/tools/b7_pathact_decode.py",
+    "reverse/tools/b7_callvirt_xref.py",
+    "reverse/tools/b7_handler_disasm.py"
+   ],
+   "converts_gaps": [],
+   "key_findings": [
+    "engine class = com.geargames.aow.entities.battle.PathAct (dump.cs 425673): ~50 Obfuz-named statics over (Battle,Unit,...) with preserved signatures; $ce 0x47501F0 walk stepper, $me/$Me 0x475C2D4/0x475DC3C cell occupancy add/remove, $Te 0x4764F44 placement legality, $Qe 0x476A73C placement check reading wait_for_moving [NATIVE]",
+    "occupancy model: BattleCellBasic {occupant Dynamic 0x10, occupants List<Dynamic> 0x18, sbyte x3, short, crosscell} + BattleCrosscell {int[],int[],Dynamic[]} per-cell multi-cell bookkeeping + BattleMap BattleCell[][]/BattleCrosscell[][] grids + CellScheduleStack pool + SkirtsStack; client Unit is a thin 26-method mirror [NATIVE]",
+    "traffic map (vtable-slot callvirt xref, r7f method; BL xref = 0 direct callers): set_Forced(102) 26 sim sites incl. GAICommandSpecMode.execute x5 (0x45F64AC..AB4) + GAICommandTroopMove + PathAct.$ce x2; get_Forced(101) PathAct.$ce x13 + UnitAct.$yG x6 + AICommUnitsMove.$CMA; set_WaitForMoving(300) UnitAct.$cg/$uG/$CG + BattleAct.$J + GAICommandTourTable; set_WalkState(302) BattleAct.$ZA x4 + BattleAct.$J + PathAct.$ce + UnitAct.$Ag/$yi [DECOMP]",
+    "forced = command-forced movement flag (set by order handlers, consumed by the walk stepper); wait_for_moving = contested-cell wait flag (written by UnitAct handlers, read by placement checks) — semantics [INFERRED] from the verified site map",
+    "dispersal: Unit.dispersal/dispersal_prev/dispersal_bu_id (0x120/0x128/0x130) driven by PathAct.$Oe/$be/$Te + BattleSide.$ju/$iu; faction scheduler = Fraction.dispersalTick 0xF1 + approachGroupAmount 0xF2 — a faction-timed spread pass over a dispersal_prev worklist [INFERRED]",
+    "SlipInfo (391779) = complete slide-resolver state: slip dx/do + closestX/Y/Radius + from->to segment + TWO tangent detour paths (x/y/angle/step per tangent, stepCur/stepCount) + strafe sub-system (dx/dy/angle/len/max/step) [NATIVE structure]",
+    "delivery: Unit.wait_for_moving/forced/walk_state/dispersal* + SlipInfo/PathUnitInfo/PathCoordInfo are Unit/SlipInfo GearGamesSerializable members serialized by UnitST*/BattleST*/BattleSideST* — battle-stream [SERVER-DATA], fogLines classification",
+    "census caveat recorded: ldr [x0,#0xE4]+bl 0x3CC7AC8 pairs in *Act bodies are the il2cpp class-init/lazy-init idiom over statics bases, NOT Unit.walk_state; only callvirt sites are register-verified"
+   ],
+   "residual": "slot-behavior value domains (wait_for_moving values, walk_state domain vs the PathAct $ZJ..$dk 0..7 family, dispersal period/radius) live in *Act bodies needing statics-aware per-function flow analysis (tooling now exists); one Frida session dumping SlipInfo/PathUnitInfo during a march (R1) recovers the live domains directly",
+   "next_action": "CLOSED at the pass-1 offline limit (architecture+traffic); value-domain decode or R1 SlipInfo/PathUnitInfo dump converts the rest; browser slot-wait/dispersal stays dormant until then (no invented slot semantics)"
   }
  },
  "findings": {
@@ -397,6 +422,29 @@
    "evidence": [
     "reverse/evidence/commands/building-commands-decode.txt"
    ]
+  },
+  "F-movement-slot-architecture": {
+   "claim": "native sim tracks who-stands-where via per-cell BattleCellBasic {occupant Dynamic, occupants List<Dynamic>, crosscell} + BattleMap grids; movement FSM = PathAct statics over (Battle,Unit); client Unit is a 26-method state mirror",
+   "status": "CONFIRMED (structure)",
+   "labels": [
+    "[NATIVE]",
+    "[DECOMP]"
+   ],
+   "evidence": [
+    "reverse/evidence/movement/b7-pathact-decode.txt",
+    "reverse/notes/b7-movement-slot-native-analysis.md"
+   ]
+  },
+  "F-movement-state-server-data": {
+   "claim": "Unit.wait_for_moving/forced/walk_state/dispersal{,_prev,_bu_id} and SlipInfo/PathUnitInfo path-execution state are battle-serialization-stream members (UnitSTSerializer/BattleSTSerializer callvirt traffic verified) — server-delivered like the R7 fogLines tables",
+   "status": "CONFIRMED",
+   "labels": [
+    "[NATIVE]",
+    "[SERVER-DATA]"
+   ],
+   "evidence": [
+    "reverse/evidence/movement/b7-pathact-decode.txt"
+   ]
   }
  },
  "browser_foldins": {
@@ -455,11 +503,18 @@
    ],
    "behavior": "new command types (net-new capability; existing behavior untouched — produce/build/move paths byte-identical); all new state hash-covered",
    "version": "v62 -> v63"
+  },
+  "v65": {
+   "task": "Task 64 / B7 pass 1 movement/slot architecture",
+   "changes": [
+    "comment-only provenance fold-in on passable() (docs/game.js): native occupancy model (BattleCellBasic occupant+list+crosscell, BattleMap grids, CellScheduleStack), PathAct engine map ($ce walk stepper 13x get_Forced, $me/$Me cell place/remove, $Te/$Qe placement checks), forced/wait semantics reading (GAICommandSpecMode sets forced x5), [SERVER-DATA] classification; documents that per-cell unit occupancy/slot waiting is NOT simulated (audit B7 residual)",
+    "comment-only diff verified (zero non-comment +/- lines); node --check OK; 10/10 suites green baseline-identical"
+   ]
   }
  },
  "blockers_summary": {
   "device_required": [
-   "R1 (now also carries building repair_price/upg_lvl values + cancel refund fraction)",
+   "R1 (now also carries R8 per-weapon values + miss-flight params + R6 cell overlay + building repair_price/upg_lvl + cancel refund fraction + B7 SlipInfo/PathUnitInfo march dump)",
    "R3",
    "R4",
    "R9",
@@ -467,7 +522,9 @@
    "R11"
   ],
   "offline_open": [
-   "R7 re-open (script.json tooling-gate; also covers R13's $CMA/get_Type + refund-rule disassembly questions)"
+   "B7 pass-2 slot-behavior value domains (walk_state/wait_for_moving value semantics in *Act bodies; statics-aware flow tooling committed) — or R1 SlipInfo/PathUnitInfo Frida dump",
+   "R13 residual $CMA validators + get_Type ids (script.json tooling gate BROKEN in Task 63 — now startable)",
+   "R5 bounded residual ($Pg jump-table case map) only if join-arm numerics ever matter"
   ],
   "note": "See reverse/notes/reverse-engineering-roadmap.md for sequencing rationale"
  }
