@@ -40788,16 +40788,30 @@ body>canvas{filter:saturate(1.07) contrast(1.035)}
       } catch (e) {}
       return r;
     };
-    // Weapon-sound provenance (M3, Task 65 — reverse/notes/m3-weapon-sound-
-    // native-decode.md): native chain = LCUnitShoot{unitId, weaponIndex}
-    // (server lockstep command) -> IUnitShootable.ToShoot(weaponIndex) on the
-    // unit prefab's sound effectors; UnitShootSoundEffector gates on its
-    // serialized m_weaponIndex and plays its serialized SoundGroups enum id
-    // (153 values: ItemFireRifle1=1 .. ItemCoiltankAutoAttack=243 .. 999) via
-    // AudioBattleSoundsHandler.PlayLimitedSoundById; AudioGroups assets
-    // (50, enum id + variant flags) resolve to clip variations; 1,677 clips
-    // inventoried. The pools below stay the documented browser approximation
-    // until the per-weapon SoundGroups table lands (extraction recipe proven).
+    // Weapon-sound provenance (M3, Task 65 + pass 4 Task 66 — reverse/notes/
+    // m3-weapon-sound-native-decode.md): native chain = LCUnitShoot{unitId,
+    // weaponIndex} (server lockstep command) -> IUnitShootable.ToShoot(
+    // weaponIndex) on the unit prefab's sound effectors; UnitShootSoundEffector
+    // gates on its serialized m_weaponIndex and plays its serialized
+    // SoundGroups enum id (153 values: ItemFireRifle1=1 .. ItemCoiltankAuto-
+    // Attack=243 .. 999) via AudioBattleSoundsHandler.PlayLimitedSoundById.
+    // PASS-4 SCAN (full corpus, script-id-driven): per-prefab pairs exist ONLY
+    // for hero/special units (UnitShootSoundEffector x5, AudioGroups x50 —
+    // sg histogram {14,43,110,118,150..153,233..249}, all hero/special; the
+    // 6 IUnitShootable receivers fully accounted). STANDARD units carry
+    // ClientUnitWeapon only (115 guns, 67 roots) and NO fire sound: the native
+    // chain is WeaponType.visual (FireType, server prototype) ->
+    // BattleEffectsContext.GetFireEffects -> ClientFirePrefabs{Fire,...} ->
+    // CDN prefab (catalog keys fire_rifle1_s1..s4 / fire_tank0..5, bundles NOT
+    // in the base APK) -> runtime AudioObject; the MapEditorFireTypeConfig
+    // FireType->prefab mapping is server/map-editor data [SERVER-DATA+CDN].
+    // The id register IS extracted offline: battle AudioController bank
+    // (aecb32e5f2b6e664, 308 items) holds ItemFire* sg 1..29 (Rifle1/2, Slug1,
+    // Flame1, Machine1..4, Missile1..7, Gun1..7, Bomb1, Torpedo1, Sniper1,
+    // Space, Launcher2) with clip naming convention fire_<family><n>_<variant>
+    // verified 24/28 exact vs the 1,677-clip inventory. The pools below stay
+    // the documented browser approximation (G11: no invented per-weapon
+    // binding); the R1 device session carries the final prefab dump.
     const _expl = Renderer3D.prototype.explosion;
     Renderer3D.prototype.explosion = function(x, y, z, r) {
       const res = _expl.call(this, x, y, z, r);

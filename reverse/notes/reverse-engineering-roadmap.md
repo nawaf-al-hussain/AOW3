@@ -125,10 +125,19 @@ Ranked by fidelity impact per audit §7 and current residuals:
    get_Type id register 36/49 into a clean sequential enum (5300-5312 unit ops,
    5400-5406 building suite, 5500-5563 meta, 5701-5710 integrity); 13 ids ride
    the fourth Obfuz form (inline accessor, third segment — bounded).
-11. ~~**M3 weapon-sound table from audio bundles**~~ — **MECHANISM DONE (Task 65,
-   2026-10-12)**: dispatch chain decoded (LCUnitShoot{unitId,weaponIndex} →
-   IUnitShootable.ToShoot gate → serialized SoundGroups id →
-   PlayLimitedSoundById); SoundGroups register (153 values), AudioGroups asset
-   register (50), 111 sound-effector components + 1,677-clip inventory
-   extracted via the globalgamemanagers.assets script-PPtr route; remaining =
-   standard-unit per-weapon SoundGroups table (gun-prefab scan, recipe proven).
+11. ~~**M3 weapon-sound table from audio bundles**~~ — **DONE (Task 65 mechanism
+   + Task 66 standard-unit gun-prefab scan, 2026-10-12)**: dispatch chain
+   decoded (LCUnitShoot{unitId,weaponIndex} → IUnitShootable.ToShoot gate →
+   serialized SoundGroups id → PlayLimitedSoundById); SoundGroups register
+   (153 values), AudioGroups asset register (50), 111 sound-effector
+   components + 1,677-clip inventory extracted; Task-66 scan PROVES the
+   standard-unit negative (zero fire-sound carriers on standard prefabs — all
+   50 AudioGroups + all SoundGroups-typed fields + all 6 IUnitShootable
+   receivers = hero/special only), decodes the standard-fire chain
+   (WeaponType.visual FireType → BattleEffectsContext.GetFireEffects →
+   ClientFirePrefabs → CDN prefab fire_rifle*/fire_tank* — MapEditor-
+   FireTypeConfig = server/map-editor data), and extracts the id→clip
+   register offline (battle bank aecb32e5f2b6e664: ItemFire* sg 1..29, clip
+   convention fire_<family><n>_<variant> verified 24/28 exact).
+   Residual = the per-weapon FINAL pair on CDN Fire prefabs [SERVER-DATA+CDN],
+   R1-carriable (one Frida hook on BattleEffectsContext.m_firePrefabs).
